@@ -77,3 +77,9 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-programme-folder .po-ai-folder-row strong{font-size:12px;line-height:1.45;color:#d8fff2;overflow-wrap:anywhere}
 #poWatchFlowPanel .po-ai-programme-folder .po-ai-folder-row small{font-size:11px;color:#abd2d8}
 #poWatchFlowPanel .po-ai-programme-folder .po-ai-folder-row button{width:fit-content;max-width:100%}
+
+/* P274: search locally indexed XMLTV programme topics. */
+#poWatchFlowPanel .po-ai-programme-search{display:grid;gap:6px;color:#bfe5e0;font-size:12px;font-weight:650}
+#poWatchFlowPanel .po-ai-programme-search input{min-width:0;width:100%;min-height:39px;box-sizing:border-box;border:1px solid #597f83;border-radius:9px;background:#132e36;color:#f1fff9;padding:8px 11px;font:inherit}
+#poWatchFlowPanel .po-ai-programme-search input:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}
+#poWatchFlowPanel .po-ai-programme-results{display:grid;gap:9px;min-width:0}

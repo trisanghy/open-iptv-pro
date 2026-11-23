@@ -302,6 +302,30 @@
   return result;
  }
 
+
+ // P274: local, cross-topic XMLTV programme search; multi-label entries are deduplicated.
+ function searchProgrammes(catalog,query,{limit=160}={}){
+  const terms=normalize(String(query||'').slice(0,160)).split(' ').filter(Boolean).slice(0,8);
+  const out={items:[],total:0,truncated:false};
+  if(!terms.length||!catalog)return out;
+  const unique=new Map();
+  const groups=[...(Array.isArray(catalog.groups)?catalog.groups:[]),
+   {label:KINDS.other,items:catalog.uncategorized||[]}];
+  for(const group of groups)for(const item of (Array.isArray(group.items)?group.items:[])){
+   if(!item?.channel?.id||!Number.isFinite(item?.programme?.start))continue;
+   const labels=(item.kinds||[]).map(k=>KINDS[k]||'').join(' ');
+   const text=normalize([item.programme.title,item.channel.name,labels,group.label].join(' '));
+   if(!terms.every(t=>text.includes(t)))continue;
+   const key=String(item.channel.id)+'|'+item.programme.start+'|'+normalize(item.programme.title);
+   if(!unique.has(key))unique.set(key,item);
+  }
+  const sorted=[...unique.values()].sort((a,b)=>a.programme.start-b.programme.start||
+   String(a.channel.name).localeCompare(String(b.channel.name),'vi'));
+  const max=Math.max(1,Math.min(500,Math.trunc(limit)||160));
+  out.total=sorted.length;out.truncated=sorted.length>max;out.items=sorted.slice(0,max);
+  return out;
+ }
+
  // P5.1.270: consent-based contextual bandit. Genre-level UCB bonuses shrink
  // as the user explicitly rates/watches a category; no channel history stored.
  function sanitizedBandit(raw){
@@ -433,5 +457,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,epgFolders,programmeFolders,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

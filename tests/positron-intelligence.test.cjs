@@ -320,3 +320,24 @@ test('P273 giao diện chương trình EPG có giờ nguồn thực, nhiều th�
  assert.ok(qa.includes('positron-p51273-epg-programmes-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51273-epg-programmes-after-1920x1080-real.png'));
 });
+
+test('P274 tìm chương trình XMLTV không dấu và khử trùng đa nhãn',()=>{
+ const ch=[mk('a','VTV Thể thao'),mk('b','Kênh Giáo dục')],g={programmes:[{id:'fixture'}]};
+ const api={find:(_g,c)=>c.id==='a'?[{title:'Bản tin thời sự và Trực tiếp bóng đá',start:now+60000,end:now+3600000}]
+ :[{title:'Khoa học và giáo dục',start:now+120000,end:now+3600000}]};
+ const before=JSON.stringify(ch),catalog=C.programmeFolders(ch,g,api,{clock:now});
+ assert.equal(C.searchProgrammes(catalog,'BONG DA').total,1);
+ assert.equal(C.searchProgrammes(catalog,'BONG DA').items[0].channel.id,'a');
+ assert.equal(C.searchProgrammes(catalog,'the thao').total,1);
+ assert.equal(C.searchProgrammes(catalog,'khoa hoc giao duc').items[0].channel.id,'b');
+ assert.equal(C.searchProgrammes(catalog,'khong co').total,0);
+ assert.equal(C.searchProgrammes(catalog,'').total,0);
+ assert.equal(JSON.stringify(ch),before);
+});
+test('P274 tìm kiếm EPG giữ focus và ảnh Electron',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const t of ['poAIProgrammeSearch','core.searchProgrammes(catalog,programmeQuery','programmeQuery=search.value.slice(0,160);paint()'])assert.ok(ui.includes(t),t);
+ assert.ok(qa.includes('positron-p51274-programme-search-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51274-programme-search-after-1920x1080-real.png'));
+});

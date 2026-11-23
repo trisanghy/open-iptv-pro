@@ -2,6 +2,15 @@
 
 
 
+## P5.1.274 — Tìm chương trình EPG xuyên chủ đề không dấu / Electron 4.23.359
+- Feature priority: NEW — Thêm khám phá chương trình XMLTV theo từ khóa trên toàn bộ các chủ đề, tên chương trình và kênh, hỗ trợ dấu/không dấu; chương trình đa nhãn chỉ liệt kê một lần trong kết quả. Tìm trực tiếp trong tập lịch 24 giờ đã nạp, không tự quét hay phát video.
+- Feature class: BREAKTHROUGH
+- Evidence: Kiểm thử lõi với bản tin thời sự kết hợp bóng đá và khoa học giáo dục chứng minh tìm không dấu, tìm đa từ, khử trùng cùng chương trình đa chủ đề và không thay đổi dữ liệu kênh. Kiểm thử Electron thật chụp trước/sau 1920x1080 khi nhập BONG DA, kiểm tra một kết quả, focus giữ trên ô nhập, không tự phát, không tràn ngang; xóa từ khóa khôi phục các thư mục EPG. Chỉ công nhận đạt khi CI và ảnh đã xác minh.
+- User action: TV → WatchFlow → ✦ AI hợp gu → Chương trình EPG → nhập từ khóa; mở kết quả và bấm Xem kênh. Xóa từ khóa để quay về danh mục chương trình.
+- Privacy: Tìm tại thiết bị trên XMLTV đã nhập, không gửi M3U, stream URL, tên kênh, lịch sử hoặc từ khóa lên Internet. Đây là chức năng tìm kiếm văn bản, không gọi là ML.
+- Electron screenshot: positron-p51274-programme-search-before-1920x1080-real.png / positron-p51274-programme-search-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE; chỉ lưu bản thử nghiệm ở nhánh và Actions, Releases dành cho Stable.
+
 ## P5.1.273 — Thư mục chương trình EPG 24h đa chủ đề / Electron 4.23.358
 - Feature priority: NEW — Thêm màn hình **Chương trình EPG** cho phép khám phá lịch phát thật theo chủ đề, không chỉ gom kênh. Một chương trình thời sự kết hợp bóng đá có thể xuất hiện đồng thời trong Tin tức và Thể thao, xem tên/giờ/kênh và chủ động chọn xem kênh; chỉ dùng XMLTV đã tải.
 - Feature class: BREAKTHROUGH

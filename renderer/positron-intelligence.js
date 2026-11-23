@@ -61,6 +61,7 @@
  exploreMode.textContent='Khám phá AI';exploreMode.setAttribute('aria-pressed','false');exploreMode.disabled=!enabled;
  modeBar.append(channelsMode,upcomingMode,planMode,exploreMode);
  let upcomingOpen=false,planOpen=false,exploreOpen=false,foldersOpen=false,programmesOpen=false;
+ let programmeQuery='';
  channelsMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=false;programmesOpen=false;render();});
  upcomingMode.addEventListener('click',()=>{upcomingOpen=true;planOpen=false;exploreOpen=false;foldersOpen=false;programmesOpen=false;render();});
  planMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=true;exploreOpen=false;foldersOpen=false;programmesOpen=false;render();});
@@ -142,6 +143,15 @@
   const note=d.createElement('p');note.className='po-ai-privacy';
   note.textContent='Tên và giờ phát thực tế từ XMLTV đã nạp. Một chương trình có thể ở nhiều chủ đề; không tải thêm dữ liệu Internet.';
   list.append(note);
+  const row=d.createElement('label');row.className='po-ai-programme-search';
+  const lab=d.createElement('span');lab.textContent='Tìm trong lịch EPG';
+  const search=d.createElement('input');search.type='search';search.id='poAIProgrammeSearch';
+  search.placeholder='Tên chương trình, kênh hoặc chủ đề…';
+  search.setAttribute('aria-label','Tìm chương trình EPG không dấu, theo kênh hoặc chủ đề');
+  search.maxLength=160;search.value=programmeQuery;
+  row.append(lab,search);
+  const resultArea=d.createElement('div');resultArea.className='po-ai-programme-results';
+  list.append(row,resultArea);
   const add=(key,label,items,open)=>{
    const folder=d.createElement('details');folder.className='po-ai-folder po-ai-programme-folder';
    folder.dataset.programmeTopic=key;folder.open=open;
@@ -164,15 +174,34 @@
     });
     row.append(title,channel,play);rows.append(row);
    }
-   folder.append(rows);list.append(folder);
+   folder.append(rows);resultArea.append(folder);
   };
-  for(const [i,group] of catalog.groups.entries())add(group.key,group.label,group.items,i===0);
-  if(catalog.uncategorized.length)add('other','Chương trình chưa rõ chủ đề',catalog.uncategorized,false);
-  if(!catalog.total){
-   const empty=d.createElement('p');empty.className='po-ai-empty';
-   empty.textContent='Chưa có chương trình XMLTV hợp lệ trong 24 giờ tới; hãy nhập EPG để khám phá theo chủ đề.';
-   list.append(empty);
-  }
+  const paint=()=>{
+   resultArea.replaceChildren();
+   if(programmeQuery.trim()){
+    const match=core.searchProgrammes(catalog,programmeQuery,{limit:160});
+    const count=d.createElement('p');count.className='po-ai-privacy';
+    count.textContent='Tìm được '+match.total+' chương trình từ XMLTV'+
+     (match.truncated?' · hiển thị 160 kết quả đầu':'')+' · sắp theo giờ phát';
+    resultArea.append(count);
+    if(match.items.length)add('search','Kết quả tìm kiếm',match.items,true);
+    else{
+     const empty=d.createElement('p');empty.className='po-ai-empty';
+     empty.textContent='Không tìm thấy chương trình phù hợp trong EPG 24 giờ tới.';
+     resultArea.append(empty);
+    }
+    return;
+   }
+   for(const [i,group] of catalog.groups.entries())add(group.key,group.label,group.items,i===0);
+   if(catalog.uncategorized.length)add('other','Chương trình chưa rõ chủ đề',catalog.uncategorized,false);
+   if(!catalog.total){
+    const empty=d.createElement('p');empty.className='po-ai-empty';
+    empty.textContent='Chưa có chương trình XMLTV hợp lệ trong 24 giờ tới; hãy nhập EPG để khám phá theo chủ đề.';
+    resultArea.append(empty);
+   }
+  };
+  search.addEventListener('input',()=>{programmeQuery=search.value.slice(0,160);paint();});
+  paint();
   if(catalog.truncated){
    const warning=d.createElement('p');warning.className='po-ai-privacy';
    warning.textContent='Đã đạt giới hạn chương trình để giữ ứng dụng phản hồi; không tải thêm nguồn hay tự phát.';
