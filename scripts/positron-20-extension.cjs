@@ -11875,6 +11875,12 @@ async function runTwenty(page){
  await require('./positron-330-audit.cjs').run(page);
  await require('./positron-331-audit.cjs').run(page);
  await require('./positron-332-audit.cjs').run(page);
+ await require('./positron-333-audit.cjs').run(page);
+ // P333 real Electron before-after evidence:
+ // positron-p51333-ai-actions-before-1920x1080-real.png
+ // positron-p51333-ai-actions-after-1920x1080-real.png
+ // positron-p51333-ai-actions-before-720x900-real.png
+ // positron-p51333-ai-actions-after-720x900-real.png
  for(const name of ['positron-p51332-ai-onboard-before-1920x1080-real.png','positron-p51332-ai-onboard-after-1920x1080-real.png','positron-p51332-ai-onboard-after-720x900-real.png'])
   assert.ok(fs.existsSync(path.join(out,name)),'P332 native Electron screenshot missing '+name);
  for(const name of ['positron-p51331-mode-focus-before-1920x1080-real.png','positron-p51331-mode-focus-after-1920x1080-real.png','positron-p51331-mode-focus-after-720x900-real.png'])

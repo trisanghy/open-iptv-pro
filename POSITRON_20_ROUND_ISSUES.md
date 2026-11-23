@@ -119,3 +119,11 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Fast QA ban đầu (45252855915): 14/14 flag đạt, ảnh desktop/720 đã MỞ; desktop width 528px, sáu nút height 44px, helper liên kết aria-describedby.
 - Node full suite run 45252855893: 1047 pass, 5 skipped, 1 fail ở test P276 vì static invariant bắt buộc lệnh area.append(title,controls,alertRow,modeBar,summary,list,privacy,modelManager) không đổi.
 - Sửa mã thực: giữ nguyên câu lệnh area.append và dùng modeBar.after(modeHelp) để thêm dòng gợi ý bên dưới; DOM hiển thị giữ đúng hình và không phá thứ tự nhóm điều hướng trước model manager. Chạy lại Node và Electron sau sửa.
+
+## Đợt 24/11/2026 từ P5.1.332 — vòng 01 P5.1.333 (CANDIDATE)
+- HEAD đầu vào: efc6f67e7d034de96790e10fa90e6c400b8206c4; package 4.23.417. Fast Electron CI 45253296843 thành công, ảnh baseline 1920 và 720 đã được mở.
+- Full capture 45253296908 lỗi P326 `cardAndActionsVisible=false` dù Node và build Win/Mac thành công.
+- Ảnh đã trực tiếp mở: P326 after-720 trong artifact 14856358405; nút Xem đầu bị đẩy dưới mép panel do toolbar WatchFlow thường và AI cùng hiện.
+- Sửa CSS: ẩn năm nút WatchFlow thường khi AI active; giữ tab AI để về chế độ cũ. Không giảm assertion P326.
+- Chạy scripts/positron-333-audit.cjs với before/after Electron, 1920/720, đo CTA và không mất dữ liệu.
+- CHƯA tính vòng nếu chưa đạt Node, QA Electron, soát ảnh SAU và CI.

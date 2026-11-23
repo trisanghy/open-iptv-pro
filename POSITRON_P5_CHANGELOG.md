@@ -1,3 +1,12 @@
+## P5.1.333 / Electron 4.23.418 — Sửa trùng thanh điều hướng che nút Xem AI (CANDIDATE)
+- Feature priority: BLOCKER_FIX
+- Root cause: Full Electron CI P332, Actions 45253296908, thất bại tại kịch bản P326 vì năm nút WatchFlow thường hiển thị ngay phía trên sáu chế độ AI; ảnh 720x900 cho thấy nút Xem của gợi ý đầu nằm dưới mép panel.
+- Fix: Ẩn thanh năm chế độ WatchFlow thường **chỉ khi chế độ AI đang mở**. Người dùng vẫn nhấn «AI hợp gu» để quay về WatchFlow thường; không xóa tính năng.
+- Electron screenshot: positron-p51333-ai-actions-before-1920x1080-real.png / positron-p51333-ai-actions-after-1920x1080-real.png / positron-p51333-ai-actions-before-720x900-real.png / positron-p51333-ai-actions-after-720x900-real.png.
+- Evidence: Kiểm tra Electron thật ở 1920 và 720; ảnh BEFORE dùng CSS override tạm để tái hiện P332 trong cùng binary, không phải chụp trực tiếp binary cũ. Ảnh AFTER kiểm tra first action trong panel, sáu nút AI vẫn dùng được, không tràn, không đổi playlist/mô hình, không autoplay; không giảm assertion của P326.
+- Privacy: Không gửi URL M3U, EPG, lịch sử xem hoặc model ra mạng.
+- Status: CANDIDATE đến khi Node, fast Electron và full 70+ screenshots CI đạt, ảnh sau được mở. GitHub Releases chỉ cho Stable theo AGENTS.md; thử nghiệm dùng Actions artifacts.
+
 ## P5.1.332 / Electron 4.23.417 — WatchFlow AI không nguồn: khung đọc rộng, nút 44px và gợi ý phím (CANDIDATE)
 - Feature priority: NEW — bổ sung chế độ hiển thị WatchFlow Intelligence dễ đọc khi chưa có playlist trên desktop; trước đó bảng AI chỉ rộng khoảng 265px khiến sáu nút chế độ quấn chữ, khó chọn bằng remote.
 - Feature class: AI

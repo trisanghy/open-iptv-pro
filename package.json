@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.417",
-  "description": "Positron P5.1.332: khung WatchFlow AI dễ đọc khi chưa có nguồn, nút 44px và gợi ý phím điều hướng",
+  "version": "4.23.418",
+  "description": "Positron P5.1.333: sửa chồng thanh điều hướng AI và nút Xem bị che (BLOCKER_FIX)",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -420,3 +420,10 @@ html[data-positron="true"] #poWatchFlowPanel .po-ai-card .po-ai-actions button:f
  margin:0 0 3px;color:#aad8d4;font-size:12px;line-height:1.4;
  overflow-wrap:anywhere;
 }
+
+/* P5.1.333: P332 full Electron screenshot exposed redundant WatchFlow modes
+   above AI controls, pushing the first "Xem" action below the visible modal
+   at 720px. The AI tab remains available to return to normal WatchFlow. */
+html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-flowplus-nav{
+ display:none!important;
+}
