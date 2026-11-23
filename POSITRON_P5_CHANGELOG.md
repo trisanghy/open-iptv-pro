@@ -4,7 +4,7 @@
 - Evidence: Node regression và Electron CDP 1920×1080 chụp trước/sau/khôi phục; kiểm tra mô hình localStorage, số nhãn, playlist, kênh bỏ qua, không autoplay. Chỉ xác nhận đạt sau Actions và mở PNG.
 - User action: TV → WatchFlow → AI hợp gu → Thư mục EPG → Dạy AI nhanh → Ghi nhãn & tiếp → Hoàn tác nhãn AI vừa dạy.
 - Privacy: Snapshot một bước chỉ tồn tại trong RAM, không thay playlist/EPG, không gửi dữ liệu lên mạng.
-- Screenshot: positron-p51281-undo-ai-before-1920x1080-real.png / positron-p51281-undo-ai-after-1920x1080-real.png / positron-p51281-undo-ai-restored-1920x1080-real.png.
+- Electron screenshot: positron-p51281-undo-ai-before-1920x1080-real.png / positron-p51281-undo-ai-after-1920x1080-real.png / positron-p51281-undo-ai-restored-1920x1080-real.png.
 - Trạng thái: CANDIDATE — chỉ lưu GitHub Actions; Releases Stable-only.
 
 ## P5.1.280 — Hàng đợi AI dạy chủ đề không lặp / Electron 4.23.365
