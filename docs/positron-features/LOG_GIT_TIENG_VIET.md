@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.345 — hướng dẫn điều khiển AI bằng remote với bảng phím mở gọn
+## P5.1.346 — Esc thu gọn hướng dẫn AI mà không đóng WatchFlow hoặc mất vị trí remote
 
-**Ứng dụng:** 4.23.430 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.431 · **Trạng thái:** Chưa có bản phát hành
+
+Esc thu gọn hướng dẫn AI mà không đóng WatchFlow hoặc mất vị trí remote
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1d98d985370cae1787396531dd2836ee3395a8e7)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.345 — Electron 4.23.430 — Phím điều khiển AI mở gọn bằng remote (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Ảnh Electron P344 cho thấy PageUp/PageDown chạy đúng nhưng chỉ có hướng dẫn Alt+Shift+J; người dùng bàn phím/remote không biết đủ các phím khi danh sách dài, trong khi thêm nhiều nút vào header sẽ che nội dung. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/8491fd93382f315f44dc78d0520e9cfea75cd8f6)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.344 — Electron 4.23.429 — PageUp/PageDown duyệt gợi ý AI (CANDIDATE)
 
