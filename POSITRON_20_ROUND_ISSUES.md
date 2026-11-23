@@ -22,3 +22,11 @@
 - Từ screenshot P347: hướng dẫn mở có thể phủ nút AI ở viewport 720px. Khi focus remote rời summary mà không nhấp chuột, Esc phải thu gọn hướng dẫn trước rồi mới đóng bảng ở lần Esc thứ hai.
 - Implementer: renderer/positron-intelligence.js + native CDP script 348, screenshot in two viewports, private playlist/AI model state unchanged.
 - Đếm đợt 20 mới: P347 có bằng chứng fast Electron thật, P348 chưa thực thi; không đếm các vòng chưa đủ test/ảnh và CI.
+
+## P5.1.348 — QA screenshot và lưu vết
+- Feature: Esc từ nút chế độ được focus thu gọn hộp hướng dẫn trước; Esc tiếp theo mới đóng WatchFlow.
+- Real Electron fast run: 45288452957 success, artifact 14871604766; 21 checks PASS, 4 genuine PNG (1920×1080 & 720×900), opened directly in QA.
+- Đánh giá bằng mắt: trước hướng dẫn che lưới các chế độ nhưng focus đang ở Kênh hợp gu; sau Esc hộp thu gọn, viền focus của Kênh hợp gu vẫn hiển thị, không cắt chữ/tràn. Dữ liệu playlist/current AI model không đổi.
+- Full Node suite: workflow 45288453026 test success; capture/build chưa chốt khi ghi checkpoint này.
+- Next issue from real images: expanded guide still OVERLAPS six modes; P349 will move guide underneath grid as bounded list with focusable PageDown scroll.
+- Strict round count: P348 unconfirmed until full capture/build and cross-check complete; no immutable Release because stable-only policy.

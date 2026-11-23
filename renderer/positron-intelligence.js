@@ -343,6 +343,9 @@
   'Alt+Shift+I: xem tên và chủ đề kênh đầy đủ',
   'Chỉ Enter hoặc Space trên nút Xem mới phát kênh'
  ]){const item=d.createElement('li');item.textContent=hint;shortcutList.append(item);}
+ // P349: remote/keyboard users can focus and scroll a bounded seven-item list.
+ shortcutList.tabIndex=0;
+ shortcutList.setAttribute('aria-label','7 phím tắt WatchFlow. Dùng PageDown hoặc phím mũi tên để cuộn.');
  shortcutGuide.append(shortcutSummary,shortcutList);
  // P346: Escape dismisses the nested help FIRST; the WatchFlow panel remains open.
  // Only when this details element handles the key; other dialogs/editors are safe.

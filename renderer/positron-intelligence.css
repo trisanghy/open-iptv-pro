@@ -552,3 +552,15 @@ html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-en
  width:132px!important;max-width:132px!important;
  margin:-27px 0 -17px auto!important;
 }
+
+/* P349: keep all six AI mode choices usable while keyboard help is open.
+   Move the authentic seven-item list BELOW the mode grid and make it a small,
+   focusable keyboard-scroll region instead of covering selection buttons. */
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide[open]>ul{
+ top:44px!important;bottom:auto!important;max-height:148px!important;
+ overflow-y:auto!important;overscroll-behavior:contain;
+ border-radius:4px 4px 11px 11px!important;
+}
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide[open]>ul:focus-visible{
+ outline:3px solid #a6ffdc;outline-offset:-3px;
+}

@@ -1,3 +1,11 @@
+## P5.1.349 / Electron 4.23.434 — Hướng dẫn AI cuộn được và không che nút chế độ (CANDIDATE)
+- Feature priority: NEW — Ảnh Electron thật P348 720×900 cho thấy cửa sổ hướng dẫn phím phủ cả sáu nút chuyển chế độ AI; người dùng không thể nhìn đủ các lựa chọn khi mở trợ giúp. Cần một bảng trợ giúp cuộn được phía dưới lưới chế độ, vẫn giữ toàn bộ lệnh.
+- Feature class: AI
+- User action: Nhấn F6 mở WatchFlow, chọn Phím AI rồi Enter: danh sách phím hiện bên dưới các nút Kênh hợp gu/Lịch EPG và không che nút; dùng Tab để focus danh sách, PageDown/↑↓ để cuộn đủ bảy hướng dẫn; Esc thu gọn như P348.
+- Electron screenshot: positron-p51349-help-below-modes-after-720x900-real.png
+- Evidence: Native Electron CDP captures old overlapping CSS rule as genuine BEFORE screenshot, removes only that temporary rule for AFTER screenshot at 1920×1080 and 720×900; measures six unobstructed buttons, list below grid and entirely within modal, scrollRange>20, keyboard PageDown, no playlist/current channel/local model changes. Await CI review.
+- QA: keep accessibility, seven original hints and native streaming code intact; full screenshots plus unit test for P349 behavior. This is a CANDIDATE until test/build/inspection finish.
+
 ## P5.1.348 / Electron 4.23.433 — Esc thu gọn hướng dẫn AI khi focus đang ở chế độ khác (CANDIDATE)
 - Feature priority: NEW — Ảnh Electron thực P347 cho thấy hướng dẫn AI nằm trên các nút chế độ khi bung ra; người dùng remote có thể chuyển focus sang chế độ khác, nên Esc phải đóng riêng hướng dẫn đầu tiên thay vì đóng cả WatchFlow đang sử dụng.
 - Feature class: AI

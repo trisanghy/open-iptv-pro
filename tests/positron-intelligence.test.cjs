@@ -1737,3 +1737,17 @@ test('P348 Escape while a different AI mode has focus collapses guide first',()=
  assert.ok(audit.includes('afterSha256'));
  assert.ok(runner.includes("await require('./positron-348-audit.cjs').run(page)"));
 });
+
+test('P349 real AI help is focusable and scrolls below, never over, mode selection',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-349-audit.cjs','utf8');
+ const runner=fs.readFileSync('scripts/positron-50-audit.cjs','utf8');
+ assert.ok(ui.includes('shortcutList.tabIndex=0'));
+ assert.ok(ui.includes("shortcutList.setAttribute('aria-label'"));
+ assert.ok(css.includes('top:44px!important;bottom:auto!important;max-height:148px!important;'));
+ assert.ok(qa.includes('modeOverlap'));
+ assert.ok(qa.includes("await page.keyboard.press('PageDown')"));
+ assert.ok(qa.includes('afterSha256'));
+ assert.ok(runner.includes("await require('./positron-349-audit.cjs').run(page)"));
+});

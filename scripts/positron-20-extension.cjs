@@ -11889,6 +11889,11 @@ async function runTwenty(page){
  await require('./positron-344-audit.cjs').run(page);
  await require('./positron-345-audit.cjs').run(page);
  await require('./positron-346-audit.cjs').run(page);
+ // P349: move the native guide below the six AI mode buttons, scroll with PageDown.
+ // positron-p51349-help-below-modes-before-1920x1080-real.png
+ // positron-p51349-help-below-modes-after-1920x1080-real.png
+ // positron-p51349-help-below-modes-before-720x900-real.png
+ // positron-p51349-help-below-modes-after-720x900-real.png
  // P348: remote Escape while keyboard focus moves elsewhere in native AI.
  // positron-p51348-escape-other-focus-before-1920x1080-real.png
  // positron-p51348-escape-other-focus-after-1920x1080-real.png
