@@ -3,7 +3,7 @@
 - Feature class: AI
 - User action: TV → WatchFlow → AI hợp gu → đóng → mở lại, điều khiển bằng Tab.
 - Electron screenshot: positron-p51327-ai-focus-before-1920x1080-real.png / positron-p51327-ai-focus-after-1920x1080-real.png / positron-p51327-ai-focus-after-720x900-real.png.
-- Evidence: ảnh P326 đã mở cho thấy focus ring trên WatchFlow toolbar dù bảng AI nằm phía trước. QA P327 sẽ so sánh, kiểm tra focus, không tràn 720px, không tự phát, giữ playlist/model.
+- Evidence: ảnh Electron thật P326 cho thấy focus trên nút WatchFlow phía sau AI. Trước P327 chụp panel đã đóng với topbar được focus; sau P327 chụp panel mở lại và focus chính xác ở AI tab. Kiểm tra cả thao tác mở đầu tiên, mở lại, 720px, không autoplay hay đổi playlist/model; hai ảnh của bản P327 không giả nhận là binary P326.
 - Privacy: không thay dữ liệu cá nhân, mô hình học, EPG, video hay mạng.
 - Status: CANDIDATE cho tới khi Electron/CI và ảnh review đạt.
 

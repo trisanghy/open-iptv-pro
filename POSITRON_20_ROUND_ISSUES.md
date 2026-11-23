@@ -48,3 +48,8 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Lỗi quan sát: viền focus nằm tại nút WatchFlow trên topbar phía sau bảng AI đang mở. Nguyên nhân: opener cố focus một tab cũ bị AI ẩn.
 - Sửa: khi bảng AI mở lại, chỉ chuyển focus từ ngoài hoặc từ control đã ẩn vào nút AI; không thay đổi tiêu điểm của control đang hiển thị bên trong.
 - QA: Electron thực trước/sau 1920, sau 720, focus DOM, overflow, no autoplay và playlist/model giữ nguyên. Chỉ tính hoàn thành sau khi có CI/ảnh được MỞ xác nhận.
+
+### Sửa kịch bản kiểm thử P327 sau CI capture thất bại
+- CI 45239378274: Node 1043 pass/5 skip/0 fail; Capture thất bại ở assertion tự áp đặt "trạng thái lỗi cũ phải còn hiện diện". Với cơ chế mới, hệ thống đã chuyển focus vào AI tab trước khi screenshot; đây là dấu hiệu sửa thành công, không phải lỗi chức năng. Đã tải và MỞ Electron ảnh 1920/720 của capture thất bại, xác nhận focus viền nằm ở nút AI trong panel, không tràn.
+- Repair: ảnh TRƯỚC chụp trạng thái WatchFlow đã đóng và focus ở toolbar; ảnh SAU chụp sau mở và mở lại WatchFlow AI thực. QA xác minh cả mở lần đầu/mở lại, không ép phần mềm quay về trạng thái lỗi sau sửa hoặc bỏ tiêu chí focus.
+- Cần chạy lại CI, mở ảnh trước/sau mới và kiểm tra toàn bộ build trước khi công nhận vòng hoàn tất.

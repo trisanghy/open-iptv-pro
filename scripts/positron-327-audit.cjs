@@ -1,5 +1,5 @@
 'use strict';
-// P327 real Electron/CDP: reproduce stale focus, then close and reopen AI.
+// P327 real Electron/CDP: compare closed WatchFlow with reopening the AI view.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const assert=require('node:assert/strict');
 const out=path.resolve('positron-evidence','p5-20-rounds');
@@ -25,10 +25,16 @@ async function run(page){
   const ai=document.getElementById('poFlowPlusAI');
   if(ai.getAttribute('aria-pressed')!=='true')ai.click();
   window.PositronIntelligence.render();
-  document.getElementById('poWatchFlowToggle').focus(); // P326 stale-focus baseline
+  window.PositronWatchFlow.close();
+  // Real user journey: focus returns to the topbar when dialog is closed.
+  document.getElementById('poWatchFlowToggle').focus();
  });
  const original=await persist(page),stale=await sample(page);
  const old=await page.screenshot({path:path.join(out,'positron-p51327-ai-focus-before-1920x1080-real.png'),animations:'disabled'});
+ await page.evaluate(()=>window.PositronWatchFlow.open());
+ await page.waitForFunction(()=>document.activeElement?.id==='poFlowPlusAI'&&
+  document.getElementById('poWatchFlowPanel')?.dataset.poAiActive==='true',null,{timeout:12000});
+ const firstOpen=await sample(page);
  await page.evaluate(()=>{window.PositronWatchFlow.close();window.PositronWatchFlow.open();});
  await page.waitForFunction(()=>document.activeElement?.id==='poFlowPlusAI'&&
   document.getElementById('poWatchFlowPanel')?.dataset.poAiActive==='true',null,{timeout:12000});
@@ -39,7 +45,8 @@ async function run(page){
  const compactPng=await page.screenshot({path:path.join(out,'positron-p51327-ai-focus-after-720x900-real.png'),animations:'disabled'});
  const final=await persist(page);
  const qa327={
-  staleFocusBehindPanel:stale.focus==='poWatchFlowToggle'&&!stale.inside,
+  beforeDialogClosed:!stale.open&&stale.focus==='poWatchFlowToggle'&&!stale.inside,
+  firstOpenFocusRestored:firstOpen.focus==='poFlowPlusAI'&&firstOpen.inside,
   desktopFocusInside: fresh.focus==='poFlowPlusAI'&&fresh.inside,
   narrowFocusInside: compact.focus==='poFlowPlusAI'&&compact.inside,
   aiPanelAccessible:fresh.open&&compact.open&&fresh.aiMode&&compact.aiMode&&fresh.aiVisible&&compact.aiVisible,
@@ -49,14 +56,14 @@ async function run(page){
   noAutoplay:original.playing===final.playing
  };
  for(const [key,ok] of Object.entries(qa327))
-  assert.equal(ok,true,'P327 real Electron focus QA '+key+': '+JSON.stringify({stale,fresh,compact,qa327}));
- assert.ok(!old.equals(fixed),'P327 before/after focus must visibly differ');
+  assert.equal(ok,true,'P327 real Electron focus QA '+key+': '+JSON.stringify({stale,firstOpen,fresh,compact,qa327}));
+ assert.ok(!old.equals(fixed),'P327 closed/open dialog screenshots must visibly differ');
  for(const [png,w,h] of [[old,1920,1080],[fixed,1920,1080],[compactPng,720,900]]){
   assert.equal(png.readUInt32BE(16),w);assert.equal(png.readUInt32BE(20),h);
  }
  fs.writeFileSync('positron-evidence/audit-p51327-ai-focus.json',JSON.stringify({
   version:'P5.1.327',app:'4.23.412',realElectron:true,
-  before:{...stale,sha256:hash(old)},after:{...fresh,sha256:hash(fixed)},
+  before:{...stale,sha256:hash(old)},firstOpen,after:{...fresh,sha256:hash(fixed)},
   narrow:{...compact,sha256:hash(compactPng)},qa327,
   scope:'Focus/UI only; no licensed stream tested'
  },null,2));
