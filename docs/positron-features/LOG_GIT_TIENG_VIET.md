@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.349 — hướng dẫn phím AI có thể cuộn bằng remote và không che các nút chọn chế độ
+## P5.1.350 — WatchFlow không có kênh có nút mở Quản lý nguồn IPTV hợp pháp, không tự nhập hay phát
 
-**Ứng dụng:** 4.23.434 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.435 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh thật P349 cho thấy WatchFlow Intelligence chưa có playlist chỉ hiển thị một dòng hướng dẫn, trong khi thao tác nhập nguồn nằm bên ngoài bảng AI. Thêm lối vào Quản lý nguồn ở đúng trạng thái trống, không tự nhập hoặc phát kênh. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4917b25c49bd7d292733113e213a89359fb6b44a)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.349 — Electron 4.23.434 — Hướng dẫn AI cuộn được và không che nút chế độ (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Ảnh Electron thật P348 720×900 cho thấy cửa sổ hướng dẫn phím phủ cả sáu nút chuyển chế độ AI; người dùng không thể nhìn đủ các lựa chọn khi mở trợ giúp. Cần một bảng trợ giúp cuộn được phía dưới lưới chế độ, vẫn giữ toàn bộ lệnh. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/75654e84f6a1b9b399cb4988f516038214523ccb)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.348 — Electron 4.23.433 — Esc thu gọn hướng dẫn AI khi focus đang ở chế độ khác (CANDIDATE)
 
