@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.319 — AI giải thích trọng số và lý do xếp hạng gợi ý
+## P5.1.320 — giữ nút Xem/Hợp gu ở trên phần giải thích AI
 
-**Ứng dụng:** 4.23.404 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.405 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: FIX — Ảnh Electron thật P319 sau khi mở “Vì sao AI gợi ý?” cho thấy nội dung chi tiết đẩy hàng nút ▶ Xem, Hợp gu, Không hợp, Tra cứu web xuống thấp dưới vùng xem. Đặt hành động chính ở trước phần giải thích mở rộng, giữ thứ tự điều khiển bằng phím và nội dung giải thích khi mở. Feature class: UX / AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e8b586ff04a5f05172942989a1ae4a78ca72955b)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.319 — Electron 4.23.404 — AI giải thích thật yếu tố nào tăng/giảm gợi ý Logistic (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Từng kênh trong WatchFlow Intelligence có mục "Vì sao AI gợi ý?" đọc-only. Hiển thị các trọng số học đóng góp mạnh nhất vào logit của điểm gợi ý: chủ đề, EPG, khung giờ, ngày thường/cuối tuần, nhóm kênh; tuyệt đối không công bố tên token nhóm riêng tư hay tự dựng lịch. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/03956a865cedb6d842c6384876158a23d5112c32)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.318 — Electron 4.23.403 — AI chẩn đoán 3 mô hình trực tiếp trong Quản lý mô hình (CANDIDATE)
 
