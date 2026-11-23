@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.341</strong> · AI dùng mũi tên remote ↑↓ để di chuyển gợi ý (NEW) · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.342</strong> · tự giữ tiêu đề gợi ý AI không bị thanh nổi che khi điều hướng (NEW) · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.426 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.427 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+tự giữ tiêu đề gợi ý AI không bị thanh nổi che khi điều hướng (NEW)
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/4c0d242c35617b80fa82747c3de33823a9644e2d)
+
+</details>
+
+<details>
+<summary><strong>P5.1.341</strong> · Electron 4.23.426 — Remote lên/xuống duyệt gợi ý AI (CANDIDATE) · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Các phím Alt+Shift+J/K/P của WatchFlow AI dùng trên bàn phím PC nhưng không thuận tiện khi điều khiển bằng remote TV hoặc phím mũi tên cơ bản. Bổ sung ArrowUp/ArrowDown trực tiếp khi nút Xem đang được focus, tự cuộn và quay vòng danh sách. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/658582c46d748503748ab4da973eda20fbb6c2cb)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
