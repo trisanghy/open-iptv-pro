@@ -1,3 +1,11 @@
+## Rust Lab v23.8.142 — Tra cứu Internet chủ động ở mọi chế độ, hoàn tất kiểm thử (PRERELEASE)
+
+- Sửa thiếu sót tự động tìm kênh: quét Wikipedia/Wikidata theo từng đợt ở cả Standard và Smart, không yêu cầu người dùng phải chuyển sang Intelligence để nghiên cứu Internet. Tôn trọng công tắc tắt Internet, tối đa 6 tên mỗi lượt, 72 tên mỗi ngày và tự tiếp tục sau khoảng 2 phút đến khi hết ngân sách.
+- Hiển thị số tên kênh thực đã tra, số nguồn khớp, số lỗi và số lượt còn lại ngay trên bảng trạng thái WatchFlow trong cả ba chế độ. Bản Qwen3 vẫn tự đọc dữ kiện mới khi được chọn mà không tải lại trọng số.
+- Sửa bài kiểm thử cũ dùng sai khóa không dấu `son la` thay vì tên `sơn la` trong cache thật. Bổ sung kiểm thử bắt buộc quét nền mọi chế độ và trạng thái Internet công khai.
+- Tiếp tục giữ Wikidata+Wikipedia fallback, loại bỏ khớp sai với tỉnh/nhạc không phải kênh, nút Tìm Internet tiếp, hàng trăm kênh chưa rõ ưu tiên trong báo cáo. Giữ nguyên playlist/player/EPG/PiP/TTS/CC và kết quả đã phân loại.
+- Chỉ nhánh Rust Lab, prerelease/tag bất biến, không đổi main, Stable, Latest hoặc nhánh khác.
+
 ## Rust Lab v23.8.141 — Sửa tra cứu Internet 0/69 khớp, báo nguồn thật trong bảng 560 kênh (PRERELEASE)
 
 - Nguyên nhân người dùng thấy 69/560 đã tra nhưng 0 khớp: ứng dụng chỉ gọi Wikidata tiếng Việt, buộc mục kết quả giống tên và có mô tả TV, lại giữ cả kết quả rỗng 48h. Nhiều kênh địa phương/âm nhạc/radio không có metadata đầy đủ ở nguồn này. Không giả lập kết quả.

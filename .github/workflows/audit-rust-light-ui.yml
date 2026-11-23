@@ -18,6 +18,7 @@ on:
       - renderer/watchflow-ai-demo-v23-8-102.css
       - renderer/watchflow-qwen-native-v23-8-111.js
       - renderer/watchflow-auto-discovery-v23-8-106.js
+      - tests/watchflow-continuous-research-v23-8-142.test.cjs
       - tests/watchflow-internet-fallback-v23-8-141.test.cjs
       - renderer/watchflow-intelligence-v23-8-105.js
       - renderer/watchflow-audit-v23-8-138.css
@@ -118,6 +119,9 @@ jobs:
       - name: Regression — Wikipedia fallback, genuine sourced audit, bounded research
         shell: bash
         run: node --test tests/watchflow-internet-fallback-v23-8-141.test.cjs
+      - name: Regression — proactive Internet research in all AI modes
+        shell: bash
+        run: node --test tests/watchflow-continuous-research-v23-8-142.test.cjs
       - name: Capture all Rust Lab feature pages and expanded panels
         shell: bash
         env:

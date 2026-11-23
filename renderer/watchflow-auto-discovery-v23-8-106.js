@@ -431,12 +431,11 @@
      notify({internet:true,running:false,...metrics});
      // Intelligence automatically resumes bounded Wikidata research while
      // running, never more than six queries/batch or 72 per local day.
-     if(win.localStorage?.getItem('watchflow:demo-mode')==='intelligence'&&
-       metrics.enabled&&metrics.remaining>0&&metrics.used<metrics.limit&&!webFollowup){
+     if(metrics.enabled&&metrics.remaining>0&&metrics.used<metrics.limit&&!webFollowup){
       webFollowup=true;
       win.setTimeout(()=>{
        webFollowup=false;
-       if(win.localStorage?.getItem('watchflow:demo-mode')!=='intelligence'||!enabled(win.localStorage))return;
+       if(!enabled(win.localStorage))return;
        lastInternet=0;void runInternet();
       },PAUSE_MS);
      }

@@ -41,7 +41,7 @@ test('Do not classify a province, song, movie or similar unrelated name as a TV 
   url.includes('wikidata')?{ok:true,json:async()=>({search:[]})}:
   {ok:true,json:async()=>({query:{search:[{title:'Sơn La',snippet:'Tỉnh Sơn La thuộc vùng Tây Bắc'}]}})});
  assert.deepEqual(results,[]);
- const store=memory(),record=auto.read(store),key='son la';
+ const store=memory(),record=auto.read(store),key='sơn la';
  record.day='2026-11-23';record.queries[key]={at:now,items:[]};
  store.setItem(auto.KEY,JSON.stringify(record));
  const info=audit.internetFor({name:'Sơn La'},auto.read(store).queries,auto,null,now+1000);

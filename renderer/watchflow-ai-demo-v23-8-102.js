@@ -139,7 +139,12 @@
    $('wfOrigin').textContent=real?'Quét tự động từ playlist/EPG đã nhập. Không tự phát kênh.':'Chưa có nguồn; thêm playlist là hệ thống tự quét.';
    const autoEnabled=$('wfAutoEnabled');if(autoEnabled)autoEnabled.checked=auto?.enabled(root.localStorage)!==false;
    const discovered=auto?.collect(root.localStorage,d.channels,engine)||[];
-   if($('wfAutoStatus'))$('wfAutoStatus').textContent=auto?.enabled(root.localStorage)===false?'Internet tắt · quét EPG trong máy vẫn chạy':'Wikidata đã lưu '+discovered.length+' mục thông tin công khai';
+   const research=auto?.internetProgress?.(root.localStorage,d.channels);
+   if($('wfAutoStatus'))$('wfAutoStatus').textContent=auto?.enabled(root.localStorage)===false?
+    'Internet tắt · quét EPG trong máy vẫn chạy':
+    research?'Internet: '+research.searched+'/'+research.total+' tên kênh đã tra · '+
+     research.matched+' có nguồn khớp · '+research.failed+' lỗi · '+research.used+'/'+research.limit+
+     ' lượt hôm nay. Tự tiếp tục khi còn hạn mức.':'Đang chuẩn bị tra cứu tên kênh công khai.';
    showLocalProgress();
    const main=$('wfContents');
    // Never collapse a folder when Qwen3/EPG delivers new labels.
