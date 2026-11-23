@@ -1,3 +1,12 @@
+## P5.1.282 — AI giải thích bằng chứng Naive Bayes / Electron 4.23.367
+- Feature priority: NEW — Cho phép xem mô hình Naive Bayes đã học bao nhiêu nhãn/chủ đề, có từ khóa nào trùng tên kênh và có dự đoán đáng tin cậy hay chưa; không hiển thị đoán mò khi thiếu nhãn hoặc từ khóa, không tự thay đổi kết quả phân loại.
+- Feature class: AI
+- Evidence: Pure regression xác minh giải thích dựa trên từ khóa đã học, từ chối đoán khi không có chứng cứ và playlist bất biến; kiểm thử Electron 1920×1080 mở bảng giải thích thật, xác minh mô hình/lưu trữ/stream không đổi, giao diện không tràn và ảnh before/after. Chỉ chứng nhận sau khi Actions xanh và trực tiếp mở PNG.
+- User action: TV → WatchFlow → AI hợp gu → Thư mục EPG → Dạy AI nhanh → "AI dựa vào đâu để gợi ý?" để xem bằng chứng cục bộ trước khi quyết định nhãn.
+- Privacy: Chỉ đọc bộ đếm và từ khóa do người dùng đã huấn luyện trên máy, không yêu cầu mạng, không đưa URL hoặc lịch sử xem vào phần giải thích; trạng thái gập/mở không ghi nhãn.
+- Electron screenshot: positron-p51282-ai-explanation-before-1920x1080-real.png / positron-p51282-ai-explanation-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE — Actions-only, Releases Stable-only.
+
 ## P5.1.281 — Hoàn tác chính xác nhãn AI gần nhất / Electron 4.23.366
 - Feature priority: NEW — Khôi phục chính xác trọng số Naive Bayes và ID của các kênh đã gán nhãn trước khi dạy sai, không xóa nhãn cũ.
 - Feature class: AI

@@ -485,3 +485,34 @@ test('P281 hoàn tác một nhãn AI, giữ nguyên trọng số học trước'
   'positron-p51281-undo-ai-restored-1920x1080-real.png'])
    assert.ok(qa.includes(png),png);
 });
+
+// P282: transparent local learned-word evidence, never implied web certainty.
+test('P282 giải thích từ khóa đã học và từ chối đoán khi không có chứng cứ',()=>{
+ let model=C.emptyCategoryModel();
+ model=C.teachCategory(model,mk('edu-1','Atlas Academy Alpha'),'education');
+ model=C.teachCategory(model,mk('edu-2','Atlas Academy Omega'),'education');
+ model=C.teachCategory(model,mk('news-1','Business Daily Report'),'news');
+ const before=JSON.stringify(model);
+ const known=C.explainCategory(model,{name:'Atlas Academy Beta',group:'Tổng hợp',url:'https://secrets.invalid/private-token'});
+ assert.equal(known.examples,3);
+ assert.equal(known.kinds,2);
+ assert.ok(known.matches.includes('academy'));
+ assert.equal(known.prediction?.key,'education');
+ assert.ok(known.prediction.confidence>=55&&known.prediction.confidence<=100);
+ assert.ok(!JSON.stringify(known).includes('private-token'),'never leak stream URL');
+ const unknown=C.explainCategory(model,{name:'QZX Unrelated Mystery',group:'Tổng hợp'});
+ assert.deepEqual(unknown.matches,[]);
+ assert.equal(unknown.prediction,null,'never infer from generic group overlap alone');
+ assert.equal(C.explainCategory(C.emptyCategoryModel(),{name:'Academy'}).prediction,null);
+ assert.equal(JSON.stringify(model),before,'no learning from explanation clicks');
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ['core.explainCategory(categoryModel,suggestion.channel)',
+  'poAIActiveExplain','explanation.matches','explanation.prediction',
+  'AI dựa vào đâu để gợi ý?'])assert.ok(ui.includes(token),token);
+ assert.ok(css.includes('#poWatchFlowPanel #poAIActiveExplain summary:focus-visible'));
+ for(const name of ['positron-p51282-ai-explanation-before-1920x1080-real.png',
+  'positron-p51282-ai-explanation-after-1920x1080-real.png'])
+  assert.ok(qa.includes(name),name);
+});

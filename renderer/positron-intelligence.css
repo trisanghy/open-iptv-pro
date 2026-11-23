@@ -147,3 +147,10 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 /* P281: reversible one-step Naive Bayes training. */
 #poWatchFlowPanel #poAIActiveUndoLabel{display:block;width:100%;min-height:34px;margin:7px 0 4px;padding:6px 9px;border:1px solid #b4b67a;border-radius:7px;background:#3c442c;color:#fff5d2;font-size:11px;font-weight:700;cursor:pointer}
 #poWatchFlowPanel #poAIActiveUndoLabel:focus-visible{outline:2px solid #ffdb80;outline-offset:2px}
+
+/* P282: transparent, read-only Naive Bayes evidence in guided training. */
+#poWatchFlowPanel #poAIActiveExplain{border:1px solid #456a67;background:#102c33;border-radius:8px;margin:9px 0 2px;max-width:100%;overflow-wrap:anywhere}
+#poWatchFlowPanel #poAIActiveExplain summary{cursor:pointer;color:#c2f7e8;font-size:12px;font-weight:700;padding:9px 10px;min-height:35px}
+#poWatchFlowPanel #poAIActiveExplain summary:focus-visible{outline:2px solid #b2f7df;outline-offset:-2px}
+#poWatchFlowPanel #poAIActiveExplain p{color:#d7e9e9;font-size:11px;line-height:1.45;margin:5px 10px}
+#poWatchFlowPanel #poAIActiveExplain small{display:block;color:#a2d5d4;font-size:11px;line-height:1.45;margin:6px 10px 10px}

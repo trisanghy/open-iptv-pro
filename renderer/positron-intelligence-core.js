@@ -236,6 +236,18 @@
  }
 
 
+ // P282: explain learned Naive Bayes evidence using only channel-name tokens.
+ // Never show a prediction from shared generic group names or unsupervised web data.
+ function explainCategory(raw,channel){
+  const model=sanitizedCategoryModel(raw),terms=categoryTokens({name:channel?.name});
+  const kinds=Object.keys(model.docs).filter(key=>model.docs[key]>0&&KINDS[key]);
+  const matches=terms.filter(token=>kinds.some(key=>(model.tokens[key]?.[token]||0)>0)).slice(0,5);
+  const guess=kinds.length>=2&&matches.length
+   ?predictCategory(model,channel,{threshold:0.55}):null;
+  return {examples:model.examples,kinds:kinds.length,matches,
+   prediction:guess?{key:guess.key,confidence:Math.round(guess.confidence*100)}:null};
+ }
+
  // P277: deterministic local active learning queue. Prioritize uncertain
  // unclassified channels, but NEVER assign a label without user action.
  function rankUnclassified(items,raw,{limit=5,excludeIds=[]}={}){
@@ -480,5 +492,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

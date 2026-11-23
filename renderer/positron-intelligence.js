@@ -369,7 +369,7 @@
       activeStatusMessage='Đã hoàn tác nhãn cho '+previous.name+'; giữ nguyên các nhãn AI cũ.';
       const stored=save();render();
       // Rerender can reset the modal scroll; leave the restored feedback visible.
-      byId('poAIActiveStatus')?.scrollIntoView({block:'nearest',behavior:'instant'});
+      byId('poAIActiveStatus')?.scrollIntoView({block:'center',behavior:'instant'});
       if(!stored)state()?.toast?.('Chưa lưu được thao tác hoàn tác nhãn AI','warn');
      });
      trainer.append(undo);
@@ -429,6 +429,22 @@
       render();
      });
      actions.append(select,teach,skip);row.append(text,actions);trainer.append(progress,row);
+      // P282: read-only, opt-in evidence from the local trained Naive Bayes model.
+      const explanation=core.explainCategory(categoryModel,suggestion.channel);
+      const why=d.createElement('details');why.id='poAIActiveExplain';why.className='po-ai-active-explain';
+      const toggle=d.createElement('summary');toggle.textContent='AI dựa vào đâu để gợi ý?';
+      toggle.title='Xem số nhãn học, độ tin cậy và từ khóa mô hình đã gặp';
+      const modelInfo=d.createElement('p');
+      modelInfo.textContent='Đã học '+explanation.examples+' nhãn thuộc '+explanation.kinds+' chủ đề.';
+      const result=d.createElement('p');
+      result.textContent=explanation.prediction
+       ?'Ước lượng: '+core.KINDS[explanation.prediction.key]+' ('+explanation.prediction.confidence+'%). Bạn vẫn quyết định nhãn.'
+       :'Chưa đủ bằng chứng từ các nhãn đã xác nhận để dự đoán chủ đề kênh này.';
+      const words=d.createElement('small');
+      words.textContent=explanation.matches.length
+       ?'Từ khóa đã học trùng tên kênh: '+explanation.matches.join(', ')
+       :'Không có từ khóa trùng nhãn đã học. AI không tự suy đoán.';
+      why.append(toggle,modelInfo,result,words);trainer.append(why);
     }
     folder.append(trainer);
 
