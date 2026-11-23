@@ -155,7 +155,7 @@ test('Fast relay error falls back to native then HLS.js without looping to relay
  s.instances[3].fail('manifestLoadError',403);await flush();
  assert.equal(s.requests.length,count,'never retry the same failed relay');
 });
-test('Two proven relay streams allow same-host HLS channel fast start',async()=>{
+test('Same-host new HLS channel still probes bundled HLS.js first and falls back to local relay',async()=>{
  const s=harness(),url=id=>'https://same.example.org/live/'+id+'.m3u8';
  for(const id of ['vtv3','vtv5']){
   s.api.play({id,name:id,url:url(id)});await flush();
@@ -165,6 +165,9 @@ test('Two proven relay streams allow same-host HLS channel fast start',async()=>
  }
  const count=s.instances.length;
  s.api.play({id:'vtv6',name:'VTV6',url:url('vtv6')});await flush();
- assert.equal(s.api.current().html5Mode,'hls-relay');
+ assert.equal(s.api.current().html5Mode,'hlsjs','new channel must prefer the bundled HLS decoder');
  assert.equal(s.instances.length,count+1);
+ s.instances.at(-1).fail();await flush();
+ assert.equal(s.api.current().html5Mode,'hls-relay','CORS blocked manifest falls back to the local HLS relay');
+ assert.equal(s.instances.length,count+2);
 });

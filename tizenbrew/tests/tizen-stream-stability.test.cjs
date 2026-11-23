@@ -266,14 +266,14 @@ test('Reopening a channel prioritizes its verified backup, and a removed backup 
 });
 
 test('Advancing decoded frames verify a route when the Tizen media clock is frozen',()=>{
- const s=setup();s.api.play(c);
+ const s=setup();const progressive={...c,url:'https://private-cdn.example/decoded.mp4'};s.api.play(progressive);
  const token=s.api.current().serial;
  s.api.playbackReady(token);
  for(const frames of [2,35,70]){
   s.video.webkitDecodedFrameCount=frames;
   s.advance(1500);s.api.playbackWatchdog(token);
  }
- assert.equal(s.api.savedPlaybackRoute(c),'native');
+ assert.equal(s.api.savedPlaybackRoute(progressive),'native');
 });
 
 test('When frame callbacks exist the first frame stays covered and the next frame reveals video',()=>{
@@ -281,7 +281,8 @@ test('When frame callbacks exist the first frame stays covered and the next fram
  s.video.videoWidth=1920;
  s.video.requestVideoFrameCallback=fn=>{callbacks.set(++nextId,fn);return nextId;};
  s.video.cancelVideoFrameCallback=id=>callbacks.delete(id);
- s.api.play(c);s.video.onplaying();
+ const progressive={...c,url:'https://private-cdn.example/decoded.mp4'};
+ s.api.play(progressive);s.video.onplaying();
  callbacks.get(1)();
  assert.equal(s.classes.has('is-tuning-video'),true);
  callbacks.get(2)();
