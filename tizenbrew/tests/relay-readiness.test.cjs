@@ -82,7 +82,7 @@ test('Browser preview without TV local service refuses relay with a clear error'
 });
 test('Playback recognises extensionless HLS and avoids repeated relay when offline',()=>{
  assert.match(js,/\/\/ Extensionless HLS redirects like \/tv360\?id=/);
- assert.match(js,/if\(pathname&&!\/\\\.[a-z0-9]/);
+ assert.ok(js.includes("if(pathname&&!/\\.[a-z0-9]{2,5}$/i.test(pathname))preferred='hlsjs';"));
  assert.match(js,/relayDownUntil<=Date\.now\(\)&&preferredDecoderAttempts\.relay/);
  assert.match(js,/relayDownUntil>Date\.now\(\)\|\|preferredDecoderAttempts\.relay/);
  assert.match(js,/if\(isServiceDown\)preferredDecoderAttempts\.relay=PREFERRED_HLS_RELAY_MAX/);

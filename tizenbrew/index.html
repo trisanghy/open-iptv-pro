@@ -2695,7 +2695,7 @@ function finishPlaybackError(token,message){
   // the 6-digit paired Cast receiver and is known to repeat manifestLoadError.
   if(tryNextChannelSource(token))return;
   var tip=!nativeAvplay()?'AVPlay không có trong module TizenBrew/trình duyệt. ':'';
-  if(relayDownUntil>Date.now())tip+=relayDownReason+' ';
+  if(relayDownUntil>Date.now())tip+='Relay HLS TV chưa chạy (127.0.0.1:17870). ';
   var last=playbackEvidence.length?playbackEvidence[playbackEvidence.length-1]:'nguồn không phát được';
   playbackFailure(token,tip+last+' · Kiểm tra nguồn, CORS hoặc HTTP; nếu các app khác phát được, dùng WGT có quyền AVPlay.');
  },2400);
@@ -3075,7 +3075,8 @@ function ensureTizenHlsRelayService(){
    setTimeout(function(){clearTimeout(timeout);try{ws.close();}catch(e){}},1300);
   };
   ws.onerror=function(){clearTimeout(timeout);};
- }catch(e){}
+  return true;
+ }catch(e){return false;}
 }
 function relayHealthCheck(){
  var url=hlsRelayServer+'/health',headers={'X-Open-IPTV-Relay':'1'};

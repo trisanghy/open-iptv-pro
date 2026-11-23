@@ -170,7 +170,7 @@ test('When AVPlay and MediaSource are unavailable the TV explains the limitation
  const grace=s.calls.timers.filter(t=>t.ms===2400).at(-1);
  assert.ok(grace,'terminal error should have a grace period to allow late Samsung playback');
  grace.fn();
- assert.match(s.status.textContent,/AVPlay không có trong TizenBrew/);
+ assert.match(s.status.textContent,/AVPlay không có trong module TizenBrew/);
  assert.match(s.objects.playbackDiag.textContent,/HLS.js không hỗ trợ MediaSource/);
  assert.equal(s.objects.playbackDiag.hidden,false);
 });
