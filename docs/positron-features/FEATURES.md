@@ -7,28 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.288</strong> · Xem thử tác động thứ hạng gợi ý AI · CANDIDATE · TÍNH NĂNG</summary>
+<summary><strong>P5.1.288</strong> · xem thử tác động gợi ý AI trước khi khôi phục · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.373 · **Trạng thái:** chờ kiểm thử Electron và Actions.
+**Ứng dụng:** 4.23.373 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Feature class: AI — Sau khi chọn bản sao JSON, WatchFlow cho thấy ba gợi ý Logistic ML đang dùng và ba gợi ý sẽ có nếu khôi phục. Xếp hạng dựa trên dữ liệu máy đang có, không hứa độ chính xác, không phát luồng hay lưu trọng số ở bước xem thử.
+Feature priority: NEW — Mô phỏng tác động của trọng số Logistic ML trong tệp sao lưu lên ba gợi ý kênh hiện tại ngay ở màn hình xem trước. Hiển thị thứ hạng trước/sau, số vị trí thay đổi và cảnh báo khi mô hình chưa học đủ. Không tự phát kênh, không ghi mô hình hay gửi dữ liệu lên mạng. Feature class: AI
 
-Bằng chứng hình ảnh tại GitHub Actions khi được kiểm chứng.
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Xem mã nguồn và changelog](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/1eb66e19d091af5bdcba6a529caac221373e164b)
 
 </details>
 
 <details>
-<summary><strong>P5.1.287</strong> · hoàn tác an toàn lần nhập mô hình AI gần nhất · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.287</strong> · Hoàn tác lần khôi phục mô hình AI gần nhất / Electron 4.23.372 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.372 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Sau khi xác nhận nhập JSON trọng số, người dùng có thể Hoàn tác để trở lại chính xác ba mô hình học trước đó và các nhãn đã dạy. Snapshot nằm trong RAM, tự chặn nếu mô hình tiếp tục học để tránh ghi đè dữ liệu mới. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/9b353c4875d26fe396417a47a0c0fd559ea47219)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
