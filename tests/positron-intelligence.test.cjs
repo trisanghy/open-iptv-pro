@@ -1333,3 +1333,18 @@ test('P312 quota recovery adds native AI backup action and an accessible warning
  for(const token of ['qa312','positron-p51312-ai-recovery-before-1920x1080-real.png',
    'positron-p51312-ai-recovery-after-1920x1080-real.png'])assert.ok(qa.includes(token),token);
 });
+
+test('P313 locally verifies reselected AI backup weights without restoring them',()=>{
+ const original=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{news:3}});
+ const same=C.verifyLearningBackupSnapshot(original,JSON.parse(JSON.stringify(original)));
+ assert.equal(same.ok,true);assert.equal(same.match,true);
+ const changed=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{news:4}});
+ assert.equal(C.verifyLearningBackupSnapshot(original,changed).match,false);
+ assert.equal(C.verifyLearningBackupSnapshot(original,{format:'invalid'}).ok,false);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const key of ['poAIVerifyBackupFile','poAIActiveVerifyRecovery','verifyLearningBackupSnapshot','file.size>512000'])
+  assert.ok(ui.includes(key),key);
+ for(const key of ['qa313','positron-p51313-ai-backup-verify-before-1920x1080-real.png',
+  'positron-p51313-ai-backup-verify-after-1920x1080-real.png'])assert.ok(qa.includes(key),key);
+});

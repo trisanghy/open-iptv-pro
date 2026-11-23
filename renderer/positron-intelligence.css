@@ -332,3 +332,7 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel #poAIActiveBackupRecovery{display:block;width:100%;min-height:42px;margin:6px 0 10px;padding:9px 12px;border:1px solid #f1c28a;border-radius:9px;background:#634627;color:#fff5e7;font-size:12px;font-weight:750;cursor:pointer;text-align:center}
 #poWatchFlowPanel #poAIActiveBackupRecovery:focus-visible{outline:2px solid #ffe4a4;outline-offset:2px}
 #poWatchFlowPanel #poAIActiveBackupRecovery:disabled{opacity:.5;cursor:not-allowed}
+
+/* P313: local-only AI backup verification. */
+#poWatchFlowPanel .po-ai-verify{background:#25475d;border-color:#619db4;color:#e7faff}
+#poWatchFlowPanel .po-ai-verify:hover{background:#2c5a74}

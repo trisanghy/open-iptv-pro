@@ -70,6 +70,14 @@
  const backup=d.createElement('button');backup.type='button';backup.id='poAIBackup';
  backup.className='po-ai-backup';backup.textContent='Sao lưu mô hình AI (.json)';
  backup.title='Tải các trọng số học AI về máy; không có playlist hoặc URL';
+ // P313: verify the actual reselected file, never infer download success from anchor click.
+ let lastBackupSnapshot=null;
+ const verifyBackup=d.createElement('button');verifyBackup.type='button';verifyBackup.id='poAIVerifyBackup';
+ verifyBackup.className='po-ai-backup po-ai-verify';verifyBackup.hidden=true;
+ verifyBackup.textContent='Kiểm tra tệp JSON vừa tải (chỉ đọc)';
+ const verifyFile=d.createElement('input');verifyFile.type='file';verifyFile.id='poAIVerifyBackupFile';
+ verifyFile.hidden=true;verifyFile.accept='.json,application/json';
+ verifyFile.setAttribute('aria-label','Chọn lại tệp JSON vừa tải để kiểm tra trọng số AI');
  const importButton=d.createElement('button');importButton.type='button';importButton.id='poAIImport';
  importButton.className='po-ai-import';importButton.textContent='Khôi phục mô hình AI (.json)';
  importButton.title='Chọn bản sao AI đã xuất; chỉ thay trọng số khi xác nhận';
@@ -88,7 +96,7 @@
  undoImport.title='Hoàn tác trọng số AI gần nhất trong phiên, không sửa playlist';
  const bulk=d.createElement('button');bulk.type='button';bulk.id='poAIClearAll';
  bulk.className='po-ai-clear-all';bulk.textContent='Xóa toàn bộ dữ liệu học';bulk.title='Xóa tất cả ba mô hình học sau khi xác nhận hai lần';
- modelManager.append(modelToggle,modelRows,backup,importButton,importFile,importPreview,importConfirm,undoImport,bulk,modelStatus,modelHint);
+ modelManager.append(modelToggle,modelRows,backup,verifyBackup,verifyFile,importButton,importFile,importPreview,importConfirm,undoImport,bulk,modelStatus,modelHint);
  let pendingModel='',pendingAt=0;
  const modelBytes=value=>new TextEncoder().encode(JSON.stringify(value||{})).byteLength;
  const learnedInventory=()=>[
@@ -405,7 +413,7 @@
     // P312: a failed local model write must not look like AI-training success.
     const failedSave=activeStatusMessage.startsWith('Không lưu được nhãn AI.');
     const status=d.createElement('p');status.id='poAIActiveStatus';
-    status.classList.toggle('po-ai-save-error',failedSave);
+    status.classList.toggle('po-ai-save-error',failedSave||activeStatusMessage.startsWith('Không kiểm chứng được')||activeStatusMessage.startsWith('Tệp sao lưu không khớp'));
     status.setAttribute('role',failedSave?'alert':'status');
     status.setAttribute('aria-live',failedSave?'assertive':'polite');
     status.tabIndex=-1;status.textContent=activeStatusMessage;
@@ -427,6 +435,14 @@
       feedback?.focus({preventScroll:true});
      });
      trainer.append(rescue);
+    }
+    // P313: verification remains available after quota-recovery feedback rerenders.
+    if(lastBackupSnapshot){
+     const verify=d.createElement('button');verify.type='button';verify.id='poAIActiveVerifyRecovery';
+     verify.className='po-ai-backup po-ai-verify';
+     verify.textContent='Kiểm tra tệp JSON vừa tải (không nhập mô hình)';
+     verify.addEventListener('click',()=>verifyFile.click());
+     trainer.append(verify);
     }
     // P281: undo the latest confirmed label without deleting earlier training data.
     if(lastActiveTeachUndo){
@@ -740,10 +756,34 @@
    a.href=url;a.download='positron-ai-models-'+new Date().toISOString().slice(0,10)+'.json';
    a.hidden=true;d.body.append(a);a.click();a.remove();
    win.setTimeout(()=>win.URL.revokeObjectURL(url),30000);
-   modelStatus.textContent='Đã yêu cầu lưu bản sao trọng số AI. Không gồm playlist, URL hoặc lịch sử xem.';
+   lastBackupSnapshot={data:snapshot,filename:a.download,size:bytes.size};
+   verifyBackup.hidden=false;
+   modelStatus.textContent='Đã yêu cầu lưu '+a.download+' ('+bytes.size+' byte). Chọn lại tệp để kiểm tra; chưa xác nhận tải thành công.';
   }catch{
    modelStatus.textContent='Không tạo được tệp sao lưu AI; kiểm tra quyền tải tệp rồi thử lại.';
   }
+ });
+ // P313: reselect the exported JSON, compare three learned models locally; never restore automatically.
+ verifyBackup.addEventListener('click',()=>verifyFile.click());
+ verifyFile.addEventListener('change',async()=>{
+  const file=verifyFile.files?.[0];verifyFile.value='';if(!file)return;
+  let message;
+  if(!lastBackupSnapshot)message='Không kiểm chứng được: chưa xuất bản sao AI trong phiên này.';
+  else if(file.size>512000)message='Không kiểm chứng được: tệp JSON vượt 500 KB.';
+  else{
+   try{
+    const content=JSON.parse(await file.text());
+    const check=core.verifyLearningBackupSnapshot(lastBackupSnapshot.data,content);
+    message=!check.ok?'Không kiểm chứng được: '+check.reason:
+     check.match?'Đã kiểm tra tệp '+file.name+' ('+file.size+' byte): cấu trúc và trọng số AI khớp bản vừa xuất. Không tự khôi phục.':
+     'Tệp sao lưu không khớp bản vừa xuất ('+file.size+' byte). Không thay đổi mô hình đang dùng.';
+   }catch{message='Không kiểm chứng được: không đọc được JSON hợp lệ.';}
+  }
+  modelStatus.textContent=message;activeStatusMessage=message;
+  render();
+  const feedback=byId('poAIActiveStatus')||modelStatus;
+  feedback?.scrollIntoView({block:'center',behavior:'instant'});
+  feedback?.focus?.({preventScroll:true});
  });
  // P285: validate and preview a chosen local backup, then require second confirmation.
  let pendingLearningImport=null,importSequence=0,lastImportUndo=null;

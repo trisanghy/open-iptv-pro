@@ -318,6 +318,17 @@
   return {ok:true,model,categoryModel,bandit,summary};
  }
 
+ // P313: user reselects a downloaded JSON to verify AI weights, without import.
+ function verifyLearningBackupSnapshot(original,selected){
+  const baseline=parseLearningBackup(original),loaded=parseLearningBackup(selected);
+  if(!baseline.ok)return {ok:false,match:false,reason:'Bản vừa xuất không còn hợp lệ.'};
+  if(!loaded.ok)return {ok:false,match:false,reason:loaded.reason};
+  const match=JSON.stringify([baseline.model,baseline.categoryModel,baseline.bandit])===
+   JSON.stringify([loaded.model,loaded.categoryModel,loaded.bandit]);
+  return {ok:true,match,summary:loaded.summary,reason:match?
+   'Cấu trúc và toàn bộ trọng số AI khớp bản vừa xuất.':
+   'Trọng số khác bản vừa xuất; không nên khôi phục nếu chưa kiểm tra.'};
+ }
  // P286: pure count-level comparison. Counts are evidence size, not ML accuracy.
  function compareLearningBackup(current,loaded){
   const imported=loaded?.ok===true?loaded:parseLearningBackup(loaded);
@@ -815,5 +826,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,compareLearningBackup,previewLearningImpact,previewCategoryImpact,compareCategorySamples,previewCategoryGroupRisks,previewCategoryTopicShifts,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,verifyLearningBackupSnapshot,compareLearningBackup,previewLearningImpact,previewCategoryImpact,compareCategorySamples,previewCategoryGroupRisks,previewCategoryTopicShifts,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.397",
-  "description": "Positron P5.1.312: trợ lý sao lưu trọng số AI khi bộ nhớ đầy, cảnh báo lưu lỗi rõ ràng",
+  "version": "4.23.398",
+  "description": "Positron P5.1.313: kiểm chứng bản sao AI đã tải bằng đối chiếu trọng số cục bộ",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

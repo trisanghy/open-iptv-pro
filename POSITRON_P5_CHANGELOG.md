@@ -1,3 +1,11 @@
+## P5.1.313 / Electron 4.23.398 — Kiểm chứng tệp sao lưu AI đã tải (CANDIDATE)
+- Feature priority: NEW — Chọn lại bản sao JSON đã tải, kiểm tra định dạng, bộ đếm và trọng số Logistic/Naive Bayes/UCB với bản vừa xuất. Cảnh báo khi không khớp, không tự ghi đè dữ liệu học.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Sao lưu trọng số AI → “Kiểm tra tệp JSON vừa tải” → chọn lại tệp đã lưu; so sánh cục bộ, không nhập mô hình.
+- Electron screenshot: positron-p51313-ai-backup-verify-before-1920x1080-real.png / positron-p51313-ai-backup-verify-after-1920x1080-real.png.
+- Evidence: QA313 Electron thực thử JSON sai định dạng và bản hợp lệ, so sánh trọng số, playlist, trạng thái player và tính toàn vẹn localStorage; Node test kiểm tra cả tệp trùng/khác trọng số. Chỉ coi đạt sau CI và trực tiếp mở PNG.
+- Giới hạn: không khẳng định hệ điều hành đã lưu nếu chưa chọn lại tệp; kiểm chứng cấu trúc và dữ liệu học, không kiểm chứng chữ ký số. Không gửi dữ liệu riêng qua mạng.
+
 ## P5.1.312 / Electron 4.23.397 — Cứu hộ sao lưu trọng số AI khi bộ nhớ đầy (CANDIDATE)
 - Feature priority: NEW — Khi ghi nhãn AI gặp lỗi lưu bộ nhớ, thêm nút cứu hộ xuất bản sao trọng số Naive Bayes bằng JSON ngay tại hàng đợi dạy AI; người dùng không phải tìm sâu trong cài đặt và không bị mất trọng số đã lưu.
 - Feature class: AI
