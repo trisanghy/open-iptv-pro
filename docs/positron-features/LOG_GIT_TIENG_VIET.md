@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.314 — chẩn đoán từng mô hình AI khác trọng số trong bản sao JSON
+## P5.1.315 — AI kiểm chứng bản sao theo nội dung không phụ thuộc thứ tự khóa JSON
 
-**Ứng dụng:** 4.23.399 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.400 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Phân tích nội dung JSON sau khi chọn lại tệp sao lưu: hai tệp có cùng bộ trọng số Logistic, Naive Bayes, UCB được công nhận tương đương dù khác thứ tự khóa, tránh cảnh báo sai khi JSON được chỉnh định dạng bằng công cụ khác; vẫn nhận ra trọng số số học bị đổi thực sự. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/86b7954ec4ae9279579dd6eaa9f6e4eed70be109)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.314 — Electron 4.23.399 — Phân tích mô hình AI sai khác khi kiểm tra bản sao (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Khi JSON sao lưu AI hợp lệ nhưng khác trọng số, tự phân tích cục bộ và chỉ rõ Logistic, Naive Bayes hay UCB thay đổi; thống kê số mẫu/chủ đề trước-sau kể cả khi số lượng bằng nhau nhưng trọng số khác. Không nhập tệp hoặc sửa mô hình. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/8802294395ad6c797949d61cae2cedc0e038e8ba)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.313 — Electron 4.23.398 — Kiểm chứng tệp sao lưu AI đã tải (CANDIDATE)
 
