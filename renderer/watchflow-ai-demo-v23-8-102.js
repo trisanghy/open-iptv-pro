@@ -36,14 +36,22 @@
   (doc.getElementById('videoEnhanceToggle')||anchor).insertAdjacentElement('afterend',button);
   const panel=doc.createElement('section');panel.id='watchflowDemo';panel.className='watchflow-demo';panel.hidden=true;
   panel.setAttribute('aria-label','WatchFlow tự động phân tích kênh và EPG');
-  panel.innerHTML='<div class="wf-head"><div><small>WATCHFLOW · TỰ ĐỘNG KHÁM PHÁ (BETA)</small><h2>AI Phân tích kênh & Đề xuất</h2><p>Phân loại kênh, khám phá nội dung và học sở thích xem TV.</p></div><button id="wfClose" type="button" aria-label="Đóng">×</button></div>'+
-  '<div class="wf-local-banner"><strong>✓ Tự động quét toàn bộ kênh và EPG</strong><span id="wfLocalScanStatus" role="status" aria-live="polite">Đang kiểm tra danh sách kênh…</span><progress id="wfLocalScanProgress" max="100" value="0" aria-label="Tiến độ phân tích kênh"></progress><small>Quét offline, không cần thao tác, không gửi playlist hoặc URL phát ra Internet.</small></div><div class="wf-modes" role="radiogroup" aria-label="Chế độ AI"><button type="button" data-wf-mode="standard" role="radio"><b>◈ Tiêu chuẩn</b><small>Naive Bayes · EPG · tên kênh</small><small class="wf-size">Dưới 20 MB · Naive Bayes đang chạy</small></button><button type="button" data-wf-mode="smart" role="radio"><b>ϟ Thông minh</b><small>TinyBERT · MobileBERT · E5 · MiniLM · PhoBERT</small><small class="wf-size">Dưới 200 MB · tự chọn mô hình</small><small class="wf-fallback">Chưa cài trọng số · dùng Standard để phân loại</small></button><button type="button" data-wf-mode="intelligence" role="radio"><b>✧ Intelligence</b><small>Dùng chung Qwen3/Hy-MT2 đã tải hoặc tải thêm</small><small class="wf-size">Dung lượng theo mô hình · Không tải trùng</small><small class="wf-fallback">Hiện chỉ xếp hạng EPG, chưa chạy LLM</small></button></div>'+
-  '<p id="wfModeHint" class="wf-hint"></p><div id="wfSmartModels" class="wf-model-picker" hidden><label for="wfSmartModelSelect">Chọn mô hình Smart (dưới 200 MB)</label><div class="wf-model-row"><select id="wfSmartModelSelect" aria-label="Chọn mô hình Smart"></select></div><p id="wfSmartModelBenefit" class="wf-model-benefit"></p><small id="wfSmartModelStatus" role="status"></small><details class="wf-smart-details"><summary>So sánh ưu điểm các mô hình Smart</summary><div id="wfSmartModelList" class="wf-smart-list"></div></details></div><div id="wfIntelligenceModels" class="wf-model-picker" hidden><label for="wfModelSelect">Mô hình Intelligence dùng chung</label><div class="wf-model-row"><select id="wfModelSelect" aria-label="Chọn mô hình AI đã có hoặc tải mới"><option value="auto">Tự chọn mô hình đã cài</option></select><button id="wfModelRefresh" type="button">↻ Làm mới</button><button id="wfModelInstall" type="button" disabled>Tải mô hình đã chọn</button></div><small id="wfModelStatus" role="status">Đang kiểm tra mô hình cục bộ…</small></div><div class="wf-auto-banner"><label><input type="checkbox" id="wfAutoEnabled"/> Tìm thêm thông tin kênh công khai trên Internet</label><span id="wfAutoStatus" role="status">Đang chuẩn bị quét nền…</span><small>Chỉ tra tên kênh công khai và chủ đề trên Wikidata; không gửi URL phát, không tự nhập M3U. Có thể tắt bất cứ lúc nào.</small></div><nav class="wf-tabs" role="tablist" aria-label="Chức năng WatchFlow"><button type="button" data-wf-tab="overview" role="tab">Tổng quan</button><button type="button" data-wf-tab="classify" role="tab">Phân loại EPG</button><button type="button" data-wf-tab="folders" role="tab">Thư mục chủ đề</button><button type="button" data-wf-tab="programmes" role="tab">Chương trình EPG</button><button type="button" data-wf-tab="suggest" role="tab">Đề xuất cho bạn</button><button type="button" data-wf-tab="search" role="tab">Tìm kênh Internet</button></nav>'+
-  '<div id="wfContents" class="wf-contents" role="tabpanel" aria-live="polite"></div><footer class="wf-foot"><span id="wfOrigin">Dữ liệu trong máy được phân tích tự động.</span></footer>';
+  panel.innerHTML='<div class="wf-head"><div><small>WATCHFLOW · TỰ ĐỘNG</small><h2>Kênh & chương trình dành cho bạn</h2><p>AI tự quét playlist và EPG · không cần nhấn phân loại</p></div><button id="wfClose" type="button" aria-label="Đóng">×</button></div>'+
+  '<div class="wf-local-banner"><span id="wfLocalScanStatus" role="status" aria-live="polite">Đang đọc kênh và lịch phát…</span><progress id="wfLocalScanProgress" max="100" value="0" aria-label="Tiến độ phân loại"></progress></div>'+
+  '<details id="wfSettings" class="wf-settings"><summary>⚙ Mô hình AI & dung lượng <small>Chọn · Tải · Xóa</small></summary><div class="wf-settings-body">'+
+  '<h3>Chế độ AI</h3><div class="wf-modes" role="radiogroup" aria-label="Chế độ AI"><button type="button" data-wf-mode="standard" role="radio"><b>Tiêu chuẩn</b><small>Dưới 20 MB · Naive Bayes đang chạy</small></button><button type="button" data-wf-mode="smart" role="radio"><b>Thông minh</b><small>Dưới 200 MB · tự chọn mô hình</small></button><button type="button" data-wf-mode="intelligence" role="radio"><b>Intelligence</b><small>Qwen3 · mô hình đã cài</small></button></div><p id="wfModeHint" class="wf-hint"></p>'+
+  '<div id="wfSmartModels" class="wf-model-picker" hidden><label for="wfSmartModelSelect">Mô hình Smart dưới 200 MB</label><div class="wf-model-row"><select id="wfSmartModelSelect" aria-label="Chọn mô hình Smart"></select></div><p id="wfSmartModelBenefit" class="wf-model-benefit"></p><small id="wfSmartModelStatus" role="status"></small><details class="wf-smart-details"><summary>Xem ưu điểm từng mô hình</summary><div id="wfSmartModelList" class="wf-smart-list"></div></details></div>'+
+  '<div id="wfIntelligenceModels" class="wf-model-picker" hidden><label for="wfModelSelect">Chọn mô hình AI để tải / sử dụng</label><div class="wf-model-row"><select id="wfModelSelect" aria-label="Chọn mô hình AI đã có hoặc tải mới"><option value="auto">Tự chọn Qwen3 đã cài</option></select><button id="wfModelInstall" type="button" disabled>↓ Tải mô hình đã chọn</button></div><small id="wfModelStatus" role="status">Đang kiểm tra mô hình cục bộ…</small><small>Hy-MT2 chuyên dịch; Qwen3 dùng để phân loại trong Intelligence.</small></div>'+
+  '<section class="wf-storage"><div class="wf-storage-head"><strong>Quản lý dung lượng AI</strong><b id="wfStorageTotal">Đang kiểm tra…</b></div><div id="wfStorageList" class="wf-storage-list"></div><small id="wfStorageStatus" role="status">Chỉ hiển thị dữ liệu AI thực tế đã lưu trên máy.</small></section>'+
+  '<details class="wf-privacy"><summary>Tùy chọn nâng cao</summary><div class="wf-auto-banner"><label><input type="checkbox" id="wfAutoEnabled"/> Tra cứu thêm tên kênh công khai trên Internet</label><span id="wfAutoStatus" role="status"></span><small>Tra cứu Wikidata theo tên kênh, không gửi URL phát hay M3U.</small></div><div id="wfPrivacyControls"></div></details>'+
+  '</div></details>'+
+  '<nav class="wf-tabs" role="tablist" aria-label="Kết quả WatchFlow"><button type="button" data-wf-tab="suggest" role="tab">Dành cho bạn</button><button type="button" data-wf-tab="folders" role="tab">Chủ đề kênh</button><button type="button" data-wf-tab="programmes" role="tab">Chương trình EPG</button><button type="button" data-wf-tab="classify" role="tab">Tất cả kênh</button></nav>'+
+  '<div id="wfContents" class="wf-contents" role="tabpanel" aria-live="polite"></div>'+
+  '<footer class="wf-foot"><span id="wfOrigin">Tự động phân loại dữ liệu trên thiết bị.</span></footer>';
   row.insertAdjacentElement('afterend',panel);
   const $=id=>doc.getElementById(id);
   const el=(name,cls='',text)=>{const x=doc.createElement(name);x.className=cls;if(text!==undefined)x.textContent=String(text);return x;};
-  const modelCatalog=root.OpenIPTVWatchFlowModelCatalog,topicCatalog=root.OpenIPTVWatchFlowTopics;
+  const modelCatalog=root.OpenIPTVWatchFlowModelCatalog,topicCatalog=root.OpenIPTVWatchFlowTopics,recommender=root.OpenIPTVWatchFlowRecommendations;
   let smartChoice=modelCatalog?.read(root.localStorage)||'tinybert-4l-int8';
   const smartSelect=$('wfSmartModelSelect'),smartList=$('wfSmartModelList');
   if(modelCatalog&&smartSelect){
@@ -58,7 +66,7 @@
     smartChoice=smartSelect.value;modelCatalog.save(root.localStorage,smartChoice);render();
    });
   }
-  let mode='standard',tab='folders';
+  let mode='standard',tab='suggest';
   try{const s=root.localStorage?.getItem('watchflow:demo-mode');if(['standard','smart','intelligence'].includes(s))mode=s;}catch{}
   const data=()=>{
    const st=root.IPTVState,channels=st?.getChannels?.()||[],current=st?.getCurrent?.()||null;
@@ -67,12 +75,13 @@
    const epg=/chưa có|chưa chọn|chương trình tiếp theo/i.test(title)?'':title;
    return {channels:Array.isArray(channels)?channels:[],recent:Array.isArray(raw)?raw:[],current,epg,guide:root.IPTVExtras?.getGuide?.()};
   };
-  function rowFor(host,c,d,canPlay){
+  function rowFor(host,c,d,canPlay,reason=''){
    const item=el('article','wf-item');item.append(el('span','wf-icon',String(c.name||'TV').slice(0,2).toUpperCase()));
    const details=el('div','wf-item-main');
    const labels=topicCatalog?.distinct(d?.labels?.length?d.labels:[d?.label])||[d?.label||'Chưa phân loại'];
    details.append(el('strong','',c.name||'Kênh'),el('small','',labels.join(' · ')+' · '+(d.from||'Đang phân loại')));
    if(d?.epgCount)details.append(el('small','',d.epgCount+' chương trình EPG đã đọc'));
+    if(reason)details.append(el('small','wf-reason',reason));
    item.append(details);
    if(c.demo)item.append(el('em','wf-sample','MINH HỌA'));
    else if(canPlay){const play=el('button','wf-play','▶ Xem');play.type='button';play.addEventListener('click',()=>{
@@ -179,11 +188,41 @@
     }
    }else if(tab==='classify'||tab==='suggest'){
     main.append(el('h3','',tab==='classify'?'Tất cả kênh · tìm theo tên và chủ đề':'Gợi ý tự động từ EPG và thói quen xem'));
-    const list=el('div','wf-list');main.append(list);
+    const list=el('div','wf-list');if(tab==='classify')main.append(list);
     if(tab==='suggest'){
-     const ordered=learnedOrder?learnedOrder.slice(0,12).map(x=>x.channel):recommend(channels,d.recent,d.current?.id).slice(0,12);
-     for(const c of ordered)rowFor(list,c,category(c),real);
-     main.append(el('p','wf-hint',real?'Gợi ý cập nhật sau mỗi lần quét EPG. Chỉ phát khi bạn nhấn Xem.':'Ví dụ minh họa; thêm playlist để nhận gợi ý thật.'));
+     const suggested=recommender?.channels?.(d.channels,analysis,learning,d.recent,d.current,Date.now(),8)||[];
+     const ranked=suggested.length?suggested:learnedOrder?.slice(0,8).map(x=>({channel:x.channel,reason:x.reason}))||[];
+     const top=el('section','wf-result-section');
+     top.append(el('h3','','Kênh nên xem'));
+     const channelList=el('div','wf-list');
+     if(!real)channelList.append(el('p','wf-hint','Chưa nhập playlist. Khi có kênh, đề xuất sẽ tự cập nhật.'));
+     for(const x of ranked)rowFor(channelList,x.channel,category(x.channel),real,x.reason);
+     top.append(channelList);main.append(top);
+     const upcoming=recommender?.programmes?.(analysis,d.channels,learning,d.recent,Date.now(),10)||[];
+     const section=el('section','wf-result-section'),heading=el('h3','','Chương trình phù hợp hôm nay & sắp chiếu');
+     section.append(heading);
+     if(!upcoming.length)section.append(el('p','wf-hint',d.guide?.programmes?.length?
+      'EPG chưa ghép được với kênh trong playlist. Kiểm tra tvg-id hoặc ánh xạ EPG.':
+      'Chưa có lịch EPG để đề xuất chương trình. WatchFlow sẽ tự cập nhật khi tải được lịch.'));
+     else{
+      const schedule=el('div','wf-programme-list');
+      for(const item of upcoming){
+       const entry=el('article','wf-programme'),body=el('div','wf-item-main');
+       const when=item.live?'Đang phát':new Date(item.programme.start).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+       body.append(el('strong','',item.programme.title||'Chương trình'),
+        el('small','',when+' · '+String(item.channel.name||'Kênh')),
+        el('small','wf-reason',item.reason));
+       entry.append(body);
+       if(item.channel?.id){
+        const play=el('button','wf-play','▶ Xem kênh');play.type='button';
+        play.addEventListener('click',()=>{close();root.IPTVState?.playChannel?.(item.channel.id);});
+        entry.append(play);
+       }
+       schedule.append(entry);
+      }
+      section.append(schedule);
+     }
+     main.append(section);
     }else{
      const search=el('input','wf-channel-search');
      search.type='search';search.placeholder='Tìm tên kênh hoặc chủ đề trong toàn bộ danh sách…';
@@ -241,22 +280,22 @@
   // Reuse native MLX model inventory; installing a model requires the user's click.
   const native=root.streamleaf, modelIds=['qwen06','qwen17','qwen4','qwen8','hymt18','hymt18q8','hymt7','hymt7q8'];
   const selectionKey='watchflow:intelligence-model-v1';
-  const modelSelect=$('wfModelSelect'),modelStatus=$('wfModelStatus'),installButton=$('wfModelInstall');
-  let modelInventory={}, modelSupported=false,modelRefreshing=false;
+  const modelSelect=$('wfModelSelect'),modelStatus=$('wfModelStatus'),installButton=$('wfModelInstall'),storageList=$('wfStorageList'),storageTotal=$('wfStorageTotal'),storageStatus=$('wfStorageStatus');
+  let modelInventory={}, modelSupported=false,modelRefreshing=false,modelOperation=false;
   const human=n=>Number.isFinite(+n)&&+n>0?(+n/(1024*1024)).toFixed(+n>1024**3?0:1)+' MB':'Chưa tải';
   const getSelected=()=>modelInventory[modelSelect.value];
   function updateModelStatus(){
    const chosen=getSelected(),installed=modelIds.filter(id=>modelInventory[id]?.installed&&modelInventory[id]?.runtimeReady);
    if(modelSelect.value==='auto'){
-    modelStatus.textContent=installed.length?'Đã tìm thấy '+installed.length+' mô hình dùng chung: '+installed.map(id=>modelInventory[id].label||id).join(', ')+'. Chưa có suy luận LLM WatchFlow.':'Chưa có mô hình MLX dùng được. Bạn có thể chọn tải, không tải tự động.';
+    modelStatus.textContent=installed.length?'Đã có '+installed.length+' mô hình AI dùng chung. Chọn mô hình cụ thể để quản lý.':'Chưa có mô hình MLX sẵn sàng. Chọn Qwen3 rồi nhấn Tải.';
     installButton.disabled=true;return;
    }
    const title=chosen?.label||modelSelect.value;
    modelStatus.textContent=!modelSupported?'MLX chỉ hỗ trợ Mac Apple Silicon trên bản hiện tại.':
-    chosen?.installed?(title+' · đã tải '+human(chosen.bytes)+' · '+(chosen.runtimeReady?'sẵn sàng cho tác vụ MLX; chưa nối WatchFlow':'cần cài/sửa runtime MLX')):
+    chosen?.installed?(title+' · đã tải '+human(chosen.bytes)+' · '+(chosen.runtimeReady?'sẵn sàng; WatchFlow sẽ tự dùng khi chọn Intelligence':'cần cài/sửa runtime MLX')):
     (title+' · chưa tải · dự kiến '+human(chosen?.approxBytes)+'.');
-   installButton.disabled=!modelSupported||!chosen||!!(chosen.installed&&chosen.runtimeReady)||modelRefreshing;
-   installButton.textContent=chosen?.installed?'Sửa bộ chạy MLX':'Tải mô hình đã chọn';
+   installButton.disabled=!modelSupported||!chosen||!!(chosen.installed&&chosen.runtimeReady)||modelRefreshing||modelOperation;
+   installButton.textContent=chosen?.installed?'Sửa bộ chạy MLX':'↓ Tải mô hình đã chọn';
   }
   async function refreshModels(){
    if(modelRefreshing)return;
@@ -265,6 +304,34 @@
     if(!native?.aiStorageStatus)throw Error('Không chạy trong ứng dụng Tauri native');
     const inventory=await native.aiStorageStatus();
     modelInventory=inventory?.models||{};modelSupported=!!inventory?.mlxAvailable;
+     storageTotal.textContent=human(inventory?.totalBytes||0);
+     storageList.replaceChildren();
+     const present=(inventory?.storage||[]).filter(item=>item?.present&&Number(item.bytes)>0)
+      .sort((a,b)=>Number(b.bytes||0)-Number(a.bytes||0));
+     if(!present.length)storageList.append(el('p','wf-hint','Chưa có model hoặc dữ liệu AI đã tải.'));
+     for(const asset of present){
+      const row=el('div','wf-storage-row'),identity=el('div','wf-item-main');
+      const label=String(asset.label||asset.id),id=String(asset.id);
+      identity.append(el('strong','',label),el('small','',human(asset.bytes)));
+      const remove=el('button','wf-model-remove','Xóa');
+      remove.type='button';remove.setAttribute('aria-label','Xóa '+label+' và giải phóng dung lượng');
+      remove.disabled=modelOperation;
+      remove.addEventListener('click',async()=>{
+       if(modelOperation||modelRefreshing||!native?.aiRemoveModel)return;
+       if(root.confirm?.('Xóa '+label+' ('+human(asset.bytes)+') khỏi máy? Một số tính năng AI liên quan sẽ cần tải lại khi sử dụng.')!==true)return;
+       modelOperation=true;
+       for(const b of panel.querySelectorAll('.wf-model-remove'))b.disabled=true;
+       installButton.disabled=true;storageStatus.textContent='Đang xóa '+label+'…';
+       try{
+        const result=await native.aiRemoveModel(id);
+        storageStatus.textContent='Đã xóa '+label+' · giải phóng '+human(result?.freed||asset.bytes);
+        if(modelSelect.value===id)modelSelect.value='auto';
+       }catch(error){storageStatus.textContent='Không thể xóa '+label+': '+String(error?.message||error).slice(0,140);}
+       finally{modelOperation=false;await refreshModels();}
+      });
+      row.append(identity,remove);storageList.append(row);
+     }
+     if(present.length)storageStatus.textContent=present.length+' mục AI đang lưu · xóa sẽ yêu cầu xác nhận.';
     const previous=modelSelect.value;
     modelSelect.replaceChildren();
     const add=(value,text)=>{const o=doc.createElement('option');o.value=value;o.textContent=text;modelSelect.append(o);};
@@ -278,19 +345,20 @@
     const already=modelIds.filter(id=>modelInventory[id]?.installed&&modelInventory[id]?.runtimeReady);
     modelSelect.value=stored==='auto'&&already.length?already[0]:stored;
     updateModelStatus();
-   }catch(error){modelStatus.textContent='Chưa đọc được mô hình cục bộ: '+String(error?.message||error).slice(0,110);installButton.disabled=true;}
+   }catch(error){modelStatus.textContent='Chưa đọc được mô hình cục bộ: '+String(error?.message||error).slice(0,110);storageStatus.textContent='Không truy cập được bộ nhớ AI: '+String(error?.message||error).slice(0,120);installButton.disabled=true;}
    finally{modelRefreshing=false;updateModelStatus();}
   }
   modelSelect.addEventListener('change',()=>{try{root.localStorage?.setItem(selectionKey,modelSelect.value);}catch{}updateModelStatus();});
-  $('wfModelRefresh').addEventListener('click',()=>void refreshModels());
+  $('wfSettings').addEventListener('toggle',()=>{if($('wfSettings').open)void refreshModels();});
   installButton.addEventListener('click',async()=>{
    const key=modelSelect.value,state=getSelected();
-   if(!modelIds.includes(key)||!modelSupported||!state||!native?.aiInstallModel)return;
+   if(modelOperation||modelRefreshing||!modelIds.includes(key)||!modelSupported||!state||!native?.aiInstallModel)return;
    if(state.installed&&state.runtimeReady)return;
-   modelRefreshing=true;installButton.disabled=true;modelStatus.textContent='Đang cài đặt mô hình qua bộ quản lý AI Rust Lab…';
+   modelOperation=true;installButton.disabled=true;modelStatus.textContent='Đang cài đặt mô hình qua bộ quản lý AI Rust Lab…';
+    for(const b of panel.querySelectorAll('.wf-model-remove'))b.disabled=true;
    try{await native.aiInstallModel(key);modelStatus.textContent='Đã hoàn tất yêu cầu cài; đang xác minh trọng số và bộ chạy…';}
    catch(error){modelStatus.textContent='Cài mô hình thất bại: '+String(error?.message||error).slice(0,160);}
-   finally{modelRefreshing=false;await refreshModels();}
+   finally{modelOperation=false;await refreshModels();}
   });
   // Automatic local scan runs independently of this panel; no refresh click is required.
   void refreshModels();
@@ -312,7 +380,7 @@
    });
   auto?.start(root,engine);
   const reset=el('button','wf-clear','Xóa sở thích đã học');reset.type='button';
-  panel.querySelector('.wf-foot')?.append(reset);
+  $('wfPrivacyControls')?.append(reset);
   reset.addEventListener('click',()=>{if(root.confirm?.('Xóa dữ liệu sở thích WatchFlow đã lưu trên máy?')!==true)return;engine.clear(root.localStorage);render();});
   engine?.monitor(root,()=>mode,ch=>auto?.getBackgroundAnalysis?.(root)?.get(String(ch.id))||engine.analyze([ch],root.IPTVExtras?.getGuide?.(),root.IPTVGuide).get(String(ch.id)));
   for(const b of panel.querySelectorAll('[data-wf-tab]'))b.addEventListener('click',()=>{tab=b.dataset.wfTab;render();});
