@@ -15,10 +15,28 @@
  const fresh=()=>({version:1,day:'',used:0,queries:{},error:'',updatedAt:0});
  function read(storage){let raw;try{raw=JSON.parse(storage?.getItem(KEY)||'null');}catch{}if(!raw||raw.version!==1||!raw.queries||typeof raw.queries!=='object')return fresh();
   const o=fresh();o.day=String(raw.day||'');o.used=Math.max(0,Math.min(DAY_LIMIT,Number(raw.used)||0));o.updatedAt=Number(raw.updatedAt)||0;o.error=String(raw.error||'').slice(0,180);
-  for(const [q,v]of Object.entries(raw.queries).slice(-100)){if(typeof q!=='string'||q.length>70||!v||!Array.isArray(v.items))continue;
-   o.queries[q]={at:Number(v.at)||0,items:v.items.slice(0,8).filter(x=>/^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$/.test(String(x.url||''))).map(x=>({name:String(x.name||'').slice(0,120),description:String(x.description||'').slice(0,180),url:x.url}))};}return o;
+  for(const [q,v]of Object.entries(raw.queries).slice(-900)){if(typeof q!=='string'||q.length>70||!v||!Array.isArray(v.items))continue;
+   o.queries[q]={at:Number(v.at)||0,failed:v.failed===true,items:v.items.slice(0,8).filter(x=>/^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$/.test(String(x.url||''))).map(x=>({name:String(x.name||'').slice(0,120),description:String(x.description||'').slice(0,180),url:x.url}))};}return o;
  }
- const save=(storage,s)=>{try{storage?.setItem(KEY,JSON.stringify({...s,queries:Object.fromEntries(Object.entries(s.queries).slice(-80))}));return true;}catch{return false;}};
+ const save=(storage,s)=>{try{storage?.setItem(KEY,JSON.stringify({...s,queries:Object.fromEntries(Object.entries(s.queries).slice(-900))}));return true;}catch{return false;}};
+
+ // Public display-name coverage only. A search result does NOT imply a
+ // playable stream, and failed requests never count as researched.
+ function internetProgress(storage,channels=[],clock=Date.now()){
+  const state=read(storage),names=[...new Set((channels||[]).map(c=>publicName(c?.name).toLowerCase()).filter(Boolean))];
+  let searched=0,matched=0,failed=0;
+  for(const name of names){
+   const entry=state.queries[name];if(!entry)continue;
+   if(entry.failed){failed++;continue;}
+   if(clock-entry.at>=CACHE_MS)continue;
+   searched++;
+   if(entry.items.some(x=>isTv(x)&&normalize(publicName(x.name))===normalize(name)))matched++;
+  }
+  const used=state.day===new Date(clock).toISOString().slice(0,10)?state.used:0;
+  return{total:names.length,searched,matched,failed,remaining:Math.max(0,names.length-searched),
+   used,limit:DAY_LIMIT,error:state.error,enabled:enabled(storage)};
+ }
+
  function collect(storage,channels=[],engine){const state=read(storage),lookup=new Set(channels.map(c=>normalize(publicName(c.name)))),result=new Map(),learned=engine?.read?.(storage)?.seconds||{};
   for(const [query,entry] of Object.entries(state.queries)){if(Date.now()-entry.at>CACHE_MS)continue;
    for(const item of entry.items){if(!isTv(item)||lookup.has(normalize(publicName(item.name))))continue;
@@ -69,17 +87,17 @@
   const rankedTopics=Object.keys(TOPICS).sort((a,b)=>(Number(interest[b])||0)-(Number(interest[a])||0));
   const topics=rankedTopics.slice(0,3).map(x=>TOPICS[x]);
   const queue=[...unique,...topics].filter((q,i,all)=>all.indexOf(q)===i);
-  let requests=0;
+  let requests=0,errors=0;state.error='';
   for(const q of queue){
    if(!enabled(storage)||state.used>=DAY_LIMIT||requests>=Math.min(RUN_LIMIT,budget))break;
-   if(state.queries[q]&&now-state.queries[q].at<CACHE_MS)continue;
+   if(state.queries[q]&&now-state.queries[q].at<(state.queries[q].failed?5*60*1000:CACHE_MS))continue;
    try{const raw=await lookup(q);const items=(Array.isArray(raw)?raw:[]).slice(0,8).filter(x=>/^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$/.test(String(x.url||''))).map(x=>({name:String(x.name||'').slice(0,120),description:String(x.description||'').slice(0,180),url:x.url}));
-    state.queries[q]={at:now,items};state.error='';
-   }catch(error){state.error='Tra cứu tạm lỗi: '+String(error?.message||error).slice(0,100);state.queries[q]={at:now,items:[]};}
+    state.queries[q]={at:now,items,failed:false};
+   }catch(error){state.error='Tra cứu tạm lỗi: '+String(error?.message||error).slice(0,100);errors++;state.queries[q]={at:now,items:[],failed:true};}
    requests++;state.used++;state.updatedAt=now;save(storage,state);onUpdate({requests,used:state.used,limit:DAY_LIMIT});
   }
-  const results=collect(storage,channels,engine);onUpdate({done:true,discovered:results.length,error:state.error});
-  return{requests,used:state.used,limit:DAY_LIMIT,discovered:results,error:state.error};
+  const results=collect(storage,channels,engine);onUpdate({done:true,discovered:results.length,errors,error:state.error});
+  return{requests,used:state.used,limit:DAY_LIMIT,discovered:results,errors,error:state.error};
  }
  // Channel labels are immutable until their name/group/EPG ID changes or a user rescans.
  const CHANNEL_CACHE='watchflow:classified-channels-v4',CHANNEL_CACHE_VERSION=4;
@@ -280,7 +298,7 @@
   if(!win?.document||!engine)return false;
   const tag='__watchflowAutoStarted';
   if(win[tag])return true;win[tag]=true;
-  let lastKey='',lastGuide=null,guideVersion=0,generation=0,webBusy=false,lastInternet=0;
+  let lastKey='',lastGuide=null,guideVersion=0,generation=0,webBusy=false,lastInternet=0,webFollowup=false;
   const status={running:false,processed:0,total:0,classified:0,epgChannels:0,epgProgrammes:0,
    guideProgrammes:0,newChannels:0,newProgrammes:0,updatedAt:0,error:'',warning:'',storage:'loading'};
   statusByWindow.set(win,status);
@@ -368,15 +386,32 @@
    webBusy=true;lastInternet=Date.now();notify({internet:true,running:true});
    try{
     const list=channels();
-    await scan({storage:win.localStorage,channels:list,analysis:backgroundAnalysis.get(win)||new Map(),engine,lookup:q=>engine.searchInternet(q),
-     onUpdate:info=>notify({internet:true,...info})});
+    const lookupResult=await scan({storage:win.localStorage,channels:list,analysis:backgroundAnalysis.get(win)||new Map(),engine,lookup:q=>engine.searchInternet(q),
+     onUpdate:info=>notify({internet:true,...info,...internetProgress(win.localStorage,list)})});
+    const metrics=internetProgress(win.localStorage,list);
+    notify({internet:true,complete:true,...metrics,requests:lookupResult.requests,errors:lookupResult.errors});
     const current=backgroundAnalysis.get(win);
     if(current?.size){
      backgroundAnalysis.set(win,mergeSavedNative(win,enrich(current,channels(),win.localStorage,engine)));
      notify({internet:true,complete:true});
     }
    }catch(error){notify({internet:true,error:String(error?.message||error).slice(0,140)});}
-   finally{webBusy=false;notify({internet:true,running:false});}
+   finally{
+     webBusy=false;
+     const metrics=internetProgress(win.localStorage,channels());
+     notify({internet:true,running:false,...metrics});
+     // Intelligence automatically resumes bounded Wikidata research while
+     // running, never more than six queries/batch or 72 per local day.
+     if(win.localStorage?.getItem('watchflow:demo-mode')==='intelligence'&&
+       metrics.enabled&&metrics.remaining>0&&metrics.used<metrics.limit&&!webFollowup){
+      webFollowup=true;
+      win.setTimeout(()=>{
+       webFollowup=false;
+       if(win.localStorage?.getItem('watchflow:demo-mode')!=='intelligence'||!enabled(win.localStorage))return;
+       lastInternet=0;void runInternet();
+      },PAUSE_MS);
+     }
+    }
   }
   // Local classification starts without a panel click and reruns on every playlist/EPG change.
   win.setTimeout(inspect,200);
@@ -394,5 +429,5 @@
   // Internet checks no longer poll constantly: startup, new channels or a manual scan only.
   return true;
  }
- return Object.freeze({setNativeTopics,setSmartProgrammeLabels,CHANNEL_CACHE,readChannelCache,saveChannelCache,loadPersistentCache,persistChannelCache,channelSignature,cachedSnapshot,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,scanLocal,fingerprint,start});
+ return Object.freeze({setNativeTopics,setSmartProgrammeLabels,CHANNEL_CACHE,readChannelCache,saveChannelCache,loadPersistentCache,persistChannelCache,channelSignature,cachedSnapshot,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,internetProgress,scanLocal,fingerprint,start});
 });

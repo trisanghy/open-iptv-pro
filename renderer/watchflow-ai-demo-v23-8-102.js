@@ -120,11 +120,11 @@
    for(const x of panel.querySelectorAll('[data-wf-mode]')){const active=x.dataset.wfMode===mode;x.classList.toggle('wf-active',active);x.setAttribute('aria-checked',String(active));}
    for(const x of panel.querySelectorAll('[data-wf-tab]')){const active=x.dataset.wfTab===tab;x.classList.toggle('wf-active',active);x.setAttribute('aria-selected',String(active));}
    $('wfModeHint').textContent=mode==='standard'?'Standard · Naive Bayes nhẹ, tự phân loại toàn bộ kênh và EPG offline.':mode==='smart'?'Smart · Ứng dụng tự tải AI đa ngôn ngữ (~118 MB) lần đầu và tự quét. Không cần tìm tệp mô hình.':'Intelligence · Tự phân loại EPG bằng bộ nhẹ; Qwen3 native có thể phân tích sâu khi đã cài.';
-   // A complete catalog stays visible regardless of the active AI mode.
-   const standardArea=$('wfStandardModels');if(standardArea){standardArea.hidden=false;standardArea.classList.toggle('wf-model-current',mode==='standard');}
+   // Exclusive mode accordion: only the selected model family is expanded.
+   const standardArea=$('wfStandardModels');if(standardArea){standardArea.hidden=mode!=='standard';standardArea.classList.toggle('wf-model-current',mode==='standard');}
    const name=standardArea?.querySelector('.wf-standard-list b');
    if(name)name.textContent=mode==='standard'?'✓ Naive Bayes (đang dùng)':'✓ Naive Bayes (đã tích hợp)';
-   const smartArea=$('wfSmartModels');if(smartArea){smartArea.hidden=false;smartArea.classList.toggle('wf-model-current',mode==='smart');}
+   const smartArea=$('wfSmartModels');if(smartArea){smartArea.hidden=mode!=='smart';smartArea.classList.toggle('wf-model-current',mode==='smart');}
    void refreshSmartUI();
    if(modelCatalog){
     const selected=modelCatalog.getSmart(smartChoice);
@@ -135,7 +135,7 @@
      'Đã lưu cấu hình: '+(selected?.label||'')+'. Chưa có trọng số/bộ chạy được xác minh — chưa kích hoạt mô hình Smart.';
     for(const card of smartList.children)card.classList.toggle('wf-smart-selected',card.dataset.modelId===smartChoice);
    }
-   const modelArea=$('wfIntelligenceModels');if(modelArea){modelArea.hidden=false;modelArea.classList.toggle('wf-model-current',mode==='intelligence');}
+   const modelArea=$('wfIntelligenceModels');if(modelArea){modelArea.hidden=mode!=='intelligence';modelArea.classList.toggle('wf-model-current',mode==='intelligence');}
    $('wfOrigin').textContent=real?'Quét tự động từ playlist/EPG đã nhập. Không tự phát kênh.':'Chưa có nguồn; thêm playlist là hệ thống tự quét.';
    const autoEnabled=$('wfAutoEnabled');if(autoEnabled)autoEnabled.checked=auto?.enabled(root.localStorage)!==false;
    const discovered=auto?.collect(root.localStorage,d.channels,engine)||[];
@@ -516,7 +516,18 @@
    }catch(error){modelStatus.textContent='Chưa đọc được mô hình cục bộ: '+String(error?.message||error).slice(0,110);storageStatus.textContent='Không truy cập được bộ nhớ AI: '+String(error?.message||error).slice(0,120);installButton.disabled=true;}
    finally{modelRefreshing=false;updateModelStatus();}
   }
-  modelSelect.addEventListener('change',()=>{try{root.localStorage?.setItem(selectionKey,modelSelect.value);}catch{}updateModelStatus();});
+  modelSelect.addEventListener('change',()=>{
+    try{root.localStorage?.setItem(selectionKey,modelSelect.value);}catch{}
+    // Choosing a Qwen3 model also activates Intelligence; otherwise its local
+    // inference and the independent Internet search would stay in Standard.
+    if(/^qwen(?:06|17|4|8)$/.test(modelSelect.value)){
+     mode='intelligence';try{root.localStorage?.setItem('watchflow:demo-mode',mode);}catch{}
+     $('wfSettings').open=true;render();
+     if(auto?.enabled?.(root.localStorage)!==false)
+      doc.dispatchEvent(new Event('openiptv:watchflow-auto-rescan'));
+    }
+    updateModelStatus();
+   });
   $('wfSettings').addEventListener('toggle',()=>{if($('wfSettings').open)void refreshModels();});
   installButton.addEventListener('click',async()=>{
    const key=modelSelect.value,state=getSelected();
@@ -568,7 +579,15 @@
   reset.addEventListener('click',()=>{if(root.confirm?.('Xóa dữ liệu sở thích WatchFlow đã lưu trên máy?')!==true)return;engine.clear(root.localStorage);render();});
   engine?.monitor(root,()=>mode,ch=>auto?.getBackgroundAnalysis?.(root)?.get(String(ch.id))||engine.analyze([ch],root.IPTVExtras?.getGuide?.(),root.IPTVGuide).get(String(ch.id)));
   for(const b of panel.querySelectorAll('[data-wf-tab]'))b.addEventListener('click',()=>{tab=b.dataset.wfTab;render();});
-  for(const b of panel.querySelectorAll('[data-wf-mode]'))b.addEventListener('click',()=>{mode=b.dataset.wfMode;try{root.localStorage?.setItem('watchflow:demo-mode',mode);}catch{}render();if(mode==='intelligence')void refreshModels();});
+  for(const b of panel.querySelectorAll('[data-wf-mode]'))b.addEventListener('click',()=>{
+    mode=b.dataset.wfMode;try{root.localStorage?.setItem('watchflow:demo-mode',mode);}catch{}
+    $('wfSettings').open=true;render();
+    if(mode==='intelligence'){
+     void refreshModels();
+     if(auto?.enabled?.(root.localStorage)!==false)
+      doc.dispatchEvent(new Event('openiptv:watchflow-auto-rescan'));
+    }
+   });
   doc.addEventListener('keydown',event=>{if(event.key==='Escape'&&!panel.hidden)close();});
   return true;
  }

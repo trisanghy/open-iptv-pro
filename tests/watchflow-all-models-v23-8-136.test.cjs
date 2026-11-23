@@ -1,9 +1,11 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),catalog=require('../renderer/watchflow-model-catalog-v23-8-112.js');
 const s=fs.readFileSync('renderer/watchflow-ai-demo-v23-8-102.js','utf8');
-test('All 3 model groups remain visible regardless of selected mode',()=>{
- assert.match(s,/standardArea.hidden=false/);assert.match(s,/smartArea.hidden=false/);assert.match(s,/modelArea.hidden=false/);
- assert.doesNotMatch(s,/smartArea.hidden=mode!==/);assert.doesNotMatch(s,/modelArea.hidden=mode!==/);
+test('Only the chosen mode has an expanded model family',()=>{
+ assert.match(s,/standardArea.hidden=mode!=='standard'/);
+ assert.match(s,/smartArea.hidden=mode!=='smart'/);
+ assert.match(s,/modelArea.hidden=mode!=='intelligence'/);
+ assert.match(s,/\$\('wfSettings'\).open=true/);
  assert.match(s,/wf-model-current/);
 });
 test('Standard has 2 models and Smart has all 5 with honest availability',()=>{

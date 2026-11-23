@@ -249,3 +249,12 @@ html[data-theme="dark"] #page-tv .wf-easy-status[data-state="error"]{background:
 #page-tv #wfSettings .wf-smart-details[open] .wf-smart-list{display:grid}
 #page-tv #wfSettings .wf-smart-details summary{font-weight:700}
 html[data-theme=dark] #page-tv #wfSettings .wf-model-current,html[data-theme=amoled] #page-tv #wfSettings .wf-model-current{border-color:#b47cef;box-shadow:inset 0 0 0 1px #b47cef}
+
+/* Exclusive WatchFlow model sections; hidden remains authoritative. */
+#page-tv #wfSettings #wfStandardModels[hidden],
+#page-tv #wfSettings #wfSmartModels[hidden],
+#page-tv #wfSettings #wfIntelligenceModels[hidden]{display:none!important}
+#page-tv #wfInternetResearchStatus{display:block;padding:8px 10px;margin:6px 0;
+ background:#f5eaff;border:1px solid #ae91d0;color:#644085;border-radius:8px;font-size:11px;line-height:1.5}
+html[data-theme=dark] #page-tv #wfInternetResearchStatus,
+html[data-theme=amoled] #page-tv #wfInternetResearchStatus{background:#32243f;border-color:#785492;color:#e1c7f5}

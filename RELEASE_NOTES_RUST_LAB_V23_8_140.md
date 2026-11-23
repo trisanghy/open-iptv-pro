@@ -1,0 +1,8 @@
+# Rust Lab v23.8.140 — Exclusive AI mode sections and verified Wikidata information to Qwen3 (PRE-RELEASE)
+
+- Selecting Standard, Smart or Intelligence expands only the selected model section in WatchFlow. Model selection retains all five Smart candidates and the native Qwen3/Hy-MT2 inventory.
+- Choosing Qwen3 in the native model selector activates Intelligence, then requests a fresh Wikidata background metadata scan unless the user opted out.
+- Research is on PUBLIC CHANNEL DISPLAY NAMES, not streaming sources. Up to 6 searches per batch, 72 per local day. Repeated bounded batches run while Intelligence stays selected; progress counts exact TV-channel matches, failed requests and remaining names. 900-entry cache prevents losing the 560-channel progress.
+- Matching Wikidata name and description (never arbitrary unrelated search hits) are passed to local Qwen3 classification. A verified new fact changes that channel's Qwen cache fingerprint once; EPG refresh by itself does not rerun AI. Process no more than 24 new native classifications per pass, reusing the installed Qwen3 model.
+- Important: Wikidata is a public metadata lookup, not a general Internet search engine. Selecting Qwen3 does not give the model its own browsing capability, create or download streams, or establish that every channel has a Wikidata entry. Native MLX Qwen3 remains Apple Silicon-only for now. Real network response accuracy and performance require native validation.
+- Tests for exact match, privacy, quota/cache and exclusive visible panels. Does not modify Stable/Latest/main; prerelease tag is immutable.

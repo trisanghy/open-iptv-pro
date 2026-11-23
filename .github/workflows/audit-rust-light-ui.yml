@@ -16,6 +16,9 @@ on:
       - renderer/watchflow-smart-runtime-v23-8-126.js
       - renderer/watchflow-ai-demo-v23-8-102.js
       - renderer/watchflow-ai-demo-v23-8-102.css
+      - renderer/watchflow-qwen-native-v23-8-111.js
+      - renderer/watchflow-auto-discovery-v23-8-106.js
+      - tests/watchflow-internet-qwen-v23-8-140.test.cjs
       - renderer/watchflow-audit-v23-8-138.js
       - renderer/watchflow-audit-v23-8-138.css
       - tests/watchflow-source-audit-v23-8-138.test.cjs
@@ -105,6 +108,9 @@ jobs:
             rust-watchflow-audit-560-v23-8-139.png
           if-no-files-found: warn
           retention-days: 14
+      - name: Regression — Qwen3 verified Internet evidence and exclusive AI modes
+        shell: bash
+        run: node --test tests/watchflow-internet-qwen-v23-8-140.test.cjs
       - name: Capture all Rust Lab feature pages and expanded panels
         shell: bash
         env:

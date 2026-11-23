@@ -1,3 +1,12 @@
+## Rust Lab v23.8.140 — Thu gọn từng nhóm AI và kết nối Qwen3 với nghiên cứu Internet (PRERELEASE)
+
+- Ba nút Tiêu chuẩn/Smart/Intelligence nay là accordion độc quyền: chọn chế độ nào thì chỉ mở nhóm mô hình đó. Giữ đủ năm lựa chọn Smart và danh mục Qwen3/Hy-MT2 có thật.
+- Khi chọn Qwen3 trong bộ chọn native, WatchFlow chuyển sang Intelligence và bắt đầu tra cứu tên kênh công khai (trừ khi đã tắt Internet trong Tùy chọn nâng cao). Không coi chọn mô hình là đã có Internet hoặc đã cài trọng số.
+- Thực hiện tra cứu tên/mô tả kênh trên Wikidata theo từng đợt 6 truy vấn, giữ giới hạn 72 truy vấn/ngày và tiếp tục trong nền nếu còn hạn mức. Cache tối đa 900 mục thay vì 80 để phù hợp playlist 560 kênh; phân biệt kết quả tra thành công, chưa tra và lỗi CORS/mạng, báo số lượng/lỗi ngay trong Intelligence.
+- Khi có mô tả Wikidata xác minh đúng tên kênh và nhận diện đúng loại kênh truyền hình, chuyển thông tin đã lọc cho Qwen3 cục bộ phân loại; dữ liệu mới làm cập nhật cache AI đúng kênh đó, không gọi lại Qwen3 vì thay đổi EPG thông thường. Qwen3 xử lý nhiều nhất 24 kênh mỗi đợt và tự tiếp tục.
+- Không tra hoặc nhập URL phát; không gửi M3U hay thông tin xác thực lên Internet. Giữ CSP WASM v23.8.135, player/PiP/TTS/CC và toàn bộ kết quả phân loại đã có.
+- Thêm test Node về bằng chứng Internet, quota, sai tên, opt-out và kết quả Qwen3; test Chromium chuyển qua kiểm tra độc quyền từng mode. Chỉ phát hành prerelease mới, không sửa Stable/Latest/main.
+
 ## Rust Lab v23.8.139 — Sửa nút “Kiểm tra phân loại” không hiện báo cáo với playlist lớn (PRERELEASE)
 
 - Sửa UX báo cáo bị khuất/không thấy bên dưới phần quản lý hàng loạt mô hình: mở một dialog lớn ở top layer ngay khi bấm, có nút Đóng và Esc, nền tối để phân biệt báo cáo với trang.
