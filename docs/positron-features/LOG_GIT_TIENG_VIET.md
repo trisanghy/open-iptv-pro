@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.415 · **Trạng thái:** Chưa có bản phát hành
 
-bảo vệ phím tắt WatchFlow AI trong hộp thoại Cast/Thêm nguồn và khi nhập văn bản
+Feature priority: NEW — bổ sung khả năng nhận biết vùng biên tập và hộp thoại đang hoạt động trước khi mở bảng AI, tránh F6/Alt+Shift+W chiếm tiêu điểm gây gián đoạn nhập dữ liệu hoặc thao tác nguồn và Cast. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/068763ffa15910dabd6a94a169fec4b5ece33500)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)

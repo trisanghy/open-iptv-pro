@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T19:15:59.802620+00:00",
+  "generatedAt": "2026-11-23T19:18:04.515747+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.330",
       "appVersion": "4.23.415",
       "title": "bảo vệ phím tắt WatchFlow AI trong hộp thoại Cast/Thêm nguồn và khi nhập văn bản",
-      "description": "bảo vệ phím tắt WatchFlow AI trong hộp thoại Cast/Thêm nguồn và khi nhập văn bản",
-      "kind": "fix",
+      "description": "Feature priority: NEW — bổ sung khả năng nhận biết vùng biên tập và hộp thoại đang hoạt động trước khi mở bảng AI, tránh F6/Alt+Shift+W chiếm tiêu điểm gây gián đoạn nhập dữ liệu hoặc thao tác nguồn và Cast. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",

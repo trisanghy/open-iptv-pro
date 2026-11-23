@@ -7,11 +7,11 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.330</strong> · bảo vệ phím tắt WatchFlow AI trong hộp thoại Cast/Thêm nguồn và khi nhập văn bản · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.330</strong> · bảo vệ phím tắt WatchFlow AI trong hộp thoại Cast/Thêm nguồn và khi nhập văn bản · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.415 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-bảo vệ phím tắt WatchFlow AI trong hộp thoại Cast/Thêm nguồn và khi nhập văn bản
+Feature priority: NEW — bổ sung khả năng nhận biết vùng biên tập và hộp thoại đang hoạt động trước khi mở bảng AI, tránh F6/Alt+Shift+W chiếm tiêu điểm gây gián đoạn nhập dữ liệu hoặc thao tác nguồn và Cast. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
