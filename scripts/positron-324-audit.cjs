@@ -9,6 +9,10 @@ async function run(page){
  await page.evaluate(()=>{
   window.IPTVState.setPage('tv');
   window.PositronWatchFlow.open();
+  // P333+: five standard modes are intentionally hidden in AI view.
+  // Test the real standard WatchFlow surface, not a display:none element.
+  if(document.getElementById('poWatchFlowPanel').dataset.poAiActive==='true')
+   document.getElementById('poFlowPlusAI').click();
   document.getElementById('poWatchFlowPanel').scrollTop=0;
  });
  await page.waitForFunction(()=>{
@@ -75,6 +79,11 @@ async function run(page){
  },null,2));
  console.log('P324 real Electron QA',JSON.stringify(qa324));
  await page.setViewportSize({width:1920,height:1080});
- await page.evaluate(()=>window.PositronWatchFlow.close());
+ await page.evaluate(()=>{
+  // Restore AI-mode baseline for P326 and later AI regression tests.
+  if(document.getElementById('poWatchFlowPanel').dataset.poAiActive!=='true')
+   document.getElementById('poFlowPlusAI').click();
+  window.PositronWatchFlow.close();
+ });
 }
 module.exports={run};

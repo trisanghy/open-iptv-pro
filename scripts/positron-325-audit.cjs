@@ -27,7 +27,12 @@ const savedState=page=>page.evaluate(()=>({
 async function run(page){
  fs.mkdirSync(out,{recursive:true});
  await page.setViewportSize({width:1920,height:1080});
- await page.evaluate(()=>{window.IPTVState.setPage('tv');window.PositronWatchFlow.open();});
+ await page.evaluate(()=>{
+  window.IPTVState.setPage('tv');window.PositronWatchFlow.open();
+  // P333+: test five *visible* standard modes instead of the hidden AI duplicate.
+  if(document.getElementById('poWatchFlowPanel').dataset.poAiActive==='true')
+   document.getElementById('poFlowPlusAI').click();
+ });
  await page.waitForFunction(()=>{
   const p=document.getElementById('poWatchFlowPanel');
   return p&&!p.hidden&&p.querySelectorAll('.po-flowplus-nav button[data-flowplus-mode]').length===5;
@@ -91,6 +96,11 @@ async function run(page){
  },null,2));
  console.log('P325 WatchFlow keyboard Electron QA:',JSON.stringify(qa325));
  await page.setViewportSize({width:1920,height:1080});
- await page.evaluate(()=>window.PositronWatchFlow.close());
+ await page.evaluate(()=>{
+  // Restore AI-mode baseline for P326 and later AI regression tests.
+  if(document.getElementById('poWatchFlowPanel').dataset.poAiActive!=='true')
+   document.getElementById('poFlowPlusAI').click();
+  window.PositronWatchFlow.close();
+ });
 }
 module.exports={run};
