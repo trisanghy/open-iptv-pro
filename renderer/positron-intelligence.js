@@ -806,6 +806,27 @@
       details.append(cross);
      }
     }
+    // P295: show the most affected library groups only when explicitly expanded.
+    const groupsRisk=core.previewCategoryGroupRisks({categoryModel},parsed,channels(),{limit:5,maxChannels:1000});
+    if(groupsRisk.ok&&groupsRisk.totalGroups){
+     const riskDetails=d.createElement('details');riskDetails.id='poAICategoryGroupRisks';
+     riskDetails.className='po-ai-category-impact';
+     const riskSummary=d.createElement('summary');
+     riskSummary.textContent='Nhóm bị ảnh hưởng khi thay mô hình · '+groupsRisk.totalGroups+' nhóm (xem chi tiết)';
+     riskDetails.append(riskSummary);
+     const overall=d.createElement('p');
+     overall.textContent='Đã phân tích '+groupsRisk.scanned+' kênh; '+groupsRisk.lostTotal+
+      ' kênh có thể mất dự đoán đủ chắc chắn khi nhập mô hình.';
+     riskDetails.append(overall);
+     for(const group of groupsRisk.groups){
+      const line=d.createElement('p');line.className='po-ai-category-diff';
+      line.textContent=group.label+': '+group.lost+' mất dự đoán · '+
+       group.relabeled+' đổi chủ đề · '+group.gained+' mới đủ chắc chắn / '+group.count+' kênh.';
+      riskDetails.append(line);
+     }
+     const riskNote=d.createElement('small');riskNote.textContent=groupsRisk.caution;
+     riskDetails.append(riskNote);details.append(riskDetails);
+    }
     const note=d.createElement('small');note.textContent=categoryImpact.caution;
     details.append(note);importPreview.append(details);
     if(categoryImpact.coverageRisk==='high'){

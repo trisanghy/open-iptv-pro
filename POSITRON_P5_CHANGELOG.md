@@ -1,3 +1,12 @@
+## P5.1.295 — Xem nhóm kênh bị ảnh hưởng khi khôi phục Naive Bayes / Electron 4.23.380
+- Feature priority: NEW — Trong dự báo trước khi nhập mô hình AI, bổ sung bảng xem riêng tối đa năm nhóm kênh chịu nhiều tác động nhất (mất dự đoán đủ chắc chắn, thay nhãn, mới được phân loại), dựa trên tối đa 1.000 kênh đang có. Không còn phải suy luận từ một tỷ lệ tổng hợp.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → Naive Bayes → mở “Nhóm bị ảnh hưởng khi thay mô hình”.
+- Electron screenshot: positron-p51295-group-risk-before-1920x1080-real.png / positron-p51295-group-risk-after-1920x1080-real.png.
+- Evidence: Unit regression ba nhóm mẫu (phim/thể thao/tin tức) với nhãn đã dạy, chứng minh các nhóm chịu mất dự đoán được xếp đúng thứ tự; output chỉ có nhóm và số đếm, không lộ URL. Electron 1920x1080 kiểm tra mở/đóng, trước/sau, không lưu trọng số hay autoplay.
+- Privacy: Xử lý tên/nhóm kênh cục bộ, không gửi URL, M3U, lịch sử xem hay mô hình ra mạng; đây là dự đoán, không phải sự thật từ EPG hoặc đánh giá chất lượng stream.
+- Status: CANDIDATE — chờ CI/bộ cài/ảnh thật.
+
 ## P5.1.294 — AI phát hiện bất đồng giữa hai mẫu kênh / Electron 4.23.379
 - Feature priority: NEW — Khi xem trước khôi phục mô hình Naive Bayes, so sánh 180 kênh đầu và mẫu phân tầng theo nhóm, đo chênh lệch độ bao phủ trước/sau và mức suy giảm; cảnh báo khi hai kết quả chênh từ 20 điểm phần trăm hoặc mức rủi ro khác nhau.
 - Feature class: AI

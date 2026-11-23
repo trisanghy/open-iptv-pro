@@ -443,6 +443,36 @@
    caution:'Hai mẫu chỉ phản ánh tên và nhóm kênh đã nạp, không đo độ chính xác hay chất lượng phát video.'};
  }
 
+ // P295: read-only risk by channel group from local Naive Bayes predictions.
+ // No stream URL, viewing history, EPG fetch or playlist changes.
+ function previewCategoryGroupRisks(current,loaded,channelRows,{limit=5,maxChannels=1000}={}){
+  const imported=loaded?.ok===true?loaded:parseLearningBackup(loaded);
+  if(!imported?.ok)return {ok:false,reason:imported?.reason||'Không đọc được dữ liệu AI.'};
+  const present=sanitizedCategoryModel(current?.categoryModel),future=sanitizedCategoryModel(imported.categoryModel);
+  const cap=Math.max(1,Math.min(1200,Math.trunc(maxChannels)||1000));
+  const entries=(Array.isArray(channelRows)?channelRows:[])
+   .filter(ch=>ch?.id&&ch?.name).slice(0,cap);
+  const groups=new Map();let lostTotal=0;
+  for(const ch of entries){
+   const label=cleanQuery(ch.group||ch.groupTitle||'')||'Chưa có nhóm';
+   const key=normalize(label);
+   if(!groups.has(key))groups.set(key,{label,count:0,before:0,after:0,lost:0,relabeled:0,gained:0});
+   const bucket=groups.get(key);
+   const before=predictCategory(present,ch,{threshold:0.6}),after=predictCategory(future,ch,{threshold:0.6});
+   bucket.count++;
+   if(before)bucket.before++;
+   if(after)bucket.after++;
+   if(before&&!after){bucket.lost++;lostTotal++;}
+   if(before&&after&&before.key!==after.key)bucket.relabeled++;
+   if(!before&&after)bucket.gained++;
+  }
+  const size=Math.max(1,Math.min(10,Math.trunc(limit)||5));
+  const rows=[...groups.values()].sort((a,b)=>b.lost-a.lost||b.relabeled-a.relabeled||
+   b.count-a.count||a.label.localeCompare(b.label,'vi'));
+  return {ok:true,scanned:entries.length,totalGroups:rows.length,lostTotal,groups:rows.slice(0,size),
+   caution:'Rủi ro chỉ dự báo từ nhãn, tên và nhóm kênh trên máy; không phải thống kê chất lượng phát hoặc độ chính xác AI.'};
+ }
+
  // P282: explain learned Naive Bayes evidence using only channel-name tokens.
  // Never show a prediction from shared generic group names or unsupervised web data.
  function explainCategory(raw,channel){
@@ -699,5 +729,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,compareLearningBackup,previewLearningImpact,previewCategoryImpact,compareCategorySamples,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,compareLearningBackup,previewLearningImpact,previewCategoryImpact,compareCategorySamples,previewCategoryGroupRisks,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

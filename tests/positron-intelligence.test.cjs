@@ -893,3 +893,28 @@ test('P294 flags disagreement between first 180 and group-balanced AI restore pr
  for(const q of ['qa294','positron-p51294-disagreement-before-1920x1080-real.png',
  'positron-p51294-disagreement-after-1920x1080-real.png'])assert.ok(audit.includes(q),q);
 });
+
+test('P295 previews top Naive Bayes group risk before restore without exposing URLs',()=>{
+ const film={id:'f',name:'Phim hành động',group:'Phim',url:'https://private.invalid/secret.m3u8'};
+ const sport={id:'s',name:'Bóng đá thể thao',group:'Thể thao',url:'https://private.invalid/secret.m3u8'};
+ let model=C.emptyCategoryModel();
+ for(let i=0;i<12;i++){model=C.teachCategory(model,film,'cinema');model=C.teachCategory(model,sport,'sport');}
+ const channels=[...Array.from({length:12},(_,i)=>({...film,id:'film'+i})),
+  ...Array.from({length:8},(_,i)=>({...sport,id:'sport'+i})),
+  ...Array.from({length:5},(_,i)=>({id:'news'+i,name:'Bản tin',group:'Tin tức'}))];
+ const file=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const before=JSON.stringify(channels),weights=JSON.stringify(model);
+ const r=C.previewCategoryGroupRisks({categoryModel:model},file,channels,{limit:2});
+ assert.equal(r.ok,true);assert.equal(r.scanned,25);assert.equal(r.totalGroups,3);
+ assert.equal(r.groups.length,2);assert.equal(r.groups[0].label,'Phim');
+ assert.ok(r.groups[0].lost>=10);assert.ok(r.groups[1].lost>=6);
+ assert.ok(r.lostTotal>=18);
+ assert.ok(!JSON.stringify(r).includes('https://')&&!JSON.stringify(r).includes('.m3u8'));
+ assert.equal(JSON.stringify(channels),before);assert.equal(JSON.stringify(model),weights);
+ assert.equal(C.previewCategoryGroupRisks({},null,channels).ok,false);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("riskDetails.id='poAICategoryGroupRisks'"));
+ for(const x of ['qa295','positron-p51295-group-risk-before-1920x1080-real.png',
+  'positron-p51295-group-risk-after-1920x1080-real.png'])assert.ok(qa.includes(x),x);
+});
