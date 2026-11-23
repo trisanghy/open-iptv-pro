@@ -90,7 +90,8 @@ async function run(page){
   secondWithinViewport:afterWide.focusVisible&&afterNarrow.focusVisible,
   wrapsToFirst:wrapped.focus===0,
   noFeedbackButtonsSkipped:afterWide.focusText.includes('Xem')&&afterNarrow.focusText.includes('Xem'),
-  declaredShortcut:afterNarrow.shortcut==='Alt+Shift+K'&&afterWide.shortcut==='Alt+Shift+K',
+  declaredShortcut:[afterNarrow.shortcut,afterWide.shortcut]
+   .every(value=>String(value).trim().split(/[ ]+/).includes('Alt+Shift+K')),
   noAutoplay:original.current===final.current,
   playlistUnchanged:original.channels===final.channels,
   modelUnchanged:original.model===final.model,

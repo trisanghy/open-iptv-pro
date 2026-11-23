@@ -1625,3 +1625,13 @@ test('P339 sticky AI channel identity tracks the focused recommendation without 
   'positron-p51339-channel-context-after-720x900-real.png'
  ])assert.ok(extension.includes(filename)&&workflow.includes(filename),'screenshot missing '+filename);
 });
+
+
+test('P339 strips ranking prefix from sticky channel identity and preserves historical K shortcut',()=>{
+ const src=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const old=fs.readFileSync('scripts/positron-335-audit.cjs','utf8');
+ assert.ok(src.includes(".replace(/^[0-9]+[.][ ]*/,'').trim()"));
+ assert.ok(old.includes(".includes('Alt+Shift+K')"));
+ assert.ok(old.includes("split(/[ ]+/)"));
+ assert.ok(!old.includes("shortcut==='Alt+Shift+K'"));
+});

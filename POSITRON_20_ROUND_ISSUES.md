@@ -26,3 +26,6 @@
 
 ## Vòng 03/20 — P5.1.339 / 4.23.424 (CANDIDATE)
 - New AI channel context. Chờ QA native, Node test, bản dựng và ảnh đã trực tiếp mở xem. Giữ các phiên bản/tags/Release bất biến.
+
+- P338 full capture 45266137724: historical P335 audit failed on exact aria-keyshortcuts equality after P338 legitimately added P. P339 corrective patch treats the shortcut attribute as a whitespace-separated token list, still requires K and preserves the new P. Not counted as independent feature.
+- P339 initial fast QA 45267409859: found actual chip title "1. QA P339 Giải trí" while expected "QA P339 Giải trí". Cause: escaped regex in generated source matched literal \\d instead of digits. Corrected by numeric character class and preserved full hover tooltip. Must re-run native screenshots.

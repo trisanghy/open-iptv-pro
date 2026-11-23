@@ -258,7 +258,7 @@
   }
   const card=target.closest('.po-ai-card');
   const name=(card?.querySelector('.po-ai-card-header strong')?.textContent||'')
-   .replace(/^\\d+\\.\\s*/,'').trim();
+   .replace(/^[0-9]+[.][ ]*/,'').trim();
   focusChannel.hidden=!name;
   focusChannel.textContent=name;
   focusChannel.title=name?'Kênh đang chọn: '+name:'';
