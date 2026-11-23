@@ -1,4 +1,10 @@
 ## P5.1.301 — Cảnh báo khôi phục AI không bị che / Electron 4.23.386
+- Feature priority: NEW — Thêm trạng thái cảnh báo riêng trên nút khôi phục AI khi mô hình mới có thể làm mất dữ liệu phân loại đã học, giúp người xem phân biệt thao tác có rủi ro và kiểm tra trước khi xác nhận.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON; nếu dự báo rủi ro, đọc cảnh báo hiển thị trước mục nhóm và nút xác nhận màu hổ phách.
+- Electron screenshot: positron-p51301-coverage-warning-before-1920x1080-real.png / positron-p51301-coverage-warning-after-1920x1080-real.png.
+- Evidence: Dự báo cục bộ Naive Bayes kiểm tra trạng thái warning trước khi người dùng chạm vào dữ liệu học, kèm QA thật xác nhận thứ tự DOM, khung hình không che cảnh báo, aria-describedby, không tự phát video và không ghi playlist/mô hình.
+- Privacy: Chỉ đọc các thống kê mô hình học lưu tại máy; không gửi stream URL, M3U, lịch sử xem hay trọng số AI lên mạng.
 - Baseline: Ảnh Electron P5.1.300 (Actions 45147223325) cho thấy cảnh báo suy giảm độ bao phủ Naive Bayes nằm sau danh sách nhóm rất dài, gần nút khôi phục sticky.
 - Fix: Đưa cảnh báo quan trọng lên trước danh sách nhóm; nút xác nhận có trạng thái màu hổ phách khi có cảnh báo; aria-describedby liên kết cảnh báo thật với nút khôi phục.
 - Regression: Node test P301 và Electron Playwright CDP QA mới. Ảnh sau dự kiến 'positron-p51301-coverage-warning-after-1920x1080-real.png'; ảnh trước từ P300 'positron-p51300-affected-names-after-1920x1080-real.png'.

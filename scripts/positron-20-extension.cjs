@@ -10664,6 +10664,9 @@ async function runTwenty(page){
   ids:JSON.stringify(window.IPTVState.getChannels().map(ch=>ch.id)),
   current:window.IPTVState.getCurrent()?.id||''
  }));
+ // This is a genuine Electron UI screenshot before focusing the warning,
+ // distinct from the pre-fix P300 version image in the baseline artifact.
+ const before301=await page.screenshot({path:path.join(out,'positron-p51301-coverage-warning-before-1920x1080-real.png'),animations:'disabled'});
  const coverage301=page.locator('#poAICategoryCoverageRisk');
  await coverage301.scrollIntoViewIfNeeded({timeout:8000});
  await page.evaluate(()=>document.getElementById('poAICategoryCoverageRisk')?.scrollIntoView({block:'center',behavior:'instant'}));
@@ -10695,7 +10698,7 @@ async function runTwenty(page){
   playlistUnchanged:observed301.ids===start301.ids,
   noAutoplay:observed301.current===start301.current,noOverflow:!observed301.overflow};
  for(const [key,value] of Object.entries(qa301))assert.equal(value,true,'P301 coverage warning '+key+': '+JSON.stringify({qa301,observed301}));
- assert.deepEqual([after301.readUInt32BE(16),after301.readUInt32BE(20)],[1920,1080]);
+ for(const png of [before301,after301])assert.deepEqual([png.readUInt32BE(16),png.readUInt32BE(20)],[1920,1080]);
  assert.ok(!after300.equals(after301),'P301 warning should be visibly different in real Electron');
  console.log('P301 visible AI coverage warning QA passed:',JSON.stringify(qa301));
 

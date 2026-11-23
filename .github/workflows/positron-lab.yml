@@ -302,6 +302,7 @@ jobs:
           test -s positron-evidence/p5-20-rounds/positron-p51299-group-alert-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51300-affected-names-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51300-affected-names-after-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51301-coverage-warning-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51301-coverage-warning-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51298-small-samples-after-1920x1080-real.png
           test -s positron-evidence/audit-p5-20-rounds.json
