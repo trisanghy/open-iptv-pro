@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.278 — Hướng dẫn dạy AI từng kênh / Electron 4.23.363
+- Feature priority: NEW — Hướng dẫn dạy AI theo từng kênh chưa phân loại: hiển thị một đề xuất có độ chắc chắn thấp nhất, cho phép Ghi nhãn & tiếp hoặc Bỏ qua an toàn; chuyển danh sách đầy đủ kênh chưa phân loại vào mục mở rộng riêng để không có hai thanh cuộn chen nhau.
+- Feature class: AI
+- Evidence: Node test xác thực một hàng dạy, nút bỏ qua không ghi trọng số; QA Electron thật 1920x1080 chụp trước/sau và kiểm tra bỏ qua đổi kênh gợi ý mà không lưu nhãn, không tự phát, không đổi playlist, không tràn; tất cả phải xác minh từ CI.
+- User action: TV → WatchFlow → ✦ AI hợp gu → Thư mục EPG → Chưa có chủ đề EPG → Dạy AI nhanh → chọn nhãn/Ghi nhãn & tiếp hoặc Bỏ qua; mở danh sách đầy đủ nếu cần.
+- Privacy: Không gửi dữ liệu ra web, không gán nhãn khi Bỏ qua, giữ nguyên kênh/EPG/Favorites và không tự phát.
+- Electron screenshot: positron-p51278-guided-ai-before-1920x1080-real.png / positron-p51278-guided-ai-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE, Actions-only; GitHub Releases Stable-only.
+
 ## P5.1.277 — AI học chủ động từ kênh chưa phân loại / Electron 4.23.362
 - Feature priority: NEW — Học chủ động từ các kênh chưa có chủ đề EPG: xếp hạng độ không chắc chắn của Naive Bayes, hiển thị năm kênh ưu tiên, cho người dùng gán nhãn trực tiếp, không phỏng đoán khi thiếu nhãn hay tự phát video.
 - Feature class: AI

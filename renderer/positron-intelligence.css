@@ -122,3 +122,20 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-active-row button:disabled{opacity:.55;cursor:not-allowed}
 #poWatchFlowPanel .po-ai-active-row select:focus-visible,#poWatchFlowPanel .po-ai-active-row button:focus-visible{outline:2px solid #91f1c5;outline-offset:2px}
 @media(max-width:620px){#poWatchFlowPanel .po-ai-active-row{grid-template-columns:1fr 1fr}#poWatchFlowPanel .po-ai-active-row>span{grid-column:1/-1}}
+
+/* P278: guided AI teaching — one readable label at a time, no nested teacher scroll. */
+#poWatchFlowPanel .po-ai-active-learning{margin:7px 8px 10px;padding:11px;background:#102e32}
+#poWatchFlowPanel .po-ai-active-learning>strong{font-size:13px}
+#poWatchFlowPanel .po-ai-active-learning>p{line-height:1.35;margin:4px 0;font-size:11px}
+#poWatchFlowPanel #poAIActiveStatus:empty{display:none}
+#poWatchFlowPanel #poAIActiveStatus{color:#a7f6d1;font-weight:700}
+#poWatchFlowPanel #poAIActiveProgress{color:#8de5ca;font-size:12px;font-weight:700;margin:7px 0}
+#poWatchFlowPanel .po-ai-active-row{display:block;padding:5px 0 0;border-top:1px solid #34656a}
+#poWatchFlowPanel .po-ai-active-row>span{display:block;min-width:0;font-size:12px;line-height:1.4;max-height:4.2em;overflow:hidden;margin-bottom:9px}
+#poWatchFlowPanel .po-ai-active-controls{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;align-items:center;min-width:0}
+#poWatchFlowPanel .po-ai-active-controls select,#poWatchFlowPanel .po-ai-active-controls button{height:38px;min-width:0;border-radius:7px;font-size:11px;font-weight:700}
+#poWatchFlowPanel .po-ai-active-controls button{padding:0 9px}
+#poWatchFlowPanel .po-ai-folder-raw{margin:6px 9px 9px;border:1px solid #30555c;border-radius:8px;min-width:0}
+#poWatchFlowPanel .po-ai-folder-raw>summary{cursor:pointer;padding:9px 10px;font-size:12px;color:#a8dbd2;font-weight:650}
+#poWatchFlowPanel .po-ai-folder-raw .po-ai-folder-items{margin:0 5px 6px}
+@media(max-width:620px){#poWatchFlowPanel .po-ai-active-controls{grid-template-columns:1fr 1fr}#poWatchFlowPanel .po-ai-active-controls select{grid-column:1/-1}}

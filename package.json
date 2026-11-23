@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.362",
-  "description": "Positron P5.1.277: AI học chủ động các kênh chưa phân loại từ EPG",
+  "version": "4.23.363",
+  "description": "Positron P5.1.278: Hướng dẫn dạy AI từng kênh và bỏ qua an toàn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

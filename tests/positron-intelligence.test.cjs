@@ -402,3 +402,20 @@ test('P277 ưu tiên học chủ động các kênh EPG chưa phân loại, gi�
  for(const image of ['positron-p51277-active-teach-before-1920x1080-real.png',
   'positron-p51277-active-teach-after-1920x1080-real.png'])assert.ok(qa.includes(image),image);
 });
+
+test('P278 AI hướng dẫn từng kênh, Bỏ qua không thay đổi trọng số',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ['activeTeachIndex=0','poAIActiveProgress','poAIActiveSkip',
+  'activeTeachIndex=(activeTeachIndex+1)%candidates.length',
+  'folder.append(trainer)','po-ai-folder-raw','po-ai-active-controls'])
+  assert.ok(ui.includes(token),token);
+ assert.ok(!ui.includes('candidates.forEach((suggestion,index)=>'),'only one suggested channel at a time');
+ const start=ui.indexOf("skip.addEventListener('click'");
+ const skip=ui.slice(start,start+300);
+ assert.ok(start>=0&&!skip.includes('save(')&&!skip.includes('teachCategory'),'skip must not train or persist');
+ assert.ok(css.includes('#poWatchFlowPanel .po-ai-folder-raw>summary'));
+ for(const image of ['positron-p51278-guided-ai-before-1920x1080-real.png',
+  'positron-p51278-guided-ai-after-1920x1080-real.png'])assert.ok(qa.includes(image),image);
+});

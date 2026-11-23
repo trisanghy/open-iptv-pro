@@ -15,7 +15,7 @@
  let alertEnabled=enabled&&record?.alertEnabled===true;const notified=new Set();
  const taughtIds=new Set((Array.isArray(record?.taughtIds)?record.taughtIds:[]).slice(-1000)
   .filter(x=>typeof x==='string'&&x.length<=160));
- let activeStatusMessage='';
+ let activeStatusMessage='',activeTeachIndex=0;
  let web=load(WEB_KEY);if(!web||typeof web!=='object'||Array.isArray(web))web={};
  const webValid=()=>{
   const live={};const now=Date.now();
@@ -356,15 +356,22 @@
     if(!candidates.length){
      const empty=d.createElement('p');empty.textContent='Chưa có kênh phù hợp để dạy; đã hoàn thành những kênh ưu tiên hiện có.';trainer.append(empty);
     }
-    candidates.forEach((suggestion,index)=>{
-     const row=d.createElement('div');row.className='po-ai-active-row';row.id='poAIActiveRow'+index;
+    // P278: teach exactly one uncertainty-ranked channel, then advance.
+    // The remaining 500+ channel rows are behind a separate disclosure.
+    if(candidates.length){
+     const index=activeTeachIndex%candidates.length,suggestion=candidates[index];
+     const progress=d.createElement('p');progress.id='poAIActiveProgress';
+     progress.textContent='Kênh '+(index+1)+'/'+candidates.length+' · Bạn quyết định chủ đề';
+     const row=d.createElement('div');row.className='po-ai-active-row';row.id='poAIActiveRow0';
      const text=d.createElement('span');text.textContent=suggestion.channel.name+' · '+suggestion.reason;
-     const select=d.createElement('select');select.id='poAIActiveSelect'+index;select.setAttribute('aria-label','Chủ đề chính xác của '+suggestion.channel.name);
+     text.title=text.textContent;
+     const actions=d.createElement('div');actions.className='po-ai-active-controls';
+     const select=d.createElement('select');select.id='poAIActiveSelect0';select.setAttribute('aria-label','Chủ đề chính xác của '+suggestion.channel.name);
      const placeholder=d.createElement('option');placeholder.value='';placeholder.textContent='Chọn chủ đề…';select.append(placeholder);
      for(const [kind,label] of Object.entries(core.KINDS)){
       if(kind==='other')continue;const opt=d.createElement('option');opt.value=kind;opt.textContent=label;select.append(opt);
      }
-     const teach=d.createElement('button');teach.type='button';teach.id='poAIActiveButton'+index;teach.textContent='Ghi nhãn';teach.disabled=true;
+     const teach=d.createElement('button');teach.type='button';teach.id='poAIActiveButton0';teach.textContent='Ghi nhãn & tiếp';teach.disabled=true;
      select.addEventListener('change',()=>{teach.disabled=!core.KINDS[select.value]||select.value==='other';});
      teach.addEventListener('click',()=>{
       if(!enabled||!core.KINDS[select.value]||select.value==='other')return;
@@ -377,11 +384,25 @@
       const stored=save();render();
       if(!stored)state()?.toast?.('Chưa lưu được mô hình mới vào bộ nhớ','warn');
      });
-     row.append(text,select,teach);trainer.append(row);
-    });
-    rows.prepend(trainer);
+     const skip=d.createElement('button');skip.type='button';skip.id='poAIActiveSkip';skip.textContent='Bỏ qua';
+     skip.title='Chuyển sang kênh tiếp theo mà không lưu bất kỳ nhãn nào';
+     skip.addEventListener('click',()=>{
+      activeTeachIndex=(activeTeachIndex+1)%candidates.length;
+      activeStatusMessage='Đã bỏ qua kênh trước. Không ghi nhãn hay sửa nguồn.';
+      render();
+     });
+     actions.append(select,teach,skip);row.append(text,actions);trainer.append(progress,row);
+    }
+    folder.append(trainer);
+
    }
-   folder.append(rows);list.append(folder);
+   if(key==='other'&&enabled){
+    const channelDisclosure=d.createElement('details');channelDisclosure.className='po-ai-folder-raw';
+    const disclosureLabel=d.createElement('summary');
+    disclosureLabel.textContent='Xem danh sách đầy đủ '+items.length+' kênh chưa phân loại';
+    channelDisclosure.append(disclosureLabel,rows);folder.append(channelDisclosure);
+   }else folder.append(rows);
+   list.append(folder);
   };
   for(const [index,group] of catalog.groups.entries())
    addFolder(group.key,group.label,group.items,index===0);
