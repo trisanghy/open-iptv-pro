@@ -224,6 +224,11 @@
   event.preventDefault();event.stopPropagation();
   buttons[next].focus({preventScroll:true});
  });
+ // P332: reveal the P331 remote keys and their safe focus-only semantics.
+ const modeHelp=d.createElement('p');modeHelp.className='po-ai-keyboard-help';
+ modeHelp.id='poAIKeyboardHelp';
+ modeHelp.textContent='← → ↑ ↓: chuyển chế độ · Enter/Space: chọn';
+ modeBar.setAttribute('aria-describedby',modeHelp.id);
  const alertRow=d.createElement('label');alertRow.className='po-ai-alerts';
  const alertCheck=d.createElement('input');alertCheck.type='checkbox';alertCheck.id='poAIAlerts';
  alertCheck.checked=alertEnabled;alertCheck.disabled=!enabled;
@@ -234,7 +239,7 @@
  const list=d.createElement('div');list.id='poAICards';list.className='po-ai-cards';
  const privacy=d.createElement('p');privacy.className='po-ai-privacy';
  privacy.textContent='Mặc định KHÔNG học. Khi bật: chỉ lưu trọng số sở thích trong máy; học sau ≥35 giây phát có hình/tiếng, không tải stream hay lịch sử lên mạng. Tra cứu web chỉ gửi tên kênh, không gửi playlist/URL/hành vi. Bạn có thể xóa mô hình.';
- area.append(title,controls,alertRow,modeBar,summary,list,privacy,modelManager);
+ area.append(title,controls,alertRow,modeBar,modeHelp,summary,list,privacy,modelManager);
 
  // P322: context-aware accessible header; preserve native wording for non-AI.
  const watchTitle=byId('poWatchFlowTitle'),watchKicker=panel.querySelector('.po-watchflow-kicker');

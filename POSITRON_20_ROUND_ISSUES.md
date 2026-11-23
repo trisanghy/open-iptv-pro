@@ -105,3 +105,11 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Thêm .github/workflows/positron-fast-round.yml cùng scripts/positron-fast-round.cjs: chạy Electron thật trên Xvfb/CDP và đúng scripts/positron-NNN-audit.cjs theo nhãn package.json.
 - Mục đích: lấy ảnh/QA riêng cho vòng hiện tại mà không phải đợi lại toàn bộ 50+20 kiểm tra lịch sử; workflow positron-lab.yml cũ vẫn chạy độc lập, không bỏ kiểm tra nào.
 - Fast QA phải kiểm tra PNG before/after thực tế, JavaScript errors, version thực và báo fail trung thực. Chưa coi P331 đủ quy trình nếu fast CI chưa đạt và ảnh chưa được xem.
+
+
+## Vòng tiếp — P5.1.332: CANDIDATE
+- Đã xem ảnh P331 fast native Electron từ run 45251855269, 16/16 flag đạt, desktop 1920 khi chưa có nguồn: WatchFlow Intelligence panel chỉ chiếm khoảng 265px khiến sáu nút 3x2 xuống dòng; 720 thì nút chế độ thấp 38px.
+- Vấn đề từ CSS: selector width 528px loại trừ data-empty-playlist="true"; khi AI mở không nguồn thì rơi về kích thước mặc định rất hẹp. 6 nút cũng min-height 38px, dù ứng dụng ưu tiên remote.
+- P332 sửa trực tiếp trong CSS/JS: đảm bảo AI-active desktop panel width 528px kể cả khi chưa có playlist, tăng min-height 44px; hiển thị hướng dẫn phím và aria-describedby.
+- QA Electron mới: đo width 1920, minheight 44 của đủ 6 nút, hint, focus-only, 720 width/overflow, không đổi playlist/model/autoplay; ảnh before panel đóng và after panel mở; đối chiếu với ảnh P331 panel mở làm baseline cũ.
+- CHƯA ĐẠT cho đến khi CI/ảnh thật của P332 được mở soát.

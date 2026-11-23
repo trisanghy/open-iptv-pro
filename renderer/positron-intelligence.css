@@ -405,3 +405,18 @@ html[data-positron="true"] #poWatchFlowPanel .po-ai-card .po-ai-actions button:f
  outline:3px solid #9af0cd!important;outline-offset:2px!important;
  box-shadow:0 0 0 4px rgba(19,45,51,.95)!important;
 }
+
+
+/* P5.1.332: empty-playlist desktop must not collapse WatchFlow Intelligence into
+   a 265px strip; the six real AI modes and their labels need usable width. */
+@media(min-width:1000px){
+ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel[data-po-ai-active="true"]{
+  width:min(528px,calc(100vw - 32px))!important;
+  max-width:calc(100vw - 32px)!important;
+ }
+}
+#poWatchFlowPanel .po-ai-modes button{min-height:44px!important}
+#poWatchFlowPanel .po-ai-keyboard-help{
+ margin:0 0 3px;color:#aad8d4;font-size:12px;line-height:1.4;
+ overflow-wrap:anywhere;
+}

@@ -1,3 +1,12 @@
+## P5.1.332 / Electron 4.23.417 — WatchFlow AI không nguồn: khung đọc rộng, nút 44px và gợi ý phím (CANDIDATE)
+- Feature priority: NEW — bổ sung chế độ hiển thị WatchFlow Intelligence dễ đọc khi chưa có playlist trên desktop; trước đó bảng AI chỉ rộng khoảng 265px khiến sáu nút chế độ quấn chữ, khó chọn bằng remote.
+- Feature class: AI
+- User action: Tại TV ngay cả khi chưa thêm M3U, nhấn F6 để mở bảng AI rộng 528px trên desktop, xem rõ sáu nút cao ít nhất 44px và dòng gợi ý dùng mũi tên/Enter/Space; màn hẹp vẫn giữ chiều rộng phù hợp.
+- Electron screenshot: positron-p51332-ai-onboard-before-1920x1080-real.png / positron-p51332-ai-onboard-after-1920x1080-real.png / positron-p51332-ai-onboard-after-720x900-real.png.
+- Evidence: đã mở ảnh Electron P331 từ fast CI với no-playlist 1920: bảng AI bị bó hẹp ~265px và ba cột nút quấn nhiều dòng, ảnh 720 có nút thấp 38px. QA P332 đo panel >=500px ở desktop, nút >=44px trên cả desktop/720, trợ giúp bàn phím aria-describedby, không tràn, không thay playlist/model/current. Ảnh BEFORE của P332 là panel đóng trên cùng binary; ảnh P331 trước đó là baseline màn AI mở trước sửa.
+- Privacy: thay đổi bố cục và nhãn hướng dẫn cục bộ, không truyền M3U/stream URL/EPG/lịch sử xem hoặc trọng số AI, không bật học hoặc autoplay.
+- Status: CANDIDATE cho tới khi Node/CI screenshot thật được mở soát và build xác minh; public Release stable-only.
+
 ## P5.1.331 / Electron 4.23.416 — Điều khiển sáu chế độ AI bằng remote/mũi tên (CANDIDATE)
 - Feature priority: NEW — bổ sung điều hướng phím mũi tên lên, xuống, trái, phải, Home và End cho sáu chế độ WatchFlow Intelligence trên lưới hai hàng; không còn phải bấm Tab nhiều lần khi sử dụng remote/bàn phím.
 - Feature class: AI
