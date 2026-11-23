@@ -236,6 +236,29 @@
  }
 
 
+ // P277: deterministic local active learning queue. Prioritize uncertain
+ // unclassified channels, but NEVER assign a label without user action.
+ function rankUnclassified(items,raw,{limit=5,excludeIds=[]}={}){
+  const model=sanitizedCategoryModel(raw);
+  const excluded=new Set((Array.isArray(excludeIds)?excludeIds:[]).slice(-1500).map(x=>String(x).slice(0,160)));
+  const rows=[],seen=new Set(),maximum=Math.max(1,Math.min(12,Math.trunc(Number(limit))||5));
+  for(const item of (Array.isArray(items)?items:[]).slice(0,5000)){
+   const ch=item?.channel;if(!ch?.id||!ch.name||ch.status==='dead')continue;
+   const id=String(ch.id).slice(0,160);
+   if(seen.has(id)||excluded.has(id))continue;seen.add(id);
+   const tokens=categoryTokens(ch);if(!tokens.length)continue;
+   const guess=predictCategory(model,ch,{threshold:0.55});
+   const uncertain=guess?1-guess.confidence:1;
+   const descriptive=tokens.filter(t=>/[a-z]{3}/.test(t)).length;
+   const priority=uncertain*100+Math.min(5,descriptive);
+   rows.push({channel:ch,prediction:guess,priority,
+    reason:guess?'Cần xác minh '+KINDS[guess.key]+' ('+Math.round(guess.confidence*100)+'% từ nhãn AI)':
+     'AI chưa đủ nhãn để phân loại, cần người xem xác nhận'});
+  }
+  rows.sort((a,b)=>b.priority-a.priority||String(a.channel.name).localeCompare(String(b.channel.name),'vi'));
+  return rows.slice(0,maximum);
+ }
+
  // P5.1.272: virtual, multi-label EPG folders. Every matching XMLTV topic
  // gets the same channel reference; the original playlist is never modified.
  function epgFolders(channels,guide,api,{clock=Date.now(),limit=5000}={}){
@@ -457,5 +480,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

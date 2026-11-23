@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.277 — AI học chủ động từ kênh chưa phân loại / Electron 4.23.362
+- Feature priority: NEW — Học chủ động từ các kênh chưa có chủ đề EPG: xếp hạng độ không chắc chắn của Naive Bayes, hiển thị năm kênh ưu tiên, cho người dùng gán nhãn trực tiếp, không phỏng đoán khi thiếu nhãn hay tự phát video.
+- Feature class: AI
+- Evidence: Node unit kiểm tra xếp hạng bất định, giới hạn, loại kênh đã dạy và không sửa nguồn; Electron 1920×1080 thao tác trong thư mục Chưa có chủ đề EPG, chọn chủ đề, ghi nhãn, thấy bộ đếm tăng và bản ghi cục bộ, giữ nguyên playlist. Ảnh trước/sau và QA phải được xác minh từ CI.
+- User action: TV → WatchFlow → AI hợp gu → Thư mục EPG → mở Chưa có chủ đề EPG → Dạy AI nhanh → chọn chủ đề và Ghi nhãn; trình tự học theo các trường hợp không chắc chắn nhất.
+- Privacy: Không có tìm kiếm web nền, không gọi backend, không thay playlist, không tự phát; chỉ lưu nhãn và danh tính kênh tối đa 1000 trong máy, có thể xóa cùng mô hình phân loại.
+- Electron screenshot: positron-p51277-active-teach-before-1920x1080-real.png / positron-p51277-active-teach-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE / Actions-only, GitHub Releases chỉ giữ Stable.
+
 ## P5.1.276 — Quản lý mô hình học AI và xóa riêng / Electron 4.23.361
 - Feature priority: NEW — Bảng quản lý giúp kiểm tra ba mô hình học thực Logistic, Naive Bayes, UCB cùng dữ liệu/dung lượng từng mô hình và xóa riêng, không đụng đến playlist, guide hoặc mô hình học còn lại.
 - Feature class: AI

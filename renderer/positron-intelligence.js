@@ -13,6 +13,9 @@
  let record=load(KEY);
  let enabled=record?.enabled===true,model=core.sanitizedModel(record?.model),bandit=core.sanitizedBandit(record?.bandit),categoryModel=core.sanitizedCategoryModel(record?.categoryModel),active=null,aiOpen=false;
  let alertEnabled=enabled&&record?.alertEnabled===true;const notified=new Set();
+ const taughtIds=new Set((Array.isArray(record?.taughtIds)?record.taughtIds:[]).slice(-1000)
+  .filter(x=>typeof x==='string'&&x.length<=160));
+ let activeStatusMessage='';
  let web=load(WEB_KEY);if(!web||typeof web!=='object'||Array.isArray(web))web={};
  const webValid=()=>{
   const live={};const now=Date.now();
@@ -22,7 +25,7 @@
   }
   return live;
  };
- const save=()=>{try{win.localStorage.setItem(KEY,JSON.stringify({enabled,alertEnabled,model,bandit,categoryModel}));return true;}catch{return false;}};
+ const save=()=>{try{win.localStorage.setItem(KEY,JSON.stringify({enabled,alertEnabled,model,bandit,categoryModel,taughtIds:[...taughtIds].slice(-1000)}));return true;}catch{return false;}};
  const saveWeb=()=>{try{
   const entries=Object.entries(web).sort((a,b)=>(b[1]?.at||0)-(a[1]?.at||0)).slice(0,60);
   web=Object.fromEntries(entries);win.localStorage.setItem(WEB_KEY,JSON.stringify(web));return true;
@@ -95,7 +98,7 @@
     if(!item.count)return;
     confirmDelete(item.id,remove,()=>{
      if(item.id==='preference'){model=core.emptyModel();active=null;notified.clear();}
-     if(item.id==='category')categoryModel=core.emptyCategoryModel();
+     if(item.id==='category'){categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';}
      if(item.id==='explore')bandit={};
     },item.name);
    });
@@ -342,6 +345,42 @@
      item.topic?.nextTitle?'Sắp tới: '+item.topic.nextTitle:'Chưa có chương trình phù hợp trong khung giờ';
     const wrap=d.createElement('div');wrap.className='po-ai-folder-row';wrap.append(entry,meta);rows.append(wrap);
    }
+   // P277: learn only after explicit selection. Preserve EPG virtual folders and M3U playlist.
+   if(key==='other'&&enabled){
+    const candidates=core.rankUnclassified(items,categoryModel,{limit:5,excludeIds:[...taughtIds]});
+    const trainer=d.createElement('section');trainer.id='poAIActiveLearning';trainer.className='po-ai-active-learning';
+    const heading=d.createElement('strong');heading.textContent='Dạy AI nhanh · '+candidates.length+' kênh ưu tiên';
+    const hint=d.createElement('p');hint.textContent='AI ưu tiên tên chưa đủ chắc chắn. Chọn chủ đề đúng để mô hình Naive Bayes học tại máy; không tự thay đổi thư mục gốc.';
+    const status=d.createElement('p');status.id='poAIActiveStatus';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.textContent=activeStatusMessage;
+    trainer.append(heading,hint,status);
+    if(!candidates.length){
+     const empty=d.createElement('p');empty.textContent='Chưa có kênh phù hợp để dạy; đã hoàn thành những kênh ưu tiên hiện có.';trainer.append(empty);
+    }
+    candidates.forEach((suggestion,index)=>{
+     const row=d.createElement('div');row.className='po-ai-active-row';row.id='poAIActiveRow'+index;
+     const text=d.createElement('span');text.textContent=suggestion.channel.name+' · '+suggestion.reason;
+     const select=d.createElement('select');select.id='poAIActiveSelect'+index;select.setAttribute('aria-label','Chủ đề chính xác của '+suggestion.channel.name);
+     const placeholder=d.createElement('option');placeholder.value='';placeholder.textContent='Chọn chủ đề…';select.append(placeholder);
+     for(const [kind,label] of Object.entries(core.KINDS)){
+      if(kind==='other')continue;const opt=d.createElement('option');opt.value=kind;opt.textContent=label;select.append(opt);
+     }
+     const teach=d.createElement('button');teach.type='button';teach.id='poAIActiveButton'+index;teach.textContent='Ghi nhãn';teach.disabled=true;
+     select.addEventListener('change',()=>{teach.disabled=!core.KINDS[select.value]||select.value==='other';});
+     teach.addEventListener('click',()=>{
+      if(!enabled||!core.KINDS[select.value]||select.value==='other')return;
+      const count=categoryModel.examples;
+      categoryModel=core.teachCategory(categoryModel,suggestion.channel,select.value);
+      if(categoryModel.examples<=count){state()?.toast?.('Không thể học nhãn: cần tên kênh có thông tin','warn');return;}
+      taughtIds.add(String(suggestion.channel.id).slice(0,160));
+      while(taughtIds.size>1000)taughtIds.delete(taughtIds.values().next().value);
+      activeStatusMessage='Đã học nhãn '+core.KINDS[select.value]+' cho '+suggestion.channel.name+'.';
+      const stored=save();render();
+      if(!stored)state()?.toast?.('Chưa lưu được mô hình mới vào bộ nhớ','warn');
+     });
+     row.append(text,select,teach);trainer.append(row);
+    });
+    rows.prepend(trainer);
+   }
    folder.append(rows);list.append(folder);
   };
   for(const [index,group] of catalog.groups.entries())
@@ -509,7 +548,7 @@
   else clear.focus();
  });
  bulk.addEventListener('click',()=>confirmDelete('all',bulk,()=>{
-  model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();active=null;alertEnabled=false;alertCheck.checked=false;
+  model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';active=null;alertEnabled=false;alertCheck.checked=false;
   notified.clear();
  },'toàn bộ dữ liệu học AI trên máy'));
  // Opt-in, in-app alert only: score actual imported EPG against locally

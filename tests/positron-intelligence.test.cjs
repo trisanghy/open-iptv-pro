@@ -373,3 +373,32 @@ test('P276 WatchFlow quản lý 3 mô hình có trọng số và xóa riêng an 
  for(const name of ['positron-p51276-model-manager-before-1920x1080-real.png',
   'positron-p51276-model-manager-after-1920x1080-real.png'])assert.ok(qa.includes(name));
 });
+
+// P277: epistemic uncertainty, NOT fabricated channel categories.
+test('P277 ưu tiên học chủ động các kênh EPG chưa phân loại, giữ nguyên danh sách',()=>{
+ let model=C.emptyCategoryModel();
+ model=C.teachCategory(model,{name:'Atlas Academy Alpha'},'education');
+ model=C.teachCategory(model,{name:'Business Daily Report'},'news');
+ const items=[
+  {channel:mk('academy','Atlas Academy Beta'),topic:{source:'other'}},
+  {channel:mk('community','Community Local One'),topic:{source:'other'}},
+  {channel:mk('business','Business Local One'),topic:{source:'other'}}
+ ];
+ const snapshot=JSON.stringify(items);
+ const ranked=C.rankUnclassified(items,model,{limit:3});
+ assert.ok(ranked.length===3,'only eligible local channels should be candidates');
+ assert.ok(ranked.every(r=>r.priority>=0&&r.priority<=105&&r.channel?.id));
+ assert.equal(C.rankUnclassified(items,model,{limit:1}).length,1);
+ assert.ok(!C.rankUnclassified(items,model,{limit:3,excludeIds:['academy']}).some(r=>r.channel.id==='academy'));
+ assert.deepEqual(C.rankUnclassified(null,model),[]);
+ assert.equal(JSON.stringify(items),snapshot,'never change actual M3U or EPG data');
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ for(const token of ['poAIActiveLearning','poAIActiveStatus','poAIActiveSelect',
+  'rankUnclassified(items,categoryModel','taughtIds:[...taughtIds].slice(-1000)',
+  'categoryModel=core.teachCategory(categoryModel,suggestion.channel,select.value)'])assert.ok(ui.includes(token),token);
+ assert.ok(css.includes('.po-ai-active-row select:focus-visible'));
+ for(const image of ['positron-p51277-active-teach-before-1920x1080-real.png',
+  'positron-p51277-active-teach-after-1920x1080-real.png'])assert.ok(qa.includes(image),image);
+});

@@ -110,3 +110,15 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-clear-all{min-height:36px;border:1px solid #9a665a;border-radius:8px;background:#50312f;color:#fff4eb;padding:8px 10px;cursor:pointer;font-size:12px;font-weight:700}
 #poWatchFlowPanel .po-ai-clear-all:disabled{opacity:.55;cursor:not-allowed}
 #poWatchFlowPanel .po-ai-clear-all:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}
+
+/* P277: active learning stays inside the explicitly opened uncategorized folder. */
+#poWatchFlowPanel .po-ai-active-learning{padding:10px;background:#102c32;border:1px solid #39736c;border-radius:10px;margin:7px 0;color:#e9fff5}
+#poWatchFlowPanel .po-ai-active-learning>strong{display:block;font-size:13px;color:#cbffdf}
+#poWatchFlowPanel .po-ai-active-learning>p{font-size:11px;color:#b4d3d1;margin:5px 0;line-height:1.45}
+#poWatchFlowPanel .po-ai-active-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(110px,0.75fr) auto;gap:6px;align-items:center;padding:8px 0;border-top:1px solid #325b5d}
+#poWatchFlowPanel .po-ai-active-row>span{min-width:0;overflow-wrap:anywhere;font-size:11px;line-height:1.45}
+#poWatchFlowPanel .po-ai-active-row select,#poWatchFlowPanel .po-ai-active-row button{height:34px;min-width:0;max-width:100%;border:1px solid #467f72;border-radius:7px;background:#193e42;color:#e9fff3;font-size:11px}
+#poWatchFlowPanel .po-ai-active-row button{padding:0 9px;background:#286d5f;cursor:pointer}
+#poWatchFlowPanel .po-ai-active-row button:disabled{opacity:.55;cursor:not-allowed}
+#poWatchFlowPanel .po-ai-active-row select:focus-visible,#poWatchFlowPanel .po-ai-active-row button:focus-visible{outline:2px solid #91f1c5;outline-offset:2px}
+@media(max-width:620px){#poWatchFlowPanel .po-ai-active-row{grid-template-columns:1fr 1fr}#poWatchFlowPanel .po-ai-active-row>span{grid-column:1/-1}}
