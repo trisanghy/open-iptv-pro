@@ -294,3 +294,8 @@ html[data-iptv-device="mobile"] body #page-tv #castBtn[data-cast-connection]:not
 .iptv-tv-body .tv-history-card[data-keyboard-selected="true"] .tv-history-icon{
  background:#29d776;color:#082015
 }
+
+#iptvCastOverlay .cx-air-browser-help{margin-top:13px;padding:13px 14px;border:1px solid var(--cx-border,#34485c);border-radius:12px;background:var(--cx-card,#132335)}
+#iptvCastOverlay .cx-air-browser-help[hidden]{display:none!important}
+#iptvCastOverlay .cx-air-browser-help p{margin:0 0 11px;line-height:1.55;font-size:13px;color:var(--cx-muted,#a9b9c7)}
+#iptvCastOverlay #cxAirUseCast{max-width:100%;white-space:normal;text-align:center}

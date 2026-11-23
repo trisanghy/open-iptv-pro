@@ -620,18 +620,20 @@ if not all(x in html and x in root_html for x in (repair_start,repair_end)):
 html=html[:html.index(repair_start)]+root_html[root_html.index(repair_start):root_html.index(repair_end,root_html.index(repair_start))]+html[html.index(repair_end,html.index(repair_start)):]
 html=html.replace('</head>','<link rel="stylesheet" href="web-source-repair-layout.css?v=source-repair-layout-20261120a"/></head>',1)
 
-# Keep the heavy DASH/HLS decoders installed but do not download or execute
-# them until playback. Same-origin loader is versioned and browser-cacheable.
+# Eagerly load HLS/DASH at startup as selected; keep same-origin loader fallback.
 for name in ('hls.min.js','dash.all.min.js'):
     eager='<script src="'+name+'"></script>'
-    if html.count(eager)!=1:sys.exit('Web fastload decoder script anchor changed: '+name)
-    html=html.replace(eager,'',1)
+    if html.count(eager)!=1:sys.exit('Web eager decoder script anchor changed: '+name)
 loader_tag='<script src="web-playback-libs.js?v=startup-fastload-20261123a"></script>'
 app_match=re.search(r'<script src="app\.js\?v=[^"]+"></script>',html)
 if app_match is None or html.count('<script src="app.js?')!=1:
     sys.exit('Web fastload entrypoint anchor missing')
 html=html[:app_match.start()]+loader_tag+html[app_match.start():]
 copy2(Path(__file__).resolve().parent.parent/'web-playback-libs.js',out/'web-playback-libs.js')
+# Rebuilding the WebView must keep current browser Cast/AirPlay assets.
+for js_file in ('web-cast-sender.js','web-cast-v2.js'):
+    html=re.sub(r'(?<=src=")'+re.escape(js_file)+r'(?:\?v=[^"]+)?',js_file+'?v=airplay-chrome-20261123b',html)
+html=re.sub(r'(?<=href=")web-cast-v2\.css(?:\?v=[^"]+)?','web-cast-v2.css?v=airplay-chrome-20261123b',html)
 
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')

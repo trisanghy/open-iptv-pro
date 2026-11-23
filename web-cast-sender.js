@@ -28,8 +28,11 @@
   (/Macintosh/i.test(root.navigator?.userAgent||'')&&Number(root.navigator?.maxTouchPoints||0)>1);
  const isMac=()=>/Macintosh|Mac OS X/i.test(root.navigator?.userAgent||'');
  const isSafari=()=>/Safari/i.test(root.navigator?.userAgent||'')&&!/Chrome|Chromium|CriOS|Edg|OPR/i.test(root.navigator?.userAgent||'');
- const hasAirPlay=()=>isSafari()&&!!(video()&&(typeof video().webkitShowPlaybackTargetPicker==='function'||
-   typeof video().remote?.prompt==='function'));
+ // Chrome on macOS RemotePlayback.prompt can mean Google Cast, not Apple AirPlay.
+ // iOS Chrome uses WebKit; gate by genuine picker rather than a Chrome remote prompt.
+ const hasAirPlay=()=>!!(video()&&(isSafari()||isAppleMobile())&&
+   (typeof video().webkitShowPlaybackTargetPicker==='function'||
+    (isSafari()&&typeof video().remote?.prompt==='function')));
  function selectDevice(){
   const select=el('castDevices');if(!select)return;
   const session=currentSession();
@@ -84,7 +87,7 @@
   doc.head.appendChild(script);
  }
  function airplayPicker(){
-  const media=video();if(!media)return false;
+  const media=video();if(!media||!hasAirPlay())return false;
   media.disableRemotePlayback=false;
   media.setAttribute?.('x-webkit-airplay','allow');
   try{
@@ -109,8 +112,8 @@
   airSection.classList.toggle('hidden',!hasAirPlay()&&!isAppleMobile()&&!isMac());
   el('airplayScan').hidden=true; // Bonjour discovery needs the Electron native process.
   el('airplayDeviceList').textContent=hasAirPlay()?'Safari tự hiển thị TV AirPlay trong bộ chọn; website không thể đọc danh sách Bonjour.':'AirPlay cần Safari trên Mac/iPhone/iPad. Nếu dùng Chrome, mở trang này trong Safari hoặc dùng Phản chiếu màn hình.';
-  el('castAirplay').textContent='◉ Chọn TV bằng AirPlay';
-  el('castAirplay').disabled=!hasAirPlay();
+  el('castAirplay').textContent=hasAirPlay()?'◉ Chọn TV bằng AirPlay':'◉ Hướng dẫn phát lên TV từ Chrome';
+  el('castAirplay').disabled=false;
   el('airplayMobileHelp').hidden=hasAirPlay();
   const lanHint=el('castLanHint');
   if(lanHint)lanHint.textContent='Web không thể tạo máy chủ LAN như Electron. Có thể lấy URL luồng trực tiếp nếu TV tự mở được nguồn HTTP/HTTPS và bạn có quyền chia sẻ.';
@@ -218,7 +221,7 @@
  function initControls(){
   el('castScan')?.addEventListener('click',scan);
   el('castPlay')?.addEventListener('click',()=>{void play();});
-  el('castAirplay')?.addEventListener('click',()=>{if(!airplayPicker())setStatus('Trình duyệt này không mở được bộ chọn AirPlay. Hãy dùng Safari hoặc Phản chiếu màn hình.',true);});
+  el('castAirplay')?.addEventListener('click',()=>{if(!airplayPicker())setStatus('Chrome trên Mac không mở được AirPlay Apple. Mở Trung tâm điều khiển > Phản chiếu màn hình > chọn TV cùng Wi-Fi; hoặc dùng Safari. Nếu TV có Google Cast, chọn tab Google Cast.',false);});
   el('castLink')?.addEventListener('click',link);
   el('castCopy')?.addEventListener('click',()=>{void copy();});
   el('castStop')?.addEventListener('click',()=>{void stop();});
@@ -227,7 +230,7 @@
  loadSdk();
  const getAirplayState=()=>{
   const media=video();
-  const connected=isSafari()&&!!(media&&(media.webkitCurrentPlaybackTargetIsWireless===true||
+  const connected=hasAirPlay()&&!!(media&&(media.webkitCurrentPlaybackTargetIsWireless===true||
    media.remote?.state==='connected'));
   return {connected,name:connected?'AirPlay TV':''};
  };
@@ -268,5 +271,5 @@
  }
  initAirplayWatcher();
  const getState=()=>({initialized,connected:!!currentSession(),name:currentSession()?getName(currentSession()):'',active,remotePaused});
- root.OpenIPTVWebCast=Object.freeze({open,scan,play,stop,stopOnLocalStop,onChannelChanged,airplayPicker,validSource,mediaType,getState,getAirplayState,transportRemote,setReceiverVolume});
+ root.OpenIPTVWebCast=Object.freeze({open,scan,play,stop,stopOnLocalStop,onChannelChanged,airplayPicker,canAirPlay:hasAirPlay,validSource,mediaType,getState,getAirplayState,transportRemote,setReceiverVolume});
 })(typeof window==='undefined'?null:window);

@@ -96,6 +96,18 @@
   const feedback=d.createElement('p');feedback.id='cxTvFeedback';feedback.className='cx-tv-feedback';
   feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');feedback.hidden=true;
   overlay.querySelector('.cx-tv').appendChild(feedback);
+
+  // Chrome Mac cannot invoke Apple's AirPlay picker; provide a clickable guide
+  // and an explicit alternative to the separate Google Cast protocol.
+  const guide=d.createElement('div');guide.id='cxAirChromeHelp';guide.hidden=true;guide.tabIndex=-1;
+  guide.className='cx-air-browser-help';guide.setAttribute('role','note');
+  const instructions=d.createElement('p');
+  instructions.textContent='Chrome trên Mac không thể tự mở AirPlay. Để chiếu sang TV chỉ hỗ trợ AirPlay: Mac > Trung tâm điều khiển > Phản chiếu màn hình > chọn TV cùng Wi-Fi. Hoặc mở Open IPTV Pro trong Safari và dùng AirPlay trực tiếp.';
+  const castOption=d.createElement('button');castOption.id='cxAirUseCast';castOption.type='button';
+  castOption.className='cx-button cx-button-secondary';castOption.textContent='Thử Google Cast trong Chrome';
+  castOption.addEventListener('click',()=>setMode('cast'));
+  guide.append(instructions,castOption);
+  $('cxAirNotice')?.parentElement?.appendChild(guide);
   const airBadge=overlay.querySelector('#cxPaneAir .cx-chip');
   if(airBadge)airBadge.id='cxAirBadge';
   root.OpenIPTVCastIcons?.decorateModal?.(overlay);
@@ -174,9 +186,13 @@
   });
   $('cxCastStop').addEventListener('click',async()=>{await root.OpenIPTVWebCast.stop();syncCast();});
   $('cxAirOpen').addEventListener('click',()=>{
-   if(root.OpenIPTVWebCast?.airplayPicker?.())
+   // Safari native picker must be called synchronously from the user's click.
+   if(root.OpenIPTVWebCast?.canAirPlay?.()&&root.OpenIPTVWebCast?.airplayPicker?.()){
     notice('cxAirNotice','Đã yêu cầu mở AirPlay. Chọn TV trong bộ chọn hệ thống.','ok');
-   else notice('cxAirNotice','Trình duyệt này chưa mở được AirPlay. Hãy thử Safari.','error');
+    return;
+   }
+   const guide=$('cxAirChromeHelp');if(guide){guide.hidden=false;guide.focus?.();}
+   notice('cxAirNotice','Chrome trên Mac không mở được AirPlay Apple. Dùng Phản chiếu màn hình của macOS, Safari hoặc Google Cast nếu TV hỗ trợ.','');
   });
  }
  function placePopupClose(){
@@ -408,13 +424,12 @@
  }
  function syncAir(){
   renderConnectionStatus();
-  const ua=root.navigator?.userAgent||'';
-  const apple=/iPhone|iPad|iPod|Macintosh|Mac OS X/i.test(ua);
-  const media=$('video');
-  // iOS Chrome uses WebKit too: check actual AirPlay support, not browser name.
-  const available=apple&&!!(media&&(typeof media.webkitShowPlaybackTargetPicker==='function'||typeof media.remote?.prompt==='function'));
-  $('cxAirOpen').disabled=!available;
-  notice('cxAirNotice',available?'Nhấn Chọn TV bằng AirPlay để mở bộ chọn hệ thống.':apple?'Trình duyệt này chưa có bộ chọn AirPlay. Hãy thử Safari hoặc Phản chiếu màn hình.':'AirPlay cần thiết bị Apple tương thích.');
+  // iOS Chrome uses WebKit too; support comes from the validated sender picker.
+  const available=!!root.OpenIPTVWebCast?.canAirPlay?.();
+  const button=$('cxAirOpen');button.disabled=false;
+  button.textContent=available?'◉ Chọn TV bằng AirPlay':'◉ Cách phát lên TV từ Chrome / Mac';
+  const guide=$('cxAirChromeHelp');if(guide)guide.hidden=available;
+  notice('cxAirNotice',available?'Nhấn Chọn TV bằng AirPlay để mở bộ chọn hệ thống.':'Chrome không cung cấp bộ chọn AirPlay Apple. Nhấn để xem cách Phản chiếu màn hình hoặc dùng Google Cast.');
  }
  function open({channel:ch,source:url}={}){
   channel=ch||channel;source=url||ch?.url||source;

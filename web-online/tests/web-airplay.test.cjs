@@ -80,6 +80,6 @@ test('AirPlay picker only comes from explicit AirPlay-tab button',()=>{
  assert.match(ui,/OpenIPTVWebCast\?\.airplayPicker\?\.\(\)/);
  assert.match(sender,/function airplayPicker\(\)/);
  assert.match(ui,/iOS Chrome uses WebKit too/);
- assert.match(html,/cast-ui\.js\?v=mobile-cast-three-tabs-20261123a/);
- assert.match(html,/web-cast-v2\.js\?v=mobile-cast-three-tabs-20261123a/);
+ assert.match(html,/cast-ui\.js\?v=airplay-chrome-20261123b/);
+ assert.match(html,/web-cast-v2\.js\?v=airplay-chrome-20261123b/);
 });
