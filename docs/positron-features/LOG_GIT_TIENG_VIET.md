@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.339 — AI hiển thị tên kênh đang chọn trên tiêu đề cố định (NEW)
+## P5.1.340 — AI xem tên kênh đầy đủ bằng Alt+Shift+I (NEW)
 
-**Ứng dụng:** 4.23.424 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.425 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ở giao diện WatchFlow AI 720px, chip tên kênh P339 cố ý rút gọn để tránh chiếm chỗ; nhưng remote và bàn phím không có hover để biết tên đầy đủ. Bổ sung phím xem thông tin kênh và chủ đề khi cần, luôn theo gợi ý đang focus. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/2c1d2623c935f24a3797d87c11e321eab7c2422e)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.339 — Electron 4.23.424 — AI luôn hiện tên kênh đang chọn khi cuộn (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Khi điều hướng các gợi ý bằng Tab/J/K/P trên cửa sổ hẹp, card được cuộn vào vùng nhìn và tiêu đề tên kênh phía trên thẻ có thể bị thanh sticky che; người dùng chỉ thấy nút Xem mà không biết chính xác kênh nào. Thêm ngữ cảnh tên kênh đang focus vào tiêu đề cố định, không cần phát video. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/269e26141aa5178696209c3d5fc1a14ff4b730aa)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.338 — Electron 4.23.423 — AI điều hướng ngược gợi ý qua Alt+Shift+P (CANDIDATE)
 
