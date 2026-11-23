@@ -189,7 +189,7 @@ jobs:
   release:
     name: Publish Rust Lab prerelease without changing Electron Latest
     needs: [tag, windows]
-    if: needs.tag.outputs.publish == 'true'
+    if: false # Branch build artifacts only; main Stable release policy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -259,7 +259,7 @@ jobs:
   release-macos:
     name: Attach verified macOS Universal DMG to the Rust Lab prerelease
     needs: [tag, macos, release]
-    if: needs.tag.outputs.publish == 'true'
+    if: false # Branch build artifacts only; main Stable release policy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
