@@ -19,5 +19,10 @@ test('Existing Google Cast / AirPlay remains and native playback routes paired a
  assert.match(cast,/castDiscover/);assert.match(cast,/scanAirplay/);assert.match(cast,/openAirplay/);
  assert.match(cast,/OpenIPTVDesktopTVPair/);
  assert.match(app,/OpenIPTVDesktopTVPair/);
- assert.match(page,/desktop-tv-pair\.js/);assert.match(page,/web-tv-pair\.js/);
+ assert.doesNotMatch(page,/<script src="cast-ui\.js"/);
+ assert.doesNotMatch(page,/<script src="desktop-tv-pair\.js"/);
+ assert.match(page,/web-tv-pair\.js/);
+ assert.match(page,/web-cast-v2\.js/);
+ assert.match(page,/desktop-cast-web-adapter\.js/);
+ assert.doesNotMatch(page,/id="castModal"/);
 });
