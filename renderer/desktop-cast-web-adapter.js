@@ -6,7 +6,7 @@
  const d=root.document,api=root.streamleaf,$=id=>d.getElementById(id);
  let channel=null,source='',devices=[],chosen='',active=false,activeName='',serial=0;
  let isMac=/Mac/i.test(root.navigator?.platform||root.navigator?.userAgent||'');
- let scanned=false,checking=false;
+ let scanned=false,capabilityProbe=null;
  const v2=()=>root.OpenIPTVWebCastV2;
  const message=e=>String(e?.message||e||'Lỗi không xác định');
  const currentDevice=()=>devices.find(x=>x.id===chosen);
@@ -18,11 +18,14 @@
   }catch{return '';}
  }
  async function capabilities(){
-  if(checking)return;
-  checking=true;
-  try{if(api?.capabilities){const result=await api.capabilities();isMac=result?.platform==='darwin';}}
-  catch{/* Navigator remains the platform fallback. */}
-  v2()?.syncAirplayState?.();
+  if(capabilityProbe)return capabilityProbe;
+  capabilityProbe=(async()=>{
+   try{if(api?.capabilities){const result=await api.capabilities();isMac=result?.platform==='darwin';}}
+   catch{/* Navigator remains the platform fallback. */}
+   v2()?.syncAirplayState?.();
+   return isMac;
+  })();
+  try{return await capabilityProbe;}finally{capabilityProbe=null;}
  }
  function picker(){
   const pane=$('cxPaneCast');
