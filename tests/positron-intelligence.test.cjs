@@ -655,3 +655,17 @@ test('P286 xem trước chênh lệch mẫu ba thuật toán AI, không thay tr�
   'positron-p51286-ai-compare-after-1920x1080-real.png'])
   assert.ok(qa.includes(image),image);
 });
+
+
+test('P287 hoàn tác an toàn lần khôi phục mô hình AI gần nhất',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ['poAIUndoImport','lastImportUndo={previous,applied:importFingerprint()}','importFingerprint()!==lastImportUndo.applied',
+  'model=previous.model;categoryModel=previous.categoryModel;bandit=previous.bandit',
+  'Mô hình đã thay đổi sau lần khôi phục','Đã hoàn tác khôi phục AI'])assert.ok(ui.includes(token),token);
+ assert.ok(css.includes('#poWatchFlowPanel #poAIUndoImport[hidden]'));
+ assert.ok(qa.includes('positron-p51287-ai-undo-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51287-ai-undo-after-1920x1080-real.png'));
+ assert.ok(qa.includes('undoRestoresPreviousLearning'));
+});

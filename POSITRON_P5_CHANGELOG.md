@@ -1,3 +1,11 @@
+## P5.1.287 — Hoàn tác lần khôi phục mô hình AI gần nhất / Electron 4.23.372
+- Feature priority: NEW — Sau khi xác nhận nhập JSON trọng số, người dùng có thể Hoàn tác để trở lại chính xác ba mô hình học trước đó và các nhãn đã dạy. Snapshot nằm trong RAM, tự chặn nếu mô hình tiếp tục học để tránh ghi đè dữ liệu mới.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → Xác nhận → Hoàn tác lần khôi phục AI vừa rồi.
+- Electron screenshot: positron-p51287-ai-undo-before-1920x1080-real.png / positron-p51287-ai-undo-after-1920x1080-real.png.
+- Evidence: Node test kiểm tra UI/snapshot và bảo vệ học mới; Electron CDP kiểm tra hoàn tác đúng số nhãn, không thay playlist, không phát kênh, không tràn và chụp hai ảnh 1920×1080.
+- Status: CANDIDATE — Chỉ xác nhận sau khi Actions thành công và mở soát ảnh thật; GitHub Releases chỉ dành cho Stable.
+
 ## P5.1.286 — So sánh trọng số AI hiện tại với bản sao trước khôi phục / Electron 4.23.371
 - Feature priority: NEW — Hiển thị chênh lệch mẫu học Logistic ML, Naive Bayes và lượt khám phá UCB trong bảng so sánh ngay trước khi xác nhận, cảnh báo khi bản sao ít dữ liệu học hơn và nêu rõ không đánh đồng số mẫu với độ chính xác.
 - Feature class: AI

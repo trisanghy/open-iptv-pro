@@ -186,3 +186,9 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-compare-loss .po-ai-compare-count{color:#ffc2a8}
 #poWatchFlowPanel .po-ai-compare-warning{margin:6px 0 0;font-size:11px;line-height:1.4;color:#bdcfd4}
 #poWatchFlowPanel .po-ai-compare-risk{color:#ffd2b3}
+
+/* P287: reversible learned model import; undo snapshot is session-only. */
+#poWatchFlowPanel .po-ai-undo-import{width:100%;min-height:38px;margin-top:5px;padding:8px 12px;border:1px solid #b8a86c;border-radius:8px;background:#4a3f25;color:#fff3d8;cursor:pointer;font-size:12px;font-weight:700}
+#poWatchFlowPanel .po-ai-undo-import:hover{background:#66532e}
+#poWatchFlowPanel .po-ai-undo-import:focus-visible{outline:2px solid #fce6a4;outline-offset:2px}
+#poWatchFlowPanel #poAIUndoImport[hidden]{display:none!important}

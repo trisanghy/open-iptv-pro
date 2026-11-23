@@ -7,6 +7,19 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
+<summary><strong>P5.1.287</strong> · Hoàn tác an toàn nhập mô hình AI · CANDIDATE · TÍNH NĂNG</summary>
+
+**Ứng dụng:** 4.23.372 · **Trạng thái:** chờ GitHub Actions và ảnh Electron thật.
+
+Feature class: AI — Hoàn tác một lần sau khi nhập JSON đã xác nhận; bản trọng số cũ chỉ nằm trong RAM và không ghi đè quá trình học mới.
+
+Ảnh sẽ được xác minh qua GitHub Actions trước khi công bố.
+
+[Xem lịch sử mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+</details>
+
+<details>
 <summary><strong>P5.1.286</strong> · so sánh số mẫu AI trước khôi phục JSON · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.371 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH

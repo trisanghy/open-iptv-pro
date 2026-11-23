@@ -77,9 +77,13 @@
  const importConfirm=d.createElement('button');importConfirm.type='button';importConfirm.id='poAIImportConfirm';
  importConfirm.className='po-ai-import-confirm';importConfirm.hidden=true;
  importConfirm.textContent='Xác nhận khôi phục trọng số AI';
+ const undoImport=d.createElement('button');undoImport.type='button';undoImport.id='poAIUndoImport';
+ undoImport.className='po-ai-undo-import';undoImport.hidden=true;
+ undoImport.textContent='Hoàn tác lần khôi phục AI vừa rồi';
+ undoImport.title='Hoàn tác trọng số AI gần nhất trong phiên, không sửa playlist';
  const bulk=d.createElement('button');bulk.type='button';bulk.id='poAIClearAll';
  bulk.className='po-ai-clear-all';bulk.textContent='Xóa toàn bộ dữ liệu học';bulk.title='Xóa tất cả ba mô hình học sau khi xác nhận hai lần';
- modelManager.append(modelToggle,modelRows,backup,importButton,importFile,importPreview,importConfirm,bulk,modelStatus,modelHint);
+ modelManager.append(modelToggle,modelRows,backup,importButton,importFile,importPreview,importConfirm,undoImport,bulk,modelStatus,modelHint);
  let pendingModel='',pendingAt=0;
  const modelBytes=value=>new TextEncoder().encode(JSON.stringify(value||{})).byteLength;
  const learnedInventory=()=>[
@@ -676,7 +680,30 @@
   }
  });
  // P285: validate and preview a chosen local backup, then require second confirmation.
- let pendingLearningImport=null,importSequence=0;
+ let pendingLearningImport=null,importSequence=0,lastImportUndo=null;
+ const importFingerprint=()=>JSON.stringify({model,categoryModel,bandit,taughtIds:[...taughtIds]});
+ undoImport.addEventListener('click',()=>{
+  if(!lastImportUndo)return;
+  if(importFingerprint()!==lastImportUndo.applied){
+   lastImportUndo=null;undoImport.hidden=true;
+   modelStatus.textContent='Mô hình đã thay đổi sau lần khôi phục; không hoàn tác để tránh ghi đè dữ liệu học mới.';return;
+  }
+  const current={model,categoryModel,bandit,taughtIds:[...taughtIds]};
+  const previous=lastImportUndo.previous;
+  model=previous.model;categoryModel=previous.categoryModel;bandit=previous.bandit;
+  taughtIds.clear();for(const id of previous.taughtIds)taughtIds.add(id);
+  if(!save()){
+   model=current.model;categoryModel=current.categoryModel;bandit=current.bandit;
+   taughtIds.clear();for(const id of current.taughtIds)taughtIds.add(id);
+   modelStatus.textContent='Không lưu được bản hoàn tác; dữ liệu AI hiện tại vẫn giữ nguyên.';return;
+  }
+  lastImportUndo=null;undoImport.hidden=true;pendingLearningImport=null;
+  importConfirm.hidden=true;importPreview.hidden=true;importPreview.replaceChildren();
+  active=null;activeTeachIndex=0;sessionSkippedIds.clear();lastActiveTeachUndo=null;
+  activeStatusMessage='Đã hoàn tác lần nhập mô hình AI gần nhất trong phiên.';
+  render();modelStatus.textContent='Đã hoàn tác khôi phục AI: trọng số cũ trở lại. Playlist, EPG và Favorites không thay đổi.';
+  modelStatus.scrollIntoView({block:'nearest',behavior:'instant'});
+ });
  importButton.addEventListener('click',()=>{
   ++importSequence;pendingLearningImport=null;importConfirm.hidden=true;importPreview.hidden=true;importPreview.replaceChildren();
   importFile.click();
@@ -727,6 +754,7 @@
    return;
   }
   pendingLearningImport=null;importConfirm.hidden=true;importPreview.hidden=true;importPreview.replaceChildren();
+  lastImportUndo={previous,applied:importFingerprint()};undoImport.hidden=false;
   active=null;activeTeachIndex=0;sessionSkippedIds.clear();lastActiveTeachUndo=null;
   activeStatusMessage='Đã khôi phục trọng số AI đã xác nhận từ tệp JSON.';
   render();
