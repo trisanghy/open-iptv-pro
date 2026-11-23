@@ -1,15 +1,20 @@
 # Positron — Đợt 20 vòng mới từ P5.1.300
 
-Baseline GitHub xác minh 2026-11-23: nhánh Positron HEAD 70105a86a0fb9e7a69683f2cb94ce1fc0ffba4a2; Electron 4.23.385; Actions 45147223325 (test/capture/build Windows + Mac success, release skipped), screenshot artifact 14805755084 được tải và mở ảnh thật.
+Baseline GitHub xác minh 2026-11-23: Positron P5.1.300 Electron 4.23.385 tại 70105a86a0fb9e7a69683f2cb94ce1fc0ffba4a2.
 
-## Vòng 01/20 — P5.1.301 (CANDIDATE)
-- Ảnh đầu vào: p5-20-rounds/positron-p51300-affected-names-after-1920x1080-real.png (Actions 45147223325).
-- Lỗi thấy: cảnh báo 'độ bao phủ Naive Bayes' ở cuối danh sách dài, dễ bị che bởi nút xác nhận sticky khi cuộn.
-- Nguyên nhân: importPreview.append(risk) đặt cảnh báo sau details mở rộng; #poAIImportConfirm position:sticky.
-- Sửa: insertBefore(risk,details); nút xác nhận chuyển sang trạng thái hổ phách khi có role=alert; aria-describedby trỏ về cảnh báo.
-- Test: Node P301 + Electron Playwright/CDP QA P301 (cần xác minh trên Actions); bảo toàn trọng số, playlist, không autoplay.
-- Screenshot dự kiến: p5-20-rounds/positron-p51301-coverage-warning-after-1920x1080-real.png.
-- Trạng thái: Chưa tính hoàn tất trước khi CI, test và mở ảnh sau.
+## Vòng 01/20 — P5.1.301 đã đạt và soát ảnh
+- Sửa cảnh báo AI bị dồn xuống cuối danh sách dài, đưa coverage warning lên trước details; CTA xác nhận rủi ro chuyển hổ phách và aria-describedby.
+- Commit chính: 8ec333440d559cd82b5169307f48b0b8015c8703; commit sửa CI: a1087f39a7a629895ef9954f31459b50e9901753.
+- CI: https://github.com/trisanghy/open-iptv-pro/actions/runs/45150068150 — test/capture/Windows x64/Mac ARM64/x64 success, release skipped.
+- Ảnh đã mở bằng mắt: positron-p51301-coverage-warning-before-1920x1080-real.png và positron-p51301-coverage-warning-after-1920x1080-real.png từ artifact 14806640607.
+- Audit: qa301 11/11 true, model/playlist/current channel không đổi, không tràn, cảnh báo trên danh sách và không bị CTA che.
+- Vấn đề nhìn từ ảnh SAU: Nút xác nhận sticky vẫn che các dòng trong chi tiết dưới cảnh báo khi cuộn; ưu tiên vòng 02.
 
-## Vòng 02–20
-Chưa thực hiện. Mỗi vòng bắt đầu từ HEAD mới nhất thật, không tính lại lịch sử và không tự nhận đủ vòng nếu thiếu bằng chứng.
+## Vòng 02/20 — P5.1.302 (CANDIDATE)
+- Mục tiêu: từ cảnh báo nhóm AI, thêm hành động “Mở ngay tên kênh có nguy cơ” tự mở nhóm và hiển thị mẫu thật trong vùng đọc rõ trên CTA cố định; keyboard/aria-controls.
+- Nguyên nhân: cần cuộn nhiều qua danh sách mẫu, các dòng gần dưới bị nút sticky che.
+- Test: Node regression P302; Electron CDP QA P302 sẽ lưu positron-p51302-risk-jump-before-1920x1080-real.png và positron-p51302-risk-jump-after-1920x1080-real.png, kiểm tra không đổi model/playlist/tự phát.
+- Chưa tính hoàn tất trước khi CI, ảnh thật, soát ảnh đều đạt.
+
+## Vòng 03–20
+Chưa thực hiện. Mỗi vòng cần sửa/test/chụp/mở ảnh và version riêng, không đếm 70 screenshot checks thành 20 vòng.

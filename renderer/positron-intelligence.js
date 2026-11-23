@@ -879,6 +879,19 @@
        '. Hãy kiểm tra các nhóm này trước khi xác nhận khôi phục. Đây chỉ là dự báo dựa trên mô hình Naive Bayes cục bộ, không phải độ chính xác thực tế hay chất lượng luồng phát.';
       // Keep the important warning ABOVE the potentially long, expanded
       // group list. The sticky Confirm button must never cover the alert.
+      // P302: the explicit AI warning can lead straight to evidence rather
+      // than forcing viewers to hunt through a long nested preview.
+      const jump=d.createElement('button');jump.type='button';
+      jump.id='poAIInspectRisk';jump.className='po-ai-risk-jump';
+      jump.textContent='Mở ngay tên kênh có nguy cơ';
+      jump.setAttribute('aria-controls','poAICategoryRiskRows');
+      jump.addEventListener('click',()=>{
+       details.open=true;riskDetails.open=true;
+       if(!namesVisible){namesVisible=true;renderRiskRows();}
+       const sample=riskRows.querySelector('.po-ai-category-samples:not([hidden])');
+       sample?.scrollIntoView({block:'center',behavior:'instant'});
+      });
+      groupAlert.append(jump);
       details.insertBefore(groupAlert,riskDetails);
      }
     }

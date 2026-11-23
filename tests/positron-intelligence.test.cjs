@@ -1054,3 +1054,15 @@ test('P301 alerts before expanded list and the model restore confirmation is acc
  assert.ok(qa.includes('qa301'));
  assert.ok(qa.includes('positron-p51301-coverage-warning-after-1920x1080-real.png'));
 });
+
+test('P302 AI jumps from severe restore warning to local affected channel evidence without autoplay',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const marker of ["jump.id='poAIInspectRisk'","jump.setAttribute('aria-controls','poAICategoryRiskRows')",
+  'details.open=true;riskDetails.open=true;',"if(!namesVisible){namesVisible=true;renderRiskRows();}",
+  "sample?.scrollIntoView({block:'center',behavior:'instant'})"])assert.ok(ui.includes(marker),marker);
+ assert.ok(css.includes('#poAIInspectRisk:focus-visible'));
+ for(const marker of ['qa302','positron-p51302-risk-jump-before-1920x1080-real.png',
+  'positron-p51302-risk-jump-after-1920x1080-real.png'])assert.ok(qa.includes(marker),marker);
+});

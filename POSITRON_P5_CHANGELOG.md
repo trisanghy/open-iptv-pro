@@ -1,3 +1,13 @@
+## P5.1.302 — AI mở ngay danh sách kênh nguy cơ từ cảnh báo khôi phục / Electron 4.23.387
+- Feature priority: NEW — Thêm thao tác điều hướng một chạm trực tiếp từ cảnh báo Naive Bayes đến danh sách tên kênh đang bị ảnh hưởng, tự mở phần chi tiết và đặt mẫu kênh vào vùng nhìn không bị nút xác nhận cố định che, giảm thao tác cuộn dài.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → Cảnh báo AI theo nhóm → bấm “Mở ngay tên kênh có nguy cơ”; kết quả mở kèm tên mẫu ngay trong panel mà chưa thay mô hình.
+- Electron screenshot: positron-p51302-risk-jump-before-1920x1080-real.png / positron-p51302-risk-jump-after-1920x1080-real.png.
+- Evidence: Playwright Electron thật xác nhận phần chi tiết mở và tên kênh nguy cơ đọc được phía trên nút xác nhận sticky; kiểm tra model và playlist giữ nguyên, không tự phát, không xuất URL stream, không tràn khung. Có Node regression kiểm tra tính năng có xử lý click thực và aria-controls.
+- Privacy: Chỉ hiển thị tên kênh trong RAM khi người xem chủ động bấm; không gửi stream URL, M3U, lịch sử xem hoặc dữ liệu mô hình lên mạng.
+- Baseline: P5.1.301 Electron ảnh đã mở trực tiếp sau CI 45150068150, cảnh báo sáng rõ nhưng một số dòng chi tiết vẫn bị CTA cố định che khi cuộn.
+- Status: CANDIDATE — chỉ hoàn tất sau CI và mở ảnh Electron thật P302; không đưa bản thử nghiệm lên Release Stable.
+
 ## P5.1.301 — Cảnh báo khôi phục AI không bị che / Electron 4.23.386
 - Feature priority: NEW — Thêm trạng thái cảnh báo riêng trên nút khôi phục AI khi mô hình mới có thể làm mất dữ liệu phân loại đã học, giúp người xem phân biệt thao tác có rủi ro và kiểm tra trước khi xác nhận.
 - Feature class: AI

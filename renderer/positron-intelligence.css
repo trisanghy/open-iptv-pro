@@ -267,3 +267,12 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
  box-shadow:0 0 0 3px #10282f,0 8px 20px rgba(0,0,0,.5)
 }
 #poWatchFlowPanel .po-ai-import-confirm.po-ai-confirm-risk:focus-visible{outline:2px solid #ffd4a3;outline-offset:2px}
+
+/* P302: one-click drilldown from the AI risk warning to genuine local examples.
+   Keep native channel data hidden until explicit viewer action. */
+#poWatchFlowPanel #poAIInspectRisk{display:block;width:100%;min-height:40px;margin:8px 0 0;padding:8px 11px;
+ border:1px solid #e8b77d;border-radius:8px;background:#58412a;color:#fff4db;
+ font-weight:750;font-size:11px;line-height:1.4;text-align:center;cursor:pointer}
+#poWatchFlowPanel #poAIInspectRisk:hover{background:#795333}
+#poWatchFlowPanel #poAIInspectRisk:focus-visible{outline:2px solid #ffe5ae;outline-offset:3px}
+#poWatchFlowPanel .po-ai-category-samples{scroll-margin-top:70px;scroll-margin-bottom:96px}
