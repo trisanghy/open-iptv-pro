@@ -4,7 +4,7 @@ on:
     branches: [build-sources/electron-desktop]
     paths:
       - 'renderer/**'
-      - 'tests/cast-web-v2-parity.test.cjs'
+      - 'tests/**'
       - '.github/workflows/build-desktop-cast-web-parity.yml'
   workflow_dispatch:
 permissions:
