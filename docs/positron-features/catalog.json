@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T21:39:18.925399+00:00",
+  "generatedAt": "2026-11-23T21:40:02.063931+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.342",
       "appVersion": "4.23.427",
       "title": "tự giữ tiêu đề gợi ý AI không bị thanh nổi che khi điều hướng (NEW)",
-      "description": "tự giữ tiêu đề gợi ý AI không bị thanh nổi che khi điều hướng (NEW)",
-      "kind": "fix",
+      "description": "Feature priority: NEW — Khi chuyển gợi ý bằng bàn phím hoặc remote, ứng dụng tự tính vùng trống và căn lại vị trí cuộn theo toàn bộ thẻ thay vì chỉ đưa nút Xem vào màn hình, giúp đọc tên kênh chính xác trên màn hình hẹp trước khi phát video. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",

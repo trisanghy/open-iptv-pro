@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.427 · **Trạng thái:** Chưa có bản phát hành
 
-tự giữ tiêu đề gợi ý AI không bị thanh nổi che khi điều hướng (NEW)
+Feature priority: NEW — Khi chuyển gợi ý bằng bàn phím hoặc remote, ứng dụng tự tính vùng trống và căn lại vị trí cuộn theo toàn bộ thẻ thay vì chỉ đưa nút Xem vào màn hình, giúp đọc tên kênh chính xác trên màn hình hẹp trước khi phát video. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4c0d242c35617b80fa82747c3de33823a9644e2d)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
