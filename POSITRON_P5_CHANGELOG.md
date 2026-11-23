@@ -1,3 +1,11 @@
+## P5.1.314 / Electron 4.23.399 — Phân tích mô hình AI sai khác khi kiểm tra bản sao (CANDIDATE)
+- Feature priority: NEW — Khi JSON sao lưu AI hợp lệ nhưng khác trọng số, tự phân tích cục bộ và chỉ rõ Logistic, Naive Bayes hay UCB thay đổi; thống kê số mẫu/chủ đề trước-sau kể cả khi số lượng bằng nhau nhưng trọng số khác. Không nhập tệp hoặc sửa mô hình.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → xuất sao lưu → Kiểm tra tệp JSON vừa tải → chọn tệp có trọng số khác. Xem bảng chẩn đoán ba thuật toán và cảnh báo; không có thao tác tự khôi phục.
+- Electron screenshot: positron-p51314-ai-model-diff-before-1920x1080-real.png / positron-p51314-ai-model-diff-after-1920x1080-real.png.
+- Evidence: QA314 Electron thực phải thử tệp JSON hợp lệ với trọng số UCB bị sửa, ghi 3 chẩn đoán và đúng một mô hình khác; kiểm tra role alert, không autoplay, không thay playlist hay localStorage. Node regression xác minh phân biệt thay đổi trọng số khi số chủ đề vẫn bằng nhau.
+- Giới hạn: kết quả chẩn đoán độ khác của trọng số, không phải thước đo độ chính xác của dự đoán hay chứng nhận chữ ký số. Chưa công bố ĐẠT tới khi CI, ảnh thật và build hoàn tất.
+
 ## P5.1.313 / Electron 4.23.398 — Kiểm chứng tệp sao lưu AI đã tải (CANDIDATE)
 - Feature priority: NEW — Chọn lại bản sao JSON đã tải, kiểm tra định dạng, bộ đếm và trọng số Logistic/Naive Bayes/UCB với bản vừa xuất. Cảnh báo khi không khớp, không tự ghi đè dữ liệu học.
 - Feature class: AI

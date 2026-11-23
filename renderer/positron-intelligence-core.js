@@ -323,11 +323,22 @@
   const baseline=parseLearningBackup(original),loaded=parseLearningBackup(selected);
   if(!baseline.ok)return {ok:false,match:false,reason:'Bản vừa xuất không còn hợp lệ.'};
   if(!loaded.ok)return {ok:false,match:false,reason:loaded.reason};
-  const match=JSON.stringify([baseline.model,baseline.categoryModel,baseline.bandit])===
-   JSON.stringify([loaded.model,loaded.categoryModel,loaded.bandit]);
-  return {ok:true,match,summary:loaded.summary,reason:match?
+  // P314: read-only per-algorithm difference report, including changes with identical sample counts.
+  const rows=[
+   {id:'logistic',label:'Logistic',before:baseline.model,after:loaded.model,
+    countBefore:baseline.summary.preferenceObservations,countAfter:loaded.summary.preferenceObservations,unit:'phản hồi'},
+   {id:'naive-bayes',label:'Naive Bayes',before:baseline.categoryModel,after:loaded.categoryModel,
+    countBefore:baseline.summary.categoryLabels,countAfter:loaded.summary.categoryLabels,unit:'nhãn'},
+   {id:'ucb',label:'UCB',before:baseline.bandit,after:loaded.bandit,
+    countBefore:baseline.summary.exploredTopics,countAfter:loaded.summary.exploredTopics,unit:'chủ đề'}
+  ];
+  const details=rows.map(({id,label,before,after,countBefore,countAfter,unit})=>({
+   id,label,match:JSON.stringify(before)===JSON.stringify(after),countBefore,countAfter,unit
+  }));
+  const matched=details.filter(item=>item.match).length,match=matched===details.length;
+  return {ok:true,match,matched,details,summary:loaded.summary,reason:match?
    'Cấu trúc và toàn bộ trọng số AI khớp bản vừa xuất.':
-   'Trọng số khác bản vừa xuất; không nên khôi phục nếu chưa kiểm tra.'};
+   'Có '+(3-matched)+' mô hình AI khác trọng số; chưa nhập dữ liệu.'};
  }
  // P286: pure count-level comparison. Counts are evidence size, not ML accuracy.
  function compareLearningBackup(current,loaded){

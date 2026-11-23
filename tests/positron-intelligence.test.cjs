@@ -1348,3 +1348,23 @@ test('P313 locally verifies reselected AI backup weights without restoring them'
  for(const key of ['qa313','positron-p51313-ai-backup-verify-before-1920x1080-real.png',
   'positron-p51313-ai-backup-verify-after-1920x1080-real.png'])assert.ok(qa.includes(key),key);
 });
+
+test('P314 distinguishes which of three machine-learning backups diverged even when sample count matches',()=>{
+ const base=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{news:3}});
+ const changed=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{news:4}});
+ const difference=C.verifyLearningBackupSnapshot(base,changed);
+ assert.equal(difference.ok,true);assert.equal(difference.match,false);
+ assert.equal(difference.matched,2);
+ assert.deepEqual(difference.details.map(d=>[d.id,d.match]),[
+  ['logistic',true],['naive-bayes',true],['ucb',false]]);
+ assert.equal(difference.details[2].countBefore,difference.details[2].countAfter,
+  'model difference must be detected even if topic count remains unchanged');
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ for(const term of ['poAIActiveVerifyDiagnostics','data-algorithm','lastVerifyDetails','Tệp sao lưu không khớp'])
+  assert.ok(ui.includes(term)||term==='data-algorithm'&&ui.includes('row.dataset.algorithm'),term);
+ for(const term of ['qa314','positron-p51314-ai-model-diff-before-1920x1080-real.png',
+  'positron-p51314-ai-model-diff-after-1920x1080-real.png'])assert.ok(qa.includes(term),term);
+ assert.ok(css.includes('.po-ai-verify-diagnostic[data-match="false"]'));
+});

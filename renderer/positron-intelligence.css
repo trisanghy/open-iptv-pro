@@ -336,3 +336,10 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 /* P313: local-only AI backup verification. */
 #poWatchFlowPanel .po-ai-verify{background:#25475d;border-color:#619db4;color:#e7faff}
 #poWatchFlowPanel .po-ai-verify:hover{background:#2c5a74}
+
+/* P314: opt-in, read-only per-algorithm backup discrepancy diagnosis. */
+#poWatchFlowPanel .po-ai-verify-diagnostics{display:grid;gap:5px;margin:5px 0 9px;padding:7px;border:1px solid #576a76;border-radius:8px;background:#1c303b;min-width:0}
+#poWatchFlowPanel .po-ai-verify-diagnostic{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:3px 8px;font-size:11px;line-height:1.4}
+#poWatchFlowPanel .po-ai-verify-diagnostic strong{color:#e0f5fb}
+#poWatchFlowPanel .po-ai-verify-diagnostic[data-match="true"] span{color:#9cf0d5}
+#poWatchFlowPanel .po-ai-verify-diagnostic[data-match="false"] span{color:#ffc58d;font-weight:700}

@@ -71,7 +71,7 @@
  backup.className='po-ai-backup';backup.textContent='Sao lưu mô hình AI (.json)';
  backup.title='Tải các trọng số học AI về máy; không có playlist hoặc URL';
  // P313: verify the actual reselected file, never infer download success from anchor click.
- let lastBackupSnapshot=null;
+ let lastBackupSnapshot=null,lastVerifyDetails=null;
  const verifyBackup=d.createElement('button');verifyBackup.type='button';verifyBackup.id='poAIVerifyBackup';
  verifyBackup.className='po-ai-backup po-ai-verify';verifyBackup.hidden=true;
  verifyBackup.textContent='Kiểm tra tệp JSON vừa tải (chỉ đọc)';
@@ -416,6 +416,10 @@
     status.classList.toggle('po-ai-save-error',failedSave||activeStatusMessage.startsWith('Không kiểm chứng được')||activeStatusMessage.startsWith('Tệp sao lưu không khớp'));
     status.setAttribute('role',failedSave?'alert':'status');
     status.setAttribute('aria-live',failedSave?'assertive':'polite');
+    // P314: mismatched backup is an actionable warning, not a success toast.
+    if(activeStatusMessage.startsWith('Tệp sao lưu không khớp')){
+     status.setAttribute('role','alert');status.setAttribute('aria-live','assertive');
+    }
     status.tabIndex=-1;status.textContent=activeStatusMessage;
     trainer.append(heading,hint,status);
     if(failedSave){
@@ -443,6 +447,22 @@
      verify.textContent='Kiểm tra tệp JSON vừa tải (không nhập mô hình)';
      verify.addEventListener('click',()=>verifyFile.click());
      trainer.append(verify);
+    }
+    // P314: show independent Logistic / Naive Bayes / UCB diagnostics for a mismatched file.
+    if(lastVerifyDetails?.ok&&!lastVerifyDetails.match){
+     const diagnostics=d.createElement('div');diagnostics.id='poAIActiveVerifyDiagnostics';
+     diagnostics.className='po-ai-verify-diagnostics';
+     diagnostics.setAttribute('aria-label','Chẩn đoán ba mô hình AI trong bản sao');
+     for(const item of lastVerifyDetails.details){
+      const row=d.createElement('div');row.className='po-ai-verify-diagnostic';
+      row.dataset.algorithm=item.id;row.dataset.match=String(item.match);
+      const name=d.createElement('strong');name.textContent=item.label;
+      const result=d.createElement('span');
+      result.textContent=(item.match?'Khớp':'Khác')+' · '+item.countBefore+' → '+item.countAfter+
+       ' '+item.unit+(!item.match&&item.countBefore===item.countAfter?' · Trọng số khác':'');
+      row.append(name,result);diagnostics.append(row);
+     }
+     trainer.append(diagnostics);
     }
     // P281: undo the latest confirmed label without deleting earlier training data.
     if(lastActiveTeachUndo){
@@ -757,6 +777,7 @@
    a.hidden=true;d.body.append(a);a.click();a.remove();
    win.setTimeout(()=>win.URL.revokeObjectURL(url),30000);
    lastBackupSnapshot={data:snapshot,filename:a.download,size:bytes.size};
+   lastVerifyDetails=null;
    verifyBackup.hidden=false;
    modelStatus.textContent='Đã yêu cầu lưu bản sao '+a.download+' ('+bytes.size+' byte). Chọn lại tệp để kiểm tra; chưa xác nhận tải thành công.';
   }catch{
@@ -767,16 +788,17 @@
  verifyBackup.addEventListener('click',()=>verifyFile.click());
  verifyFile.addEventListener('change',async()=>{
   const file=verifyFile.files?.[0];verifyFile.value='';if(!file)return;
-  let message;
+  let message;lastVerifyDetails=null;
   if(!lastBackupSnapshot)message='Không kiểm chứng được: chưa xuất bản sao AI trong phiên này.';
   else if(file.size>512000)message='Không kiểm chứng được: tệp JSON vượt 500 KB.';
   else{
    try{
     const content=JSON.parse(await file.text());
     const check=core.verifyLearningBackupSnapshot(lastBackupSnapshot.data,content);
+    if(check.ok)lastVerifyDetails=check;
     message=!check.ok?'Không kiểm chứng được: '+check.reason:
      check.match?'Đã kiểm tra tệp '+file.name+' ('+file.size+' byte): cấu trúc và trọng số AI khớp bản vừa xuất. Không tự khôi phục.':
-     'Tệp sao lưu không khớp bản vừa xuất ('+file.size+' byte). Không thay đổi mô hình đang dùng.';
+     'Tệp sao lưu không khớp bản vừa xuất: '+check.matched+'/3 mô hình khớp. Chưa nhập hay ghi đè dữ liệu.';
    }catch{message='Không kiểm chứng được: không đọc được JSON hợp lệ.';}
   }
   modelStatus.textContent=message;activeStatusMessage=message;
