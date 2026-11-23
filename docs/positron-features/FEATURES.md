@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.332</strong> · khung WatchFlow AI dễ đọc khi chưa có nguồn, nút 44px và gợi ý phím điều hướng · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.333</strong> · sửa chồng thanh điều hướng AI và nút Xem bị che (BLOCKER_FIX) · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.417 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.418 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: BLOCKER_FIX Fix: Ẩn thanh năm chế độ WatchFlow thường **chỉ khi chế độ AI đang mở**. Người dùng vẫn nhấn «AI hợp gu» để quay về WatchFlow thường; không xóa tính năng.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/4cf381311eb081cd09ab25c1674c40d31de5cb83)
+
+</details>
+
+<details>
+<summary><strong>P5.1.332</strong> · Electron 4.23.417 — WatchFlow AI không nguồn: khung đọc rộng, nút 44px và gợi ý phím (CANDIDATE) · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — bổ sung chế độ hiển thị WatchFlow Intelligence dễ đọc khi chưa có playlist trên desktop; trước đó bảng AI chỉ rộng khoảng 265px khiến sáu nút chế độ quấn chữ, khó chọn bằng remote. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ef6f85214fb893cb1a0cfb6362e52642fc625a83)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
