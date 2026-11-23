@@ -606,8 +606,12 @@
  }
 
  function destroyMpegts(){
-  if(mpegtsMetadataListener){player.removeEventListener('loadedmetadata',mpegtsMetadataListener);mpegtsMetadataListener=null;}
-  const engine=mpegtsInstance;mpegtsInstance=null;
+  // Also safe when legacy isolated Stop tests evaluate this helper without app state.
+  if(typeof mpegtsMetadataListener!=='undefined'&&mpegtsMetadataListener){
+   player.removeEventListener?.('loadedmetadata',mpegtsMetadataListener);mpegtsMetadataListener=null;
+  }
+  const engine=typeof mpegtsInstance==='undefined'?null:mpegtsInstance;
+  if(typeof mpegtsInstance!=='undefined')mpegtsInstance=null;
   if(!engine)return;
   for(const action of ['pause','unload','detachMediaElement','destroy'])try{engine[action]?.();}catch(e){console.warn('MPEG-TS cleanup:',action,e);}
  }
@@ -821,7 +825,7 @@
   // Warn without cancelling a healthy slow source at the old fixed 13-second threshold.
   // Network/decoder errors still fail immediately; a genuine blank startup gets a longer ceiling.
   startupNoteTimer=setTimeout(()=>{if(isCurrent()&&player.readyState<2)textStatus('Đang đợi dữ liệu video từ nguồn • '+(current?.name||'kênh'));},7500);
-  failoverTimer=setTimeout(()=>{if(isCurrent()&&player.readyState<2)recoverPlayback(generation,playMode==='timeshift'?'Bộ đệm chưa tải kịp dữ liệu':'Kết nối quá thời gian',attempt);},playMode==='timeshift'?30000:activeEngine==='native-hls'?6500:transport==='ffmpeg'?19000:transport==='mpegts'?12000:24000);
+  failoverTimer=setTimeout(()=>{if(isCurrent()&&player.readyState<2)recoverPlayback(generation,playMode==='timeshift'?'Bộ đệm chưa tải kịp dữ liệu':'Kết nối quá thời gian',attempt);},playMode==='timeshift'?30000:transport==='mpegts'?12000:activeEngine==='native-hls'?6500:transport==='ffmpeg'?19000:24000);
   $('#playBtn').textContent='Ⅱ';textStatus('Đang kết nối: '+current.name);
  }
  function serverDenied(reason){return /\bHTTP\s+(?:401|403)\b/i.test(String(reason||''));}
