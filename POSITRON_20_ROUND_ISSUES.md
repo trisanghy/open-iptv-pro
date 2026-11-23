@@ -53,3 +53,12 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - CI 45239378274: Node 1043 pass/5 skip/0 fail; Capture thất bại ở assertion tự áp đặt "trạng thái lỗi cũ phải còn hiện diện". Với cơ chế mới, hệ thống đã chuyển focus vào AI tab trước khi screenshot; đây là dấu hiệu sửa thành công, không phải lỗi chức năng. Đã tải và MỞ Electron ảnh 1920/720 của capture thất bại, xác nhận focus viền nằm ở nút AI trong panel, không tràn.
 - Repair: ảnh TRƯỚC chụp trạng thái WatchFlow đã đóng và focus ở toolbar; ảnh SAU chụp sau mở và mở lại WatchFlow AI thực. QA xác minh cả mở lần đầu/mở lại, không ép phần mềm quay về trạng thái lỗi sau sửa hoặc bỏ tiêu chí focus.
 - Cần chạy lại CI, mở ảnh trước/sau mới và kiểm tra toàn bộ build trước khi công nhận vòng hoàn tất.
+
+## Đợt mới — Vòng 01 P5.1.327: ĐÃ ĐẠT
+- CI run 45240853457, SHA b23effd09311698475cb78225da04944812901c4: Node 1.043 pass, 5 skipped, 0 failed; Electron 9/9 QA true; capture, Windows x64, Mac arm64, Mac x64 build pass; Release skipped stable-only.
+- Ảnh tải từ artifact 14852091202 đã MỞ: trước đóng WatchFlow, sau mở AI focus đúng nút tại 1920 và 720, không tràn. So sánh với ảnh P326 cho thấy focus không còn ở topbar. Không claim playback/GPU/Cast thực.
+
+## Đợt mới — Vòng 02 P5.1.328: CANDIDATE
+- Từ ảnh P327, WatchFlow AI chỉ mở bằng nút; người dùng điều khiển bàn phím không có phím tắt trực tiếp.
+- Tính năng: F6 hoặc Alt+Shift+W mở AI ngay trang TV và focus vào AI tab; không chiếm nhập liệu, không chạy ở trang Sources, không phát kênh hoặc thay đổi nguồn/model.
+- QA Electron: before/after 1920, after 720; F6/Alt+Shift+W thực, điền tìm kiếm, non-TV guard, aria-keyshortcuts, không tràn/dữ liệu bất biến. Không đánh dấu hoàn tất trước CI/soát ảnh.

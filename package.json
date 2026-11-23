@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.412",
-  "description": "Positron P5.1.327: repair focus on reopening WatchFlow AI",
+  "version": "4.23.413",
+  "description": "Positron P5.1.328: phím F6 hoặc Alt+Shift+W mở trực tiếp WatchFlow AI",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

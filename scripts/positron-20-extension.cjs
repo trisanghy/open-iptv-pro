@@ -11870,6 +11870,9 @@ async function runTwenty(page){
  await require('./positron-325-audit.cjs').run(page);
  await require('./positron-326-audit.cjs').run(page);
  await require('./positron-327-audit.cjs').run(page);
+ await require('./positron-328-audit.cjs').run(page);
+ for(const png of ['positron-p51328-ai-shortcut-before-1920x1080-real.png','positron-p51328-ai-shortcut-after-1920x1080-real.png','positron-p51328-ai-shortcut-after-720x900-real.png'])
+  assert.ok(fs.existsSync(path.join(out,png)),'P328 missing native Electron screenshot '+png);
  for(const png of ['positron-p51327-ai-focus-before-1920x1080-real.png','positron-p51327-ai-focus-after-1920x1080-real.png','positron-p51327-ai-focus-after-720x900-real.png'])
   assert.ok(fs.existsSync(path.join(out,png)),'P327 missing real screenshot '+png);
  for(const png of [

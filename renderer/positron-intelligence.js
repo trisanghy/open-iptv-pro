@@ -240,6 +240,25 @@
   wideButton.setAttribute('aria-pressed',String(wideAI));
   wideButton.textContent=wideAI?'Thu gọn':'Đọc rộng';
  });
+ // P328: direct TV-only WatchFlow AI keyboard access without new buttons.
+ tab.setAttribute('aria-keyshortcuts','F6 Alt+Shift+W');
+ tab.title=(tab.title?tab.title+' · ':'')+'Phím tắt: F6 hoặc Alt+Shift+W';
+ d.addEventListener('keydown',event=>{
+  const f6=event.key==='F6'&&!event.altKey&&!event.shiftKey&&!event.ctrlKey&&!event.metaKey;
+  const chord=event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
+   String(event.key).toLowerCase()==='w';
+  if((!f6&&!chord)||event.defaultPrevented||event.repeat||event.isComposing)return;
+  if(event.target?.closest?.('input,textarea,select,[contenteditable="true"],[role="textbox"]'))return;
+  if(!byId('page-tv')?.classList.contains('active-page'))return;
+  const palette=byId('positronPalette');
+  if(palette&&!palette.hidden)return;
+  event.preventDefault();event.stopPropagation();
+  if(panel.hidden)win.PositronWatchFlow?.open?.();
+  if(panel.hidden)return;
+  if(!aiOpen)showAI();
+  else syncAIView();
+  tab.focus({preventScroll:true});
+ });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
  const learnedSource=(channel,cache=null)=>{
