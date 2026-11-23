@@ -245,7 +245,8 @@
   const next='Gợi ý '+(index+1)+'/'+cards.length;
   // Avoid repeating an aria-live announcement when focus stays on this card.
   if(focusProgress.hidden||focusProgress.textContent!==next){
-   focusProgress.hidden=false;focusProgress.textContent=next;
+   focusProgress.hidden=false;
+   focusProgress.textContent='Gợi ý '+(index+1)+'/'+cards.length;
   }
  };
  // P337: keep the recommendation index synchronized with standard Tab, click,

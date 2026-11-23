@@ -3,7 +3,7 @@
 - Feature class: AI
 - User action: Trong WatchFlow Intelligence, dùng Tab, chuột hoặc remote để chọn Xem / Hợp gu / Không hợp / Tra cứu web; số thứ tự luôn theo thẻ đang focus. Đi ra ngoài một thẻ sẽ ẩn nhãn cũ, quay về sẽ khôi phục nhãn chính xác.
 - Root cause: P336 gọi updateFocusProgress riêng trong hai phím tắt, chưa theo dõi DOM focusin. P337 đồng bộ focusin ở document, xác định thẻ cha và tránh lặp thông báo aria-live không đổi.
-- Electron screenshots: positron-p51337-focus-sync-before-1920x1080-real.png / positron-p51337-focus-sync-after-1920x1080-real.png / positron-p51337-focus-sync-before-720x900-real.png / positron-p51337-focus-sync-after-720x900-real.png.
+- Electron screenshot: positron-p51337-focus-sync-before-1920x1080-real.png / positron-p51337-focus-sync-after-1920x1080-real.png / positron-p51337-focus-sync-before-720x900-real.png / positron-p51337-focus-sync-after-720x900-real.png.
 - Evidence: Bài audit P337 chặn tạm sự kiện focusin để tái hiện nhãn cũ trên cùng binary P337 trong BEFORE (không giả nhận binary P336), rồi bỏ chặn chụp AFTER trên Electron CDP thực, đo focus/counter/aria/overflow và xác nhận không đổi nguồn, current channel hoặc AI model.
 - Privacy: chỉ dùng DOM và focus trên máy, không kích hoạt phát video hoặc thay trọng số AI.
 - Status: CANDIDATE cho tới khi Node tests, native screenshot được mở soát và CI build đạt; GitHub Release công khai chỉ dành cho Stable.

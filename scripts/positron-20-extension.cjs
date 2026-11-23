@@ -11879,6 +11879,12 @@ async function runTwenty(page){
  await require('./positron-334-audit.cjs').run(page);
  await require('./positron-335-audit.cjs').run(page);
  await require('./positron-336-audit.cjs').run(page);
+ await require('./positron-337-audit.cjs').run(page);
+ // P337 native Electron CDP screenshots (same current binary; see audit beforeNote):
+ // positron-p51337-focus-sync-before-1920x1080-real.png
+ // positron-p51337-focus-sync-after-1920x1080-real.png
+ // positron-p51337-focus-sync-before-720x900-real.png
+ // positron-p51337-focus-sync-after-720x900-real.png
  // P336 native AI keyboard position screenshots:
  // positron-p51336-focus-position-before-1920x1080-real.png
  // positron-p51336-focus-position-after-1920x1080-real.png
