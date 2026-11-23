@@ -1,0 +1,7 @@
+# Rust Lab v23.8.127 — Fix non-clickable model delete and build-first DMG/EXE workflow
+
+- **Native model deletion fixed:** click **Xóa** beside any installed model to open two real buttons **Hủy** / **Xác nhận xóa** inline. The old native `window.confirm()` WebView call is removed from this path, as is the silent ignore during model status refresh. Only after explicit confirmation is the real Tauri `ai:removeModel` operation invoked. Error text is surfaced; a successful removal reports actual freed bytes.
+- **Safer operation:** backend allows only app-managed model IDs and refuses symlink directory deletion, while the UI displays storage status after native operations. No automatic deletion; deleting a shared runtime requires reinstalling dependent AI components.
+- **Build-first automation on every relevant commit:** native Rust Lab Windows and macOS jobs run their existing tests, compile without bundling, verify the app binary, and **only then** bundle the installable Windows NSIS EXE or macOS Universal DMG. Builds are not declared complete until actual artifacts are uploaded and verified.
+- Windows branch workflow also follows the same ordered two-phase compilation and packaging. Rust Lab tags remain immutable and all experimental installer assets stay inside GitHub Actions Artifacts, not Releases Stable.
+- No other platform branches, playback, M3U streams, EPG content, AI model weights or user playlists changed.

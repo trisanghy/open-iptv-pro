@@ -393,20 +393,46 @@
       const remove=el('button','wf-model-remove','Xóa');
       remove.type='button';remove.setAttribute('aria-label','Xóa '+label+' và giải phóng dung lượng');
       remove.disabled=modelOperation;
-      remove.addEventListener('click',async()=>{
-       if(modelOperation||modelRefreshing||!native?.aiRemoveModel)return;
-       if(root.confirm?.('Xóa '+label+' ('+human(asset.bytes)+') khỏi máy? Một số tính năng AI liên quan sẽ cần tải lại khi sử dụng.')!==true)return;
-       modelOperation=true;
+      const confirmation=el('div','wf-delete-confirm');
+      confirmation.hidden=true;
+      const question=el('span','wf-delete-question','Xóa '+label+' ('+human(asset.bytes)+')? Tính năng đang dùng model sẽ cần tải lại.');
+      const cancel=el('button','wf-delete-cancel','Hủy');
+      const confirm=el('button','wf-delete-yes','Xác nhận xóa');
+      cancel.type=confirm.type='button';
+      confirmation.append(question,cancel,confirm);
+      function hideConfirmation(){confirmation.hidden=true;remove.disabled=modelOperation;}
+      cancel.addEventListener('click',()=>{hideConfirmation();storageStatus.textContent='Đã hủy xóa '+label+'.';});
+      remove.addEventListener('click',()=>{
+       if(modelOperation)return;
+       if(!native?.aiRemoveModel){storageStatus.textContent='Không thể xóa: cần mở ứng dụng Rust Lab native để quản lý model.';return;}
+       for(const section of storageList.querySelectorAll('.wf-delete-confirm'))section.hidden=true;
+       for(const button of storageList.querySelectorAll('.wf-model-remove'))button.disabled=false;
+       confirmation.hidden=false;remove.disabled=true;
+       storageStatus.textContent='Đang chờ xác nhận xóa '+label+'. Chưa có dữ liệu nào bị xóa.';
+       confirm.focus();
+      });
+      confirm.addEventListener('click',async()=>{
+       if(modelOperation||confirmation.hidden)return;
+       if(!native?.aiRemoveModel){storageStatus.textContent='Không có API xóa native.';return;}
+       modelOperation=true;confirm.disabled=cancel.disabled=true;
        for(const b of panel.querySelectorAll('.wf-model-remove'))b.disabled=true;
        installButton.disabled=true;storageStatus.textContent='Đang xóa '+label+'…';
        try{
         const result=await native.aiRemoveModel(id);
-        storageStatus.textContent='Đã xóa '+label+' · giải phóng '+human(result?.freed||asset.bytes);
         if(modelSelect.value===id)modelSelect.value='auto';
-       }catch(error){storageStatus.textContent='Không thể xóa '+label+': '+String(error?.message||error).slice(0,140);}
-       finally{modelOperation=false;await refreshModels();}
+        await refreshModels();
+        storageStatus.textContent='Đã xóa '+label+' · giải phóng '+human(result?.freed||asset.bytes)+'.';
+       }catch(error){
+        const message=String(error?.message||error).slice(0,200);
+        storageStatus.textContent='Không thể xóa '+label+': '+message;
+        confirmation.hidden=false;
+       }finally{
+        modelOperation=false;confirm.disabled=cancel.disabled=false;
+        for(const b of panel.querySelectorAll('.wf-model-remove'))b.disabled=false;
+       }
       });
-      row.append(identity,remove);storageList.append(row);
+      row.append(identity,remove);
+      const section=el('div','wf-storage-unit');section.append(row,confirmation);storageList.append(section);
      }
      if(present.length)storageStatus.textContent=present.length+' mục AI đang lưu · xóa sẽ yêu cầu xác nhận.';
     const previous=modelSelect.value;

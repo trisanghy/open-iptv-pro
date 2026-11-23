@@ -37,8 +37,18 @@ jobs:
         run: npm ci
       - name: Run renderer and app regression tests
         run: npm run test:quick
-      - name: Build Tauri Windows NSIS installer
-        run: npx tauri build --bundles nsis --target x86_64-pc-windows-msvc
+      # First compile/test the application binary; do not begin creating an
+      # installer until the build has returned success.
+      - name: Priority 1 — compile Windows x64 app without packaging
+        run: npx tauri build --no-bundle --target x86_64-pc-windows-msvc --ci
+      - name: Verify compiled Windows x64 application
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exe = @(Get-ChildItem src-tauri/target/x86_64-pc-windows-msvc/release -Filter '*.exe' -File -ErrorAction SilentlyContinue | Where-Object { $_.Length -gt 1000000 })
+          if ($exe.Count -eq 0) { throw 'App compilation did not produce an x64 binary; NSIS packaging is blocked.' }
+      - name: Priority 2 — package verified Windows x64 binary into NSIS EXE
+        run: npx tauri bundle --bundles nsis --target x86_64-pc-windows-msvc --ci
       - name: Stage actual Windows EXE installers
         shell: pwsh
         run: |

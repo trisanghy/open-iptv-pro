@@ -92,13 +92,28 @@ jobs:
           lipo -create "$intel" prepared/ffmpeg-arm64 -output src-tauri/resources/ffmpeg
           chmod +x src-tauri/resources/ffmpeg
           lipo src-tauri/resources/ffmpeg -verify_arch arm64 x86_64
-      - name: Compile Tauri Universal and DMG
+      # Build the app first and only package a DMG after successful compilation.
+      - name: Priority 1 — compile macOS Universal application (no DMG yet)
         shell: bash
         env:
           IPTV_FFMPEG_UNIVERSAL: '1'
         run: |
           set -euo pipefail
-          npm run build -- --target universal-apple-darwin --bundles dmg --ci --no-sign
+          npm run build -- --target universal-apple-darwin --no-bundle --ci --no-sign
+      - name: Verify compiled macOS Universal executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          binary="$(find src-tauri/target/universal-apple-darwin/release -maxdepth 1 -type f -perm -111 -print -quit)"
+          test -n "$binary" && test -s "$binary"
+          lipo "$binary" -verify_arch arm64 x86_64
+      - name: Priority 2 — package verified Universal application into DMG
+        shell: bash
+        env:
+          IPTV_FFMPEG_UNIVERSAL: '1'
+        run: |
+          set -euo pipefail
+          npx tauri bundle --target universal-apple-darwin --bundles dmg --ci --no-sign
       - name: Verify finished DMG contains Apple Silicon + Intel app and FFmpeg
         shell: bash
         env:
@@ -157,8 +172,16 @@ jobs:
         run: npm run test:quick
       - name: Rust DNS / redirect SSRF unit tests
         run: cargo test --manifest-path src-tauri/Cargo.toml safe_network::tests --lib
-      - name: Compile Tauri NSIS installer
-        run: npm run build -- --bundles nsis --ci
+      - name: Priority 1 — compile Windows x64 application without packaging
+        run: npm run build -- --no-bundle --ci
+      - name: Verify compiled Windows application
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exe = @(Get-ChildItem src-tauri/target/release -Filter '*.exe' -File -ErrorAction SilentlyContinue | Where-Object { $_.Length -gt 1000000 })
+          if ($exe.Count -eq 0) { throw 'No compiled Windows application. Installer creation is blocked.' }
+      - name: Priority 2 — package verified x64 application into NSIS EXE
+        run: npx tauri bundle --bundles nsis --ci
       - name: Stage Setup and portable folder (includes FFmpeg)
         shell: pwsh
         env:

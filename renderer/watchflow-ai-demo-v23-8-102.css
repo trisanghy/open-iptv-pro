@@ -208,3 +208,16 @@ html[data-theme=amoled] #page-tv .watchflow-demo #wfClose{
 html[data-theme=dark] #page-tv .wf-standard-list,html[data-theme=amoled] #page-tv .wf-standard-list{border-color:#65516f}
 html[data-theme=dark] #page-tv .wf-standard-list button,html[data-theme=amoled] #page-tv .wf-standard-list button{background:#3d2b51;color:#d7bbea}
 @media(max-width:680px){#page-tv .wf-standard-list{flex-wrap:wrap}#page-tv .wf-standard-list button{margin-left:auto}}
+
+/* v23.8.127 — Inline, native-WebView-safe model deletion confirmation. */
+#page-tv .wf-storage-unit{display:grid;gap:5px;min-width:0}
+#page-tv .wf-delete-confirm{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:9px 10px;border-radius:8px;border:1px solid #d2a9ba;background:#fff6f8;color:#7d2c48}
+#page-tv .wf-delete-confirm[hidden]{display:none!important}
+#page-tv .wf-delete-question{flex:1 1 100%;font-size:11px;line-height:1.4}
+#page-tv .wf-delete-confirm button{border:1px solid #cdadba;border-radius:7px;background:white;padding:6px 10px;color:#74354b;font-size:11px;font-weight:700;cursor:pointer}
+#page-tv .wf-delete-confirm .wf-delete-yes{background:#b32d57;color:white;border-color:#a72c50}
+#page-tv .wf-delete-confirm button:disabled{opacity:.5;cursor:wait}
+#page-tv .wf-delete-confirm button:focus-visible{outline:2px solid #a33a66;outline-offset:2px}
+html[data-theme=dark] #page-tv .wf-delete-confirm,html[data-theme=amoled] #page-tv .wf-delete-confirm{background:#432637;border-color:#89506a;color:#ffdce8}
+html[data-theme=dark] #page-tv .wf-delete-confirm button,html[data-theme=amoled] #page-tv .wf-delete-confirm button{background:#eee7f0;color:#57283d}
+html[data-theme=dark] #page-tv .wf-delete-confirm .wf-delete-yes,html[data-theme=amoled] #page-tv .wf-delete-confirm .wf-delete-yes{background:#b42f60;color:#fff}
