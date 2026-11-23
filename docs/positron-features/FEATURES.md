@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.296</strong> · sửa kiểm thử AI lồng nhau và hỗ trợ bàn phím · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.297</strong> · AI so sánh tỷ lệ rủi ro phân loại giữa các nhóm kênh · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.381 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.382 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — AI tính tỷ lệ kênh có thể mất dự đoán đủ chắc chắn riêng trong từng nhóm và cho phép đổi thứ tự ưu tiên từ số lượng sang tỷ lệ; tránh xem nhóm đông luôn là nhóm chịu rủi ro tương đối lớn nhất. Feature class: AI
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/84bac9a95102332b5268e18f899d87ea25787bbb)
+
+</details>
+
+<details>
+<summary><strong>P5.1.296</strong> · Chi tiết nhóm rủi ro AI: selector chính xác và bàn phím / Electron 4.23.381 · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: BLOCKER_FIX — Khôi phục CI Electron bị chặn vì bộ chọn nhầm hai mục chi tiết Naive Bayes; bảo vệ dữ liệu AI, playlist và thao tác phát video khỏi hồi quy. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/781f1b72f47157fe7ff9348a700cb21182e65ae1)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 

@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.296 — sửa kiểm thử AI lồng nhau và hỗ trợ bàn phím
+## P5.1.297 — AI so sánh tỷ lệ rủi ro phân loại giữa các nhóm kênh
 
-**Ứng dụng:** 4.23.381 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.382 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — AI tính tỷ lệ kênh có thể mất dự đoán đủ chắc chắn riêng trong từng nhóm và cho phép đổi thứ tự ưu tiên từ số lượng sang tỷ lệ; tránh xem nhóm đông luôn là nhóm chịu rủi ro tương đối lớn nhất. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/84bac9a95102332b5268e18f899d87ea25787bbb)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.296 — Chi tiết nhóm rủi ro AI: selector chính xác và bàn phím / Electron 4.23.381
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: BLOCKER_FIX — Khôi phục CI Electron bị chặn vì bộ chọn nhầm hai mục chi tiết Naive Bayes; bảo vệ dữ liệu AI, playlist và thao tác phát video khỏi hồi quy. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/781f1b72f47157fe7ff9348a700cb21182e65ae1)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.295 — Xem nhóm kênh bị ảnh hưởng khi khôi phục Naive Bayes / Electron 4.23.380
 
