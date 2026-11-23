@@ -14,6 +14,7 @@ function browser(userAgent,{webkit=false,remote=false}={}){
  const document={getElementById:id=>elements[id],createElement:()=>({dataset:{}}),head:{appendChild(){}}};
  const win={document,navigator:{userAgent,maxTouchPoints:0},streamleaf:null,location:{href:'https://example.test/app'}};
  vm.runInNewContext(sender,{window:win,URL,Option:function(){},Promise,console},{filename:'web-cast-sender.js'});
+ win.OpenIPTVWebCast.open({id:'vtv1',name:'VTV1',group:'VTV'},'https://example.test/live.m3u8');
  return {api:win.OpenIPTVWebCast,elements,air:()=>airClicks,remote:()=>remoteClicks};
 }
 test('Chrome macOS remote prompt is not Apple AirPlay and button remains enabled',()=>{
