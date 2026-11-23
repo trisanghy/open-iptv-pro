@@ -11889,6 +11889,11 @@ async function runTwenty(page){
  await require('./positron-344-audit.cjs').run(page);
  await require('./positron-345-audit.cjs').run(page);
  await require('./positron-346-audit.cjs').run(page);
+ // P347 independent real Electron capture runs after the legacy QA suite.
+ // positron-p51347-auto-dismiss-mode-before-1920x1080-real.png
+ // positron-p51347-auto-dismiss-mode-after-1920x1080-real.png
+ // positron-p51347-auto-dismiss-mode-before-720x900-real.png
+ // positron-p51347-auto-dismiss-mode-after-720x900-real.png
  // P346 real Electron Escape nested help before/after proof:
  // positron-p51346-escape-guide-before-1920x1080-real.png
  // positron-p51346-escape-guide-after-1920x1080-real.png

@@ -1,3 +1,11 @@
+## P5.1.347 / Electron 4.23.432 — Đóng hướng dẫn AI sau thao tác ngoài bảng (CANDIDATE)
+- Feature priority: NEW — Ảnh Electron P346 720px cho thấy hướng dẫn phím che các nút chế độ AI; cho phép chạm bên ngoài lớp hướng dẫn để đóng riêng lớp đó, tránh nhấn nhầm hoặc mất bảng WatchFlow, nhất là khi dùng remote và màn hình hẹp.
+- Feature class: AI
+- User action: Nhấn F6 khi không gõ văn bản để mở WatchFlow AI, chọn Phím AI rồi Enter để mở hướng dẫn; bấm tiêu đề hoặc vùng trống ngoài danh sách hướng dẫn để thu gọn, sau đó chọn chế độ gợi ý. Khi dùng remote, Enter trên chế độ cũng đóng phần hướng dẫn.
+- Electron screenshot: positron-p51347-auto-dismiss-mode-after-720x900-real.png
+- Evidence: Native CDP/Playwright Electron screenshots before/after in 1920×1080 and 720×900, real outside-pointer action and keyboard Enter, native AI mode retained, unchanged source channel IDs/current channel/local model, no autoplay; pending complete CI proof.
+- QA: Sửa P345 regression focus do P344 để search editor giữ focus; đồng bộ Electron title, sidebar, Windows builder và changelog. Release riêng đang tắt ở policy stable-only.
+
 ## P5.1.346 / Electron 4.23.431 — Esc thu gọn hướng dẫn trước khi thoát WatchFlow (CANDIDATE)
 - Feature priority: NEW — Ảnh thật P345 đã mở cho thấy hướng dẫn phím chiếm phần lớn màn hình 720px khi mở; remote cần một phím Esc đóng lớp hướng dẫn mà không thoát toàn bộ WatchFlow và không làm mất focus.
 - Feature class: AI
