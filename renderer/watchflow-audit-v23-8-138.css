@@ -39,3 +39,14 @@ html[data-theme=dark] #page-tv .wf-audit-table td small,html[data-theme=amoled] 
 #page-tv .wf-audit-modal::backdrop{background:rgba(7,5,18,.75)}
 #page-tv .wf-audit-modal .wf-audit-table-wrap{max-height:55vh}
 @media(max-width:720px){#page-tv .wf-audit-modal{width:98vw;max-height:94vh;min-height:260px;padding:10px}}
+
+/* Public metadata discovery: visible on-screen status, direct retry button. */
+#page-tv .wf-audit-controls .wf-audit-research{min-height:38px;padding:8px 14px;
+ border:1px solid #a377d2;border-radius:8px;background:#7042a7;color:#fff;
+ font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}
+#page-tv .wf-audit-controls .wf-audit-research:disabled{opacity:.55;cursor:not-allowed}
+#page-tv .wf-audit-controls .wf-audit-sort{min-width:210px}
+html[data-theme=dark] #page-tv .wf-audit-controls .wf-audit-research,
+html[data-theme=amoled] #page-tv .wf-audit-controls .wf-audit-research{
+ background:#8047b0;border-color:#a777d0;color:#fff}
+@media(max-width:720px){#page-tv .wf-audit-controls .wf-audit-research{flex:1 1 100%}}

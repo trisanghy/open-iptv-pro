@@ -83,5 +83,46 @@
   for(const evt of ['pause','ended','stalled','emptied'])video.addEventListener(evt,()=>{time=0;});return true;}
  async function searchInternet(raw,request=fetch){const q=String(raw||'').trim().slice(0,90);if(q.length<2)return[];const url='https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=vi&uselang=vi&limit=8&origin=*&search='+encodeURIComponent(q);
   const response=await request(url,{method:'GET',headers:{Accept:'application/json'},signal:AbortSignal.timeout(12000)});if(!response.ok)throw Error('Wikidata HTTP '+response.status);const json=await response.json();return(Array.isArray(json.search)?json.search:[]).filter(x=>/^Q\d+$/.test(String(x.id||''))).slice(0,8).map(x=>({name:String(x.label||'').slice(0,120),description:String(x.description||'').slice(0,200),url:'https://www.wikidata.org/wiki/'+x.id}));}
- return Object.freeze({KEY,labels,predict,programmeKey,analyzeChannel,analyze,read,learn,save,clear,rank,monitor,searchInternet});
+
+ // Public metadata research. One public display name may use Wikidata and
+ // Vietnamese Wikipedia. Neither result identifies streaming URLs.
+ const broadcaster=item=>/television|tv channel|tv network|tv station|broadcaster|broadcasting|radio|phát thanh|truyền hình|đài tiếng nói|đài truyền thanh|kênh truyền hình|đài truyền hình|broadcast station/i
+    .test(String(item?.description||'')+' '+String(item?.name||''));
+ const normSearch=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().replace(/\b(?:hd|fhd|uhd|sd|1080p|4k)\b/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+ function matchPublicName(query,item){
+  const a=normSearch(query),b=normSearch(item?.name);
+  if(!a||!b||a.length<3||b.length<3)return false;
+  if(a===b)return true;
+  const short=a.length<b.length?a:b,long=a.length<b.length?b:a;
+  // A named regional broadcast station may append a locality in the playlist;
+  // never match generic "TV", "Radio" or unrelated station names.
+  return short.length>=7&&short.split(' ').length>=2&&long.startsWith(short+' ')&&short.length/long.length>=.64;
+ }
+ async function searchChannelMetadata(raw,request=fetch){
+  const name=String(raw||'').trim().slice(0,70);
+  if(name.length<3||/https?:|[/?=&@]|m3u|token|password/i.test(name))return [];
+  let wikidata=[],wiki=[],wikidataError=null;
+  try{wikidata=await searchInternet(name,request);}catch(e){wikidataError=e;}
+  const verified=wikidata.filter(x=>broadcaster(x)&&matchPublicName(name,x));
+  if(verified.length)return verified.slice(0,4);
+  // Wikipedia Action API explicitly supports cross-origin requests with origin=*.
+  const context=/(?:radio|vov|phát thanh|\bfm\b)/i.test(name)?' phát thanh':' truyền hình';
+  const url='https://vi.wikipedia.org/w/api.php?action=query&list=search&format=json&utf8=1&srprop=snippet&srlimit=6&origin=*&srsearch='+encodeURIComponent(name+context);
+  try{
+   const res=await request(url,{method:'GET',headers:{Accept:'application/json'},signal:AbortSignal.timeout(12000)});
+   if(!res.ok)throw Error('Wikipedia HTTP '+res.status);
+   const body=await res.json();
+   if(body?.error)throw Error('Wikipedia '+String(body.error.code||'API error'));
+   wiki=(Array.isArray(body?.query?.search)?body.query.search:[]).slice(0,6).map(row=>{
+    const title=String(row.title||'').slice(0,120);
+    const description=String(row.snippet||'').replace(/<[^>]*>/g,' ').replace(/&(?:quot|amp|lt|gt|nbsp);/g,' ').replace(/\s+/g,' ').trim().slice(0,180);
+    return{name:title,description,url:'https://vi.wikipedia.org/wiki/'+encodeURIComponent(title.replace(/ /g,'_'))};
+   });
+  }catch(error){
+   if(wikidataError)throw new Error('Wikidata/Wikipedia: '+String(wikidataError.message||wikidataError).slice(0,60)+'; '+String(error.message||error).slice(0,60));
+   if(!wikidata.length)throw error;
+  }
+  return [...verified,...wiki.filter(x=>broadcaster(x)&&matchPublicName(name,x))].slice(0,6);
+ }
+ return Object.freeze({KEY,labels,predict,programmeKey,analyzeChannel,analyze,read,learn,save,clear,rank,monitor,searchInternet,matchPublicName,searchChannelMetadata});
 });

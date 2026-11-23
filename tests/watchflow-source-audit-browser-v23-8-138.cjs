@@ -20,9 +20,10 @@ const {chromium}=require('playwright-core');
    report:!!document.getElementById('wfAuditPanel'),
    displayed:!document.getElementById('wfAuditPanel')?.hidden,
    header:document.querySelectorAll('#wfAuditPanel th').length,
-   sortOptions:document.querySelectorAll('#wfAuditPanel .wf-audit-sort option').length
+   sortOptions:document.querySelectorAll('#wfAuditPanel .wf-audit-sort option').length,
+   researchButton:!!document.getElementById('wfAuditResearch')
   }));
-  if(!audit.button||!audit.report||!audit.displayed||audit.header!==5||audit.sortOptions!==4)
+  if(!audit.button||!audit.report||!audit.displayed||audit.header!==5||audit.sortOptions!==6||!audit.researchButton)
    throw Error('WatchFlow audit UI regression: '+JSON.stringify(audit));
   await page.locator('#wfAuditPanel').screenshot({path:'rust-watchflow-audit-v23-8-138.png',timeout:20000});
   // Regression from a real user report: 560 imported channels appeared to do

@@ -1,0 +1,9 @@
+# Rust Lab v23.8.141 — Verified Internet discovery with Wikipedia fallback (PRERELEASE)
+
+The user's 560-channel audit showed 69 Wikidata search attempts and zero confirmed channel identities. Previous code searched Wikidata in Vietnamese only, used strict broadcaster/identity checks and cached negative results for 48h. It did not actually have verified Internet evidence for all 560 channels.
+
+- Add a real second public metadata provider via Vietnamese Wikipedia's CORS-enabled Action API when a Wikidata result does not verify the exact channel identity. Search broadcast channel names only (radio and television), verify a broadcaster-related snippet, restrict links to wikidata.org or vi.wikipedia.org and preserve source URLs for the audit. Do not scrape websites or retrieve streams.
+- Surface separate 'not yet searched', 'searched without matching station', 'network error' and 'verified source' statuses in the 560-channel audit. Include direct public-source links, an optional next-six Internet research action, live incremental updates and unknown-channel-first sorting. Actual automatic background batches continue in Intelligence without further clicks.
+- Upgrade historical negative Wikidata-only cache entries to allow immediate Wikipedia fallback, with 5-minute retry for network errors and 2-hour retry for new verified-source misses. Serialized background/manual searches preserve daily quota. Limits remain six sanitized public names per scan, 72/day.
+- Exact matching verified Wikipedia or Wikidata public facts are also eligible for native Qwen3 reclassification. Unrelated province/music pages and vague results are rejected; Qwen3 cannot browse the web on its own.
+- Existing Stable, Latest and other branches unchanged. Tag immutable, prerelease-only. Unit/browser CI verify logic and UI; live network and Apple Silicon MLX inference must still be checked on the installed build.

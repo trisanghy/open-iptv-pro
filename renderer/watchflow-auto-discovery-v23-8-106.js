@@ -9,14 +9,23 @@
  const DAY_LIMIT=72,RUN_LIMIT=6,CACHE_MS=48*3600*1000,PAUSE_MS=2*60*1000;
  const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().replace(/[^a-z0-9]/g,'');
  const publicName=value=>{let s=String(value||'').trim();if(/https?:|www\.|[/?=&@]|password|token|m3u|access[_ -]?key|bearer/i.test(s))return '';s=s.replace(/\[[^\]]*(?:geo|block|region)[^\]]*\]/ig,'').replace(/\([^)]*(?:geo|block|region|\d{3,4}p)[^)]*\)/ig,'').replace(/\b(?:UHD|FHD|HD|SD|1080p|720p|4K|geo.blocked)\b/ig,'').replace(/\s+/g,' ').trim();return s.length>=3&&s.length<=60?s:'';};
- const isTv=item=>/television|tv channel|tv network|tv station|broadcaster|broadcasting|truy[eề]n h[iì]nh|k[eê]nh truy[eề]n h[iì]nh|đ[aà]i truy[eề]n h[iì]nh|t[eế]l[eé]vision/i.test(String(item?.description||'')+' '+String(item?.name||''));
+ const isTv=item=>/television|tv channel|tv network|tv station|broadcaster|broadcasting|broadcast station|radio|phát thanh|truyền hình|đài tiếng nói|đài truyền thanh|truy[eề]n h[iì]nh|k[eê]nh truy[eề]n h[iì]nh|đ[aà]i truy[eề]n h[iì]nh|t[eế]l[eé]vision/i.test(String(item?.description||'')+' '+String(item?.name||''));
+ const validPublicUrl=url=>/^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$/.test(String(url||''))||
+   /^https:\/\/vi\.wikipedia\.org\/wiki\/[A-Za-z0-9_%().,~!'-]+$/.test(String(url||''));
+ function matchesName(name,item){
+  const a=normalize(publicName(name)),b=normalize(publicName(item?.name));
+  if(!a||!b||a.length<3||b.length<3)return false;
+  if(a===b)return true;
+  const longer=a.length>b.length?a:b,shorter=a.length>b.length?b:a;
+  return shorter.length>=7&&longer.startsWith(shorter)&&shorter.length/longer.length>=.64;
+ }
  const enabled=storage=>{try{return storage?.getItem(OPT)!=='false';}catch{return true;}};
  const setEnabled=(storage,on)=>{try{storage?.setItem(OPT,on?'true':'false');return true;}catch{return false;}};
  const fresh=()=>({version:1,day:'',used:0,queries:{},error:'',updatedAt:0});
  function read(storage){let raw;try{raw=JSON.parse(storage?.getItem(KEY)||'null');}catch{}if(!raw||raw.version!==1||!raw.queries||typeof raw.queries!=='object')return fresh();
   const o=fresh();o.day=String(raw.day||'');o.used=Math.max(0,Math.min(DAY_LIMIT,Number(raw.used)||0));o.updatedAt=Number(raw.updatedAt)||0;o.error=String(raw.error||'').slice(0,180);
   for(const [q,v]of Object.entries(raw.queries).slice(-900)){if(typeof q!=='string'||q.length>70||!v||!Array.isArray(v.items))continue;
-   o.queries[q]={at:Number(v.at)||0,failed:v.failed===true,items:v.items.slice(0,8).filter(x=>/^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$/.test(String(x.url||''))).map(x=>({name:String(x.name||'').slice(0,120),description:String(x.description||'').slice(0,180),url:x.url}))};}return o;
+   o.queries[q]={at:Number(v.at)||0,failed:v.failed===true,sourcesChecked:v.sourcesChecked===true,items:v.items.slice(0,8).filter(x=>validPublicUrl(x.url)).map(x=>({name:String(x.name||'').slice(0,120),description:String(x.description||'').slice(0,180),url:x.url}))};}return o;
  }
  const save=(storage,s)=>{try{storage?.setItem(KEY,JSON.stringify({...s,queries:Object.fromEntries(Object.entries(s.queries).slice(-900))}));return true;}catch{return false;}};
 
@@ -30,10 +39,10 @@
    if(entry.failed){failed++;continue;}
    if(clock-entry.at>=CACHE_MS)continue;
    searched++;
-   if(entry.items.some(x=>isTv(x)&&normalize(publicName(x.name))===normalize(name)))matched++;
+   if(entry.items.some(x=>isTv(x)&&matchesName(name,x)))matched++;
   }
   const used=state.day===new Date(clock).toISOString().slice(0,10)?state.used:0;
-  return{total:names.length,searched,matched,failed,remaining:Math.max(0,names.length-searched),
+  return{total:names.length,searched,matched,noMatch:searched-matched,failed,remaining:Math.max(0,names.length-searched),
    used,limit:DAY_LIMIT,error:state.error,enabled:enabled(storage)};
  }
 
@@ -53,8 +62,8 @@
   const cache=read(storage).queries,map=new Map(analysis||[]);
   for(const c of channels){
    const q=publicName(c.name).toLowerCase(),record=cache[q];
-   if(!q||!record||Date.now()-record.at>CACHE_MS)continue;
-   const match=record.items.find(x=>normalize(publicName(x.name))===normalize(publicName(c.name))&&isTv(x));
+   if(!q||!record||record.failed||Date.now()-record.at>CACHE_MS)continue;
+   const match=record.items.find(x=>matchesName(c.name,x)&&isTv(x)&&validPublicUrl(x.url));
    if(!match)continue; // Never classify a different channel just because it appeared in a web search.
    const desc=String(match.description||'');
    const labels=topicCatalog?.fromText(desc)||[];
@@ -70,7 +79,7 @@
   }
   return map;
  }
- async function scan({storage,channels=[],analysis=new Map(),engine,lookup,clock=Date.now,budget=RUN_LIMIT,onUpdate=()=>{}}={}){
+ async function scanInternal({storage,channels=[],analysis=new Map(),engine,lookup,clock=Date.now,budget=RUN_LIMIT,onUpdate=()=>{}}={}){
   if(!enabled(storage))return {disabled:true,requests:0,discovered:collect(storage,channels,engine)};
   if(!engine||typeof lookup!=='function')return{error:'Search service unavailable',requests:0,discovered:[]};
   const now=clock(),date=new Date(now).toISOString().slice(0,10),state=read(storage);
@@ -81,8 +90,14 @@
     return (m.label==='Chưa phân loại'||!m.label?0:m.from==='Tên/nhóm'?1:2);};
    return score(a)-score(b);
   });
+  const priorityFor=q=>{
+   const v=state.queries[q];
+   // Empty legacy results had only searched Wikidata in Vietnamese.
+   if(v&&!v.failed&&!v.sourcesChecked&&!v.items.length)return -1;
+   return v?.at||0;
+  };
   const unique=[...new Set(ordered.map(c=>publicName(c.name).toLowerCase()).filter(Boolean))]
-   .sort((a,b)=>(state.queries[a]?.at||0)-(state.queries[b]?.at||0)).slice(0,18);
+   .sort((a,b)=>priorityFor(a)-priorityFor(b)).slice(0,18);
   const interest=engine.read?.(storage)?.seconds||{};
   const rankedTopics=Object.keys(TOPICS).sort((a,b)=>(Number(interest[b])||0)-(Number(interest[a])||0));
   const topics=rankedTopics.slice(0,3).map(x=>TOPICS[x]);
@@ -90,14 +105,28 @@
   let requests=0,errors=0;state.error='';
   for(const q of queue){
    if(!enabled(storage)||state.used>=DAY_LIMIT||requests>=Math.min(RUN_LIMIT,budget))break;
-   if(state.queries[q]&&now-state.queries[q].at<(state.queries[q].failed?5*60*1000:CACHE_MS))continue;
-   try{const raw=await lookup(q);const items=(Array.isArray(raw)?raw:[]).slice(0,8).filter(x=>/^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$/.test(String(x.url||''))).map(x=>({name:String(x.name||'').slice(0,120),description:String(x.description||'').slice(0,180),url:x.url}));
-    state.queries[q]={at:now,items,failed:false};
-   }catch(error){state.error='Tra cứu tạm lỗi: '+String(error?.message||error).slice(0,100);errors++;state.queries[q]={at:now,items:[],failed:true};}
+   const previous=state.queries[q],legacy=previous&&!previous.failed&&!previous.sourcesChecked&&!previous.items.length;
+   if(previous&&!legacy&&now-previous.at<(previous.failed?5*60*1000:previous.items.length?CACHE_MS:2*60*60*1000))continue;
+   try{const raw=await lookup(q);const items=(Array.isArray(raw)?raw:[]).slice(0,8).filter(x=>validPublicUrl(x.url)&&isTv(x)&&matchesName(q,x)).map(x=>({name:String(x.name||'').slice(0,120),description:String(x.description||'').slice(0,180),url:x.url}));
+    state.queries[q]={at:now,items,failed:false,sourcesChecked:true};
+   }catch(error){state.error='Tra cứu tạm lỗi: '+String(error?.message||error).slice(0,100);errors++;state.queries[q]={at:now,items:[],failed:true,sourcesChecked:false};}
    requests++;state.used++;state.updatedAt=now;save(storage,state);onUpdate({requests,used:state.used,limit:DAY_LIMIT});
   }
   const results=collect(storage,channels,engine);onUpdate({done:true,discovered:results.length,errors,error:state.error});
   return{requests,used:state.used,limit:DAY_LIMIT,discovered:results,errors,error:state.error};
+ }
+ // Serialize concurrent background/manual searches sharing the same storage.
+ // This prevents consuming the same daily quota twice or losing cached results.
+ const activeScans=new WeakMap();
+ function scan(args={}){
+  const storage=args?.storage;
+  if(!storage||typeof storage!=='object')return scanInternal(args);
+  const active=activeScans.get(storage);
+  if(active)return active;
+  let task;
+  task=scanInternal(args).finally(()=>{if(activeScans.get(storage)===task)activeScans.delete(storage);});
+  activeScans.set(storage,task);
+  return task;
  }
  // Channel labels are immutable until their name/group/EPG ID changes or a user rescans.
  const CHANNEL_CACHE='watchflow:classified-channels-v4',CHANNEL_CACHE_VERSION=4;
@@ -386,7 +415,7 @@
    webBusy=true;lastInternet=Date.now();notify({internet:true,running:true});
    try{
     const list=channels();
-    const lookupResult=await scan({storage:win.localStorage,channels:list,analysis:backgroundAnalysis.get(win)||new Map(),engine,lookup:q=>engine.searchInternet(q),
+    const lookupResult=await scan({storage:win.localStorage,channels:list,analysis:backgroundAnalysis.get(win)||new Map(),engine,lookup:q=>(engine.searchChannelMetadata||engine.searchInternet)(q),
      onUpdate:info=>notify({internet:true,...info,...internetProgress(win.localStorage,list)})});
     const metrics=internetProgress(win.localStorage,list);
     notify({internet:true,complete:true,...metrics,requests:lookupResult.requests,errors:lookupResult.errors});
@@ -429,5 +458,5 @@
   // Internet checks no longer poll constantly: startup, new channels or a manual scan only.
   return true;
  }
- return Object.freeze({setNativeTopics,setSmartProgrammeLabels,CHANNEL_CACHE,readChannelCache,saveChannelCache,loadPersistentCache,persistChannelCache,channelSignature,cachedSnapshot,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,internetProgress,scanLocal,fingerprint,start});
+ return Object.freeze({setNativeTopics,setSmartProgrammeLabels,CHANNEL_CACHE,readChannelCache,saveChannelCache,loadPersistentCache,persistChannelCache,channelSignature,cachedSnapshot,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,matchesName,validPublicUrl,read,enabled,setEnabled,collect,enrich,scan,internetProgress,scanLocal,fingerprint,start});
 });

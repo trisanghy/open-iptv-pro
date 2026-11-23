@@ -14,7 +14,7 @@ test('Wikidata exact-name facts reach Qwen3 prompt, never IPTV stream URLs',()=>
  const evidence=qwen.verifiedInternet(channel,auto.read(storage).queries,auto,clock+1000);
  assert.match(evidence,/Vietnamese news television channel/);
  const prompt=qwen.metadata(channel,null,null,evidence);
- assert.match(prompt,/Dữ kiện Internet \(Wikidata\)/);
+ assert.match(prompt,/Dữ kiện Internet \(Wikidata\/Wikipedia\)/);
  assert.match(prompt,/Vietnamese news/);
  assert.doesNotMatch(prompt,/secret\.local|\.m3u8|wikidata\.org\/wiki/);
  assert.notEqual(qwen.channelKey('qwen06',channel),qwen.channelKey('qwen06',channel,evidence));

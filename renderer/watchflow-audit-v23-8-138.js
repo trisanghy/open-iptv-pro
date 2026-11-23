@@ -16,11 +16,12 @@
   const name=auto?.publicName?.(channel?.name)||'';
   const entry=queryCache?.[name.toLowerCase()];
   if(!entry||!(clock-entry.at<48*3600*1000))return{label:NOT_SEARCHED,status:'pending',url:'',description:''};
-  const match=(entry.items||[]).find(item=>auto?.isTv?.(item)&&norm(auto.publicName(item.name))===norm(name));
-  if(!match)return{label:'Không tìm thấy mục khớp',status:'no-match',url:'',description:''};
+  if(entry.failed)return{label:'Tra cứu lỗi · sẽ thử lại',status:'failed',url:'',description:''};
+  const match=(entry.items||[]).find(item=>auto?.isTv?.(item)&&auto?.matchesName?.(name,item)&&auto?.validPublicUrl?.(item.url));
+  if(!match)return{label:'Đã tìm · không có nguồn khớp',status:'no-match',url:'',description:''};
   const labels=unique(topics?.fromText?.(match.name+' '+match.description)||[]);
-  return{label:labels.join(', ')||UNKNOWN,labels,status:labels.length?'matched':'unclear',
-   url:/^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$/.test(String(match.url))?match.url:'',
+  return{label:labels.join(', ')||'Có nguồn · chưa xác định chủ đề',labels,status:'matched',
+   url:auto?.validPublicUrl?.(match.url)?match.url:'',
    description:String(match.description||'').slice(0,160)};
  }
  function localLabels(ch,engine,topics){
@@ -62,6 +63,10 @@
    let x=0;
    if(sort==='evidence')x=b.sources-a.sources||b.vote-a.vote;
    else if(sort==='name')x=a.name.localeCompare(b.name,'vi');
+   else if(sort==='unknown')x=Number(a.nameLabels.length>0)-Number(b.nameLabels.length>0)||
+    Number(a.epg.labels.length>0)-Number(b.epg.labels.length>0)||Number(a.internet.status==='matched')-Number(b.internet.status==='matched');
+   else if(sort==='internet')x=Number(b.internet.status==='matched')-Number(a.internet.status==='matched')||
+    Number(a.internet.status==='pending')-Number(b.internet.status==='pending');
    else if(sort==='current')x=Number(b.isCurrent)-Number(a.isCurrent)||b.sources-a.sources;
    else x=categorySort(a,b);
    return x||a.name.localeCompare(b.name,'vi')||a.index-b.index;
@@ -70,32 +75,42 @@
  function totals(rows){
   return{total:rows.length,channel:rows.filter(x=>x.nameLabels.length).length,
    epg:rows.filter(x=>x.epg.count>0).length,epgClassified:rows.filter(x=>x.epg.labels.length).length,
-   searched:rows.filter(x=>!['pending','disabled'].includes(x.internet.status)).length,
+   searched:rows.filter(x=>['matched','no-match','unclear'].includes(x.internet.status)).length,
+   noMatch:rows.filter(x=>x.internet.status==='no-match').length,
+   errors:rows.filter(x=>x.internet.status==='failed').length,
+   unsearched:rows.filter(x=>x.internet.status==='pending').length,
    matched:rows.filter(x=>x.internet.status==='matched').length,
    agreed:rows.filter(x=>x.vote>=2).length};
  }
  function mount(win){
   const doc=win?.document;if(!doc)return false;
   if(win.__watchflowAuditMount)return true;win.__watchflowAuditMount=true;
-  let rows=[],limit=50,running=false,ready=false,sort='category',search='';
+  let rows=[],limit=50,running=false,researching=false,ready=false,sort='unknown',search='';
   const text=(tag,cls,value)=>{const el=doc.createElement(tag);if(cls)el.className=cls;if(value!==undefined)el.textContent=String(value);return el;};
   const api={
    get auto(){return win.OpenIPTVWatchFlowAuto;},
    get engine(){return win.OpenIPTVWatchFlowEngine;},
    get topics(){return win.OpenIPTVWatchFlowTopics;}
   };
-  let panel,button,status,summary,results,select,input,more;
+  let panel,button,researchButton,status,summary,results,select,input,more;
   function label(v){return Array.isArray(v)&&v.length?v.slice(0,3).join(', '):UNKNOWN;}
   function addCell(tr,title,body,sub='',link=''){
    const td=text('td','wf-audit-cell');
    td.append(text('strong','',body));
    if(sub)td.append(text('small','',sub));
-   if(link){const a=text('a','','Xem nguồn Wikidata');a.href=link;a.target='_blank';a.rel='noopener noreferrer';td.append(a);}
+   if(link){const a=text('a','','Xem bằng chứng Internet');a.href=link;a.target='_blank';a.rel='noopener noreferrer';td.append(a);}
    tr.append(td);
   }
   function render(){
    const n=totals(rows),shown=sortRows([...rows],sort,search);
-   summary.textContent=n.total+' kênh · '+n.channel+' phân loại theo tên/nhóm · '+n.epg+' có EPG ('+n.epgClassified+' đã nhận chủ đề) · '+n.matched+'/'+n.searched+' mục Internet đã tra khớp · '+n.agreed+' kênh có ≥2 nguồn đồng ý.';
+   const localCount=n.total;
+   const budget=api.auto?.internetProgress?.(win.localStorage,win.IPTVState?.getChannels?.()||[]);
+   summary.textContent=localCount+' kênh · '+n.channel+' có nhãn theo tên/nhóm · '+n.epgClassified+' có chủ đề EPG · Internet: '+n.matched+' có nguồn / '+n.noMatch+' đã tìm nhưng không thấy / '+n.errors+' lỗi / '+n.unsearched+' chưa tìm'+
+    (budget?' · hạn mức hôm nay '+budget.used+'/'+budget.limit:'')+' · '+n.agreed+' kênh có ≥2 nguồn đồng ý.';
+   if(researchButton){
+    researchButton.disabled=researching||!budget?.enabled||budget.used>=budget.limit;
+    researchButton.textContent=researching?'Đang tra cứu…':!budget?.enabled?'Internet đã tắt':budget.used>=budget.limit?'Hết lượt hôm nay':'Tìm Internet tiếp (tối đa 6)';
+   }
    results.replaceChildren();
    for(const item of shown.slice(0,limit)){
     const tr=text('tr',item.isCurrent?'wf-audit-current':'');
@@ -162,14 +177,17 @@
      status.textContent='Đã kiểm tra tên kênh + EPG. Internet đang tắt trong cài đặt WatchFlow; không gửi yêu cầu ra ngoài.';
      return;
     }
-    status.textContent='Kết quả cục bộ đã sẵn sàng. Đang tra cứu tối đa 6 tên kênh công khai trên Wikidata…';
+    status.textContent='Kết quả cục bộ đã có. Đang tìm nguồn trên Wikidata và Wikipedia tiếng Việt (tối đa 6 tên kênh)…';
     // Existing discovery limit: no bulk scraping, no stream URLs and no bypass
     // of the user's privacy setting or the 72-query daily budget.
     let lookup=null;
     try{
-     lookup=await auto.scan({storage:win.localStorage,channels,analysis,engine,lookup:q=>engine.searchInternet(q),
+     lookup=await auto.scan({storage:win.localStorage,channels,analysis,engine,lookup:q=>(engine.searchChannelMetadata||engine.searchInternet)(q),
       budget:6,onUpdate:x=>{
-       if(x.requests)status.textContent='Internet: đã kiểm tra '+x.requests+' tên kênh trong lượt này · đang cập nhật kết quả…';
+       if(x.requests){
+         status.textContent='Internet: đã tìm '+x.requests+' tên kênh trong lượt này · đang cập nhật bảng…';
+         rows=buildRows(args);render();
+        }
       }});
     }catch(err){lookup={requests:0,error:String(err?.message||err)};}
     rows=buildRows(args);render();
@@ -177,7 +195,7 @@
     status.textContent='Hoàn tất · '+channels.length+' kênh · tra cứu mới '+Number(lookup.requests||0)+' tên kênh'+
      ' · Internet đã đối chiếu '+counts.searched+'/'+channels.length+' kênh'+
      (lookup.error?' · Internet: '+String(lookup.error).slice(0,100):'')+
-     '. Chưa tra cứu không có nghĩa là sai phân loại.';
+     '. Các kênh chưa tìm chưa có bằng chứng Internet.';
    }catch(error){
     status.textContent='Không hoàn thành kiểm tra: '+String(error?.message||error).slice(0,180);
    }finally{running=false;button.disabled=false;button.textContent='✓ Kiểm tra phân loại';}
@@ -202,15 +220,46 @@
    head.append(left,close);panel.append(head);
    status=text('p','wf-audit-status','Chưa chạy kiểm tra.');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
    summary=text('p','wf-audit-summary','');panel.append(status,summary);
+   
+  async function researchNext(){
+   const auto=api.auto,engine=api.engine,channels=(win.IPTVState?.getChannels?.()||[]).filter(c=>c?.id);
+   if(researching||!auto?.scan||!channels.length)return;
+   if(auto.enabled?.(win.localStorage)===false){status.textContent='Tra cứu Internet đã tắt trong phần cài đặt.';return;}
+   researching=true;render();
+   const analysis=auto.getBackgroundAnalysis?.(win)||new Map();
+   status.textContent='Đang tìm tên kênh chưa xác định trên Wikidata/Wikipedia tiếng Việt…';
+   try{
+    const result=await auto.scan({storage:win.localStorage,channels,analysis,engine,
+     lookup:q=>(engine.searchChannelMetadata||engine.searchInternet)(q),budget:6,
+     onUpdate:state=>{
+      rows=buildRows({channels,analysis,storage:win.localStorage,auto,engine,topics:api.topics,
+       currentId:win.IPTVState?.getCurrent?.()?.id});
+      render();
+      if(state.requests)status.textContent='Đã thực hiện '+state.requests+'/6 lượt tra cứu trong lần này'+
+       (state.error?' · '+state.error:'');
+     }});
+    rows=buildRows({channels,analysis,storage:win.localStorage,auto,engine,topics:api.topics,
+     currentId:win.IPTVState?.getCurrent?.()?.id});render();
+    const p=auto.internetProgress?.(win.localStorage,channels);
+    status.textContent='Tra cứu Internet: thêm '+Number(result.requests||0)+' tên · '+(p?.matched||0)+' nguồn khớp / '+(p?.searched||0)+' đã tìm · '+
+     (p?.remaining||0)+' chưa tìm · '+(p?.used||0)+'/'+(p?.limit||72)+' lượt hôm nay'+
+     (result.error?' · '+result.error:'')+'. Các kết quả không khớp không được dùng để phân loại.';
+   }catch(err){status.textContent='Lỗi truy vấn Internet: '+String(err?.message||err).slice(0,180);}
+   finally{researching=false;render();}
+  }
+
    const controls=text('div','wf-audit-controls');
    input=text('input','wf-audit-search');input.type='search';input.placeholder='Tìm kênh hoặc chủ đề…';input.setAttribute('aria-label','Lọc kết quả phân loại');
    select=text('select','wf-audit-sort');select.setAttribute('aria-label','Sắp xếp kết quả phân loại');
-   for(const [v,title]of [['category','Sắp xếp: Chủ đề AI'],['evidence','Nguồn bằng chứng nhiều nhất'],['name','Tên kênh A–Z'],['current','Kênh đang phát trước']]){
+   for(const [v,title]of [['unknown','Ưu tiên: Kênh chưa xác định'],['internet','Đã tìm được trên Internet'],['category','Chủ đề AI'],['evidence','Nguồn bằng chứng nhiều nhất'],['name','Tên kênh A–Z'],['current','Kênh đang phát trước']]){
     const option=text('option','',title);option.value=v;select.append(option);
    }
    input.addEventListener('input',()=>{search=input.value;limit=50;render();});
    select.addEventListener('change',()=>{sort=select.value;limit=50;render();});
-   controls.append(input,select);panel.append(controls);
+   researchButton=text('button','wf-audit-research','Tìm Internet tiếp (tối đa 6)');
+   researchButton.id='wfAuditResearch';researchButton.type='button';
+   researchButton.addEventListener('click',()=>{void researchNext();});
+   controls.append(input,select,researchButton);panel.append(controls);
    const scroll=text('div','wf-audit-table-wrap'),table=text('table','wf-audit-table');
    const thead=text('thead',''),tr=text('tr','');for(const col of ['Kênh hiện tại','Phân loại kênh','Phân loại EPG','Tìm kiếm Internet','Phân loại cuối'])tr.append(text('th','',col));
    thead.append(tr);results=text('tbody','');table.append(thead,results);scroll.append(table);panel.append(scroll);
@@ -220,6 +269,16 @@
    if(anchor)anchor.insertAdjacentElement('afterend',panel);
    else wf.append(panel);
    button.addEventListener('click',()=>{void run();});
+   doc.addEventListener('openiptv:watchflow-auto-update',event=>{
+    if(!event.detail?.internet||!panel?.open||running||researching)return;
+    const channels=(win.IPTVState?.getChannels?.()||[]).filter(ch=>ch?.id);
+    if(!channels.length)return;
+    rows=buildRows({channels,analysis:api.auto?.getBackgroundAnalysis?.(win)||new Map(),
+      storage:win.localStorage,auto:api.auto,engine:api.engine,topics:api.topics,
+      currentId:win.IPTVState?.getCurrent?.()?.id});
+    render();
+    status.textContent='Internet đang tìm trong nền · '+(api.auto?.internetProgress?.(win.localStorage,channels)?.searched||0)+' tên kênh đã tra.';
+   });
    return true;
   }
   doc.addEventListener('openiptv:unified-ai-ready',attach);

@@ -49,7 +49,7 @@ test('Button and result table use real channels, existing capped network lookup,
  const html=fs.readFileSync('renderer/index.html','utf8');
  assert.match(ui,/wfAuditRun/);assert.match(ui,/wfAuditPanel/);
  assert.match(ui,/await auto.scanLocal/);assert.match(ui,/budget:6/);
- assert.match(ui,/engine.searchInternet\(q\)/);
+ assert.match(ui,/engine\.searchChannelMetadata\|\|engine\.searchInternet/);
  assert.match(ui,/chưa tra cứu/i);
  assert.doesNotMatch(ui,/playChannel\(|addChannel\(|parseM3U\(|streamUrl/);
  assert.ok(html.indexOf('watchflow-ai-demo-v23-8-102.js')<html.indexOf('watchflow-audit-v23-8-138.js'));

@@ -1,3 +1,12 @@
+## Rust Lab v23.8.141 — Sửa tra cứu Internet 0/69 khớp, báo nguồn thật trong bảng 560 kênh (PRERELEASE)
+
+- Nguyên nhân người dùng thấy 69/560 đã tra nhưng 0 khớp: ứng dụng chỉ gọi Wikidata tiếng Việt, buộc mục kết quả giống tên và có mô tả TV, lại giữ cả kết quả rỗng 48h. Nhiều kênh địa phương/âm nhạc/radio không có metadata đầy đủ ở nguồn này. Không giả lập kết quả.
+- Tìm Internet theo tên kênh công khai: kiểm tra Wikidata, và nếu không có danh tính kênh phù hợp thì tra cứu Wikipedia tiếng Việt qua API có CORS. Phân biệt radio và truyền hình; chỉ chấp nhận tiêu đề khớp và mô tả cho biết đài/kênh phát sóng, URL thuộc nguồn Wikimedia đã xác minh. Không tìm/chuyển URL phát, thông tin đăng nhập hoặc link M3U.
+- Tự nâng cấp các kết quả rỗng cũ (chỉ Wikidata) để có thể tra lại bằng Wikipedia, ưu tiên trước danh sách mới, giữ quota giới hạn tối đa 6 tên một lượt và 72 tên mỗi ngày; kết quả không tìm thấy mới thử lại sau 2h và truy vấn lỗi có thể thử lại sau 5 phút. Chặn 2 lượt tra cứu đồng thời ghi đè ngân sách.
+- Trong cửa sổ Kiểm tra 3 nguồn, mặc định xếp kênh chưa rõ lên trước; thêm nút Tìm Internet tiếp (tối đa 6), sắp xếp kênh có bằng chứng Internet trước, báo riêng có nguồn / không tìm thấy / lỗi / chưa tìm, cập nhật bảng theo mỗi lượt và dẫn link nguồn.
+- Khi có mô tả Wikipedia hoặc Wikidata khớp tên thật, chuyển thông tin đã lọc sang Qwen3 phân loại và thêm vào kết quả nguồn. Chỉ sửa Rust Lab, giữ nguyên player, EPG import, smart ONNX, PiP, CC/TTS, chế độ độc quyền v23.8.140, Stable và Latest.
+- Kiểm thử Node mô phỏng Wikimedia thật, so khớp danh tính, từ chối trang không phải kênh, quota/opt-out, click UI và tải bộ nhớ; Chromium kiểm tra 6 kiểu sắp xếp. Release vẫn là prerelease và tag bất biến.
+
 ## Rust Lab v23.8.140 — Thu gọn từng nhóm AI và kết nối Qwen3 với nghiên cứu Internet (PRERELEASE)
 
 - Ba nút Tiêu chuẩn/Smart/Intelligence nay là accordion độc quyền: chọn chế độ nào thì chỉ mở nhóm mô hình đó. Giữ đủ năm lựa chọn Smart và danh mục Qwen3/Hy-MT2 có thật.

@@ -23,8 +23,8 @@
   const name=auto.publicName(ch?.name).toLowerCase(),entry=queries?.[name];
   if(!name||!entry||entry.failed||clock-entry.at>=48*3600*1000)return '';
   const norm=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().replace(/[^a-z0-9]/g,'');
-  const match=(entry.items||[]).find(x=>/^https:\/\/www\.wikidata\.org\/wiki\/Q\d+$/.test(String(x.url||''))&&
-   auto.isTv(x)&&norm(auto.publicName(x.name))===norm(name));
+  const match=(entry.items||[]).find(x=>auto.validPublicUrl?.(x.url)&&
+   auto.isTv(x)&&auto.matchesName?.(name,x));
   if(!match)return '';
   return (String(match.name||'').slice(0,80)+' — '+String(match.description||'').slice(0,145))
    .replace(/https?:\/\/\S+|[\r\n]/gi,' ').slice(0,205);
@@ -41,7 +41,7 @@
   const scrub=s=>String(s||'').replace(/https?:\/\/\S+/gi,'').slice(0,120);
   const verified=String(webEvidence||'').replace(/https?:\/\/\S+/gi,'').slice(0,205);
   return ('Kênh: '+scrub(ch?.name)+'\nNhóm: '+scrub(ch?.group||ch?.groupTitle)+
-   (verified?'\nDữ kiện Internet (Wikidata): '+verified:'')+
+   (verified?'\nDữ kiện Internet (Wikidata/Wikipedia): '+verified:'')+
    '\nChương trình EPG: '+names.join(' | ').slice(0,240)).slice(0,590);
  }
  function labelsFrom(result){
@@ -89,7 +89,7 @@
    if(doc.getElementById('wfQwenStatus'))return true;
    const net=doc.createElement('small');net.id='wfInternetResearchStatus';
    net.setAttribute('role','status');net.setAttribute('aria-live','polite');
-   net.textContent='Internet/Wikidata: đang đọc số lượng đã tra cứu.';
+   net.textContent='Internet/Wikidata/Wikipedia: đang đọc số lượng đã tra cứu.';
    panel.append(net);
    const status=doc.createElement('small');status.id='wfQwenStatus';status.setAttribute('role','status');
    status.textContent='Qwen3: dùng kết quả kênh đã lưu. Kênh mới sẽ được phân loại tự động.';
@@ -106,7 +106,7 @@
    const p=auto?.internetProgress?.(win.localStorage,win.IPTVState?.getChannels?.()||[]);
    if(!p){el.textContent='Internet: chưa có dữ liệu nghiên cứu.';return;}
    el.textContent=p.enabled?
-    'Internet/Wikidata: đã tra '+p.searched+'/'+p.total+' tên kênh · '+p.matched+' khớp · '+p.used+'/'+p.limit+' lượt hôm nay'+
+    'Internet/Wikidata/Wikipedia: đã tra '+p.searched+'/'+p.total+' tên kênh · '+p.matched+' khớp · '+p.used+'/'+p.limit+' lượt hôm nay'+
     (p.error?' · Lỗi: '+p.error:'')+(p.remaining>0?' · tiếp tục tự tra cứu khi chọn Intelligence.':''):
     'Tra cứu Internet đang TẮT trong Tùy chọn nâng cao. Qwen3 chỉ phân loại offline.';
   }
