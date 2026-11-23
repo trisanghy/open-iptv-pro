@@ -1368,3 +1368,28 @@ test('P314 distinguishes which of three machine-learning backups diverged even w
   'positron-p51314-ai-model-diff-after-1920x1080-real.png'])assert.ok(qa.includes(term),term);
  assert.ok(css.includes('.po-ai-verify-diagnostic[data-match="false"]'));
 });
+
+test('P315 backup verification is semantic: reordered Logistic and Naive Bayes tokens are identical weights',()=>{
+ const model={version:1,observations:2,weights:{sport:0.25,news:0.75}};
+ const category={version:1,examples:1,docs:{sport:1},tokens:{sport:{football:2,live:1}}};
+ const original=C.buildLearningBackup({model,categoryModel:category,bandit:{sport:3,news:5}});
+ const same=JSON.parse(JSON.stringify(original));
+ same.models.preference.weights={news:0.75,sport:0.25};
+ same.models.category.tokens.sport={live:1,football:2};
+ same.models.explore={news:5,sport:3};
+ assert.notEqual(JSON.stringify(original.models.preference),JSON.stringify(same.models.preference),
+  'fixture must actually reorder source weights');
+ const outcome=C.verifyLearningBackupSnapshot(original,same);
+ assert.equal(outcome.ok,true);assert.equal(outcome.match,true);
+ assert.equal(outcome.matched,3);
+ assert.ok(outcome.details.every(item=>item.match));
+ same.models.preference.weights.news=0.76;
+ const changed=C.verifyLearningBackupSnapshot(original,same);
+ assert.equal(changed.match,false);assert.equal(changed.matched,2);
+ assert.equal(changed.details.find(item=>item.id==='logistic').match,false);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ assert.ok(ui.includes('không phụ thuộc thứ tự khóa JSON'));
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const item of ['qa315','positron-p51315-ai-key-order-before-1920x1080-real.png',
+  'positron-p51315-ai-key-order-after-1920x1080-real.png'])assert.ok(qa.includes(item),item);
+});

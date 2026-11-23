@@ -332,8 +332,13 @@
    {id:'ucb',label:'UCB',before:baseline.bandit,after:loaded.bandit,
     countBefore:baseline.summary.exploredTopics,countAfter:loaded.summary.exploredTopics,unit:'chủ đề'}
   ];
+  // P315: semantically identical learned weights must compare equal even when
+  // a JSON editor reorders object keys. Arrays retain their meaningful order.
+  const canonical=value=>Array.isArray(value)?value.map(canonical):
+   value&&typeof value==='object'?Object.keys(value).sort().map(key=>[key,canonical(value[key])]):value;
   const details=rows.map(({id,label,before,after,countBefore,countAfter,unit})=>({
-   id,label,match:JSON.stringify(before)===JSON.stringify(after),countBefore,countAfter,unit
+   id,label,match:JSON.stringify(canonical(before))===JSON.stringify(canonical(after)),
+   countBefore,countAfter,unit
   }));
   const matched=details.filter(item=>item.match).length,match=matched===details.length;
   return {ok:true,match,matched,details,summary:loaded.summary,reason:match?

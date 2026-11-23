@@ -1,3 +1,11 @@
+## P5.1.315 / Electron 4.23.400 — Kiểm tra trọng số AI không phụ thuộc thứ tự khóa JSON (CANDIDATE)
+- Feature priority: NEW — Phân tích nội dung JSON sau khi chọn lại tệp sao lưu: hai tệp có cùng bộ trọng số Logistic, Naive Bayes, UCB được công nhận tương đương dù khác thứ tự khóa, tránh cảnh báo sai khi JSON được chỉnh định dạng bằng công cụ khác; vẫn nhận ra trọng số số học bị đổi thực sự.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → xuất tệp → Kiểm tra JSON vừa tải → chọn bản sao do phần mềm khác sắp thứ tự khóa; app chấp nhận nếu các trọng số và bộ đếm vẫn trùng, không tự khôi phục.
+- Electron screenshot: positron-p51315-ai-key-order-before-1920x1080-real.png / positron-p51315-ai-key-order-after-1920x1080-real.png.
+- Evidence: Node regression đối chiếu bản gốc với bản đổi thứ tự hai trọng số Logistic, hai token Naive Bayes và lượt UCB, xác minh vẫn khớp 3/3; đổi một giá trị số thực phải bị đánh dấu khác. QA315 qua Electron thật thử tệp JSON đã đảo thứ tự, bảo toàn localStorage, playlist, trình phát và kiểm tra thông báo có đọc được.
+- Giới hạn: không coi JSON khác định dạng/mã hóa hay làm sai số là tương đương; chỉ bỏ qua sự khác biệt thứ tự khóa đối tượng; không gửi dữ liệu đi mạng.
+
 ## P5.1.314 / Electron 4.23.399 — Phân tích mô hình AI sai khác khi kiểm tra bản sao (CANDIDATE)
 - Feature priority: NEW — Khi JSON sao lưu AI hợp lệ nhưng khác trọng số, tự phân tích cục bộ và chỉ rõ Logistic, Naive Bayes hay UCB thay đổi; thống kê số mẫu/chủ đề trước-sau kể cả khi số lượng bằng nhau nhưng trọng số khác. Không nhập tệp hoặc sửa mô hình.
 - Feature class: AI

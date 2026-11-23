@@ -797,7 +797,7 @@
     const check=core.verifyLearningBackupSnapshot(lastBackupSnapshot.data,content);
     if(check.ok)lastVerifyDetails=check;
     message=!check.ok?'Không kiểm chứng được: '+check.reason:
-     check.match?'Đã kiểm tra tệp '+file.name+' ('+file.size+' byte): cấu trúc và trọng số AI khớp bản vừa xuất. Không tự khôi phục.':
+     check.match?'Đã kiểm tra tệp '+file.name+' ('+file.size+' byte): cấu trúc và trọng số AI khớp bản vừa xuất (không phụ thuộc thứ tự khóa JSON). Không tự khôi phục.':
      'Tệp sao lưu không khớp bản vừa xuất: '+check.matched+'/3 mô hình khớp. Chưa nhập hay ghi đè dữ liệu.';
    }catch{message='Không kiểm chứng được: không đọc được JSON hợp lệ.';}
   }
