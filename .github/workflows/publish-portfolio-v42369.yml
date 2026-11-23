@@ -60,6 +60,7 @@ jobs:
           node --test web/web-online/tests/source-use-consent-v1.test.cjs web/web-online/tests/cloud-core.test.cjs web/web-online/tests/resume-last.test.cjs web/web-online/tests/web-autoplay.test.cjs web/web-online/tests/web-volume.test.cjs web/web-online/tests/browser-channel-check.test.cjs
 
   publish:
+    if: false # published immutable Stable version; QA artifacts only
     name: Verify upstream installers, package full source and publish new immutable release
     needs: verify
     runs-on: ubuntu-latest
