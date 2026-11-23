@@ -951,7 +951,8 @@ test('P297 compares relative local Naive Bayes classification losses across grou
  assert.ok(!JSON.stringify(relative).includes('https://'));
  const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8'),qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
  assert.ok(ui.includes("riskSort.id='poAICategoryRiskSort'"));
- assert.ok(ui.includes("sortBy:'rate'"));
+ assert.ok(ui.includes("sortBy:rateMode?'rate':'count'"));
+ assert.ok(ui.includes("minGroupSize:hideSmall?5:1"));
  assert.ok(ui.includes("riskSort.addEventListener('click'"));
  for(const term of ['qa297','positron-p51297-group-rate-before-1920x1080-real.png',
  'positron-p51297-group-rate-after-1920x1080-real.png'])assert.ok(qa.includes(term));
