@@ -1461,3 +1461,28 @@ test('P318 backup comparison shows three-model diagnostic directly in manager, p
  for(const item of ['qa318','positron-p51318-ai-manager-diff-before-1920x1080-real.png',
   'positron-p51318-ai-manager-diff-after-1920x1080-real.png'])assert.ok(qa.includes(item),item);
 });
+
+test('P319 explains real logistic preference factors without inventing cold-start evidence or exposing group tokens',()=>{
+ const clock=new Date('2026-11-23T19:00:00+07:00').getTime();
+ const channel={id:'secret',name:'QA sport channel',group:'Private Group'};
+ const topic={key:'sport',source:'epg'};
+ const learned={version:1,observations:4,weights:{
+  bias:-0.2,'topic:sport':2,'epg:sport':1,'slot:toi':0.4,'group:private group':2
+ }};
+ const result=C.explainPreference(learned,channel,topic,clock,{limit:5});
+ assert.equal(result.ready,true);assert.equal(result.observations,4);
+ assert.ok(result.probability>0.5&&result.probability<1);
+ assert.equal(result.factors[0].label,'Chủ đề Thể thao');
+ assert.ok(result.factors.some(x=>x.label==='Nhóm kênh'&&x.trend==='tăng'));
+ assert.ok(result.factors.some(x=>x.trend==='giảm'));
+ assert.ok(!JSON.stringify(result).includes('private group'),'private group token must not leak');
+ const cold=C.explainPreference({version:1,observations:0,weights:{}},channel,topic,clock);
+ assert.equal(cold.ready,false);assert.deepEqual(cold.factors,[]);
+ assert.match(cold.note,/Chưa đủ phản hồi/);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const term of ['core.explainPreference(model,ch,topic','po-ai-preference-explain',
+  'Vì sao AI gợi ý?'])assert.ok(ui.includes(term),term);
+ for(const term of ['qa319','positron-p51319-ai-explain-before-1920x1080-real.png',
+  'positron-p51319-ai-explain-after-1920x1080-real.png'])assert.ok(qa.includes(term),term);
+});

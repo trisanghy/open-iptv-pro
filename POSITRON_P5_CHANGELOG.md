@@ -1,3 +1,11 @@
+## P5.1.319 / Electron 4.23.404 — AI giải thích thật yếu tố nào tăng/giảm gợi ý Logistic (CANDIDATE)
+- Feature priority: NEW — Từng kênh trong WatchFlow Intelligence có mục "Vì sao AI gợi ý?" đọc-only. Hiển thị các trọng số học đóng góp mạnh nhất vào logit của điểm gợi ý: chủ đề, EPG, khung giờ, ngày thường/cuối tuần, nhóm kênh; tuyệt đối không công bố tên token nhóm riêng tư hay tự dựng lịch.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Kênh hợp gu → mở "Vì sao AI gợi ý?" dưới kênh. Nếu chưa đủ hai phản hồi, hiện thiếu dữ liệu, không giả thuyết AI đã học.
+- Electron screenshot: positron-p51319-ai-explain-before-1920x1080-real.png / positron-p51319-ai-explain-after-1920x1080-real.png.
+- Evidence: Node test xác minh đóng góp trọng số Logistic, chiều tăng/giảm, không lộ group token, không giải thích giả ở cold start; Electron QA319 dùng trọng số học QA cục bộ có kiểm soát, chụp screenshot thật, mở disclosure, khôi phục localStorage ban đầu và không chạm playlist/luồng phát.
+- Giới hạn: độ lớn đóng góp là điểm logit không phải tỷ lệ phần trăm xác suất; QA không chứng minh kênh stream có phát thật.
+
 ## P5.1.318 / Electron 4.23.403 — AI chẩn đoán 3 mô hình trực tiếp trong Quản lý mô hình (CANDIDATE)
 - Feature priority: NEW — Khi tệp sao lưu khác trọng số AI đang dùng, hiển thị Logistic/Naive Bayes/UCB với số phản hồi/nhãn/chủ đề và số trường dữ liệu học khác ngay dưới nút đối chiếu trong Quản lý mô hình. Trước đây bảng chi tiết chỉ hiện sâu trong phần Dạy AI.
 - Feature class: AI

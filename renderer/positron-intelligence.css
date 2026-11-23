@@ -347,3 +347,10 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 /* P318: the same non-sensitive three-model diagnosis is visible beside model import/backup. */
 #poWatchFlowPanel #poAIModelVerifyDiagnostics[hidden]{display:none!important}
 #poWatchFlowPanel #poAIModelVerifyDiagnostics{margin-top:6px;max-width:100%;overflow-wrap:anywhere}
+
+/* P319: explain real logistic model contributions without displaying private feature keys. */
+#poWatchFlowPanel .po-ai-preference-explain{border:1px solid #396661;border-radius:8px;background:#123139;padding:6px 9px;margin:5px 0;color:#d8f8e8;min-width:0}
+#poWatchFlowPanel .po-ai-preference-explain>summary{cursor:pointer;font-size:11px;line-height:1.4;font-weight:700;color:#b9efe3}
+#poWatchFlowPanel .po-ai-preference-explain>p{font-size:11px;line-height:1.45;margin:5px 0;overflow-wrap:anywhere}
+#poWatchFlowPanel .po-ai-preference-factor{color:#cae9ed}
+#poWatchFlowPanel .po-ai-preference-explain>summary:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}

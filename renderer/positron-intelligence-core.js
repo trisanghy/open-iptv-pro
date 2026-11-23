@@ -93,6 +93,39 @@
   for(const [key,value] of Object.entries(vector||{}))score+=(m.weights[key]||0)*(Number(value)||0);
   return sigmoid(score);
  }
+
+ // P319: explain the *actual* learned logistic score, never fabricate
+ // preference evidence when the model has insufficient observations.
+ function explainPreference(raw,channel,topic,clock=Date.now(),{limit=3}={}){
+  const m=sanitizedModel(raw);
+  const kind=KINDS[topic?.key]?topic.key:'other';
+  const safeTopic={key:kind,source:topic?.source||'metadata'};
+  const date=new Date(Number.isFinite(clock)?clock:Date.now());
+  const vector=features(channel,safeTopic,date);
+  const slotLabels={dem:'đêm',sang:'sáng',trua:'trưa',toi:'tối',khuya:'khuya'};
+  const factorLabel=key=>{
+   if(key==='bias')return 'Sở thích chung đã học';
+   if(key.startsWith('topic:'))return 'Chủ đề '+(KINDS[key.slice(6)]||'Khác');
+   if(key.startsWith('epg:'))return 'Chủ đề từ EPG: '+(KINDS[key.slice(4)]||'Khác');
+   if(key.startsWith('slot:'))return 'Khung giờ '+(slotLabels[key.slice(5)]||'trong ngày');
+   if(key==='day:weekend')return 'Ngày cuối tuần';
+   if(key==='day:weekday')return 'Ngày thường';
+   if(key.startsWith('group:'))return 'Nhóm kênh'; // Hide private group labels/tokens.
+   return 'Đặc trưng đã học';
+  };
+  const rows=Object.entries(vector).map(([key,value])=>{
+   const weight=m.weights[key]||0,impact=weight*(Number(value)||0);
+   return {label:factorLabel(key),impact,trend:impact>0?'tăng':'giảm'};
+  }).filter(row=>Number.isFinite(row.impact)&&Math.abs(row.impact)>1e-6)
+   .sort((a,b)=>Math.abs(b.impact)-Math.abs(a.impact)||a.label.localeCompare(b.label,'vi'))
+   .slice(0,Math.max(1,Math.min(5,Math.trunc(limit)||3)))
+   .map(row=>({...row,impact:Math.round(Math.abs(row.impact)*1000)/1000}));
+  return {ready:m.observations>=2,observations:m.observations,
+   probability:predict(m,vector),factors:m.observations>=2?rows:[],
+   note:m.observations>=2
+    ?'Mỗi yếu tố tăng hoặc giảm điểm logit, không phải số phần trăm xác suất riêng.'
+    :'Chưa đủ phản hồi học để giải thích điểm số cá nhân hóa; hiện chỉ là gợi ý khám phá.'};
+ }
  function learn(model,vector,label,{rate=0.42}={}){
   const before=sanitizedModel(model);
   if(label!==0&&label!==1)return before;
@@ -856,5 +889,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,verifyLearningBackupSnapshot,compareLearningBackup,previewLearningImpact,previewCategoryImpact,compareCategorySamples,previewCategoryGroupRisks,previewCategoryTopicShifts,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,explainPreference,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,verifyLearningBackupSnapshot,compareLearningBackup,previewLearningImpact,previewCategoryImpact,compareCategorySamples,previewCategoryGroupRisks,previewCategoryTopicShifts,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

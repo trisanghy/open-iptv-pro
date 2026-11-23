@@ -693,6 +693,23 @@
     card.append(onAir);
    }
    const why=d.createElement('p');why.className='po-ai-why';why.textContent=item.reason;card.append(why);
+   // P319: actionable, privacy-safe logistic ML explanation, never a made-up EPG reason.
+   if(!exploreOpen){
+    const explanation=core.explainPreference(model,ch,topic,Date.now(),{limit:3});
+    const details=d.createElement('details');details.className='po-ai-preference-explain';
+    const toggle=d.createElement('summary');toggle.textContent='Vì sao AI gợi ý?';
+    details.append(toggle);
+    const note=d.createElement('p');note.textContent=explanation.ready
+     ?'Đã học '+explanation.observations+' phản hồi trên máy. '+explanation.note
+     :explanation.note;
+    details.append(note);
+    for(const factor of explanation.factors){
+     const line=d.createElement('p');line.className='po-ai-preference-factor';
+     line.textContent=factor.label+' · '+factor.trend+' điểm ('+factor.impact.toFixed(3)+')';
+     details.append(line);
+    }
+    card.append(details);
+   }
    const citation=profile[String(ch.name)];
    if(citation?.articleUrl){
     const link=d.createElement('a');link.href=citation.articleUrl;link.target='_blank';link.rel='noopener noreferrer';
