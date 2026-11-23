@@ -339,278 +339,163 @@ body[data-theme=light] #app .primary{color:#fff}
  #channelPicker .picker-help b{font-size:15px;min-height:26px;padding:3px 7px}
 }
 
-/* CINEMA TV 2.0 — streaming-style home and fullscreen channel gallery.
-   Original Open IPTV Pro identity retained; no third-party brand assets. */
+/* Netflix-inspired COLOR PALETTE ONLY. Preserve the pre-cinema TV layout,
+   remote navigation, preview lifecycle, picker sizes and playback engine. */
+body{
+ --bg:#141414;--panel:#1c1c1c;--item:#2b2b2b;--fg:#f5f5f1;
+ --muted:#b3b3b3;--edge:#454545;--blue:#e50914;--focus:#ffffff;
+ background:#141414;color:#f5f5f1
+}
+body[data-theme=amoled]{
+ --bg:#000000;--panel:#101010;--item:#242424;--fg:#f5f5f1;
+ --muted:#b3b3b3;--edge:#484848;--blue:#e50914;--focus:#ffffff;
+ background:#000
+}
+body[data-theme=light]{
+ --bg:#f5f5f1;--panel:#ffffff;--item:#ececec;--fg:#191919;
+ --muted:#555555;--edge:#b3b3b3;--blue:#e50914;--focus:#e50914;
+ background:#f5f5f1;color:#191919
+}
 body #app{
- --home-inset:2.4vw;--home-gap:18px;--home-target:66px;
- --accent:#41ded2;--focus-bg:#fff;--focus-ink:#101114;--active-bg:#2a3035;
- --fg:#f6f6f7;--muted:#babdc4;--edge:#35353b;
- background:radial-gradient(ellipse at 78% -24%,#4b1823 0%,transparent 39%),
-  linear-gradient(160deg,#141519 0%,#08090c 62%,#101114 100%);
- color:#f7f7f8
+ --accent:#e50914;--focus-bg:#ffffff;--focus-ink:#171717;--active-bg:#6e1117;
+ background:linear-gradient(145deg,#1a1a1a 0%,#111111 62%,#191919 100%);
+ color:#f5f5f1
 }
 body[data-theme=amoled] #app{background:#000}
-body[data-theme=light] #app{background:linear-gradient(160deg,#1c2026,#101115 78%);--fg:#fff;--muted:#d1d2d8;--edge:#55555a}
-#app .top{min-height:104px;padding:15px 0 17px;border-bottom:1px solid #ffffff17;margin-bottom:16px}
-#app .brandicon{background:linear-gradient(140deg,#4ff7e8,#06b7b2);box-shadow:0 5px 30px #04b8ad26}
-#app .brand strong{font-size:35px;font-weight:850;letter-spacing:-.8px}
-#app .brand p{font-size:17px;color:#adb0b9}
-#app .toolbar{gap:10px}
-#app .toolbar button{background:#282a30;border:1px solid #ffffff26;min-height:60px;font-size:19px;border-radius:9px;padding:13px 16px}
-#app .clock{color:#e1e2e6;font-size:23px}
-#app .ui-icon{width:25px;height:25px}
-#app button:focus,#app button:focus-visible{
- background:#fafafa;color:#121417;border:2px solid #fff;outline:3px solid #ffffffc8;outline-offset:2px;box-shadow:0 0 0 7px #ffffff21
+body[data-theme=light] #app{
+ --accent:#e50914;--focus-bg:#191919;--focus-ink:#fff;--active-bg:#ffe6e7;
+ background:#f5f5f1;color:#191919
 }
-#app button:focus .num,#app button:focus small,#app button:focus .heart{color:#202125}
-#app button.active{background:#30343a;border-color:#555c65;color:#fff}
-#app button.active:focus{background:#fff;color:#121417}
-#app .main.cinema-home{
- flex:1;min-height:0;display:grid;
- grid-template-columns:minmax(210px,17fr) minmax(0,83fr);
- grid-template-rows:minmax(0,44fr) minmax(0,56fr);
- gap:15px 23px
+body #app .brandicon{background:linear-gradient(140deg,#ee2934,#e50914);color:#fff;box-shadow:0 8px 24px #e5091430}
+body #app .brand-svg{color:#fff}
+body #app .brand p,body #app .clock{color:var(--muted)}
+body #app .nav,body #app .listpane,body #app .details{
+ background:var(--panel);border-color:var(--edge)
 }
-#app .main .nav{grid-column:1;grid-row:1 / span 2;background:#15161a;border:1px solid #ffffff1c;
- border-radius:13px;padding:15px;gap:10px;align-self:stretch;max-height:none;overflow-y:auto}
-#app .nav button{justify-content:flex-start;background:transparent;border:2px solid transparent;
- color:#d2d3d9;border-radius:10px;min-height:66px;padding:11px 14px;font-size:22px}
-#app .nav button .nav-icon{width:27px;color:#c7d1d9}
-#app .nav button .ui-icon{width:25px;height:25px}
-#app .nav button.active{background:#2c2d32;border-left:5px solid #e32334;border-top-color:#44454b;
- border-right-color:#44454b;border-bottom-color:#44454b;color:#fff}
-#app .nav button:focus,#app .nav button.active:focus{background:#fff;color:#151515;border-color:#fff}
-#app .nav .sidebar-shortcuts{margin-top:auto;border-top:1px solid #ffffff27;padding-top:15px}
-#app .nav .sidebar-shortcuts button{min-height:59px;font-size:19px}
-#app .main .details{grid-column:2;grid-row:1;display:grid;
- grid-template-columns:minmax(0,41fr) minmax(0,59fr);grid-template-rows:auto minmax(0,1fr) auto;
- gap:11px 23px;padding:24px 28px;border:1px solid #ffffff23;border-radius:15px;
- min-height:0;max-height:none;align-self:stretch;overflow:hidden;
- background:radial-gradient(ellipse at 76% 8%,#421d29 0%,transparent 61%),linear-gradient(125deg,#28272d,#121318 67%)
+body #app button{
+ background:var(--item);color:var(--fg);border-color:var(--edge)
 }
-#app .hero-eyebrow{grid-column:1;grid-row:1;display:flex;align-items:center;gap:12px;
- font-size:17px;letter-spacing:2px;font-weight:850;color:#f8f8f9}
-#app .hero-live-dot{width:12px;height:12px;display:block;border-radius:50%;
- background:#e5283d;box-shadow:0 0 14px #e5283daa}
-#app .hero-eyebrow-sep{color:#f45360}
-#app .channel-summary{grid-column:1;grid-row:2;align-self:center;min-width:0}
-#app .hero-label{font-size:16px;letter-spacing:2.1px;font-weight:850;color:#fa5b67;margin-bottom:13px}
-#app .channel-summary h2{font-size:51px;letter-spacing:-1.5px;line-height:1.05;color:#fff;
- font-weight:900;text-shadow:0 3px 18px #0009}
-#app .channel-summary p{font-size:22px;color:#d9d9df;margin-top:12px}
-#app .hero-description{font-size:19px;color:#acaeb9;line-height:1.36;margin-top:17px;max-width:400px}
-#app .main .details .actions{grid-column:1;grid-row:3;display:flex;flex-direction:row;
- align-items:stretch;gap:12px;padding:0}
-#app .main .details .actions button{min-height:66px;border-radius:9px;font-size:20px;padding:10px 15px;
- white-space:normal;flex:1;border:2px solid #ffffff40;background:#323338;color:#fff}
-#app .main .details .actions .primary{flex:1.4;background:#e51b2d;border-color:#e51b2d;color:#fff}
-#app .main .details .actions button:focus{background:#fff;color:#111;border-color:#fff}
-#app .main .details .preview{grid-column:2;grid-row:1 / span 3;position:relative;
- height:100%;min-height:0;max-height:none;align-self:stretch;border:1px solid #ffffff24;
- border-radius:12px;background:linear-gradient(125deg,#3b1723,#151922 70%,#101217);
- box-shadow:0 20px 48px #0008;overflow:hidden}
-#app .preview-art{background:radial-gradient(circle at 50% 38%,#3f3648 0%,#15151a 64%)}
-#app .preview-art img{max-width:260px;max-height:152px;width:48%;height:51%;padding:10px;
- background:#f5f5f5;border-radius:12px}
-#app .preview-live{background:#151519dd;border:1px solid #ffffff60;border-radius:7px;color:#fff}
-#app .preview-live .ui-icon{color:#ff5262}
-#app .preview-state{font-size:18px;background:linear-gradient(transparent,#000b 74%);color:#f8f8fa}
-#app .main .listpane{grid-column:2;grid-row:2;padding:14px 17px 15px;background:#121316;
- border:1px solid #ffffff22;border-radius:14px;min-height:0;max-height:none;overflow:hidden}
-#app .library-eyebrow{display:flex;align-items:center;gap:12px;color:#e6e6e9;
- font-size:13px;font-weight:850;letter-spacing:2px;padding:2px 9px 5px}
-#app .library-eyebrow .eyebrow-rule{display:block;width:26px;height:2px;background:#e51b2d}
-#app .heading{margin:0 0 7px;padding:0 9px;gap:10px}
-#app .heading h1{font-size:32px;font-weight:850;letter-spacing:-.6px;color:#fff}
-#app .heading span{font-size:17px;color:#b5b6bf}
-#app .groups{min-height:53px;margin-bottom:8px;padding:4px 8px;gap:10px}
-#app .groups button{min-height:46px;font-size:19px;border:1px solid #ffffff32;
- border-radius:7px;padding:8px 18px;max-width:300px;background:#2b2c30;color:#f0f0f2}
-#app .groups button.active{background:#e62a3b;border-color:#e62a3b;color:#fff}
-#app .groups button.active:focus{background:#fff;color:#111}
-#app .channels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
- grid-auto-rows:180px;gap:14px;align-content:start;overflow-y:auto;
- padding:9px 10px 15px;scrollbar-color:#68686d transparent}
-#app .channel{position:relative;display:grid;grid-template-rows:minmax(0,1fr) auto;grid-template-columns:1fr;
- width:100%;height:180px;min-height:0;padding:0;margin:0;gap:0;
- background:linear-gradient(140deg,#302a32,#191b21 68%);
- border:2px solid #ffffff29;border-radius:12px;color:#fff;
- text-align:left;align-items:stretch;overflow:hidden;transition:transform .13s ease,border-color .13s ease}
-#app .channel::before{content:"";position:absolute;inset:0 0 46px;
- background:radial-gradient(ellipse at 50% 35%,#5c253777,transparent 70%);
- pointer-events:none}
-#app .channel .num{position:absolute;top:11px;left:12px;z-index:2;
- background:#0c0d10ba;border:1px solid #ffffff2b;border-radius:6px;
- padding:5px 8px;font-size:15px;min-width:0;width:auto;color:#f2f2f2}
-#app .channel .logo,#app .channel .placeholder{grid-row:1;grid-column:1;z-index:1;
- justify-self:center;align-self:center;width:46%;max-width:148px;height:68px;
- border-radius:10px;object-fit:contain;background:#f7f7f8;padding:8px}
-#app .channel .placeholder{display:grid;place-items:center;padding:7px;font-size:22px;font-weight:850;
- background:#e9ebef;color:#222}
-#app .channel .chtext{position:relative;grid-row:2;grid-column:1;z-index:1;
- padding:10px 14px 12px;background:#101115d9;min-width:0;flex:none}
-#app .channel .chtext strong{font-size:22px;color:#fff;line-height:1.16}
-#app .channel .chtext small{font-size:15px;color:#b7bac4;margin-top:5px}
-#app .channel .heart{position:absolute;right:11px;top:10px;z-index:2;
- background:#0b0c10a9;border-radius:30px;padding:5px 9px;color:#ff6375;font-size:22px}
-#app .channel.is-selected{border-color:#c1475a;background:linear-gradient(140deg,#4c2633,#22232b 65%)}
-#app .channel:focus,#app .channel:focus-visible{
- outline:3px solid #fff;outline-offset:1px;transform:scale(1.035);
- border-color:#fff;background:linear-gradient(140deg,#543343,#2a272e);color:#fff;
- box-shadow:0 10px 25px #000b;z-index:8
+body #app button:focus,body #app button:focus-visible{
+ background:var(--focus-bg);color:var(--focus-ink);border-color:#e50914;
+ outline:3px solid var(--focus);outline-offset:3px;
+ box-shadow:0 0 0 5px #e5091440
 }
-#app .channel:focus .chtext small{color:#f2ebed}
-#app #more{margin:7px 10px 2px;font-size:19px;min-height:51px;border-radius:8px}
-#app .footer{min-height:52px;font-size:17px;gap:23px;color:#bdbec5}
-#app .footer b{font-size:16px;background:#2c2d31;border:1px solid #505056;color:#f7f7f8;border-radius:5px}
-#app .footer .preview-footer{color:#a0a3ad}
-@media(max-width:1600px){
- #app .main.cinema-home{grid-template-columns:minmax(180px,17fr) minmax(0,83fr);
-  grid-template-rows:minmax(0,43fr) minmax(0,57fr);gap:12px 15px}
- #app .top{min-height:78px;padding:9px 0 12px;margin-bottom:10px}
- #app .brandicon{width:53px;height:53px}
- #app .brand strong{font-size:27px}
- #app .brand p{font-size:13px}
- #app .toolbar button{min-height:48px;font-size:16px;padding:8px 11px}
- #app .clock{font-size:19px}
- #app .main .nav{padding:9px;gap:5px}
- #app .nav button{min-height:55px;font-size:19px;padding:9px 10px}
- #app .nav .sidebar-shortcuts button{min-height:49px;font-size:17px}
- #app .main .details{padding:15px 18px;gap:8px 14px}
- #app .hero-eyebrow{font-size:13px;gap:8px;letter-spacing:1px}
- #app .hero-live-dot{width:9px;height:9px}
- #app .hero-label{font-size:13px;margin-bottom:7px}
- #app .channel-summary h2{font-size:35px}
- #app .channel-summary p{font-size:18px;margin-top:7px}
- #app .hero-description{font-size:15px;margin-top:8px}
- #app .main .details .actions button{min-height:51px;font-size:16px;padding:8px}
- #app .main .listpane{padding:10px 12px}
- #app .library-eyebrow{font-size:11px;padding:0 6px 4px}
- #app .heading h1{font-size:28px}
- #app .heading span{font-size:16px}
- #app .groups{min-height:45px;margin-bottom:4px}
- #app .groups button{min-height:38px;font-size:16px;padding:6px 12px}
- #app .channels{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:159px;gap:10px;padding:7px 8px}
- #app .channel{height:159px}
- #app .channel .logo,#app .channel .placeholder{height:57px}
- #app .channel .chtext{padding:8px 11px 10px}
- #app .channel .chtext strong{font-size:19px}
- #app .channel .chtext small{font-size:13px}
- #app .footer{min-height:44px;font-size:15px;gap:15px}
- #app .footer b{font-size:14px}
+body #app button.active{
+ background:#b20710;border-color:#e50914;color:#fff
 }
-@media(max-width:1000px),(max-height:620px){
- #app .main.cinema-home{grid-template-columns:minmax(150px,19fr) minmax(0,81fr);
-  grid-template-rows:minmax(0,40fr) minmax(0,60fr)}
- #app .hero-description{display:none}
- #app .channel-summary h2{font-size:29px}
- #app .channels{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:138px}
- #app .channel{height:138px}
- #app .channel .logo,#app .channel .placeholder{height:49px}
- #app .channel .chtext strong{font-size:18px}
- #app .channel .chtext small{font-size:13px}
- #app .footer .preview-footer{display:none}
+body #app button.active:focus,body #app button.active:focus-visible{
+ background:var(--focus-bg);color:var(--focus-ink);border-color:#e50914
 }
-
-
-/* CINEMA CHANNEL BROWSER — fullscreen video remains visible behind the rail. */
-#channelPicker{inset:0;padding:0;align-items:stretch;justify-content:flex-start;
- background:linear-gradient(90deg,#07070bed 0%,#0b0b0eec 34%,#111116b5 72%,#06060936 100%);
- animation:picker-in .14s ease-out}
-#channelPicker:focus{outline:none}
-#channelPicker .picker-panel{height:100%;min-height:0;width:min(1260px,77vw);min-width:0;
- display:flex;flex-direction:column;gap:12px;padding:39px 35px 27px 48px;
- background:linear-gradient(90deg,#101015fb 0%,#17171bee 82%,#17171b2a 100%);
- border:0;border-right:1px solid #ffffff24;border-radius:0;
- box-shadow:40px 0 90px #0008;backdrop-filter:blur(10px)}
-#channelPicker .picker-overline{font-size:17px;letter-spacing:2.8px;font-weight:900;
- color:#e3e3e7;line-height:1.2}
-#channelPicker .picker-overline span{color:#e52235;margin:0 9px}
-#channelPicker .picker-heading{font-size:45px;line-height:1.12;font-weight:900;
- color:#f6f6f7;letter-spacing:-1.25px;display:flex;align-items:center;gap:20px}
-#channelPicker .picker-live-tag{font-size:16px;font-weight:900;letter-spacing:1.4px;
- background:#e71b2e;color:#fff;padding:9px 14px;border-radius:5px}
-#channelPicker .picker-info{font-size:20px;color:#babdc6;line-height:1.25}
-#channelPicker .picker-groups{display:flex;align-items:center;min-height:67px;
- flex-shrink:0;gap:12px;overflow-x:auto;overflow-y:hidden;
- padding:5px 3px 8px;scrollbar-width:none}
-#channelPicker .picker-groups button{flex:none;white-space:nowrap;min-height:55px;
- padding:11px 20px;border:2px solid #505058;border-radius:8px;
- font-size:22px;font-weight:800;color:#f0f0f2;background:#2a2a30}
-#channelPicker .picker-groups button.active,#channelPicker .picker-groups button:focus{
- color:#17171b;background:#fff;border-color:#fff;
- box-shadow:0 0 0 4px #ffffff36;outline:none}
-#channelPicker .picker-list{flex:1;min-height:0;display:grid;align-content:start;
- grid-auto-flow:column;grid-template-rows:repeat(3,minmax(0,1fr));
- grid-auto-columns:minmax(246px,31%);gap:14px;
- padding:12px 16px 15px 4px;overflow-x:auto;overflow-y:hidden;
- scrollbar-width:thin;scrollbar-color:#9b9ba0 transparent}
-#channelPicker .picker-row{position:relative;display:grid;grid-template-rows:minmax(0,1fr) auto;
- grid-template-columns:1fr;gap:0;width:100%;height:100%;min-height:0;
- margin:0;padding:0;border:3px solid #ffffff30;border-radius:13px;overflow:hidden;
- background:#24252b;color:#fafafb;text-align:left;transform:none;
- transition:transform .12s ease,border-color .12s ease}
-#channelPicker .picker-row:nth-child(4n+1) .picker-cover{background:linear-gradient(135deg,#553344,#181820 80%)}
-#channelPicker .picker-row:nth-child(4n+2) .picker-cover{background:linear-gradient(135deg,#254354,#181b25 80%)}
-#channelPicker .picker-row:nth-child(4n+3) .picker-cover{background:linear-gradient(135deg,#344438,#181d1a 80%)}
-#channelPicker .picker-row:nth-child(4n+4) .picker-cover{background:linear-gradient(135deg,#53372b,#201b1c 80%)}
-#channelPicker .picker-row .picker-cover{grid-column:1;grid-row:1;
- display:grid;place-items:center;min-height:0;overflow:hidden}
-#channelPicker .picker-row .picker-logo{width:51%;height:65%;object-fit:contain;
- background:#f5f6f8;border-radius:10px;padding:9px;
- box-shadow:0 10px 24px #0005}
-#channelPicker .picker-row .picker-monogram{display:grid;place-items:center;
- width:110px;height:74px;background:#f6f6f7;color:#202025;
- border-radius:10px;font-size:28px;font-weight:900;letter-spacing:.3px}
-#channelPicker .picker-row .picker-number{position:absolute;top:11px;left:11px;z-index:2;
- padding:5px 8px;border-radius:5px;min-width:0;width:auto;
- background:#111216b5;color:#f8f8f9;font-size:16px;font-weight:900}
-#channelPicker .picker-row .picker-name{grid-row:2;grid-column:1;
- display:block;padding:11px 14px 13px;
- background:#0c0d10dd;color:#f9f9fb;font-size:22px;font-weight:850;
- line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#channelPicker .picker-row .picker-onair{position:absolute;right:9px;top:10px;z-index:2;
- padding:6px 9px;border:1px solid #ff9ea7a8;border-radius:5px;
- background:#e32136;color:#fff;font-size:12px;font-weight:900;letter-spacing:.7px}
-#channelPicker .picker-row.active,#channelPicker .picker-row:focus{
- z-index:3;transform:scale(1.025);border:3px solid #fff;outline:3px solid #ffffffd9;outline-offset:1px;
- background:#303035;box-shadow:0 12px 32px #000a}
-#channelPicker .picker-row.active .picker-name{background:#25252bf2;color:#fff}
-#channelPicker .picker-row.active .picker-number{background:#e71b2e;color:#fff}
-#channelPicker .picker-help{display:flex;flex-wrap:wrap;align-items:center;flex-shrink:0;
- gap:10px 23px;padding:16px 4px 3px;border-top:1px solid #ffffff3b;
- font-size:20px;font-weight:720;color:#e9e9ed;line-height:1.3}
-#channelPicker .picker-help span{white-space:nowrap}
-#channelPicker .picker-help b{display:inline-flex;align-items:center;justify-content:center;
- min-height:37px;padding:5px 11px;margin-right:8px;
- border:1px solid #73737a;border-radius:6px;background:#37373d;color:#fff;font-size:18px}
-@media(max-width:1500px),(max-height:820px){
- #channelPicker .picker-panel{width:80vw;padding:24px 23px 17px 26px;gap:8px}
- #channelPicker .picker-overline{font-size:13px;letter-spacing:2px}
- #channelPicker .picker-heading{font-size:33px;gap:12px}
- #channelPicker .picker-live-tag{font-size:12px;padding:6px 9px}
- #channelPicker .picker-info{font-size:17px}
- #channelPicker .picker-groups{min-height:53px;gap:8px}
- #channelPicker .picker-groups button{min-height:45px;font-size:18px;padding:8px 13px}
- #channelPicker .picker-list{grid-template-rows:repeat(3,minmax(0,1fr));
-  grid-auto-columns:minmax(205px,32%);gap:10px;padding:9px 12px 12px 3px}
- #channelPicker .picker-row .picker-logo{width:48%;height:61%;padding:6px}
- #channelPicker .picker-row .picker-monogram{width:85px;height:55px;font-size:22px}
- #channelPicker .picker-row .picker-name{font-size:19px;padding:8px 10px 10px}
- #channelPicker .picker-row .picker-number{font-size:13px;top:7px;left:7px}
- #channelPicker .picker-row .picker-onair{font-size:10px;padding:4px 7px}
- #channelPicker .picker-help{font-size:17px;padding-top:11px;gap:8px 13px}
- #channelPicker .picker-help b{font-size:15px;min-height:30px;padding:4px 7px;margin-right:5px}
+body[data-theme=light] #app button.active{background:#e50914;color:#fff}
+body #app .nav button span.nav-icon{color:#f05a63}
+body #app .nav button:focus span.nav-icon,body #app .nav button.active:focus span.nav-icon{color:inherit}
+body #app .channel{
+ background:var(--item);border-color:var(--edge);color:var(--fg)
 }
-@media(max-width:1000px),(max-height:600px){
- #channelPicker .picker-panel{width:87vw;padding:15px 14px 12px 18px;gap:6px}
- #channelPicker .picker-heading{font-size:27px}
- #channelPicker .picker-groups{min-height:45px;padding:3px 1px}
- #channelPicker .picker-groups button{min-height:38px;font-size:16px}
- #channelPicker .picker-list{grid-auto-columns:minmax(165px,35%);gap:8px}
- #channelPicker .picker-row .picker-name{font-size:17px}
- #channelPicker .picker-help{font-size:15px;gap:6px 10px}
- #channelPicker .picker-help b{min-height:26px;font-size:13px}
+body #app .channel .num{background:var(--bg);color:var(--muted)}
+body #app .channel .chtext small{color:var(--muted)}
+body #app .channel .heart{color:#ff606b}
+body #app .channel.is-selected{
+ background:#3a2022;border-color:#e50914
+}
+body[data-theme=light] #app .channel.is-selected{background:#ffe6e7}
+body #app .channel:focus,body #app .channel:focus-visible{
+ background:#e50914;border-color:#fff;color:#fff;box-shadow:0 0 0 3px #ffffff38
+}
+body #app .channel:focus .chtext small,body #app .channel:focus .num{color:#fff}
+body #app .channel:focus .num{background:#8b030b}
+body #app .groups button.active{background:#e50914;border-color:#e50914;color:#fff}
+body #app .heading span,body #app .channel-summary p{color:var(--muted)}
+body #app .preview{
+ border-color:#5d3033;
+ background:radial-gradient(ellipse at 68% 12%,#45191e 0%,#1b1b1b 64%,#111 100%)
+}
+body #app .preview-art{background:radial-gradient(ellipse at 54% 23%,#401a1e,#141414 76%)}
+body #app .preview .preview-live{
+ background:#74040cdd;border-color:#e50914;color:#fff
+}
+body #app .preview .preview-live .ui-icon{color:#fff}
+body #app .preview .preview-state{
+ color:#fff;background:linear-gradient(transparent,#000e)
+}
+body #app .actions .primary,body #app #emptyAdd,body #app #sampleBtn{
+ background:#e50914;color:#fff;border-color:#e50914
+}
+body #app .actions .primary:focus,body #app #emptyAdd:focus,body #app #sampleBtn:focus{
+ background:#fff;color:#171717;border-color:#e50914
+}
+body #app .footer{color:var(--muted)}
+body #app .footer b{
+ background:var(--item);border-color:var(--edge);color:var(--fg)
+}
+body #app .footer .preview-footer{color:#ff747d}
+body .overlay{background:#000c}
+body .dialog{
+ background:var(--panel);border-color:var(--edge);color:var(--fg)
+}
+body .dialog input:not([type=checkbox]),body .dialog textarea{
+ background:var(--bg);color:var(--fg);border-color:var(--edge)
+}
+body .dialog button,body .dialog .rights-toggle{
+ background:var(--item);color:var(--fg);border-color:var(--edge)
+}
+body .dialog button:focus,body .dialog input:focus,body .dialog textarea:focus{
+ outline:3px solid #e50914;outline-offset:2px;border-color:#e50914
+}
+body .dialog .buttons .primary,body .dialog #saveSource,body .dialog #applySearch{
+ background:#e50914;border-color:#e50914;color:#fff
+}
+body .dialog .rights-toggle[aria-checked=true]{
+ background:#e509141c;border-color:#e50914
+}
+body .dialog .rights-toggle[aria-checked=true] .rights-box{
+ background:#e50914;border-color:#e50914
+}
+body .source-pair{background:var(--bg);border-color:var(--edge)}
+body #channelPicker{
+ background:linear-gradient(90deg,#000e 0%,#0009 60%,#0001 100%)
+}
+body #channelPicker .picker-panel{
+ background:linear-gradient(150deg,#202020f8,#141414fb);
+ border-color:#666;box-shadow:0 22px 60px #000b
+}
+body #channelPicker .picker-heading{color:#fff}
+body #channelPicker .picker-info{color:#c9c9c9}
+body #channelPicker .picker-groups button{
+ background:#303030;border-color:#5d5d5d;color:#f5f5f1
+}
+body #channelPicker .picker-groups button.active,
+body #channelPicker .picker-groups button:focus{
+ background:#e50914;border-color:#ff7e85;color:#fff;
+ box-shadow:0 0 0 2px #ffffff36,0 8px 24px #e509144d
+}
+body #channelPicker .picker-row{
+ background:#2b2b2b;border-color:#494949;color:#f5f5f1
+}
+body #channelPicker .picker-row.active,
+body #channelPicker .picker-row:focus{
+ background:linear-gradient(110deg,#ed1825,#b20710);
+ border-color:#fff;color:#fff;box-shadow:0 0 0 3px #ffffff45,0 10px 30px #e5091455
+}
+body #channelPicker .picker-row .picker-number{color:#c6c6c6}
+body #channelPicker .picker-row.active .picker-number{color:#fff}
+body #channelPicker .picker-row .picker-onair{
+ background:#8c070fcc;border-color:#e50914;color:#fff
+}
+body #channelPicker .picker-help{
+ border-top-color:#ffffff38;color:#eeeeee
+}
+body #channelPicker .picker-help b{
+ background:#353535;border-color:#707070;color:#fff
+}
+body #browserFallback{
+ background:#b20710;border-color:#e50914;color:#fff
+}
+body #toast{background:#b20710;color:#fff}
+body #player .playerhead{background:linear-gradient(#000d,transparent)}
+body #player .playerfoot{background:linear-gradient(transparent,#000d)}
+body #player .playerdiag{
+ background:#161616f2;border-color:#e50914;color:#eee
 }
 
 .playerdiag{position:absolute;z-index:3;top:calc(45% + 55px);left:7%;right:7%;max-height:30vh;overflow:auto;white-space:pre-line;overflow-wrap:anywhere;padding:12px 18px;border:1px solid #8b6c3b;border-radius:10px;background:#080a0ee8;color:#ffe0aa;font-size:19px;line-height:1.45;text-align:left;text-shadow:0 1px 3px #000}
@@ -630,7 +515,7 @@ body[data-theme=light] #app{background:linear-gradient(160deg,#1c2026,#101115 78
     <button id="themeBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9c0 2.2-1.3 3.5-3.3 3.5h-2.1c-1 0-1.5.8-1.3 1.7.4 1.8-1.1 3.5-3.7 3.5"/><path d="M7.5 8h.01M12.5 6.5h.01M17 9h.01M7.7 14h.01"/></svg>Giao diện</button>
   </div>
 </header>
-<div class="main cinema-home">
+<div class="main">
   <nav class="nav">
     <button class="active" data-nav="all"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="15" rx="3"/><path d="M8 22h8M12 19v3m-2-13 5 3-5 3z"/></svg></span>Trực tiếp</button>
     <button data-nav="favorites"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg></span>Yêu thích</button>
@@ -642,7 +527,6 @@ body[data-theme=light] #app{background:linear-gradient(160deg,#1c2026,#101115 78
     </div>
   </nav>
   <section class="listpane" aria-labelledby="heading">
-    <div class="library-eyebrow">THƯ VIỆN TRUYỀN HÌNH <span class="eyebrow-rule"></span> KHÁM PHÁ</div>
     <div class="heading"><h1 id="heading">Trực tiếp</h1><span id="count">0 kênh</span></div>
     <div class="groups" id="groups" aria-label="Nhóm kênh"></div>
     <div class="channels" id="channels"></div>
@@ -655,13 +539,12 @@ body[data-theme=light] #app{background:linear-gradient(160deg,#1c2026,#101115 78
     <button id="more" hidden>Tải thêm kênh ↓</button>
   </section>
   <aside class="details" aria-label="Kênh đang chọn">
-    <div class="hero-eyebrow"><span class="hero-live-dot"></span> OPEN IPTV PRO <span class="hero-eyebrow-sep">/</span> LIVE TV</div>
     <div class="preview" id="previewStage" aria-label="Xem thử kênh đang chọn">
 <video id="homePreviewVideo" playsinline muted preload="none" aria-label="Video xem thử tắt tiếng" hidden></video>
 <div class="preview-art" id="previewArt"><b id="previewText">TV</b><img id="previewLogo" alt="" hidden></div>
 <div class="preview-live"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6"/></svg><span>XEM THỬ · TẮT TIẾNG</span></div>
 <div class="preview-state" id="previewStatus" role="status">Chọn kênh để xem thử</div></div>
-    <div class="channel-summary"><div class="hero-label">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Chọn kênh</h2><p id="channelGroup" hidden></p><div class="hero-description">Xem trước không tiếng. Nhấn OK để xem toàn màn hình.</div></div>
+    <div class="channel-summary"><h2 id="channelTitle">Chọn kênh</h2><p id="channelGroup" hidden></p></div>
     <div class="actions">
       <button class="primary" id="watchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4m13-5h4a1 1 0 0 1 1 1v4M3 16v4a1 1 0 0 0 1 1h4m13-5v4a1 1 0 0 1-1 1h-4"/></svg>Xem toàn màn hình</button>
       <button id="favBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg><span class="fav-label">Thêm yêu thích</span></button>
@@ -683,15 +566,14 @@ body[data-theme=light] #app{background:linear-gradient(160deg,#1c2026,#101115 78
 <p id="sourceQRStatus" role="status">Đang tạo mã QR…</p><p id="sourcePhoneLink"></p>
 <button type="button" id="refreshSourceQR">↻ Tạo mã QR mới</button></section></div></div>
 <div id="searchDialog" hidden><label for="searchInput">Tìm kênh</label><input id="searchInput" placeholder="Nhập tên kênh..."><div class="buttons"><button id="cancelSearch">Hủy</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
-<div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><iframe id="castPlayerFrame" hidden tabindex="-1" title="Bộ phát Cast HTTPS" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerdiag" id="playbackDiag" hidden></div><button id="browserFallback" type="button" hidden>Mở Cast chuẩn · ghép mã 6 số</button><div class="playerfoot">↑ ↓ Chọn kênh · phát sau 0,2 giây　·　← → Chọn thư mục　·　CH ± Chuyển nhanh　·　OK Phát/Tạm dừng　·　Đỏ: Trình duyệt　·　Back Danh sách</div>
+<div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><iframe id="castPlayerFrame" hidden tabindex="-1" title="Bộ phát Cast HTTPS" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerdiag" id="playbackDiag" hidden></div><button id="browserFallback" type="button" hidden>Mở Cast chuẩn · ghép mã 6 số</button><div class="playerfoot">↑ ↓ Chuyển ngay và hiện danh sách　·　← → Chọn thư mục　·　CH ± Chuyển nhanh　·　OK Phát/Tạm dừng　·　Đỏ: Trình duyệt　·　Back Danh sách</div>
 <div id="channelPicker" hidden tabindex="-1" role="dialog" aria-label="Chọn kênh">
   <div class="picker-panel">
-    <div class="picker-overline">OPEN IPTV PRO <span>•</span> KÊNH TRỰC TIẾP</div>
-    <div class="picker-heading">Chọn kênh TV <span class="picker-live-tag">LIVE</span></div>
+    <div class="picker-heading">Chọn kênh TV</div>
     <div class="picker-info" id="pickerInfo">Dùng điều khiển để chọn kênh</div>
     <div class="picker-groups" id="pickerGroups"></div>
     <div class="picker-list" id="pickerList"></div>
-    <div class="picker-help" aria-label="Phím điều khiển TV"><span><b>↑ ↓</b> Chọn kênh · phát sau 0,2s</span><span><b>← →</b> Đổi thư mục</span><span><b>OK/Back Đóng danh sách</b></span></div>
+    <div class="picker-help" aria-label="Phím điều khiển TV"><span><b>↑ ↓</b> Phát kênh ngay</span><span><b>← →</b> Đổi thư mục</span><span><b>OK/Back Đóng danh sách</b></span></div>
   </div>
 </div></div>
 <div id="toast" hidden></div>
@@ -2357,20 +2239,12 @@ function renderChannelPicker(){
   (function(index){
    var ch=pickerChannels[index],active=index===pickerIndex;
    var button=elem('button','picker-row'+(active?' active':''));button.type='button';
-   button.title=ch.name||'Kênh TV';
-   var cover=elem('span','picker-cover');
-   if(ch.logo){
-    var logo=elem('img','picker-logo');logo.alt='';logo.loading='lazy';logo.src=ch.logo;
-    logo.onerror=function(){try{cover.replaceChildren(elem('span','picker-monogram',(ch.name||'TV').slice(0,3).toUpperCase()));}catch(e){}};
-    cover.appendChild(logo);
-   }else cover.appendChild(elem('span','picker-monogram',(ch.name||'TV').slice(0,3).toUpperCase()));
-   button.appendChild(cover);
    button.appendChild(elem('span','picker-number',String(index+1).padStart(3,'0')));
    button.appendChild(elem('span','picker-name',ch.name||'Kênh TV'));
    if(playing&&playing.id===ch.id)button.appendChild(elem('span','picker-onair','● ĐANG XEM'));
    button.onclick=function(){pickerIndex=index;confirmPickerChannel();};
    list.appendChild(button);
-   if(active){try{button.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}}
+   if(active){try{button.scrollIntoView({block:'nearest'});}catch(e){}}
   })(i);
  }
 }
@@ -2451,29 +2325,6 @@ function focusHomeButton(button){
  try{button.focus({preventScroll:true});}catch(e){button.focus();}
  try{button.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}
 }
-
-/* Cards follow their visual two-dimensional layout, not their DOM order. */
-function nearestHomeTile(buttons,current,key){
- if(!current||typeof current.getBoundingClientRect!=='function')return null;
- var a=current.getBoundingClientRect();
- if(!a||!a.width||!a.height)return null;
- var ax=a.left+a.width/2,ay=a.top+a.height/2,best=null,bestScore=Infinity;
- var horizontal=key==='ArrowLeft'||key==='ArrowRight';
- buttons.forEach(function(next){
-  if(next===current||!next.dataset||!next.dataset.channelId||
-   typeof next.getBoundingClientRect!=='function')return;
-  var r=next.getBoundingClientRect();if(!r||!r.width||!r.height)return;
-  var dx=r.left+r.width/2-ax,dy=r.top+r.height/2-ay;
-  if(key==='ArrowLeft'&&dx>=-6||key==='ArrowRight'&&dx<=6||
-   key==='ArrowUp'&&dy>=-6||key==='ArrowDown'&&dy<=6)return;
-  // A horizontal key stays in its row; vertical stays in its column.
-  if(horizontal&&Math.abs(dy)>Math.max(a.height,r.height)*.60)return;
-  if(!horizontal&&Math.abs(dx)>Math.max(a.width,r.width)*.60)return;
-  var score=horizontal?Math.abs(dx)+Math.abs(dy)*2:Math.abs(dy)+Math.abs(dx)*2;
-  if(score<bestScore){bestScore=score;best=next;}
- });
- return best;
-}
 function moveHome(key){
  var active=document.activeElement;
  var toolbar=homeButtons('#app .toolbar button');
@@ -2499,20 +2350,10 @@ function moveHome(key){
   if(left)target=groups[index-1]||selectedMenu;
   if(right)target=groups[index+1]||actions[0];
  }else if((index=list.indexOf(active))>=0){
-  var spatial=nearestHomeTile(list,active,key);
-  if(spatial)target=spatial;
-  else if(typeof active.getBoundingClientRect==='function'){
-   if(up)target=selectedGroup||toolbar[0];
-   if(left)target=selectedMenu;
-   if(right)target=actions[0];
-   // Down on the final gallery row retains focus instead of jumping to controls.
-  }else{
-   // Older Tizen layouts and simplified test DOMs still use linear navigation.
-   if(up)target=list[index-1]||selectedGroup||toolbar[0];
-   if(down)target=list[index+1];
-   if(left)target=selectedMenu;
-   if(right)target=actions[0];
-  }
+  if(up)target=list[index-1]||selectedGroup||toolbar[0];
+  if(down)target=list[index+1];
+  if(left)target=selectedMenu;
+  if(right)target=actions[0];
  }else if((index=actions.indexOf(active))>=0){
   if(up)target=actions[index-1]||toolbar[2];
   if(down)target=actions[index+1];

@@ -165,7 +165,7 @@ test('HTML picker is inside the player and announces remote navigation',()=>{
  assert.match(markup,/id="pickerGroups"/);
  assert.match(markup,/id="pickerList"/);
  assert.match(markup,/Back Đóng danh sách/);
- assert.match(html,/↑ ↓ Chọn kênh · phát sau 0,2 giây/);
+ assert.match(html,/↑ ↓ Chuyển ngay và hiện danh sách/);
 });
 
 
@@ -199,7 +199,7 @@ test('Full-screen picker provides sofa-readable sizes instead of tiny controls',
   assert.ok(css.includes(size),'missing TV scale rule '+size);
  }
  assert.ok(html.includes('<div class="picker-help" aria-label="Phím điều khiển TV">'));
- assert.ok(html.includes('<b>↑ ↓</b> Chọn kênh · phát sau 0,2s'));
+ assert.ok(html.includes('<b>↑ ↓</b> Phát kênh ngay'));
  assert.ok(html.includes('<b>← →</b> Đổi thư mục'));
  assert.ok(html.includes('<b>OK/Back Đóng danh sách</b>'));
 });
@@ -222,21 +222,4 @@ test('Switching folder cancels tuning queued for a previous folder',()=>{
  assert.equal(s.picker.current().pickerGroup,'Tin tức');
  s.picker.closeChannelPicker();
  assert.deepEqual(s.played,[],'old folder channel never starts');
-});
-
-test('Cinema fullscreen picker renders landscape logo covers, not tiny text-only rows',()=>{
- const full=html.slice(html.indexOf('/* CINEMA CHANNEL BROWSER'),html.indexOf('.playerdiag{position:absolute;'));
- assert.ok(full.includes('grid-auto-flow:column'),'Netflix-style sideways poster gallery');
- assert.ok(full.includes('grid-template-rows:repeat(3,minmax(0,1fr))'));
- assert.ok(full.includes('.picker-cover'));
- assert.ok(full.includes('.picker-logo'));
- assert.ok(full.includes('.picker-live-tag'));
- const s=harness();s.picker.openChannelPicker();
- assert.equal(s.els.pickerList.children.length,21);
- const first=s.els.pickerList.children[0];
- assert.ok(first.children.some(n=>n.className==='picker-cover'));
- assert.ok(first.children.some(n=>n.className==='picker-name'));
- assert.ok(first.children.some(n=>n.className==='picker-number'));
- s.picker.pickerMove('ArrowDown');
- assert.deepEqual(s.played,[],'gallery must preserve the 200ms playback delay');
 });
