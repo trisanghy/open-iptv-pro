@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.295</strong> · cảnh báo suy giảm bao phủ chủ đề AI trước nhập mô hình · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.296</strong> · sửa kiểm thử AI lồng nhau và hỗ trợ bàn phím · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.380 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.381 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+BLOCKER_FIX + ACCESSIBILITY. P295 thêm mục “Nhóm bị ảnh hưởng” nằm trong details Naive Bayes; bộ kiểm thử Electron `#poAICategoryImpact summary` chọn hai summary và bị strict-mode violation dù npm test và Windows/macOS build thành công. Chỉnh `scripts/positron-20-extension.cjs`: dùng `#poAICategoryImpact > summary` cho mục cha, không bỏ mục con. Có thêm QA dùng Enter mở bảng nhóm bằng bàn phím, giữ focus và không thay đổi playlist, mô hình hoặc tự phát stream.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/781f1b72f47157fe7ff9348a700cb21182e65ae1)
+
+</details>
+
+<details>
+<summary><strong>P5.1.295</strong> · Xem nhóm kênh bị ảnh hưởng khi khôi phục Naive Bayes / Electron 4.23.380 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Trong dự báo trước khi nhập mô hình AI, bổ sung bảng xem riêng tối đa năm nhóm kênh chịu nhiều tác động nhất (mất dự đoán đủ chắc chắn, thay nhãn, mới được phân loại), dựa trên tối đa 1.000 kênh đang có. Không còn phải suy luận từ một tỷ lệ tổng hợp. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/cbc355895e068028dbb0183b852d9994debae17c)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
