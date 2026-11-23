@@ -30,11 +30,18 @@ async function run(page){
  const opened=await measure(page);
  const a=await page.screenshot({path:path.join(dir,'positron-p51328-ai-shortcut-after-1920x1080-real.png'),animations:'disabled'});
  await page.evaluate(()=>window.PositronWatchFlow.close());
- const inputFound=await page.evaluate(()=>{
-  const input=document.querySelector('#page-tv input:not([type="checkbox"]):not([disabled])');
-  if(!input)return false;input.focus();return true;
+ // Only test the actual, visible TV search box; querying a hidden input
+ // without verifying focus makes the shortcut-guard assertion misleading.
+ const searchFocus=await page.evaluate(()=>{
+  const input=document.getElementById('searchBox');
+  if(!input)return {found:false,visible:false,focused:false};
+  input.focus();
+  return {found:true,visible:!!input.getClientRects().length,
+   focused:document.activeElement===input};
  });
- if(inputFound)await page.keyboard.press('F6');
+ assert.ok(searchFocus.found&&searchFocus.visible&&searchFocus.focused,
+  'P328 actual Electron QA must focus visible searchBox before testing F6: '+JSON.stringify(searchFocus));
+ await page.keyboard.press('F6');
  const typing=await measure(page);
  await page.evaluate(()=>{window.IPTVState.setPage('sources');document.getElementById('positronOpen').focus();});
  await page.keyboard.press('Alt+Shift+W');
@@ -63,7 +70,8 @@ async function run(page){
   beforePanelClosed:closed.tv&&!closed.open,
   f6OpensAIAndFocuses:opened.open&&opened.active&&opened.pressed&&opened.focus==='poFlowPlusAI',
   bothShortcutsDeclared:opened.shortcuts.includes('F6')&&opened.shortcuts.includes('Alt+Shift+W'),
-  ignoresTextInputs:!inputFound||!typing.open,
+  searchInputReallyFocused:searchFocus.focused,
+  ignoresTextInputs:!typing.open,
   ignoresOtherPages:!nonTV.tv&&!nonTV.open,
   keyboardLayoutSafe:altCode&&layout.open&&layout.focus==='poFlowPlusAI',
   altShiftWOpensNarrow:narrow.open&&narrow.active&&narrow.pressed&&narrow.focus==='poFlowPlusAI',
@@ -74,7 +82,7 @@ async function run(page){
   noAutoplay:initial.playing===final.playing
  };
  for(const [k,v] of Object.entries(qa328))assert.equal(v,true,
-  'P328 actual Electron keyboard QA '+k+': '+JSON.stringify({closed,opened,typing,nonTV,layout,narrow,qa328}));
+  'P328 actual Electron keyboard QA '+k+': '+JSON.stringify({closed,opened,searchFocus,typing,nonTV,layout,narrow,qa328}));
  assert.ok(!b.equals(a),'P328 before/after shortcuts should change visible dialog');
  for(const [png,w,h] of [[b,1920,1080],[a,1920,1080],[n,720,900]]){
   assert.equal(png.readUInt32BE(16),w);assert.equal(png.readUInt32BE(20),h);
@@ -82,7 +90,7 @@ async function run(page){
  fs.writeFileSync('positron-evidence/audit-p51328-ai-shortcut.json',JSON.stringify({
   version:'P5.1.328',app:'4.23.413',realElectron:true,
   before:{...closed,sha256:hash(b)},after:{...opened,sha256:hash(a)},
-  narrow:{...narrow,sha256:hash(n)},typing,nonTV,layout,qa328,
+  narrow:{...narrow,sha256:hash(n)},searchFocus,typing,nonTV,layout,qa328,
   scope:'focus/keyboard UI only, no licensed stream/GPU testing'
  },null,2));
  console.log('P328 native Electron AI keyboard QA',JSON.stringify(qa328));

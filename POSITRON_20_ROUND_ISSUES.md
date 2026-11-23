@@ -62,3 +62,8 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Từ ảnh P327, WatchFlow AI chỉ mở bằng nút; người dùng điều khiển bàn phím không có phím tắt trực tiếp.
 - Tính năng: F6 hoặc Alt+Shift+W mở AI ngay trang TV và focus vào AI tab; không chiếm nhập liệu, không chạy ở trang Sources, không phát kênh hoặc thay đổi nguồn/model.
 - QA Electron: before/after 1920, after 720; F6/Alt+Shift+W thực, điền tìm kiếm, non-TV guard, aria-keyshortcuts, không tràn/dữ liệu bất biến. Không đánh dấu hoàn tất trước CI/soát ảnh.
+
+### P328 — Chặn false-positive của QA nhập liệu
+- Workflow 45243005052: Node pass, Win/mac build pass nhưng Electron capture báo ignoresTextInputs=false. Lỗi có thể xuất phát từ QA chỉ chọn DOM input đầu tiên, không xác minh trạng thái focus thật, hoặc bộ nhận phím cần guard mạnh hơn.
+- Sửa kiểm thử: target #searchBox có thật ở TV, bắt buộc visible và document.activeElement===input trước khi nhấn F6. Đồng thời guard cả event.target và document.activeElement trong handler. Giữ nguyên assertion panel phải đóng khi nhập.
+- Chạy lại full CI, không nhận P328 đạt khi chưa xem screenshot thật.
