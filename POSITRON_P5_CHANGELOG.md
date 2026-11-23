@@ -1,3 +1,10 @@
+## P5.1.301 — Cảnh báo khôi phục AI không bị che / Electron 4.23.386
+- Baseline: Ảnh Electron P5.1.300 (Actions 45147223325) cho thấy cảnh báo suy giảm độ bao phủ Naive Bayes nằm sau danh sách nhóm rất dài, gần nút khôi phục sticky.
+- Fix: Đưa cảnh báo quan trọng lên trước danh sách nhóm; nút xác nhận có trạng thái màu hổ phách khi có cảnh báo; aria-describedby liên kết cảnh báo thật với nút khôi phục.
+- Regression: Node test P301 và Electron Playwright CDP QA mới. Ảnh sau dự kiến 'positron-p51301-coverage-warning-after-1920x1080-real.png'; ảnh trước từ P300 'positron-p51300-affected-names-after-1920x1080-real.png'.
+- Safety: Xem trước không thay đổi mô hình AI, playlist, EPG, Favorites và không tự phát kênh.
+- Status: CANDIDATE, chờ CI, mở ảnh thật và xác minh artifact. Không đưa bản thử nghiệm vào Release Stable.
+
 ## P5.1.300 — AI hiển thị tên kênh dễ mất phân loại khi thay mô hình / Electron 4.23.385
 - Feature priority: NEW — Sau khi AI Naive Bayes cảnh báo nhóm chịu rủi ro, người xem có thể chủ động mở danh sách tối đa ba tên kênh thực đang có nguy cơ mất dự đoán đủ chắc chắn trong mỗi nhóm, thay vì chỉ nhìn tỷ lệ tổng hợp; danh sách không tự phát video.
 - Feature class: AI

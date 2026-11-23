@@ -258,3 +258,12 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel #poAICategoryNamesToggle:focus-visible{outline:2px solid #c2ffdc;outline-offset:2px}
 #poWatchFlowPanel .po-ai-category-samples{display:block;margin:7px 0 1px;padding:6px 9px;border-left:3px solid #74ceb4;background:#1a3e38;color:#e5fff2;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
 #poWatchFlowPanel .po-ai-category-samples[hidden]{display:none!important}
+
+/* P301: serious coverage warnings are visible before long details and
+   the confirmation gains an amber warning state while restoring risky AI. */
+#poWatchFlowPanel #poAICategoryCoverageRisk{scroll-margin-top:100px;scroll-margin-bottom:112px}
+#poWatchFlowPanel .po-ai-import-confirm.po-ai-confirm-risk:not([hidden]){
+ background:#754c2e;border-color:#edbb85;color:#fff4e5;
+ box-shadow:0 0 0 3px #10282f,0 8px 20px rgba(0,0,0,.5)
+}
+#poWatchFlowPanel .po-ai-import-confirm.po-ai-confirm-risk:focus-visible{outline:2px solid #ffd4a3;outline-offset:2px}

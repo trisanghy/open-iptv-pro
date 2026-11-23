@@ -1042,3 +1042,15 @@ test('P300 AI shows true local example names for groups losing classification, n
  for(const n of ['qa300','positron-p51300-affected-names-before-1920x1080-real.png',
  'positron-p51300-affected-names-after-1920x1080-real.png'])assert.ok(qa.includes(n),n);
 });
+
+test('P301 alerts before expanded list and the model restore confirmation is accessible',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes('importPreview.insertBefore(risk,details)'));
+ assert.ok(ui.includes("importConfirm.classList.toggle('po-ai-confirm-risk'"));
+ assert.ok(ui.includes("importConfirm.setAttribute('aria-describedby',warningIds.join(' '))"));
+ assert.ok(css.includes('.po-ai-import-confirm.po-ai-confirm-risk:not([hidden])'));
+ assert.ok(qa.includes('qa301'));
+ assert.ok(qa.includes('positron-p51301-coverage-warning-after-1920x1080-real.png'));
+});

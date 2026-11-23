@@ -698,19 +698,19 @@
    modelStatus.textContent='Không lưu được bản hoàn tác; dữ liệu AI hiện tại vẫn giữ nguyên.';return;
   }
   lastImportUndo=null;undoImport.hidden=true;pendingLearningImport=null;
-  importConfirm.hidden=true;importPreview.hidden=true;importPreview.replaceChildren();
+  importConfirm.hidden=true;importConfirm.classList.remove('po-ai-confirm-risk');importConfirm.removeAttribute('aria-describedby');importPreview.hidden=true;importPreview.replaceChildren();
   active=null;activeTeachIndex=0;sessionSkippedIds.clear();lastActiveTeachUndo=null;
   activeStatusMessage='Đã hoàn tác lần nhập mô hình AI gần nhất trong phiên.';
   render();modelStatus.textContent='Đã hoàn tác khôi phục AI: trọng số cũ trở lại. Playlist, EPG và Favorites không thay đổi.';
   modelStatus.scrollIntoView({block:'nearest',behavior:'instant'});
  });
  importButton.addEventListener('click',()=>{
-  ++importSequence;pendingLearningImport=null;importConfirm.hidden=true;importPreview.hidden=true;importPreview.replaceChildren();
+  ++importSequence;pendingLearningImport=null;importConfirm.hidden=true;importConfirm.classList.remove('po-ai-confirm-risk');importConfirm.removeAttribute('aria-describedby');importPreview.hidden=true;importPreview.replaceChildren();
   importFile.click();
  });
  importFile.addEventListener('change',async()=>{
   const file=importFile.files?.[0];importFile.value='';
-  const sequence=++importSequence;pendingLearningImport=null;importConfirm.hidden=true;importPreview.hidden=true;importPreview.replaceChildren();
+  const sequence=++importSequence;pendingLearningImport=null;importConfirm.hidden=true;importConfirm.classList.remove('po-ai-confirm-risk');importConfirm.removeAttribute('aria-describedby');importPreview.hidden=true;importPreview.replaceChildren();
   if(!file)return;
   if(file.size>512000){modelStatus.textContent='Tệp sao lưu vượt giới hạn 500 KB; dữ liệu hiện tại chưa thay đổi.';return;}
   try{
@@ -891,10 +891,16 @@
       categoryImpact.coverageBefore+'% xuống '+categoryImpact.coverageAfter+
       '% (giảm '+categoryImpact.coverageDropPoints+' điểm % trong '+
       categoryImpact.scanned+' kênh được thử). Đây chỉ là dự báo theo tên/nhóm kênh; không phải lỗi phát video hay thước đo độ chính xác thực.';
-     importPreview.append(risk);
+     // P301: a severe model warning must precede long expanded details.
+     importPreview.insertBefore(risk,details);
     }
    }
 
+   // P301: make every concrete restore warning readable by screen readers.
+   const warningIds=[...importPreview.querySelectorAll('[role="alert"][id]')].map(el=>el.id);
+   importConfirm.classList.toggle('po-ai-confirm-risk',warningIds.length>0);
+   if(warningIds.length)importConfirm.setAttribute('aria-describedby',warningIds.join(' '));
+   else importConfirm.removeAttribute('aria-describedby');
    pendingLearningImport=parsed;importConfirm.hidden=false;
    modelStatus.textContent='Xem trước: '+parsed.summary.preferenceObservations+' phản hồi, '
     +parsed.summary.categoryLabels+' nhãn và '+parsed.summary.exploredTopics
@@ -915,7 +921,7 @@
    modelStatus.textContent='Không thể lưu dữ liệu khôi phục; mô hình cũ đã được giữ nguyên.';
    return;
   }
-  pendingLearningImport=null;importConfirm.hidden=true;importPreview.hidden=true;importPreview.replaceChildren();
+  pendingLearningImport=null;importConfirm.hidden=true;importConfirm.classList.remove('po-ai-confirm-risk');importConfirm.removeAttribute('aria-describedby');importPreview.hidden=true;importPreview.replaceChildren();
   lastImportUndo={previous,applied:importFingerprint()};undoImport.hidden=false;
   active=null;activeTeachIndex=0;sessionSkippedIds.clear();lastActiveTeachUndo=null;
   activeStatusMessage='Đã khôi phục trọng số AI đã xác nhận từ tệp JSON.';
