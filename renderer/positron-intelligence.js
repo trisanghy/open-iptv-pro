@@ -540,6 +540,26 @@
   updateFocusProgress(next);
   revealRecommendationCard(next);
  });
+ // P344: five-card PageUp/PageDown jumps from an actual Xem action.
+ // Only focus changes; playback, playlist, ML and input editors stay untouched.
+ list.setAttribute('aria-keyshortcuts',list.getAttribute('aria-keyshortcuts')+' PageUp PageDown');
+ list.title+=' · PageUp/PageDown: duyệt nhanh 5 gợi ý';
+ modeHelp.title+=' · PageUp/PageDown: di chuyển 5 gợi ý (chỉ khi chọn Xem)';
+ list.addEventListener('keydown',event=>{
+  if(!aiOpen||panel.hidden||event.defaultPrevented||event.altKey||event.ctrlKey||
+   event.metaKey||event.shiftKey||event.isComposing||event.repeat)return;
+  if(event.key!=='PageUp'&&event.key!=='PageDown')return;
+  const actions=[...list.querySelectorAll('.po-ai-card .po-ai-actions button:first-child')]
+   .filter(button=>!button.disabled&&button.getClientRects().length);
+  const index=actions.indexOf(d.activeElement);
+  if(index<0)return;
+  const jump=event.key==='PageDown'?5:-5;
+  const next=actions[Math.max(0,Math.min(actions.length-1,index+jump))];
+  event.preventDefault();event.stopPropagation();
+  next.focus({preventScroll:true});
+  updateFocusProgress(next);
+  revealRecommendationCard(next);
+ });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
  const learnedSource=(channel,cache=null)=>{

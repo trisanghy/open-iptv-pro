@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.428",
-  "description": "Positron P5.1.343: AI nhảy tới gợi ý đầu/cuối bằng Home/End trên remote (NEW)",
+  "version": "4.23.429",
+  "description": "Positron P5.1.344: PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

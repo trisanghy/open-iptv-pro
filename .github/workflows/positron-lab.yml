@@ -1,4 +1,4 @@
-name: Positron P5.1.343 · 70+ Electron screenshots + AI remote arrow browsing · Mac/Windows experiments
+name: Positron P5.1.344 · Electron AI PageUp/PageDown · Mac/Windows experiments
 on:
   push:
     branches: [Positron]
@@ -111,6 +111,7 @@ jobs:
           node --check scripts/positron-341-audit.cjs
           node --check scripts/positron-342-audit.cjs
           node --check scripts/positron-343-audit.cjs
+          node --check scripts/positron-344-audit.cjs
           npm test
 
   capture:
@@ -710,7 +711,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: positron-p51343-real-desktop-screenshots
+          name: positron-p51344-real-desktop-screenshots
           path: positron-evidence/
           retention-days: 30
           if-no-files-found: warn
@@ -745,11 +746,11 @@ jobs:
             test -s "dist/Open-IPTV-Pro-4.23.428-mac-${{ matrix.arch }}.dmg"
           else
             test -s "dist/Open-IPTV-Pro-4.23.428-x64.exe"
-            test -s "dist/Open-IPTV-Pro-Setup-4.23.428-x64.exe"
+            test -s "dist/Open-IPTV-Pro-Setup-4.23.429-x64.exe"
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: positron-p51343-${{ matrix.label }}
+          name: positron-p51344-${{ matrix.label }}
           path: |
             dist/*.dmg
             dist/*.exe

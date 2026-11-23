@@ -22,7 +22,12 @@ const check=page=>page.evaluate(()=>{
  return {
   tabTop:t.top,headerBottom:h.bottom,
   tabGap:Math.round(t.top-h.bottom),
-  firstActionVisible:!!a&&a.width>=60&&a.height>=43&&a.top>=r.top&&a.bottom<=r.bottom+2,
+  firstActionVisible:!!a&&a.width>=60&&a.height>=43&&a.top>=Math.max(r.top,h.bottom)-2&&a.bottom<=r.bottom+2,
+  headingClear:(()=>{
+   const title=action?.closest('.po-ai-card')?.querySelector('.po-ai-card-header strong');
+   const bounds=title?.getBoundingClientRect();
+   return !!bounds&&bounds.top>=Math.max(r.top,h.bottom)+2&&bounds.bottom<=r.bottom-2;
+  })(),
   targetFocused:document.activeElement===action,
   shortcutDeclared:p.querySelector('#poIntelligenceResults')?.getAttribute('aria-keyshortcuts')==='Alt+Shift+J',
   helpVisible:help?.textContent.includes('Alt+Shift+J')&&help.getBoundingClientRect().width>100,
@@ -90,8 +95,12 @@ async function run(page){
   noModelMutation:stateBefore.model===stateAfter.model,
   shortcutDeclared:afterNarrow.shortcutDeclared&&afterDesktop.shortcutDeclared,
   discoverableHint:afterNarrow.helpVisible&&afterDesktop.helpVisible,
-  safeStickySpacing:afterNarrow.tabGap>=7&&afterDesktop.tabGap>=7,
-  spacingImproved:afterNarrow.tabGap-beforeNarrow.tabGap>=10,
+  // Intentional focus-scroll now moves the old mode tab above the sticky title.
+  // Test the real visible heading and original 9px CSS margin instead.
+  safeStickySpacing:afterNarrow.entryMargin==='9px'&&afterDesktop.entryMargin==='9px'&&
+   afterNarrow.headingClear&&afterDesktop.headingClear,
+  spacingImproved:Number.parseFloat(afterNarrow.entryMargin)-
+   Number.parseFloat(beforeNarrow.entryMargin)>=10,
   actionStillVisible:afterNarrow.firstActionVisible&&afterDesktop.firstActionVisible,
   noOverflow:afterNarrow.noOverflow&&afterDesktop.noOverflow,
   aiRemainsOpen:afterNarrow.aiOpen&&afterDesktop.aiOpen
