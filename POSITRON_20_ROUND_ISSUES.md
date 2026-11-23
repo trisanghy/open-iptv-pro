@@ -52,14 +52,14 @@ Quy tắc áp dụng: chỉ nhánh `Positron`; **Stable-only GitHub Releases** (
 - Ảnh/QA Actions artifact: https://github.com/trisanghy/open-iptv-pro/actions/runs/45092120324/artifacts/14780949594
 - Windows x64: https://github.com/trisanghy/open-iptv-pro/actions/runs/45092120324/artifacts/14781816591
 
-### Vòng 02/20 — P5.1.275 (4.23.360) — ĐANG KIỂM CHỨNG ẢNH
+### Vòng 02/20 — P5.1.275 (4.23.360) — ĐÃ QA, Actions-only
 - Tính năng NEW/BREAKTHROUGH: chỉ mục EPG được tái dùng giữa các lần render, nút **Quét lại EPG**, tự làm mới khi playlist/EPG có thay đổi nhận diện được, và giữ trạng thái thư mục đã mở/đóng; bỏ trạng thái health của kênh khỏi khóa làm mới.
 - Commit tính năng `b4af68fc4e65b68e21de79c9ce7bfc826077d1f3`; hai commit hoàn thiện `14a16db02fb795cbe0922272a457d66e03cef8b5` và `67aabf3c2c0b34aadafea78f3e01dfd29c0dd43c`.
-- Node test thành công vòng sửa test: 988 tổng, 983 pass, 5 skip, 0 fail (run https://github.com/trisanghy/open-iptv-pro/actions/runs/45093144782). SHA cuối `67aabf3c...` còn kiểm chứng CI https://github.com/trisanghy/open-iptv-pro/actions/runs/45093436205 .
-- Bằng chứng Electron cần xác nhận: `positron-p51275-index-before-1920x1080-real.png`, `positron-p51275-index-after-1920x1080-real.png`, số lượt quét cache, giữ thư mục đóng, không autoplay/overflow.
-- Chỉ tính đủ 02/20 khi **CI của SHA cuối thành công và hai PNG đã được MỞ**; nếu chưa đủ ghi 01/20 đạt, 02/20 candidate.
+- CI hoàn tất trên SHA mã nguồn cuối `67aabf3c2c0b34aadafea78f3e01dfd29c0dd43c`: https://github.com/trisanghy/open-iptv-pro/actions/runs/45093436205 — 988 tests, 983 pass, 5 skip, 0 fail; capture Electron, Win Setup/Portable x64, Mac arm64/x64 success, Release skipped đúng Stable-only.
+- Bằng chứng Electron thật **ĐÃ TẢI VÀ MỞ SOÁT**: `positron-p51275-index-before-1920x1080-real.png` và `positron-p51275-index-after-1920x1080-real.png`; 1920x1080. QA: `cached=true`, `keptClosed=true`, `button=true`, nhấn quét lại tạo lượt scan mới, giao diện đổi thông báo sang `Đã quét lại từ EPG trên máy`, focus đúng nút, không tràn ngang. Bộ ảnh: https://github.com/trisanghy/open-iptv-pro/actions/runs/45093436205/artifacts/14782238501 ; Windows x64: https://github.com/trisanghy/open-iptv-pro/actions/runs/45093436205/artifacts/14782820842 ; Mac ARM: https://github.com/trisanghy/open-iptv-pro/actions/runs/45093436205/artifacts/14782572050 ; Mac Intel: https://github.com/trisanghy/open-iptv-pro/actions/runs/45093436205/artifacts/14781829450
+- **Tiến độ thực: 02/20 vòng hoàn thành và đã mở ảnh Electron, còn 18 vòng**. Không tạo Release thử nghiệm. Giới hạn: cache RAM không tồn tại sau khi thoát ứng dụng, chưa test nguồn/live stream thật.
 
 ### Vòng 03–20 của đợt 23/11 — CHƯA BẮT ĐẦU
 - Không đánh dấu thêm vòng mới khi chưa có đủ thay đổi mã, test, PNG Electron đã mở, version/commit và bằng chứng riêng.
-- Trọng tâm tiếp theo: tối ưu lưu chỉ mục giữa các lần mở ứng dụng mà không lưu stream URL hoặc rò rỉ lịch sử, giới hạn dữ liệu cache; quản lý model học máy, rà soát số nút AI và kết quả phân loại theo EPG.
+- Đầu vào vòng 03 từ ảnh P275: popover hover kênh `Xem trước (không tiếng)` xuất hiện màu trắng với khung video đen khi không có stream trong fixture, che vùng player. Cần kiểm tra nguồn và điều kiện hiển thị preview trước khi sửa; không kết luận stream thực lỗi chỉ từ fixture. Ưu tiên tiếp theo khác: chỉ mục bền giữa lần mở ứng dụng mà không lưu URL stream hoặc lịch sử; quản lý mô hình học máy, tinh giản nút AI và kiểm chứng đa nhãn EPG.
 - Khi tiếp nối: xác minh HEAD/version mới nhất, ảnh và trạng thái Actions trước. Không tái bật Release prerelease, không chạm main/nhánh khác.
