@@ -341,3 +341,15 @@ test('P274 tìm kiếm EPG giữ focus và ảnh Electron',()=>{
  assert.ok(qa.includes('positron-p51274-programme-search-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51274-programme-search-after-1920x1080-real.png'));
 });
+
+test('P275 chỉ mục EPG tái sử dụng cùng dữ liệu và có quét lại thủ công',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ['channelSignature','guideSignature','indexCache.key!==key',
+  'indexCache.programmeScans++','indexCache.folderScans++','scanTools()',
+  "btn.textContent='Quét lại EPG'",'previousOpen=new Map',
+  'programmeFolders:()=>indexed',"scanStats:()=>({folderScans"])
+  assert.ok(ui.includes(token),token);
+ assert.ok(qa.includes('positron-p51275-index-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51275-index-after-1920x1080-real.png'));
+});

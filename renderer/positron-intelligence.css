@@ -83,3 +83,9 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-programme-search input{min-width:0;width:100%;min-height:39px;box-sizing:border-box;border:1px solid #597f83;border-radius:9px;background:#132e36;color:#f1fff9;padding:8px 11px;font:inherit}
 #poWatchFlowPanel .po-ai-programme-search input:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}
 #poWatchFlowPanel .po-ai-programme-results{display:grid;gap:9px;min-width:0}
+
+/* P275: one-click local EPG re-index without recurring full list scans. */
+#poWatchFlowPanel .po-ai-scan-tools{display:flex;flex-wrap:wrap;gap:9px;align-items:center;border-top:1px solid #244b4b;padding-top:6px}
+#poWatchFlowPanel .po-ai-scan-tools button{min-height:34px;border:1px solid #4a8f79;border-radius:8px;background:#1b5148;color:#effff8;padding:6px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+#poWatchFlowPanel .po-ai-scan-tools button:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}
+#poWatchFlowPanel .po-ai-scan-tools small{font-size:11px;color:#9fcec0;flex:1}

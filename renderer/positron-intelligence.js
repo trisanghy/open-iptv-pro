@@ -136,13 +136,63 @@
  }
 
 
+
+ // P275: EPG topic indexing runs once for each source/guide signature,
+ // rather than every render, navigation update or new AI notification.
+ // No playlist, stream address or viewing history is cached.
+ const indexCache={key:'',folders:null,programmes:null,folderScans:0,programmeScans:0};
+ let scanNotice='';
+ const channelSignature=collection=>(Array.isArray(collection)?collection:[]).map(c=>
+  [c?.id,c?.name,c?.group,c?.groupTitle,c?.status].join(':')).join('\u001f');
+ function guideSignature(g){
+  if(!g)return 'no-epg';
+  const list=g.programmes;
+  const size=Array.isArray(list)?list.length:(list&&typeof list==='object'?Object.keys(list).length:0);
+  const first=Array.isArray(list)?list[0]:null,last=Array.isArray(list)?list[list.length-1]:null;
+  const hint=x=>[x?.id,x?.channel,x?.start,x?.end,x?.title].join(':');
+  return [g.version,g.updatedAt,g.loadedAt,g.revision,size,hint(first),hint(last)].join('|');
+ }
+ function indexed(kind,collection){
+  const g=guide(),clock=Date.now();
+  const key=channelSignature(collection)+'||'+guideSignature(g)+'||'+Math.floor(clock/3600000);
+  if(indexCache.key!==key){
+   if(indexCache.key)scanNotice='';
+   indexCache.key=key;indexCache.folders=null;indexCache.programmes=null;
+  }
+  if(kind==='folders'){
+   if(!indexCache.folders){
+    indexCache.folders=core.epgFolders(collection,g,win.IPTVGuide,{clock});
+    indexCache.folderScans++;
+   }
+   return indexCache.folders;
+  }
+  if(!indexCache.programmes){
+   indexCache.programmes=core.programmeFolders(collection,g,win.IPTVGuide,{clock,hours:24});
+   indexCache.programmeScans++;
+  }
+  return indexCache.programmes;
+ }
+ function scanTools(){
+  const box=d.createElement('div');box.className='po-ai-scan-tools';
+  const btn=d.createElement('button');btn.type='button';btn.id='poAIRescan';
+  btn.textContent='Quét lại EPG';btn.title='Làm mới chỉ mục chủ đề theo EPG hiện đã nạp; không tải Internet';
+  btn.addEventListener('click',()=>{
+   indexCache.key='';indexCache.folders=null;indexCache.programmes=null;
+   scanNotice='Đã quét lại từ EPG trên máy';
+   render();byId('poAIRescan')?.focus();
+  });
+  const status=d.createElement('small');
+  status.textContent=scanNotice||'Chỉ mục tự làm mới khi nguồn, EPG hoặc thời điểm đổi';
+  box.append(btn,status);list.append(box);
+ }
+
  function renderEPGProgrammes(collection){
-  const catalog=core.programmeFolders(collection,guide(),win.IPTVGuide,{clock:Date.now(),hours:24});
+  const catalog=indexed('programmes',collection);
   summary.textContent='Chương trình EPG 24h · '+catalog.total+' chương trình · '+
    catalog.groups.length+' chủ đề · '+catalog.scanned+' kênh đã kiểm tra';
   const note=d.createElement('p');note.className='po-ai-privacy';
   note.textContent='Tên và giờ phát thực tế từ XMLTV đã nạp. Một chương trình có thể ở nhiều chủ đề; không tải thêm dữ liệu Internet.';
-  list.append(note);
+  list.append(note);scanTools();
   const row=d.createElement('label');row.className='po-ai-programme-search';
   const lab=d.createElement('span');lab.textContent='Tìm trong lịch EPG';
   const search=d.createElement('input');search.type='search';search.id='poAIProgrammeSearch';
@@ -210,12 +260,12 @@
  }
 
  function renderEPGFolders(collection){
-  const catalog=core.epgFolders(collection,guide(),win.IPTVGuide,{clock:Date.now()});
+  const catalog=indexed('folders',collection);
   summary.textContent='Thư mục EPG ảo · '+catalog.groups.length+' chủ đề · '+catalog.scanned+
    ' kênh được rà soát · '+catalog.uncategorized.length+' chưa đủ chủ đề';
   const notice=d.createElement('p');notice.className='po-ai-privacy';
   notice.textContent='Tự phân nhóm từ tên và mô tả chương trình XMLTV đã nạp. Một kênh có thể thuộc nhiều chủ đề; không sửa playlist, không tự tải Internet hay tự phát.';
-  list.append(notice);
+  list.append(notice);scanTools();
   const addFolder=(key,label,items,open)=>{
    const folder=d.createElement('details');folder.className='po-ai-folder';folder.dataset.topic=key;
    folder.open=open;
@@ -265,6 +315,16 @@
   programmesMode.setAttribute('aria-pressed',String(programmesOpen));
   summary.textContent=(enabled?'● Đang học':'○ Chưa bật học')+(alertEnabled?' · Nhắc lịch AI bật':'')+' · '+model.observations+
    ' phản hồi · '+categoryModel.examples+' nhãn AI · '+collection.length+' kênh · Web chỉ tra khi nhấn';
+
+  const previousOpen=new Map([...list.querySelectorAll('details.po-ai-folder')].map(el=>[
+   (el.dataset.programmeTopic?'p:':'f:')+(el.dataset.programmeTopic||el.dataset.topic||''),el.open
+  ]));
+  const restoreFolders=()=>{
+   for(const el of list.querySelectorAll('details.po-ai-folder')){
+    const key=(el.dataset.programmeTopic?'p:':'f:')+(el.dataset.programmeTopic||el.dataset.topic||'');
+    if(previousOpen.has(key))el.open=previousOpen.get(key);
+   }
+  };
   list.dataset.mode=(foldersOpen||programmesOpen)?'folders':'cards';
   list.replaceChildren();
   if(!collection.length){
@@ -272,8 +332,8 @@
    empty.textContent='Chưa có nguồn IPTV. Hãy thêm playlist hợp lệ và EPG để phân loại, sau đó bật học nếu muốn.';
    list.append(empty);return;
   }
-  if(foldersOpen){renderEPGFolders(collection);return;}
-  if(programmesOpen){renderEPGProgrammes(collection);return;}
+  if(foldersOpen){renderEPGFolders(collection);restoreFolders();return;}
+  if(programmesOpen){renderEPGProgrammes(collection);restoreFolders();return;}
   const ranked=exploreOpen
    ?core.exploreWithBandit(collection,guide(),win.IPTVGuide,model,profile,bandit,{limit:8,clock:Date.now()})
    :planOpen
@@ -447,7 +507,8 @@
   explore:()=>enabled?core.exploreWithBandit(channels(),guide(),win.IPTVGuide,model,profileFor(channels()),bandit):[],
   categoryProfile:()=>({enabled,examples:categoryModel.examples}),
   epgFolders:()=>core.epgFolders(channels(),guide(),win.IPTVGuide),
-  programmeFolders:()=>core.programmeFolders(channels(),guide(),win.IPTVGuide),
+  programmeFolders:()=>indexed('programmes',channels()),
+  scanStats:()=>({folderScans:indexCache.folderScans,programmeScans:indexCache.programmeScans}),
   alerts:()=>({enabled:alertEnabled,candidates:alertEnabled?core.startingForYou(channels(),guide(),win.IPTVGuide,model,webValid()):[]}),
   getTopic:metadata});
 })();

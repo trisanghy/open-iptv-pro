@@ -2,6 +2,15 @@
 
 
 
+## P5.1.275 — Chỉ mục EPG tái sử dụng và chủ động quét lại / Electron 4.23.360
+- Feature priority: NEW — Lập chỉ mục kênh/chương trình theo XMLTV rồi dùng lại khi thay đổi giao diện, mở thư mục hoặc cập nhật chỉ báo số kênh, thay vì quét toàn bộ 561 kênh mỗi lần hiển thị. Người dùng có nút **Quét lại EPG** trong Thư mục EPG và Chương trình EPG; thay đổi nguồn, EPG có nhận diện mới hoặc qua mốc thời gian tự làm mới kết quả. Giữ nguyên trạng thái mở/đóng các thư mục khi giao diện được cập nhật.
+- Feature class: BREAKTHROUGH
+- Evidence: Kiểm thử Node và Electron thực kiểm tra hai lần render liên tiếp không tăng số lượt phân tích chương trình, thư mục đã đóng không tự bật lại, nhấn Quét lại EPG tăng chỉ số quét đúng một lần, trạng thái thông báo quét lại xuất hiện và focus trở về nút quét. Chụp trước/sau 1920x1080, đo không tràn ngang và không tác động phát kênh hoặc playlist. Cache chỉ lưu nhóm/tên/giờ XMLTV trong RAM, tự hết hạn khi dữ liệu thay đổi hoặc sang khung giờ tiếp theo.
+- User action: TV → WatchFlow → ✦ AI hợp gu → Thư mục EPG hoặc Chương trình EPG → Quét lại EPG. Phần mở/đóng thư mục được giữ nguyên khi ứng dụng làm mới kết quả.
+- Privacy: Không tự tải nguồn từ Internet, không lưu URL M3U hoặc lịch sử xem trong cache mới; tự động nhận diện thay đổi nguồn và EPG cục bộ, chỉ mục mất khi thoát ứng dụng.
+- Electron screenshot: positron-p51275-index-before-1920x1080-real.png / positron-p51275-index-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE; chỉ lưu bản thử nghiệm ở nhánh và Actions, GitHub Releases Stable-only.
+
 ## P5.1.274 — Tìm chương trình EPG xuyên chủ đề không dấu / Electron 4.23.359
 - Feature priority: NEW — Thêm khám phá chương trình XMLTV theo từ khóa trên toàn bộ các chủ đề, tên chương trình và kênh, hỗ trợ dấu/không dấu; chương trình đa nhãn chỉ liệt kê một lần trong kết quả. Tìm trực tiếp trong tập lịch 24 giờ đã nạp, không tự quét hay phát video.
 - Feature class: BREAKTHROUGH

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.359",
-  "description": "Positron P5.1.274: Tìm chương trình EPG xuyên chủ đề không dấu",
+  "version": "4.23.360",
+  "description": "Positron P5.1.275: Chỉ mục EPG thông minh và quét lại thủ công",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
