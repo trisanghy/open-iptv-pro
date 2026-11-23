@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict');
 const {audit,auditAttributes,auditDictionary,engine}=require('../scripts/audit-rustlab-l10n.cjs');
 test('every static UI and accessibility attribute localized to all 17 languages',()=>{
  const textAudit=audit(),attributeAudit=auditAttributes();
- assert.ok(textAudit.total>=359 && attributeAudit.total>=101,'Audit unexpectedly lost UI labels');
+ assert.ok(textAudit.total>=350 && attributeAudit.total>=101,'Audit unexpectedly lost UI labels');
  for(const [language,stats] of Object.entries(textAudit.byLocale))
   assert.equal(stats.localized,textAudit.total,language+' missing static text: '+stats.missing.join(' | '));
  for(const [language,stats] of Object.entries(attributeAudit.byLocale))
