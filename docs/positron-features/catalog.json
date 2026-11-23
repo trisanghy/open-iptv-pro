@@ -1,20 +1,35 @@
 {
-  "generatedAt": "2026-11-23T05:29:03.782043+00:00",
+  "generatedAt": "2026-11-23T05:40:56.199023+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
+      "number": 286,
+      "version": "P5.1.286",
+      "appVersion": "4.23.371",
+      "title": "so sánh số mẫu AI trước khôi phục JSON",
+      "description": "Feature priority: NEW — Hiển thị chênh lệch mẫu học Logistic ML, Naive Bayes và lượt khám phá UCB trong bảng so sánh ngay trước khi xác nhận, cảnh báo khi bản sao ít dữ liệu học hơn và nêu rõ không đánh đồng số mẫu với độ chính xác. Feature class: AI",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "0904c77af9e1fee2a570b389f5226d437a00d2df",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 285,
       "version": "P5.1.285",
-      "appVersion": "4.23.370",
-      "title": "khôi phục an toàn ba mô hình AI từ JSON",
+      "appVersion": "Chưa xác minh",
+      "title": "Khôi phục mô hình AI từ JSON có xác nhận / Electron 4.23.370",
       "description": "Feature priority: NEW — Bổ sung chọn file sao lưu JSON cục bộ, từ chối tệp sai định dạng, giả mạo, vượt 500KB hoặc tổng số mẫu không khớp. Hiển thị xem trước Logistic, Naive Bayes, UCB và bắt buộc nhấn nút xác nhận trước khi thay thế trọng số. Chỉ đọc tệp trong Electron, không tải lên Internet. Bảo toàn quyền bật AI, thông báo, dữ liệu M3U/kênh, EPG, Favorites và trình phát; nếu ghi localStorage thất bại, khôi phục các giá trị cũ trong bộ nhớ.",
       "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "53be84edbdaf9715cdee9a245dd73e706bd91b19",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
       "image": null
     },
@@ -1381,7 +1396,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
     },
     {
       "number": 193,
