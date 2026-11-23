@@ -35,7 +35,7 @@ test('Renders auto switch and starts scan as soon as the player is ready',()=>{
 });
 test('Still prerelease-only with immutable tags and no Latest change',()=>{
  const w=fs.readFileSync('.github/workflows/rust-lab-version-tags.yml','utf8'),x=fs.readFileSync('.github/workflows/rustlab-windows-exe-on-push.yml','utf8');
- assert.match(w,/prerelease: true/);assert.match(w,/make_latest: false/);assert.match(x,/--prerelease --latest=false/);
+ assert.match(w,/prerelease: true/);assert.match(w,/make_latest: false/);assert.match(x,/actions\/upload-artifact@v4/);assert.doesNotMatch(x,/gh release create/);
 });
 test('Confident Internet description is used even when Bayesian vocabulary is sparse',()=>{
  const store=memory(),v=auto.read(store);

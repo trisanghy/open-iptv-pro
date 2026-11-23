@@ -28,5 +28,5 @@ test('Existing release workflows are strictly prerelease',()=>{
  const release=fs.readFileSync('.github/workflows/rust-lab-version-tags.yml','utf8');
  const win=fs.readFileSync('.github/workflows/rustlab-windows-exe-on-push.yml','utf8');
  assert.match(release,/prerelease: true/);assert.match(release,/make_latest: false/);
- assert.match(win,/--prerelease --latest=false/);
+ assert.match(win,/actions\/upload-artifact@v4/);assert.doesNotMatch(win,/gh release create/);
 });
