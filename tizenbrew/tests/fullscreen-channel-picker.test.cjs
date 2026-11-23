@@ -8,8 +8,9 @@ function extract(from,to){
  return html.slice(a,b);
 }
 const focusCode=extract("var focusStorageKey=","function select(c){");
-const pickerCode=extract("var pickerGroup='Tất cả',pickerIndex=0,pickerChannels=[];","function closePlayer(){");
+const pickerCode=extract("var pickerGroup='Tất cả',pickerIndex=0,pickerChannels=[],pickerHideTimer=null;","function closePlayer(){");
 function harness(){
+ const timers=new Map(),delays=[];let timerId=0;
  const channels=Array.from({length:45},(_,i)=>({
    id:'c'+(i+1),name:'Kênh '+(i+1),
    group:i<24?'Tin tức':'Thể thao',
@@ -31,20 +32,35 @@ function harness(){
  };
  const ctx={
    items:channels,playing,byId:id=>els[id],elem:el,
+   setTimeout(fn,delay){const id=++timerId;timers.set(id,fn);delays.push(delay);return id;},
+   clearTimeout(id){timers.delete(id);},
    localStorage:{getItem(){return null;},setItem(){}},
    select:ch=>selected.push(ch.id),play:ch=>{played.push(ch.id);ctx.playing=ch;}
  };
  const picker=vm.runInNewContext(focusCode+pickerCode+'\n({openChannelPicker,closeChannelPicker,pickerMove,confirmPickerChannel,pickerSetGroup,pickerGroupsAll,renderChannelPicker,current:()=>({pickerGroup,pickerIndex,pickerChannels,lastPickerPosition})});',ctx);
- return {picker,els,channels,played,selected,ctx,focused};
+ return {picker,els,channels,played,selected,ctx,focused,timers,delays};
 }
 test('Full-screen player opens a real picker with the playing channel highlighted without switching',()=>{
  const s=harness();
  assert.equal(s.picker.openChannelPicker(),true);
  assert.equal(s.els.channelPicker.hidden,false);
+ assert.deepEqual(s.delays,[3000],'picker should auto-hide after three seconds');
  assert.match(s.els.pickerInfo.textContent,/11 \/ 45 kênh/);
  assert.equal(s.els.pickerList.children.length,21,'large playlists render a small window');
  assert.equal(s.played.length,0,'opening picker must not switch channels');
  assert.ok(s.els.pickerList.children.some(row=>row.className.includes('active')));
+});
+test('Picker inactivity closes the overlay after three seconds and remote input restarts the timer',()=>{
+ const s=harness();s.picker.openChannelPicker();
+ const firstTimer=[...s.timers.keys()][0];
+ s.picker.pickerMove('ArrowDown');
+ assert.equal(s.timers.has(firstTimer),false,'activity clears the previous deadline');
+ assert.deepEqual(s.delays,[3000,3000]);
+ const currentTimer=[...s.timers.keys()][0];
+ const expire=s.timers.get(currentTimer);s.timers.delete(currentTimer);expire();
+ assert.equal(s.els.channelPicker.hidden,true,'inactivity hides the picker');
+ assert.equal(s.focused.at(-1),'player','auto-hide returns focus to video');
+ assert.equal(s.timers.size,0);
 });
 test('Up/Down immediately changes playback while keeping the list visible',()=>{
  const s=harness();s.picker.openChannelPicker();

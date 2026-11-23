@@ -68,22 +68,25 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 #browserFallback:focus{outline:4px solid #fff;outline-offset:4px}
 #browserFallback[hidden]{display:none}
 /* Full-screen Samsung remote channel selector; never navigate to hidden home controls. */
-#channelPicker{position:absolute;inset:0;z-index:6;display:flex;justify-content:flex-start;background:linear-gradient(90deg,rgba(0,0,0,.76),rgba(0,0,0,.20));}
+#channelPicker{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:flex-start;padding:24px 0 24px 28px;background:linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,.34) 43%,rgba(0,0,0,.04));animation:picker-in .18s ease-out}
 #channelPicker:focus{outline:none}
-.picker-panel{width:min(680px,49vw);min-width:400px;height:100%;min-height:0;padding:28px 25px 18px;background:rgba(11,24,42,.97);border-right:2px solid #31516e;display:flex;flex-direction:column;gap:13px;box-shadow:18px 0 48px #0007}
-.picker-heading{font-size:30px;font-weight:750;color:#f4f8ff}
-.picker-info{font-size:17px;color:#a7bdd8;line-height:1.4}
-.picker-groups{display:flex;gap:10px;overflow-x:auto;min-height:53px;flex-shrink:0;scrollbar-width:none}
-.picker-groups button{flex:none;white-space:nowrap;padding:10px 17px;border:1px solid #3e5a77;border-radius:12px;background:#162b43;color:#e8f2ff;font-size:17px}
-.picker-groups button.active{background:#078cf5;border-color:#59c8ff;color:#fff}
-.picker-list{flex:1;min-height:0;overflow-y:auto;padding:5px;scrollbar-width:thin}
-.picker-row{width:100%;display:flex;gap:13px;align-items:center;text-align:left;margin:0 0 7px;padding:12px;border-radius:12px;border:2px solid transparent;background:#182c46;color:#f5f9ff;min-height:58px;font-size:19px}
-.picker-row.active{background:#0870c2;border-color:#8bdaff;box-shadow:0 0 0 2px #1b80e360}
-.picker-row .picker-number{width:42px;flex:none;color:#b3cbe8;font-size:15px}
+.picker-panel{width:min(640px,40vw);min-width:410px;height:100%;min-height:0;padding:26px 22px 18px;background:linear-gradient(155deg,rgba(13,28,49,.98),rgba(7,17,32,.97));border:1px solid rgba(157,195,232,.32);border-radius:22px;display:flex;flex-direction:column;gap:12px;box-shadow:0 18px 60px #0009;backdrop-filter:blur(12px)}
+.picker-heading{font-size:28px;font-weight:750;letter-spacing:.1px;color:#f4f8ff}
+.picker-info{font-size:15px;color:#a7bdd8;line-height:1.35}
+.picker-groups{display:flex;gap:8px;overflow-x:auto;min-height:44px;flex-shrink:0;padding:2px 1px 5px;scrollbar-width:none}
+.picker-groups button{flex:none;white-space:nowrap;padding:8px 14px;border:1px solid #3e5a77;border-radius:999px;background:#162b43;color:#dceaff;font-size:15px}
+.picker-groups button.active{background:linear-gradient(135deg,#08a8f5,#0875dd);border-color:#68d1ff;color:#fff;box-shadow:0 4px 14px #078cf544}
+.picker-list{flex:1;min-height:0;overflow-y:auto;padding:3px 5px 5px 1px;scrollbar-width:thin;scrollbar-color:#3b6288 transparent}
+.picker-row{width:100%;display:flex;gap:12px;align-items:center;text-align:left;margin:0 0 7px;padding:9px 13px;border-radius:12px;border:1px solid rgba(136,169,205,.16);background:rgba(27,47,74,.82);color:#f5f9ff;min-height:52px;font-size:17px;transition:background .12s,border-color .12s,transform .12s}
+.picker-row.active{background:linear-gradient(105deg,#078ee7,#0877d2);border-color:#73d7ff;box-shadow:0 0 0 2px #22aaff33,0 5px 16px #006bb855;transform:translateX(2px)}
+.picker-row .picker-number{width:40px;flex:none;color:#9db6d2;font-size:13px;font-variant-numeric:tabular-nums}
+.picker-row.active .picker-number{color:#e6f7ff}
 .picker-row .picker-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
-.picker-row .picker-onair{color:#aff4c5;font-size:14px;flex:none}
-.picker-help{font-size:16px;color:#b4cadf;line-height:1.45;border-top:1px solid #36506b;padding-top:12px}
-@media(max-width:1050px){.picker-panel{width:60vw;padding:19px}.picker-heading{font-size:24px}.picker-row{min-height:48px;font-size:16px}}
+.picker-row .picker-onair{color:#b8ffd0;font-size:11px;font-weight:700;letter-spacing:.3px;flex:none;border:1px solid #b8ffd044;background:#00793b55;border-radius:999px;padding:5px 8px}
+.picker-help{font-size:13px;color:#a8c0da;line-height:1.4;border-top:1px solid #ffffff1b;padding:11px 3px 0}
+@keyframes picker-in{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@media(max-width:1050px){#channelPicker{padding:14px 0 14px 14px}.picker-panel{width:60vw;min-width:360px;padding:17px;border-radius:17px}.picker-heading{font-size:23px}.picker-row{min-height:46px;font-size:15px}.picker-groups button{font-size:13px;padding:7px 11px}.picker-help{font-size:12px}}
+@media(max-height:620px){#channelPicker{padding-top:10px;padding-bottom:10px}.picker-panel{padding:14px 17px;gap:8px}.picker-row{min-height:40px;padding:6px 10px;margin-bottom:5px}.picker-groups{min-height:38px}}
 .playerdiag{position:absolute;z-index:3;top:calc(45% + 55px);left:7%;right:7%;max-height:30vh;overflow:auto;white-space:pre-line;overflow-wrap:anywhere;padding:12px 18px;border:1px solid #8b6c3b;border-radius:10px;background:#080a0ee8;color:#ffe0aa;font-size:19px;line-height:1.45;text-align:left;text-shadow:0 1px 3px #000}
 #player.is-playing .playerdiag{display:none}
 @media(max-width:1100px){.nav .sidebar-shortcuts{gap:6px;padding:0 2px}.nav .sidebar-shortcuts button{font-size:13px;padding:8px 9px}}
@@ -1362,7 +1365,13 @@ function togglePlayback(){
 /* Samsung TV channel picker: any D-pad arrow opens this overlay.
  * Up/Down play the next channel immediately while leaving the picker visible.
  * Left/Right switch folders; OK/Back dismiss the picker without undoing playback. */
-var pickerGroup='Tất cả',pickerIndex=0,pickerChannels=[];
+var pickerGroup='Tất cả',pickerIndex=0,pickerChannels=[],pickerHideTimer=null;
+function schedulePickerAutoHide(){
+ if(pickerHideTimer!==null)clearTimeout(pickerHideTimer);
+ pickerHideTimer=null;
+ if(byId('channelPicker').hidden)return;
+ pickerHideTimer=setTimeout(function(){pickerHideTimer=null;if(!byId('channelPicker').hidden)closeChannelPicker();},3000);
+}
 function pickerGroupsAll(){
  var out=['Tất cả'];
  items.forEach(function(ch){var name=String(ch.group||'Khác');if(out.indexOf(name)<0)out.push(name);});
@@ -1383,7 +1392,7 @@ function renderChannelPicker(){
  var container=byId('pickerGroups');container.replaceChildren();
  groups.forEach(function(name){
   var b=elem('button',name===pickerGroup?'active':'',name);
-  b.type='button';b.onclick=function(){pickerSetGroup(name);picker.focus();};
+  b.type='button';b.onclick=function(){pickerSetGroup(name);picker.focus();schedulePickerAutoHide();};
   container.appendChild(b);
   if(name===pickerGroup){try{b.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}}
  });
@@ -1420,15 +1429,19 @@ function openChannelPicker(anchorToPlaying){
  var preferredId=anchorToPlaying&&playing?playing.id:lastPickerPosition.id;
  pickerSetGroup(desiredGroup,preferredId);
  byId('channelPicker').focus();
+ schedulePickerAutoHide();
  return true;
 }
 function closeChannelPicker(){
+ if(pickerHideTimer!==null)clearTimeout(pickerHideTimer);
+ pickerHideTimer=null;
  byId('channelPicker').hidden=true;
  pickerChannels=[];
  if(!byId('player').hidden)byId('player').focus();
 }
 function pickerMove(key){
  if(byId('channelPicker').hidden)return;
+ schedulePickerAutoHide();
  if(key==='ArrowLeft'||key==='ArrowRight'){
   var groups=pickerGroupsAll(),index=groups.indexOf(pickerGroup);
   pickerSetGroup(groups[(index+(key==='ArrowRight'?1:-1)+groups.length)%groups.length]);
