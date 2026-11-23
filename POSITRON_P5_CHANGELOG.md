@@ -7,6 +7,7 @@
 - Electron screenshot: positron-p51346-escape-guide-before-720x900-real.png / positron-p51346-escape-guide-after-720x900-real.png.
 - Privacy: chỉ tác động DOM hiển thị, không gửi playlist/EPG, URL hoặc hành vi; không gọi nút Xem.
 - Status: CANDIDATE tới khi Node, Electron, mở ảnh và CI full chứng minh; không release public từ nhánh thử nghiệm.
+- P326 regression fix: shortcut disclosure moved to a non-reflowing overlay on existing keyboard hint row; updated the P345 regression assertion to verify that DOM anchor and retain all keyboard focus/escape tests.
 
 ## P5.1.345 / Electron 4.23.430 — Phím điều khiển AI mở gọn bằng remote (CANDIDATE)
 - Feature priority: NEW — Ảnh Electron P344 cho thấy PageUp/PageDown chạy đúng nhưng chỉ có hướng dẫn Alt+Shift+J; người dùng bàn phím/remote không biết đủ các phím khi danh sách dài, trong khi thêm nhiều nút vào header sẽ che nội dung.

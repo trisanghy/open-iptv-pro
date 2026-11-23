@@ -4,7 +4,7 @@ const read=p=>fs.readFileSync(p,'utf8');
 test('P345 native AI shortcut guide is optional, remote-accessible and does not alter playback',()=>{
  const js=read('renderer/positron-intelligence.js'),css=read('renderer/positron-intelligence.css');
  for(const x of ["shortcutGuide=d.createElement('details')","shortcutGuide.id='poAIShortcutGuide'",
-  "shortcutSummary.setAttribute('aria-label'","modeHelp.after(shortcutGuide)",
+  "shortcutSummary.setAttribute('aria-label'","modeHelp.append(shortcutGuide)",
   "PageUp/PageDown: lùi hoặc tiến 5 gợi ý","Chỉ Enter hoặc Space trên nút Xem"])
   assert.ok(js.includes(x),'missing P345 keyboard help '+x);
  assert.ok(css.includes('#poAIShortcutGuide')&&css.includes('min-height:44px'));
