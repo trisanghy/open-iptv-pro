@@ -19,12 +19,14 @@
   const navItems={},filterItems={};
   let current='';
   const sidebarAnchor=sidebar.querySelector('.nav[data-page="fav"]');
+  let lastSidebarAnchor=sidebarAnchor;
   for(const mode of modes){
    const nav=doc.createElement('button');nav.type='button';nav.className='nav web-ai-quick-nav';
    nav.dataset.aiQuick=mode;nav.setAttribute('aria-label',text(mode));nav.title=text(mode);
    const glyph=doc.createElement('span');glyph.textContent=mode==='classification'?'▦':'✦';glyph.setAttribute('aria-hidden','true');
    nav.append(glyph,doc.createTextNode(' '+text(mode)));
-   sidebarAnchor?.insertAdjacentElement('afterend',nav);
+   lastSidebarAnchor?.insertAdjacentElement('afterend',nav);
+   lastSidebarAnchor=nav;
    navItems[mode]=nav;
    const tab=doc.createElement('button');tab.type='button';tab.className='filter-tab web-ai-quick-filter';
    tab.dataset.aiQuick=mode;tab.textContent=text(mode);tab.setAttribute('aria-pressed','false');

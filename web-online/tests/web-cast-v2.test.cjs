@@ -180,6 +180,7 @@ test('remote channel handoff tears down local HLS/DASH before awaiting channel s
  const mock={
   playGeneration:11,playAttemptSerial:4,failoverTimer:1,stallTimer:2,startupNoteTimer:3,
   hls:{destroy(){seen.push('hls-destroy');}},dash:{reset(){seen.push('dash-reset');}},
+  destroyMpegts(){seen.push('mpegts-destroy');},
   player:{pause(){seen.push('pause');},removeAttribute(name){seen.push('remove-'+name);},load(){seen.push('load');}},
   clearTimeout(id){seen.push('timer-'+id);},
   window:{OpenIPTVWebCastV2:{syncRemoteControls(){seen.push('sync');},onLocalStop(){throw Error('must never stop TV');}}},
