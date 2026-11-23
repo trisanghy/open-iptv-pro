@@ -1,3 +1,12 @@
+## P5.1.329 / Electron 4.23.414 — Phím tắt hai chiều mở/đóng WatchFlow AI (CANDIDATE)
+- Feature priority: NEW — điều khiển hoàn toàn bằng một phím để bật và tắt bảng AI, không phải đưa chuột tìm nút × hoặc chuyển sang Escape khi đang xem truyền hình.
+- Feature class: AI
+- User action: Ở trang TV, nhấn F6 hoặc Alt+Shift+W một lần để mở AI; nhấn lại cùng phím để đóng và trở lại nút WatchFlow. Hỗ trợ cả màn hẹp và bàn phím.
+- Electron screenshot: positron-p51329-ai-key-toggle-before-1920x1080-real.png / positron-p51329-ai-key-toggle-after-1920x1080-real.png / positron-p51329-ai-key-toggle-open-720x900-real.png / positron-p51329-ai-key-toggle-after-720x900-real.png.
+- Evidence: Ảnh P328 được mở thật ở desktop và 720 cho thấy panel AI phủ góc bên phải TV sau khi nhấn F6; QA P329 chụp AI trước khi tắt và TV sau khi tắt, soát focus, viewport, không thay playlist/model/playback.
+- Privacy: xử lý phím cục bộ, không tạo mạng, không đổi nguồn, yêu thích, EPG, quyền hay dữ liệu huấn luyện AI.
+- Status: CANDIDATE tới khi QA/build/ảnh Electron thật được xác minh; public release stable-only.
+
 ## P5.1.328 / Electron 4.23.413 — Phím tắt mở nhanh WatchFlow Intelligence (CANDIDATE)
 - Feature priority: NEW — thêm lối truy cập AI trực tiếp qua bàn phím mà không phải tìm nút trên toolbar, hỗ trợ thao tác nhanh khi quản lý danh sách kênh.
 - Feature class: AI

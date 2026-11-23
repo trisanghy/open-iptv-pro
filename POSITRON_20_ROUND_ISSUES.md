@@ -67,3 +67,13 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Workflow 45243005052: Node pass, Win/mac build pass nhưng Electron capture báo ignoresTextInputs=false. Lỗi có thể xuất phát từ QA chỉ chọn DOM input đầu tiên, không xác minh trạng thái focus thật, hoặc bộ nhận phím cần guard mạnh hơn.
 - Sửa kiểm thử: target #searchBox có thật ở TV, bắt buộc visible và document.activeElement===input trước khi nhấn F6. Đồng thời guard cả event.target và document.activeElement trong handler. Giữ nguyên assertion panel phải đóng khi nhập.
 - Chạy lại full CI, không nhận P328 đạt khi chưa xem screenshot thật.
+
+## Đợt mới — Vòng 02/20 P5.1.328: Electron QA ĐÃ ĐẠT, Mac ARM đang xếp hàng
+- CI 45244481603 trên commit 0fbc817300aa65961ab28b1a3e38c27544f07cca: Node tests success, capture success (13/13 flags true) sau 2 lượt sửa QA/guard ô tìm kiếm; build Windows x64 và macOS Intel pass; macOS ARM tại thời điểm cập nhật còn queued. Release stable-only.
+- Ảnh native lấy từ artifact 14853641547 đã MỞ: before 1920 panel đóng, after F6 mở AI có focus, 720x900 không tràn, AI tab đúng. QA: actual searchBox focused true, F6 không mở AI, Sources không mở AI, layout quốc tế KeyW pass, playlist/model/noAutoplay unchanged.
+- Không claim phát hành ARM khi còn queued; vẫn tiếp tục vòng 03 dựa trên ảnh đã mở và QA desktop.
+
+## Đợt mới — Vòng 03 P5.1.329: CANDIDATE
+- Phát hiện từ ảnh sau P328: phím tắt đã mở AI, nhưng nhấn lại không đóng; cửa sổ AI phủ góc video, để đóng phải tìm nút × hoặc dùng phím Escape riêng.
+- Tính năng: F6 và Alt+Shift+W là hai-way toggle cùng trạng thái; lần đầu mở và tập trung nút AI, lần hai đóng và chuyển focus về WatchFlow toolbar, trên cả 1920/720.
+- QA Electron: trước AI mở/sau đóng trên desktop và 720, nhấn lại F6/chord, no overflow/data changes/autoplay; không tính vòng hoàn tất trước Node + ảnh thật + CDP/CI và mở PNG.

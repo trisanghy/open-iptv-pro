@@ -253,6 +253,15 @@
   const palette=byId('positronPalette');
   if(palette&&!palette.hidden)return;
   event.preventDefault();event.stopPropagation();
+  // P329: a second shortcut dismisses the visible AI panel and returns focus.
+  // Never toggle playback, the AI preference model, or a source playlist.
+  if(!panel.hidden&&aiOpen){
+   win.PositronWatchFlow?.close?.();
+   const opener=byId('poWatchFlowToggle');
+   if(panel.hidden&&opener?.getClientRects().length)
+    opener.focus({preventScroll:true});
+   return;
+  }
   if(panel.hidden)win.PositronWatchFlow?.open?.();
   if(panel.hidden)return;
   if(!aiOpen)showAI();
