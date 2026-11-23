@@ -366,6 +366,35 @@
     :'Đây là thứ hạng thử trên dữ liệu hiện có, không chứng minh độ chính xác của mô hình.'};
  }
 
+
+ // P289: read-only dry run of how imported Naive Bayes data changes
+ // channel topic labels. Never include URLs, start playback, or store results.
+ function previewCategoryImpact(current,loaded,channelRows,{limit=4}={}){
+  const imported=loaded?.ok===true?loaded:parseLearningBackup(loaded);
+  if(!imported?.ok)return {ok:false,reason:imported?.reason||'Không đọc được mô hình AI.'};
+  const present=sanitizedCategoryModel(current?.categoryModel),future=sanitizedCategoryModel(imported.categoryModel);
+  const sample=(Array.isArray(channelRows)?channelRows:[])
+   .filter(ch=>ch?.id&&ch?.name).slice(0,180);
+  const max=Math.max(1,Math.min(8,Math.trunc(limit)||4));
+  let changed=0,classifiedBefore=0,classifiedAfter=0;
+  const differences=[];
+  for(const ch of sample){
+   const before=predictCategory(present,ch,{threshold:0.6});
+   const after=predictCategory(future,ch,{threshold:0.6});
+   if(before)classifiedBefore++;if(after)classifiedAfter++;
+   if((before?.key||'')===(after?.key||''))continue;
+   changed++;
+   if(differences.length<max){
+    differences.push({name:cleanQuery(ch.name)||'Kênh chưa rõ',
+     before:before?KINDS[before.key]:'Chưa đủ chắc chắn',
+     after:after?KINDS[after.key]:'Chưa đủ chắc chắn'});
+   }
+  }
+  return {ok:true,scanned:sample.length,changed,classifiedBefore,classifiedAfter,
+   examplesBefore:present.examples,examplesAfter:future.examples,differences,
+   caution:'Đây là dự đoán dựa trên tên/nhóm kênh và nhãn đã dạy, không phải kết quả xem luồng hay sự thật từ EPG.'};
+ }
+
  // P282: explain learned Naive Bayes evidence using only channel-name tokens.
  // Never show a prediction from shared generic group names or unsupervised web data.
  function explainCategory(raw,channel){
@@ -622,5 +651,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,compareLearningBackup,previewLearningImpact,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,compareLearningBackup,previewLearningImpact,previewCategoryImpact,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.373",
-  "description": "Positron P5.1.288: xem thử tác động gợi ý AI trước khi khôi phục",
+  "version": "4.23.374",
+  "description": "Positron P5.1.289: xem trước kênh đổi nhãn Naive Bayes khi nhập AI",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

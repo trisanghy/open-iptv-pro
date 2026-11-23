@@ -198,3 +198,11 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-impact>strong{display:block;font-size:12px;margin-bottom:4px}
 #poWatchFlowPanel .po-ai-impact p{margin:4px 0;line-height:1.45;overflow-wrap:anywhere}
 #poWatchFlowPanel .po-ai-impact small{display:block;color:#a4cebf;font-size:10px;line-height:1.4;margin-top:6px}
+
+/* P289: compact, accessible Naive Bayes impact disclosure. */
+#poWatchFlowPanel .po-ai-category-impact{margin-top:8px;border:1px solid #55748f;border-radius:8px;padding:0 8px 8px;background:#132b3e;color:#e9f5ff;font-size:12px}
+#poWatchFlowPanel .po-ai-category-impact summary{min-height:38px;display:list-item;cursor:pointer;font-weight:700;line-height:1.4;padding:10px 2px 6px}
+#poWatchFlowPanel .po-ai-category-impact summary:focus-visible{outline:2px solid #aeddfa;outline-offset:2px}
+#poWatchFlowPanel .po-ai-category-impact p{margin:4px 0 7px;line-height:1.5}
+#poWatchFlowPanel .po-ai-category-diff{border-top:1px solid #365568;padding:6px 0;overflow-wrap:anywhere}
+#poWatchFlowPanel .po-ai-category-impact small{display:block;margin-top:7px;color:#b2cde1;font-size:11px;line-height:1.45}

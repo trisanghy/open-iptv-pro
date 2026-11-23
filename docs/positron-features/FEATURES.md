@@ -7,6 +7,19 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
+<summary><strong>P5.1.289</strong> · Dự báo nhãn Naive Bayes thay đổi khi khôi phục · CANDIDATE · AI</summary>
+
+**Ứng dụng:** 4.23.374 · **Trạng thái:** chờ GitHub Actions và ảnh Electron.
+
+Feature class: AI — Xem thử tối đa 180 kênh theo mô hình phân loại hiện tại và trọng số trong JSON. Danh sách mở rộng hiển thị các kênh có thể đổi chủ đề; không phát video, không ghi dữ liệu, không suy diễn EPG khi chỉ có tên/nhóm.
+
+Bằng chứng ảnh thật được kiểm tra trước khi công bố hoàn tất.
+
+[Xem changelog và source](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+</details>
+
+<details>
 <summary><strong>P5.1.288</strong> · xem thử tác động gợi ý AI trước khi khôi phục · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.373 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH

@@ -712,3 +712,44 @@ test('P288 dự báo thay đổi thứ hạng kênh theo trọng số Logistic M
   'positron-p51288-ai-ranking-after-1920x1080-real.png'])assert.ok(qa.includes(name));
  assert.ok(qa.includes('bothRankingsVisible'));
 });
+
+
+test('P289 xem trước nhãn Naive Bayes sẽ thay đổi, không ghi dữ liệu',()=>{
+ const movie={id:'movie',name:'Phim hành động mới',group:'Truyền hình',
+  url:'https://private.invalid/secret-movie.m3u8',status:'alive'};
+ const football={id:'sport',name:'Bóng đá thể thao',group:'Truyền hình',
+  url:'https://private.invalid/secret-football.m3u8',status:'alive'};
+ let before=C.emptyCategoryModel(),after=C.emptyCategoryModel();
+ for(let i=0;i<8;i++){
+  before=C.teachCategory(before,movie,'cinema');
+  before=C.teachCategory(before,football,'sport');
+  after=C.teachCategory(after,movie,'news');
+  after=C.teachCategory(after,football,'sport');
+ }
+ const file=C.buildLearningBackup({model:C.emptyModel(),categoryModel:after,bandit:{}});
+ const rows=[movie,football],snapshot=JSON.stringify(rows),backup=JSON.stringify(file);
+ const report=C.previewCategoryImpact({categoryModel:before},file,rows,{limit:4});
+ assert.equal(report.ok,true);
+ assert.equal(report.scanned,2);
+ assert.equal(report.changed,1);
+ assert.equal(report.classifiedBefore,2);
+ assert.equal(report.classifiedAfter,2);
+ assert.deepEqual(report.differences.map(r=>[r.before,r.after]),[['Phim','Tin tức']]);
+ assert.ok(report.caution.includes('không phải kết quả xem luồng'));
+ assert.equal(JSON.stringify(rows),snapshot);
+ assert.equal(JSON.stringify(file),backup);
+ assert.ok(!JSON.stringify(report).includes('private.invalid'), 'no stream URLs in preview');
+ assert.equal(C.previewCategoryImpact({categoryModel:before},{},rows).ok,false);
+ assert.equal(C.previewCategoryImpact({categoryModel:before},file,[],{limit:2}).scanned,0);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ['core.previewCategoryImpact({categoryModel},parsed,channels()',
+  "details.id='poAICategoryImpact'","details.className='po-ai-category-impact'"])
+  assert.ok(ui.includes(token),token);
+ assert.ok(css.includes('#poWatchFlowPanel .po-ai-category-impact summary:focus-visible'));
+ assert.ok(qa.includes('hasRealLabelChanges'));
+ for(const name of ['positron-p51289-ai-category-before-1920x1080-real.png',
+  'positron-p51289-ai-category-after-1920x1080-real.png'])
+  assert.ok(qa.includes(name));
+});

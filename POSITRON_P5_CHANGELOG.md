@@ -1,3 +1,11 @@
+## P5.1.289 — Dự báo kênh đổi chủ đề Naive Bayes trước khôi phục / Electron 4.23.374
+- Feature priority: NEW — Sau khi chọn JSON sao lưu, AI thử phân loại tối đa 180 kênh theo mô hình Naive Bayes hiện tại và mô hình trong tệp, đếm số kênh có thể đổi nhãn, liệt kê tối đa 4 khác biệt và nêu rõ đây chỉ là dự đoán dựa trên tên/nhóm kênh, không xác nhận từ EPG/luồng. Bảng thu gọn để giữ nút Xác nhận dễ truy cập.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → mục "Naive Bayes dự báo ... kênh đổi nhãn (xem chi tiết)".
+- Electron screenshot: positron-p51289-ai-category-before-1920x1080-real.png / positron-p51289-ai-category-after-1920x1080-real.png.
+- Evidence: Node test dạy hai nhóm nhãn đối nghịch để chứng minh thay đổi Phim → Tin tức, không lộ URL/đổi dữ liệu; Electron kiểm tra số kênh đổi nhãn thật trong fixture, preview mở rộng, lưu trữ/playlist/trình phát bất biến, không tràn và hai ảnh 1920×1080.
+- Status: CANDIDATE — Chờ CI, ảnh thật và bộ cài Actions; không phát hành thử nghiệm lên GitHub Releases Stable.
+
 ## P5.1.288 — Xem thử thứ hạng gợi ý AI trước khi nhập mô hình / Electron 4.23.373
 - Feature priority: NEW — Mô phỏng tác động của trọng số Logistic ML trong tệp sao lưu lên ba gợi ý kênh hiện tại ngay ở màn hình xem trước. Hiển thị thứ hạng trước/sau, số vị trí thay đổi và cảnh báo khi mô hình chưa học đủ. Không tự phát kênh, không ghi mô hình hay gửi dữ liệu lên mạng.
 - Feature class: AI

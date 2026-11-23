@@ -753,6 +753,30 @@
     forecast.append(heading,before,after,caution);importPreview.append(forecast);
    }
 
+
+   const categoryImpact=core.previewCategoryImpact({categoryModel},parsed,channels(),{limit:4});
+   if(categoryImpact.ok){
+    const details=d.createElement('details');details.id='poAICategoryImpact';
+    details.className='po-ai-category-impact';
+    const summary=d.createElement('summary');
+    summary.textContent='Naive Bayes dự báo '+categoryImpact.changed+' kênh đổi nhãn (xem chi tiết)';
+    const stats=d.createElement('p');
+    stats.textContent='Đã thử '+categoryImpact.scanned+' kênh. Phân loại đủ chắc chắn: '+
+     categoryImpact.classifiedBefore+' → '+categoryImpact.classifiedAfter+' kênh.';
+    details.append(summary,stats);
+    if(!categoryImpact.differences.length){
+     const empty=d.createElement('p');empty.textContent='Chưa thấy nhãn thay đổi trong mẫu kiểm tra.';
+     details.append(empty);
+    }
+    for(const row of categoryImpact.differences){
+     const line=d.createElement('div');line.className='po-ai-category-diff';
+     line.textContent=row.name+': '+row.before+' → '+row.after;
+     details.append(line);
+    }
+    const note=d.createElement('small');note.textContent=categoryImpact.caution;
+    details.append(note);importPreview.append(details);
+   }
+
    pendingLearningImport=parsed;importConfirm.hidden=false;
    modelStatus.textContent='Xem trước: '+parsed.summary.preferenceObservations+' phản hồi, '
     +parsed.summary.categoryLabels+' nhãn và '+parsed.summary.exploredTopics
