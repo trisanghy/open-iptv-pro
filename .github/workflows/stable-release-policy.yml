@@ -38,9 +38,21 @@ jobs:
           while IFS=$'\t' read -r id tag prerelease; do
             [[ -n "$id" ]] || continue
             if [[ "$prerelease" == false && "$tag" =~ ^[vV][0-9]+(\.[0-9]+)+$ ]]; then
-              echo "PRESERVE STABLE: $tag"
-              keep=$((keep + 1))
-              continue
+              # Semantic-version appearance is not enough: the release tag
+              # MUST resolve to a commit already merged into main.
+              # GitHub compare tag...main has behind_by=0 exactly when
+              # the tagged commit is an ancestor of main.
+              if ! behind="$(gh api "repos/$GITHUB_REPOSITORY/compare/${tag}...main" --jq '.behind_by')"; then
+                echo "::error::Unable to verify Stable tag ancestry: $tag; leaving it unchanged"
+                errors=$((errors + 1))
+                continue
+              fi
+              if [[ "$behind" == 0 ]]; then
+                echo "PRESERVE MAIN STABLE: $tag"
+                keep=$((keep + 1))
+                continue
+              fi
+              echo "Release $tag is not based on main (behind_by=$behind): remove its Release object"
             fi
             echo "Removing non-Stable Release $tag (id=$id); Git tag and branch stay intact."
             ok=false
