@@ -2232,3 +2232,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - User action: Focus QA Channel 412, chuyển sang thanh công cụ rồi Alt+Shift+L để quay lại. Hàng đang chọn hiện gần trung tâm danh sách thay vì cạnh dưới, cuộn không ảnh hưởng vùng nội dung ngoài.
 - Đầu vào: ĐÃ MỞ ảnh Electron thật P5.1.252 SAU; hàng 412 được focus nhưng nằm sát mép dưới panel, thiếu bối cảnh duyệt.
 - QA: đo hình học vị trí row trước/sau, ảnh Electron 1920×1080, không phát video hoặc thay đổi M3U/Favorites; chỉ hoàn tất sau CI/release.
+
+
+## P5.1.279 — Không tự đóng danh sách chưa phân loại
+- Sửa trạng thái mở danh sách con trong thư mục EPG ảo khi WatchFlow Intelligence render lại hoặc khi người dùng dạy AI, bỏ qua kênh.
+- Đồng bộ kiểm thử P272 với DOM lồng thực tế P278; kiểm tra cả nhánh thư mục thường và danh sách kênh con, không xóa assertion.
+- Thêm smoke test Electron P279: mở danh sách, render lại, xác thực trạng thái, cache, không tự phát và playlist nguyên vẹn; ghi 2 PNG 1920×1080.
+- Release thử nghiệm tắt, chỉ build và giữ artifact trong GitHub Actions theo chính sách chỉ public bản stable.

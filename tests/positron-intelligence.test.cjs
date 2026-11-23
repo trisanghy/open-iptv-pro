@@ -284,7 +284,10 @@ test('P272 WatchFlow hiển thị thư mục có thể mở và kênh đa nhóm,
  assert.ok(ui.includes('indexCache.folders=core.epgFolders(collection,g,win.IPTVGuide'));
  assert.ok(ui.includes("[c?.id,c?.name,c?.group,c?.groupTitle].join(':')"),'health/status changes must not trigger a full EPG scan');
  assert.ok(ui.includes("folder.dataset.topic=key"));
- assert.ok(ui.includes("folder.append(rows);list.append(folder)"));
+ assert.ok(ui.includes("channelDisclosure.append(disclosureLabel,rows);folder.append(channelDisclosure)"),
+  'P278 nested disclosure must preserve the unclassified channel list');
+ assert.ok(ui.includes("}else folder.append(rows);"),'All normal EPG folders still expose their rows');
+ assert.ok(ui.includes("list.append(folder);"),'All EPG folders must remain in the list');
  assert.ok(css.includes('#poAICards[data-mode="folders"]'));
  assert.ok(qa.includes('positron-p51272-epg-folders-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51272-epg-folders-after-1920x1080-real.png'));
@@ -418,4 +421,16 @@ test('P278 AI hướng dẫn từng kênh, Bỏ qua không thay đổi trọng s
  assert.ok(css.includes('#poWatchFlowPanel .po-ai-folder-raw>summary'));
  for(const image of ['positron-p51278-guided-ai-before-1920x1080-real.png',
   'positron-p51278-guided-ai-after-1920x1080-real.png'])assert.ok(qa.includes(image),image);
+});
+
+test('P279 giữ trạng thái mở danh sách con sau mỗi lần render',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ["const disclosureKey=el=>","el.classList.contains('po-ai-folder-raw')",
+  "return 'raw:'+(parent?.dataset.topic||'')","details.po-ai-folder, details.po-ai-folder-raw",
+  "if(previousOpen.has(key))el.open=previousOpen.get(key)"])
+   assert.ok(ui.includes(token),token);
+ for(const name of ['positron-p51279-folders-persist-before-1920x1080-real.png',
+  'positron-p51279-folders-persist-after-1920x1080-real.png','rawOpen:raw?.open===true'])
+  assert.ok(qa.includes(name),name);
 });

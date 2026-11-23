@@ -432,12 +432,19 @@
   summary.textContent=(enabled?'● Đang học':'○ Chưa bật học')+(alertEnabled?' · Nhắc lịch AI bật':'')+' · '+model.observations+
    ' phản hồi · '+categoryModel.examples+' nhãn AI · '+collection.length+' kênh · Web chỉ tra khi nhấn';
 
-  const previousOpen=new Map([...list.querySelectorAll('details.po-ai-folder')].map(el=>[
-   (el.dataset.programmeTopic?'p:':'f:')+(el.dataset.programmeTopic||el.dataset.topic||''),el.open
-  ]));
+  // P279: restore nested unclassified lists as well as their EPG parent folders.
+  const disclosureKey=el=>{
+   if(el.classList.contains('po-ai-folder-raw')){
+    const parent=el.closest('details.po-ai-folder');
+    return 'raw:'+(parent?.dataset.topic||'');
+   }
+   return (el.dataset.programmeTopic?'p:':'f:')+(el.dataset.programmeTopic||el.dataset.topic||'');
+  };
+  const previousOpen=new Map([...list.querySelectorAll('details.po-ai-folder, details.po-ai-folder-raw')]
+   .map(el=>[disclosureKey(el),el.open]));
   const restoreFolders=()=>{
-   for(const el of list.querySelectorAll('details.po-ai-folder')){
-    const key=(el.dataset.programmeTopic?'p:':'f:')+(el.dataset.programmeTopic||el.dataset.topic||'');
+   for(const el of list.querySelectorAll('details.po-ai-folder, details.po-ai-folder-raw')){
+    const key=disclosureKey(el);
     if(previousOpen.has(key))el.open=previousOpen.get(key);
    }
   };

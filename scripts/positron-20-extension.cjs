@@ -9561,6 +9561,40 @@ async function runTwenty(page){
 
 
 
+
+ // P279: nested unclassified-channel disclosure remains open through a live rerender.
+ const raw279=page.locator('details.po-ai-folder[data-topic="other"] details.po-ai-folder-raw');
+ assert.equal(await raw279.count(),1,'P279 nested list must exist');
+ await raw279.locator('summary').scrollIntoViewIfNeeded();
+ const before279=await page.screenshot({path:path.join(out,'positron-p51279-folders-persist-before-1920x1080-real.png'),animations:'disabled'});
+ await raw279.locator('summary').click();
+ assert.equal(await raw279.evaluate(el=>el.open),true,'P279 user can expand channel list');
+ await page.evaluate(()=>{
+  window.__p279Scans=window.PositronIntelligence.scanStats();
+  window.__p279Ids=JSON.stringify(window.IPTVState.getChannels().map(c=>c.id));
+  window.__p279Playing=window.IPTVState.getCurrent()?.id||'';
+  window.PositronIntelligence.render();
+ });
+ const qa279=await page.evaluate(()=>{
+  const raw=document.querySelector('details.po-ai-folder[data-topic="other"] details.po-ai-folder-raw');
+  const parent=document.querySelector('details.po-ai-folder[data-topic="other"]');
+  return {
+   rawOpen:raw?.open===true,
+   parentOpen:parent?.open===true,
+   rowsPresent:(raw?.querySelectorAll('.po-ai-folder-row').length||0)>0,
+   cached:window.PositronIntelligence.scanStats().folderScans===window.__p279Scans.folderScans,
+   noAutoplay:(window.IPTVState.getCurrent()?.id||'')===window.__p279Playing,
+   playlistUnchanged:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id))===window.__p279Ids,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+3
+  };
+ });
+ for(const [key,value] of Object.entries(qa279))assert.equal(value,true,'P279 '+key+': '+JSON.stringify(qa279));
+ await raw279.locator('summary').scrollIntoViewIfNeeded();
+ const after279=await page.screenshot({path:path.join(out,'positron-p51279-folders-persist-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before279.readUInt32BE(16),before279.readUInt32BE(20)],[1920,1080]);
+ assert.deepEqual([after279.readUInt32BE(16),after279.readUInt32BE(20)],[1920,1080]);
+ assert.ok(!before279.equals(after279),'P279 expanding list creates a genuine UI change');
+
  await page.evaluate(()=>{
   window.IPTVExtras.getGuide=window.__p273GuideOriginal;
   window.IPTVGuide.find=window.__p273FindOriginal;
