@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.323 — nút gợi ý AI cao 44px, dễ bấm chuột và bàn phím
+## P5.1.324 — năm chế độ WatchFlow có vùng bấm 44px
 
-**Ứng dụng:** 4.23.408 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.409 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — tăng vùng bấm của năm nút Gợi ý, Tiếp, Cùng gu, Mix, Zap từ 35px lên 44px; vẫn trên một hàng. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e124f3896e7138d39a943fd174fcc05e1ced9290)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.323 — Cập nhật Positron P5.1.323
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — AI hợp gu có thao tác vùng chạm 44px dễ dùng trên máy tính và cửa sổ hẹp, hỗ trợ điều hướng bàn phím rõ nét ngay trong đề xuất kênh. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/142da0430604f1acdcf0ba57ee504a72a43e9ed3)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.322 — Electron 4.23.407 — Header WatchFlow theo chế độ AI (CANDIDATE)
 

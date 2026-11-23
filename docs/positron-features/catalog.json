@@ -1,20 +1,35 @@
 {
-  "generatedAt": "2026-11-23T17:04:04.683931+00:00",
+  "generatedAt": "2026-11-23T17:39:50.239631+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
+      "number": 324,
+      "version": "P5.1.324",
+      "appVersion": "4.23.409",
+      "title": "năm chế độ WatchFlow có vùng bấm 44px",
+      "description": "Feature priority: NEW — tăng vùng bấm của năm nút Gợi ý, Tiếp, Cùng gu, Mix, Zap từ 35px lên 44px; vẫn trên một hàng. Feature class: AI",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "e124f3896e7138d39a943fd174fcc05e1ced9290",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 323,
       "version": "P5.1.323",
-      "appVersion": "4.23.408",
-      "title": "nút gợi ý AI cao 44px, dễ bấm chuột và bàn phím",
+      "appVersion": "Chưa xác minh",
+      "title": "Cập nhật Positron P5.1.323",
       "description": "Feature priority: NEW — AI hợp gu có thao tác vùng chạm 44px dễ dùng trên máy tính và cửa sổ hẹp, hỗ trợ điều hướng bàn phím rõ nét ngay trong đề xuất kênh. Feature class: AI",
       "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "142da0430604f1acdcf0ba57ee504a72a43e9ed3",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
       "image": null
     },
@@ -1951,7 +1966,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
     },
     {
       "number": 193,
