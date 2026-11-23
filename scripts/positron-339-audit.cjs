@@ -16,16 +16,19 @@ async function state(page){
   const badge=document.getElementById('poAIFocusProgress');
   const card=document.activeElement?.closest?.('#poAICards .po-ai-card');
   const completeName=card?.querySelector('.po-ai-card-header strong')?.textContent?.replace(/^\d+\.\s*/,'').trim()||'';
-  const labelRect=label?.getBoundingClientRect(),titleRect=title?.getBoundingClientRect();
-  const back=document.getElementById('poAIBackTop')?.getBoundingClientRect();
+  const labelRect=label?.getBoundingClientRect();
+  const header=p.querySelector('.po-watchflow-head')?.getBoundingClientRect();
+  const backEl=document.getElementById('poAIBackTop');
+  const back=backEl&&!backEl.hidden&&backEl.getClientRects().length?
+   backEl.getBoundingClientRect():null;
   const bounds=p.getBoundingClientRect();
   return {count:items.length,index:items.indexOf(document.activeElement),name:completeName,
    labelText:label?.textContent||'',labelTooltip:label?.title||'',labelAria:label?.getAttribute('aria-hidden'),
    labelVisible:!!label&&!label.hidden&&labelRect.width>20&&labelRect.height>6,
    badge:badge?.textContent||'',badgeVisible:!!badge&&!badge.hidden,
-   staysInHeader:!!labelRect&&!!titleRect&&labelRect.top>=titleRect.top-4&&
-    labelRect.bottom<=titleRect.bottom+4&&labelRect.right<=titleRect.right+4&&
-    (!back||labelRect.right<=back.left+4),
+   staysInHeader:!!labelRect&&!!header&&labelRect.left>=header.left-4&&
+    labelRect.top>=header.top-4&&labelRect.bottom<=header.bottom+4&&
+    labelRect.right<=header.right+4&&(!back||labelRect.right<=back.left-2),
    noOverflow:p.scrollWidth<=p.clientWidth+3&&
     document.documentElement.scrollWidth<=innerWidth+3,
    aiOpen:p.dataset.poAiActive==='true'&&!p.hidden,
