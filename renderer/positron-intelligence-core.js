@@ -502,6 +502,38 @@
    caution:'Rủi ro chỉ dự báo từ nhãn, tên và nhóm kênh trên máy; không phải thống kê chất lượng phát hoặc độ chính xác AI.'};
  }
 
+ // P304: Read-only Naive Bayes topic migration matrix. Category coverage can
+ // stay unchanged while a confident model silently switches the topic.
+ function previewCategoryTopicShifts(current,loaded,channelRows,{limit=6,maxChannels=1000}={}){
+  const imported=loaded?.ok===true?loaded:parseLearningBackup(loaded);
+  if(!imported?.ok)return {ok:false,reason:imported?.reason||'Không đọc được dữ liệu AI.'};
+  const present=sanitizedCategoryModel(current?.categoryModel),future=sanitizedCategoryModel(imported.categoryModel);
+  const cap=Math.max(1,Math.min(1200,Math.trunc(Number(maxChannels))||1000));
+  const entries=(Array.isArray(channelRows)?channelRows:[]).filter(ch=>ch?.id&&ch?.name).slice(0,cap);
+  const matrix=new Map();let comparable=0,changed=0;
+  for(const ch of entries){
+   const before=predictCategory(present,ch,{threshold:0.6}),after=predictCategory(future,ch,{threshold:0.6});
+   if(!before||!after)continue;
+   comparable++;
+   if(before.key===after.key)continue;
+   changed++;
+   const key=before.key+'>'+after.key;
+   if(!matrix.has(key))matrix.set(key,{beforeKey:before.key,afterKey:after.key,count:0,examples:[]});
+   const row=matrix.get(key);row.count++;
+   const safeName=cleanQuery(ch.name);
+   if(safeName&&row.examples.length<2&&!row.examples.includes(safeName))row.examples.push(safeName);
+  }
+  const max=Math.max(1,Math.min(12,Math.trunc(Number(limit))||6));
+  const transitions=[...matrix.values()].sort((a,b)=>b.count-a.count||
+   a.beforeKey.localeCompare(b.beforeKey)||a.afterKey.localeCompare(b.afterKey))
+   .slice(0,max).map(row=>({from:KINDS[row.beforeKey],to:KINDS[row.afterKey],count:row.count,examples:row.examples}));
+  const shiftRate=comparable?Math.round(changed*1000/comparable)/10:0;
+  return {ok:true,scanned:entries.length,comparable,changed,shiftRate,
+   significant:comparable>=10&&changed>=5&&shiftRate>=20,
+   transitions,omittedTransitions:Math.max(0,matrix.size-max),
+   caution:'Đây là chuyển đổi nhãn dự đoán Naive Bayes theo tên/nhóm kênh cục bộ, không đo độ chính xác thật hay chất lượng luồng; dữ liệu người dùng chưa thay đổi.'};
+ }
+
  // P282: explain learned Naive Bayes evidence using only channel-name tokens.
  // Never show a prediction from shared generic group names or unsupervised web data.
  function explainCategory(raw,channel){
@@ -758,5 +790,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,compareLearningBackup,previewLearningImpact,previewCategoryImpact,compareCategorySamples,previewCategoryGroupRisks,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,compareLearningBackup,previewLearningImpact,previewCategoryImpact,compareCategorySamples,previewCategoryGroupRisks,previewCategoryTopicShifts,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

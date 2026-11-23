@@ -1,3 +1,13 @@
+## P5.1.304 — AI phát hiện chuyển chủ đề ngầm khi khôi phục mô hình / Electron 4.23.389
+- Feature priority: NEW — Bổ sung ma trận so sánh chủ đề trước/sau của Naive Bayes, tìm tình huống kênh vẫn đủ chắc chắn nhưng chuyển từ chủ đề A sang B; cảnh báo khi nhiều kênh đổi nhãn dù tỷ lệ bao phủ không giảm.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → mở “AI kiểm tra đổi chủ đề” để xem các cặp chủ đề thay đổi và tên kênh mẫu, trước khi quyết định nhập.
+- Electron screenshot: positron-p51304-topic-shifts-before-1920x1080-real.png / positron-p51304-topic-shifts-after-1920x1080-real.png.
+- Evidence: Node regression huấn luyện hai mô hình Naive Bayes đối nghịch, giữ độ bao phủ 18/18 nhưng phát hiện 18/18 lượt đổi chủ đề và hai cặp nhãn; Electron QA xác minh mở/đóng chi tiết, playlist/mô hình không bị thay đổi, không autoplay, chụp thật 1920×1080.
+- Privacy: Chỉ so sánh tên/nhóm kênh và trọng số cục bộ, không xuất URL IPTV, lịch sử xem, M3U hoặc ID kênh.
+- Baseline: Ảnh Electron P5.1.303 được kiểm tra trực tiếp từ Actions 45152927137; trước đó các kiểm tra chỉ tổng hợp số kênh mất dự đoán hoặc đổi nhãn, chưa cho xem ma trận chủ đề A → B.
+- Status: CANDIDATE — chỉ kết luận hoàn tất sau khi CI xanh, ảnh mới đã được mở kiểm tra, không đưa bản thử nghiệm vào Release Stable.
+
 ## P5.1.303 — AI lọc nhóm thật sự mất phân loại / Electron 4.23.388
 - Feature priority: NEW — Thêm bộ lọc chỉ nhóm có kênh mất dự đoán đủ chắc chắn trong phân tích rủi ro mô hình Naive Bayes; giúp người xem bỏ qua các dòng không có suy giảm ngay trong báo cáo khôi phục mà không xóa bất kỳ nhãn hay kênh nào.
 - Feature class: AI

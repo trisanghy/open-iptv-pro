@@ -779,6 +779,35 @@
      line.textContent=row.name+': '+row.before+' → '+row.after;
      details.append(line);
     }
+    // P304: show topic migration separately from loss of classifier coverage.
+    const topicShifts=core.previewCategoryTopicShifts({categoryModel},parsed,channels(),{limit:6,maxChannels:1000});
+    if(topicShifts.ok){
+     const shifts=d.createElement('details');shifts.id='poAICategoryTopicShifts';
+     shifts.className='po-ai-category-impact';
+     const caption=d.createElement('summary');
+     caption.textContent='AI kiểm tra đổi chủ đề: '+topicShifts.changed+'/'+topicShifts.comparable+
+      ' kênh vẫn đủ chắc chắn ('+topicShifts.shiftRate+'%) · Xem chủ đề trước/sau';
+     shifts.append(caption);
+     const explanation=d.createElement('p');explanation.id='poAICategoryShiftSummary';
+     explanation.textContent='Đã đối chiếu '+topicShifts.scanned+' kênh tại máy. '+
+      (topicShifts.comparable
+       ?topicShifts.changed+' kênh đổi sang chủ đề khác dù cả hai mô hình vẫn dự đoán đủ chắc chắn.'
+       :'Chưa có kênh được cả hai mô hình phân loại đủ chắc chắn để so sánh chủ đề.')+
+      ' Không đồng nghĩa kênh bị mất khỏi playlist.';
+     shifts.append(explanation);
+     if(!topicShifts.transitions.length){
+      const empty=d.createElement('p');empty.textContent='Chưa phát hiện chuyển chủ đề đủ chắc chắn trong mẫu kiểm tra.';
+      shifts.append(empty);
+     }
+     for(const row of topicShifts.transitions){
+      const line=d.createElement('p');line.className='po-ai-category-diff';
+      line.textContent=row.from+' → '+row.to+': '+row.count+' kênh'+
+       (row.examples.length?' · Ví dụ: '+row.examples.join(' · '):'');
+      shifts.append(line);
+     }
+     const caution=d.createElement('small');caution.textContent=topicShifts.caution;
+     shifts.append(caution);details.append(shifts);
+    }
     // P293: independent local preview balanced across channel groups.
     const balanced=core.previewCategoryImpact({categoryModel},parsed,channels(),{limit:4,strategy:'balanced'});
     if(balanced.ok&&balanced.totalGroups>1){
@@ -906,6 +935,15 @@
     }
     const note=d.createElement('small');note.textContent=categoryImpact.caution;
     details.append(note);importPreview.append(details);
+    if(topicShifts.ok&&topicShifts.significant){
+     const relabelAlert=d.createElement('p');relabelAlert.id='poAICategoryShiftRisk';
+     relabelAlert.className='po-ai-coverage-risk';
+     relabelAlert.setAttribute('role','alert');
+     relabelAlert.textContent='Cảnh báo AI đổi chủ đề: '+topicShifts.changed+'/'+topicShifts.comparable+
+      ' kênh ('+topicShifts.shiftRate+'%) có thể đổi nhãn phân loại đủ chắc chắn sau khi khôi phục. '+
+      'Hãy mở phần “AI kiểm tra đổi chủ đề” trước khi xác nhận. Đây là dự đoán cục bộ, không phải độ chính xác thật.';
+     importPreview.insertBefore(relabelAlert,details);
+    }
     if(categoryImpact.coverageRisk==='high'){
      const risk=d.createElement('p');risk.id='poAICategoryCoverageRisk';
      risk.className='po-ai-coverage-risk';risk.setAttribute('role','alert');

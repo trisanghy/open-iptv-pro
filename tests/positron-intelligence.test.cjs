@@ -1095,3 +1095,41 @@ test('P303 classifier risk-only filter hides zero-loss groups without mutating d
  for(const m of ['qa303','positron-p51303-risk-only-before-1920x1080-real.png',
   'positron-p51303-risk-only-after-1920x1080-real.png'])assert.ok(qa.includes(m),m);
 });
+
+
+test('P304 local Naive Bayes topic migration exposes confident label swaps without losing coverage',()=>{
+ const film={id:'film',name:'Đêm phim hành động',group:'Phim'};
+ const sport={id:'sport',name:'Trận đấu bóng đá',group:'Thể thao'};
+ let before=C.emptyCategoryModel(),after=C.emptyCategoryModel();
+ for(let i=0;i<18;i++){
+  before=C.teachCategory(before,film,'cinema');
+  before=C.teachCategory(before,sport,'sport');
+  after=C.teachCategory(after,film,'sport');
+  after=C.teachCategory(after,sport,'cinema');
+ }
+ const channels=[...Array.from({length:9},(_,i)=>({...film,id:'movie'+i,url:'https://private.invalid/source'})),
+  ...Array.from({length:9},(_,i)=>({...sport,id:'sports'+i}))];
+ const original=JSON.stringify(channels),originalModel=JSON.stringify(before);
+ const backup=C.buildLearningBackup({model:C.emptyModel(),categoryModel:after,bandit:{}});
+ const result=C.previewCategoryTopicShifts({categoryModel:before},backup,channels);
+ assert.equal(result.ok,true);
+ assert.equal(result.scanned,18);
+ assert.equal(result.comparable,18,'both models retain predictions');
+ assert.equal(result.changed,18,'all channels confidently switch topic');
+ assert.equal(result.shiftRate,100);
+ assert.equal(result.significant,true);
+ assert.ok(result.transitions.some(r=>r.from==='Phim'&&r.to==='Thể thao'&&r.count===9));
+ assert.ok(result.transitions.some(r=>r.from==='Thể thao'&&r.to==='Phim'&&r.count===9));
+ assert.ok(!JSON.stringify(result).includes('private.invalid'),'no URL is returned');
+ assert.equal(JSON.stringify(channels),original,'playlist remains untouched');
+ assert.equal(JSON.stringify(before),originalModel,'current model remains untouched');
+ const same=C.previewCategoryTopicShifts({categoryModel:before},
+  C.buildLearningBackup({categoryModel:before}),channels);
+ assert.equal(same.changed,0);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const marker of ["shifts.id='poAICategoryTopicShifts'","relabelAlert.id='poAICategoryShiftRisk'",
+  "relabelAlert.setAttribute('role','alert')"])assert.ok(ui.includes(marker),marker);
+ for(const marker of ['qa304','positron-p51304-topic-shifts-before-1920x1080-real.png',
+  'positron-p51304-topic-shifts-after-1920x1080-real.png'])assert.ok(qa.includes(marker),marker);
+});
