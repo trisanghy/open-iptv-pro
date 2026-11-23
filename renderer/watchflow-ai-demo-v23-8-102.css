@@ -97,3 +97,17 @@ html[data-theme=dark] #page-tv :is(.wf-model-benefit,#wfSmartModelStatus),html[d
 html[data-theme=dark] #page-tv .wf-local-banner,html[data-theme=amoled] #page-tv .wf-local-banner{background:#15362d;border-color:#376c5d}
 html[data-theme=dark] #page-tv .wf-local-banner :is(strong,span,small),html[data-theme=amoled] #page-tv .wf-local-banner :is(strong,span,small){color:#c2f3df}
 @media(min-width:851px){#page-tv .wf-metrics{grid-template-columns:repeat(5,minmax(0,1fr))}}
+
+/* Rust Lab v23.8.117: real virtual topic folders and classified EPG programme lists. */
+#page-tv .wf-topic-folder{display:block;margin:9px 0;padding:0 12px;background:#fff;border:1px solid #dcd0ed;border-radius:11px;min-width:0}
+#page-tv .wf-topic-folder summary{display:list-item;padding:14px 8px;cursor:pointer;font-size:13px;font-weight:800;color:#613196}
+#page-tv .wf-topic-folder[open] summary{border-bottom:1px solid #eee5f8}
+#page-tv .wf-topic-folder .wf-list{padding:10px 0;max-height:480px;overflow:auto}
+#page-tv .wf-folder-count{display:block;font-size:11px;color:#7c7891;margin:9px 0}
+#page-tv .wf-programme-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px 0;max-height:480px;overflow:auto}
+#page-tv .wf-programme{display:flex;align-items:center;gap:8px;padding:10px;background:#faf8ff;border:1px solid #e4d9f0;border-radius:9px;min-width:0}
+#page-tv .wf-programme .wf-play{white-space:nowrap}
+html[data-theme=dark] #page-tv .wf-topic-folder,html[data-theme=amoled] #page-tv .wf-topic-folder{background:#2a243a;border-color:#665574}
+html[data-theme=dark] #page-tv .wf-topic-folder summary,html[data-theme=amoled] #page-tv .wf-topic-folder summary{color:#ddc0f7}
+html[data-theme=dark] #page-tv .wf-programme,html[data-theme=amoled] #page-tv .wf-programme{background:#342b42;border-color:#57466d}
+@media(max-width:850px){#page-tv .wf-programme-list{grid-template-columns:1fr}}

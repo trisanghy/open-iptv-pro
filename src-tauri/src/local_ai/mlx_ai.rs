@@ -267,8 +267,17 @@ pub(super) async fn classify_channel(ai:&LocalAi,key:&str,metadata:&str)->Result
   if let Ok(event)=serde_json::from_str::<Value>(&line){
    if event["id"].as_str()!=Some(&id){continue;}
    if event["ok"]!=true{return Err(format!("Qwen3 lỗi: {}",event["error"].as_str().unwrap_or("không rõ")));}
-   let label=event["text"].as_str().unwrap_or("").trim();
-   return Ok(if matches!(label,"Tin tức"|"Thể thao"|"Phim truyện"|"Thiếu nhi"|"Giải trí"|"Khoa học"){label.to_string()}else{"Chưa phân loại".into()});
+   let raw=event["text"].as_str().unwrap_or("[]").trim();
+   let parsed:Vec<String>=serde_json::from_str(raw).unwrap_or_default();
+   let allowed=["Tin tức","Thể thao","Phim truyện","Thiếu nhi","Giải trí","Khoa học",
+    "Ẩm thực","Du lịch","Văn hóa","Âm nhạc","Giáo dục","Kinh tế","Pháp luật",
+    "Địa phương","Tài liệu","Phong cách sống","Truyền hình tổng hợp"];
+   let mut selected=Vec::<String>::new();
+   for value in parsed.into_iter().take(16){
+    if allowed.contains(&value.as_str())&&!selected.contains(&value){selected.push(value);}
+    if selected.len()==4{break;}
+   }
+   return Ok(serde_json::to_string(&selected).unwrap_or_else(|_|"[]".into()));
   }
  }
 }

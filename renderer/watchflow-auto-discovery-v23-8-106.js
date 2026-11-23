@@ -6,9 +6,9 @@
  const KEY='watchflow:auto-catalog-v1',OPT='watchflow:auto-discovery-enabled';
  const backgroundAnalysis=new WeakMap();
  const TOPICS={'Tin tức':'news television channel','Thể thao':'sports television channel','Phim truyện':'movie television channel','Thiếu nhi':'children television channel','Giải trí':'entertainment television channel','Khoa học':'science documentary television channel'};
- const DAY_LIMIT=24,RUN_LIMIT=6,CACHE_MS=48*3600*1000,PAUSE_MS=15*60*1000;
+ const DAY_LIMIT=72,RUN_LIMIT=6,CACHE_MS=48*3600*1000,PAUSE_MS=2*60*1000;
  const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().replace(/[^a-z0-9]/g,'');
- const publicName=value=>{let s=String(value||'').trim();if(/https?:|www\.|[/?=&@]|password|token|m3u|access[_ -]?key|bearer/i.test(s))return '';s=s.replace(/\b(?:UHD|FHD|HD|SD|1080p|720p|4K)\b/ig,'').replace(/\s+/g,' ').trim();return s.length>=3&&s.length<=60?s:'';};
+ const publicName=value=>{let s=String(value||'').trim();if(/https?:|www\.|[/?=&@]|password|token|m3u|access[_ -]?key|bearer/i.test(s))return '';s=s.replace(/\[[^\]]*(?:geo|block|region)[^\]]*\]/ig,'').replace(/\([^)]*(?:geo|block|region|\d{3,4}p)[^)]*\)/ig,'').replace(/\b(?:UHD|FHD|HD|SD|1080p|720p|4K|geo.blocked)\b/ig,'').replace(/\s+/g,' ').trim();return s.length>=3&&s.length<=60?s:'';};
  const isTv=item=>/television|tv channel|tv network|tv station|broadcaster|broadcasting|truy[eề]n h[iì]nh|k[eê]nh truy[eề]n h[iì]nh|đ[aà]i truy[eề]n h[iì]nh|t[eế]l[eé]vision/i.test(String(item?.description||'')+' '+String(item?.name||''));
  const enabled=storage=>{try{return storage?.getItem(OPT)!=='false';}catch{return true;}};
  const setEnabled=(storage,on)=>{try{storage?.setItem(OPT,on?'true':'false');return true;}catch{return false;}};
@@ -29,32 +29,42 @@
   }
   return [...result.values()].sort((a,b)=>(Number(learned[b.category])||0)-(Number(learned[a.category])||0)||b.confidence-a.confidence).slice(0,35);
  }
- function enrich(analysis,channels,storage,engine){const cache=read(storage).queries;const map=new Map(analysis||[]);for(const c of channels){const q=publicName(c.name).toLowerCase(),record=cache[q];if(!q||!record||Date.now()-record.at>CACHE_MS)continue;
-   const matching=record.items.find(x=>normalize(publicName(x.name))===normalize(publicName(c.name))&&isTv(x));if(!matching)continue;
-   // Explicit public-genre descriptions are high-quality evidence even when
-   // a small Bayes vocabulary yields low confidence on short English metadata.
-   const desc=String(matching.description||'');
-   const strong=[
-    ['Tin tức',/\bnews\b|\bcurrent affairs\b|thời sự|tin tức/i],
-    ['Thể thao',/\bsports?\b|football|bóng đá|thể thao/i],
-    ['Phim truyện',/\bmovies?\b|\bfilms?\b|cinema|phim truyện/i],
-    ['Thiếu nhi',/\bchildren\b|\bkids?\b|cartoon|thiếu nhi/i],
-    ['Khoa học',/\bscience\b|\bdocumentary\b|khám phá|khoa học/i],
-    ['Giải trí',/\bentertainment\b|\bvariety\b|giải trí/i]
-   ].find(([,re])=>re.test(desc));
-   const bayes=engine?.predict?.(matching.name+' '+desc);
-   const guess=strong?{label:strong[0],confidence:90}:bayes;const prior=map.get(String(c.id));
-   if(!guess||guess.label==='Chưa phân loại'||guess.confidence<35||prior?.from==='EPG')continue;
-   if(prior?.label!=='Chưa phân loại'&&Number(prior?.confidence||0)>=guess.confidence)continue;
-   map.set(String(c.id),{...prior,label:guess.label,confidence:guess.confidence,from:'Internet/Wikidata',sourceUrl:matching.url});
- }return map;}
- async function scan({storage,channels=[],engine,lookup,clock=Date.now,budget=RUN_LIMIT,onUpdate=()=>{}}={}){
+ const topicCatalog=typeof window!=='undefined'?window.OpenIPTVWatchFlowTopics:
+  typeof require==='function'?require('./watchflow-topic-catalog-v23-8-117.js'):null;
+ function enrich(analysis,channels,storage,engine){
+  const cache=read(storage).queries,map=new Map(analysis||[]);
+  for(const c of channels){
+   const q=publicName(c.name).toLowerCase(),record=cache[q];
+   if(!q||!record||Date.now()-record.at>CACHE_MS)continue;
+   const match=record.items.find(x=>normalize(publicName(x.name))===normalize(publicName(c.name))&&isTv(x));
+   if(!match)continue; // Never classify a different channel just because it appeared in a web search.
+   const desc=String(match.description||'');
+   const labels=topicCatalog?.fromText(desc)||[];
+   if(!labels.length)continue;
+   const id=String(c.id),prior=map.get(id)||{};
+   const oldLabels=Array.isArray(prior.labels)?prior.labels:prior.label&&prior.label!=='Chưa phân loại'?[prior.label]:[];
+   const merged=topicCatalog?.mergeLabels(oldLabels,labels)||[...new Set([...oldLabels,...labels])];
+   const best=prior?.from==='EPG'&&prior?.label!=='Chưa phân loại'?prior.label:
+    prior?.label&&prior.label!=='Chưa phân loại'?prior.label:topicCatalog?.primary(merged)||labels[0];
+   map.set(id,{...prior,label:best,labels:merged,confidence:Math.max(Number(prior.confidence)||0,70),
+    from:prior?.from==='EPG'?'EPG':oldLabels.length?prior.from||'Tên/nhóm':'Internet/Wikidata',
+    sourceUrl:match.url});
+  }
+  return map;
+ }
+ async function scan({storage,channels=[],analysis=new Map(),engine,lookup,clock=Date.now,budget=RUN_LIMIT,onUpdate=()=>{}}={}){
   if(!enabled(storage))return {disabled:true,requests:0,discovered:collect(storage,channels,engine)};
   if(!engine||typeof lookup!=='function')return{error:'Search service unavailable',requests:0,discovered:[]};
   const now=clock(),date=new Date(now).toISOString().slice(0,10),state=read(storage);
   if(state.day!==date){state.day=date;state.used=0;}
-  const sorted=[...channels].map(c=>publicName(c.name)).filter(Boolean);
-  const unique=[...new Set(sorted.map(s=>s.toLowerCase()))].sort((a,b)=>(state.queries[a]?.at||0)-(state.queries[b]?.at||0)).slice(0,12);
+  // Search unclassified channels first, then work through the remaining catalog on later runs.
+  const ordered=[...channels].filter(c=>c?.id).sort((a,b)=>{
+   const score=c=>{const m=analysis.get(String(c.id))||{};
+    return (m.label==='Chưa phân loại'||!m.label?0:m.from==='Tên/nhóm'?1:2);};
+   return score(a)-score(b);
+  });
+  const unique=[...new Set(ordered.map(c=>publicName(c.name).toLowerCase()).filter(Boolean))]
+   .sort((a,b)=>(state.queries[a]?.at||0)-(state.queries[b]?.at||0)).slice(0,18);
   const interest=engine.read?.(storage)?.seconds||{};
   const rankedTopics=Object.keys(TOPICS).sort((a,b)=>(Number(interest[b])||0)-(Number(interest[a])||0));
   const topics=rankedTopics.slice(0,3).map(x=>TOPICS[x]);
@@ -110,6 +120,40 @@
   }
   return channels.length+':'+(hash>>>0);
  }
+ const nativeOverrides=new WeakMap();
+ function setNativeTopics(win,channel,values){
+  const id=String(channel?.id||'');if(!id)return false;
+  const labels=topicCatalog?.distinct(values)||[];
+  if(!labels.length)return false;
+  const base=backgroundAnalysis.get(win)||new Map(),prior=base.get(id)||{};
+  const explicit=topicCatalog?.channelLabels(channel)||[];
+  // If the channel's own branding establishes a specific topic, do not allow
+  // unrelated model guesses to override it (e.g. Food Network -> Thiếu nhi).
+  const specific=explicit.filter(x=>!['Địa phương','Truyền hình tổng hợp'].includes(x));
+  const usable=specific.length?labels.filter(x=>specific.includes(x)||prior?.programmes?.some(p=>p.labels?.includes(x))):labels;
+  if(!usable.length)return false;
+  const store=nativeOverrides.get(win)||new Map();
+  const old=store.get(id)||[];
+  store.set(id,topicCatalog?.mergeLabels(old,usable)||[...new Set([...old,...usable])]);
+  nativeOverrides.set(win,store);
+  const merged=topicCatalog?.mergeLabels(prior.labels||[prior.label],store.get(id))||store.get(id);
+  const label=prior.label&&prior.label!=='Chưa phân loại'?prior.label:topicCatalog?.primary(merged)||merged[0];
+  backgroundAnalysis.set(win,new Map(base).set(id,{...prior,label,labels:merged,
+   from:prior.label&&prior.label!=='Chưa phân loại'?prior.from||'Tên/nhóm':'Qwen3 offline'}));
+  win?.document?.dispatchEvent?.(new win.CustomEvent('openiptv:watchflow-auto-update',
+   {detail:{native:true,complete:true,channel:id}}));
+  return true;
+ }
+ function mergeSavedNative(win,analysis){
+  const overrides=nativeOverrides.get(win);if(!overrides?.size)return analysis;
+  const map=new Map(analysis);
+  for(const [id,add] of overrides){
+   const prior=map.get(id);if(!prior)continue;
+   const labels=topicCatalog?.mergeLabels(prior.labels,add)||add;
+   map.set(id,{...prior,labels,label:prior.label==='Chưa phân loại'?(topicCatalog?.primary(labels)||labels[0]):prior.label});
+  }
+  return map;
+ }
  const statusByWindow=new WeakMap();
  function start(win,engine){
   if(!win?.document||!engine)return false;
@@ -142,7 +186,7 @@
       }
      }});
     if(token!==generation||result.cancelled)return;
-    backgroundAnalysis.set(win,enrich(result.analysis,list,win.localStorage,engine));
+    backgroundAnalysis.set(win,mergeSavedNative(win,enrich(result.analysis,list,win.localStorage,engine)));
     Object.assign(status,{running:false,updatedAt:Date.now()});
     notify({local:true,complete:true,...status});
    }catch(error){
@@ -166,11 +210,11 @@
    webBusy=true;lastInternet=Date.now();notify({internet:true,running:true});
    try{
     const list=channels();
-    await scan({storage:win.localStorage,channels:list,engine,lookup:q=>engine.searchInternet(q),
+    await scan({storage:win.localStorage,channels:list,analysis:backgroundAnalysis.get(win)||new Map(),engine,lookup:q=>engine.searchInternet(q),
      onUpdate:info=>notify({internet:true,...info})});
     const current=backgroundAnalysis.get(win);
     if(current?.size){
-     backgroundAnalysis.set(win,enrich(current,channels(),win.localStorage,engine));
+     backgroundAnalysis.set(win,mergeSavedNative(win,enrich(current,channels(),win.localStorage,engine)));
      notify({internet:true,complete:true});
     }
    }catch(error){notify({internet:true,error:String(error?.message||error).slice(0,140)});}
@@ -188,5 +232,5 @@
   win.setInterval(()=>{void runInternet();},PAUSE_MS);
   return true;
  }
- return Object.freeze({getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,scanLocal,fingerprint,start});
+ return Object.freeze({setNativeTopics,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,scanLocal,fingerprint,start});
 });

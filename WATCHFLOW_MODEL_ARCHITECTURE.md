@@ -31,3 +31,11 @@ The original v4.23.82 UI concept shows:
 - The current results are in-memory only; scan progress reports channel count, classified count, and matched programme entries. Stale runs are cancelled when the input fingerprint changes. Playback, playlist and source URLs are never modified.
 - Optional Internet lookup is separate from the local scan, limited to sanitized public names, with its existing daily request budget. Disabling online search does not disable offline EPG analysis.
 - The Standard model works now. Smart Transformer models under 200 MB remain a documented user-selectable catalog pending verified weights and inference runtimes; do not label them active.
+
+## v23.8.117 — multi-topic classification and programme folders
+
+- A shared taxonomy with 17 topics categorizes channel names, user-imported programme EPG titles/descriptions, and confidence-filtered exact-match Wikidata descriptions. Each channel and programme may appear in multiple virtual folders, without modifying M3U groups.
+- WatchFlow displays **Thư mục chủ đề** and **Chương trình EPG**. Items are paginated inside disclosure folders and use real playlist IDs and guide match results. No matching EPG yields a truthful explanation, not fabricated programmes.
+- Specific channel examples include Asian Food Network => Ẩm thực, An Ninh TV => Pháp luật/Tin tức, and recognized provincial TV stations => Địa phương/Truyền hình tổng hợp. These are metadata-derived classifications, not proof of each individual programme.
+- Installed Qwen3 models in Intelligence mode can automatically process the complete available channel queue in the background, one at a time, using cached local metadata results; it no longer caps at eight or creates a separate disconnected result list. Native Qwen3 returns a validated set of up to four topics. Existing non-Intelligence modes do not trigger additional Qwen inference.
+- Optional online Wikidata enrichment prioritizes unclassified channels, uses sanitized public names only, and remains bounded by a daily request limit. It cannot guarantee third-party coverage; the offline classification continues independently.

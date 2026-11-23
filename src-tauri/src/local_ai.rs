@@ -635,8 +635,10 @@ pub async fn mlx_install(app:AppHandle,ai:Arc<LocalAi>,key:&str)->Result<Value,S
  mlx_ai::install(app,ai,key).await
 }
 pub async fn mlx_classify_channel(ai:&LocalAi,key:&str,metadata:&str)->Result<Value,String>{
- let label=mlx_ai::classify_channel(ai,key,metadata).await?;
- Ok(json!({"model":key,"label":label,"source":"local-mlx-qwen3"}))
+ let encoded=mlx_ai::classify_channel(ai,key,metadata).await?;
+ let labels:Vec<String>=serde_json::from_str(&encoded).unwrap_or_default();
+ let label=labels.first().map(String::as_str).unwrap_or("Chưa phân loại");
+ Ok(json!({"model":key,"label":label,"labels":labels,"source":"local-mlx-qwen3"}))
 }
 pub async fn ai_test_translation(app:AppHandle,ai:Arc<LocalAi>,target:&str,engine:&str,mode:&str)->Result<Value,String>{
  if !translation_supported(target){return Err("Ngôn ngữ đích không hỗ trợ".into());}

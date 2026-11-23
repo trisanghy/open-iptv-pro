@@ -1,6 +1,8 @@
 'use strict';
 /* Real offline WatchFlow learning. No stream URL, credentials or subtitle text are retained. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.OpenIPTVWatchFlowEngine=api;})(typeof window==='undefined'?globalThis:window,function(){
+ const topics=typeof window!=='undefined'?window.OpenIPTVWatchFlowTopics:
+  typeof require==='function'?require('./watchflow-topic-catalog-v23-8-117.js'):null;
  const KEY='watchflow:local-learning-v1',labels=['Tin tức','Thể thao','Phim truyện','Thiếu nhi','Giải trí','Khoa học'];
  const training={
   'Tin tức':['thời sự tin tức bản tin thế giới hôm nay','chính trị xã hội kinh tế tài chính thời tiết','news politics current affairs breaking headline'],
@@ -18,28 +20,37 @@
  // Scan every valid programme for each channel, not just the first eight or next twelve hours.
  function analyzeChannel(channel,guide,guideLib,clock=Date.now()){
   if(!channel?.id)return null;
+  const explicit=topics?.channelLabels(channel)||[];
   const name=predict(String(channel.name||'')+' '+String(channel.group||channel.groupTitle||''));
   let rows=[];
   try{if(guide&&typeof guideLib?.find==='function')rows=guideLib.find(guide,channel)||[];}catch{}
-  const votes=new Map();let epgCount=0,live=null,next=null,first=null;
+  const votes=new Map(),programmes=[];let epgCount=0,live=null,next=null,first=null;
   for(const row of Array.isArray(rows)?rows:[]){
    if(!Number.isFinite(row?.start)||!Number.isFinite(row?.end)||row.end<=row.start)continue;
    epgCount++;
    if(row.start<=clock&&row.end>clock)live=row;
    else if(row.start>clock&&(!next||row.start<next.start))next=row;
    if(!first)first=row;
-   const pred=predict(String(row.title||'')+' '+String(row.description||'').slice(0,240));
-   if(pred.label==='Chưa phân loại'||pred.confidence<30)continue;
+   const detected=topics?.programmeLabels(row)||[];
+   const prediction=predict(String(row.title||'')+' '+String(row.description||'').slice(0,240));
+   const labels=detected.length?detected:prediction.confidence>=40&&prediction.label!=='Chưa phân loại'?[prediction.label]:[];
+   programmes.push({title:String(row.title||'Chưa có tên').slice(0,220),start:row.start,end:row.end,labels,
+    confidence:detected.length?85:prediction.confidence,from:detected.length?'EPG/từ khóa':'EPG/Naive Bayes'});
    const weight=row.start<=clock&&row.end>clock?4:row.start>clock?1.5:.6;
-   votes.set(pred.label,(votes.get(pred.label)||0)+weight*Math.max(.3,pred.confidence/100));
+   for(const label of labels)votes.set(label,(votes.get(label)||0)+weight);
   }
-  const ranked=[...votes].sort((a,b)=>b[1]-a[1]);
-  const winner=ranked[0],total=ranked.reduce((sum,x)=>sum+x[1],0);
-  const fromEPG=!!winner&&winner[1]>=.3&&(name.label==='Chưa phân loại'||winner[1]>=.8);
-  const chosen=fromEPG?{label:winner[0],confidence:Math.max(30,Math.round(100*winner[1]/Math.max(1,total)))}:name;
-  return {label:chosen.label,confidence:chosen.confidence,from:fromEPG?'EPG':'Tên/nhóm',
+  const sorted=[...votes].sort((a,b)=>b[1]-a[1]);
+  const peak=sorted[0]?.[1]||0;
+  const epgTopics=sorted.filter(([,score])=>score>=Math.max(1.5,peak*.19)).slice(0,5).map(([label])=>label);
+  const fallback=name.label==='Chưa phân loại'?[]:[name.label];
+  const all=topics?.mergeLabels(explicit,epgTopics.length?epgTopics:explicit.length?[]:fallback)||[...new Set([...explicit,...epgTopics,...fallback])];
+  if(!all.length&&fallback.length)all.push(...fallback);
+  const best=explicit.includes('Địa phương')?'Địa phương':topics?.primary(all)||all[0]||'Chưa phân loại';
+  return {label:best,labels:all,confidence:all.length?(explicit.length?85:65):0,
+   from:epgTopics.length?'EPG':explicit.length?'Tên/nhóm':'Tên/nhóm',
    programme:String((live||next||first)?.title||'').slice(0,180),
-   epgCount,epgMatched:epgCount>0,topics:ranked.slice(0,4).map(([label,score])=>({label,score:Math.round(score*10)/10}))};
+   epgCount,epgMatched:epgCount>0,topics:sorted.slice(0,6).map(([label,score])=>({label,score:Math.round(score*10)/10})),
+   programmes};
  }
  function analyze(channels,guide,guideLib,clock=Date.now()){
   const result=new Map();
