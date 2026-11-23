@@ -11888,6 +11888,13 @@ async function runTwenty(page){
  await require('./positron-343-audit.cjs').run(page);
  await require('./positron-344-audit.cjs').run(page);
  await require('./positron-345-audit.cjs').run(page);
+ await require('./positron-346-audit.cjs').run(page);
+ // P346 real Electron Escape nested help before/after proof:
+ // positron-p51346-escape-guide-before-1920x1080-real.png
+ // positron-p51346-escape-guide-after-1920x1080-real.png
+ // positron-p51346-escape-guide-before-720x900-real.png
+ // positron-p51346-escape-guide-after-720x900-real.png
+
  // P345 genuine Electron shortcut-guide before/after evidence:
  // positron-p51345-shortcut-guide-before-1920x1080-real.png
  // positron-p51345-shortcut-guide-after-1920x1080-real.png

@@ -1,3 +1,13 @@
+## P5.1.346 / Electron 4.23.431 — Esc thu gọn hướng dẫn trước khi thoát WatchFlow (CANDIDATE)
+- Feature priority: NEW — Ảnh thật P345 đã mở cho thấy hướng dẫn phím chiếm phần lớn màn hình 720px khi mở; remote cần một phím Esc đóng lớp hướng dẫn mà không thoát toàn bộ WatchFlow và không làm mất focus.
+- Feature class: AI
+- User action: Vào bảng WatchFlow AI, chọn Phím điều khiển AI, nhấn Enter mở rồi nhấn Esc: hướng dẫn thu gọn, bảng WatchFlow còn mở, focus trở lại tiêu đề; F6 vẫn đóng bảng, lần mở lại hướng dẫn thu gọn sẵn.
+- Root cause: native details mặc định chỉ Enter đóng/mở, còn Esc từ hệ thống có thể đóng hộp cấp trên trong lúc người xem chỉ muốn rời lớp trợ giúp phụ.
+- Evidence: scripts/positron-346-audit.cjs trên Electron thật 1920x1080/720x900 kiểm Esc không đóng panel, focus summary phục hồi, Enter mở lại, F6 đóng và mở modal vẫn giữ guide gọn; bốn ảnh before/after và không thay M3U/current/model.
+- Electron screenshot: positron-p51346-escape-guide-before-720x900-real.png / positron-p51346-escape-guide-after-720x900-real.png.
+- Privacy: chỉ tác động DOM hiển thị, không gửi playlist/EPG, URL hoặc hành vi; không gọi nút Xem.
+- Status: CANDIDATE tới khi Node, Electron, mở ảnh và CI full chứng minh; không release public từ nhánh thử nghiệm.
+
 ## P5.1.345 / Electron 4.23.430 — Phím điều khiển AI mở gọn bằng remote (CANDIDATE)
 - Feature priority: NEW — Ảnh Electron P344 cho thấy PageUp/PageDown chạy đúng nhưng chỉ có hướng dẫn Alt+Shift+J; người dùng bàn phím/remote không biết đủ các phím khi danh sách dài, trong khi thêm nhiều nút vào header sẽ che nội dung.
 - Feature class: AI
