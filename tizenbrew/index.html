@@ -135,6 +135,110 @@ body[data-theme=light] #app .primary{color:#fff}
 .overlay{position:absolute;inset:0;background:#000d;display:grid;place-items:center;z-index:10}.dialog{width:min(800px,85vw);max-height:90vh;overflow-y:auto;background:var(--panel);border:2px solid var(--edge);border-radius:20px;padding:28px 35px}.dialog h2{margin:0 0 16px}.dialog label{display:block;margin-top:15px;font-size:18px;font-weight:bold}.dialog input:not([type=checkbox]),.dialog textarea{background:var(--bg);border:1px solid var(--edge);border-radius:10px;padding:14px;width:100%;margin-top:7px;font-size:19px}.dialog .consent{display:flex;gap:12px;align-items:center;line-height:1.45}.dialog .consent input{width:26px;height:26px}.dialog .hint{color:var(--muted);font-size:16px;line-height:1.4}.dialog .buttons{display:flex;justify-content:flex-end;gap:12px;margin-top:18px}
 #player{position:absolute;inset:0;background:#000;z-index:7}#video{width:100%;height:100%;object-fit:contain}.playerhead{position:absolute;top:0;left:0;right:0;padding:24px 32px;background:linear-gradient(#000b,transparent);display:flex;justify-content:space-between;align-items:center}.playerhead strong{font-size:30px}.playerstatus{position:absolute;top:45%;width:100%;text-align:center;color:#fff;font-size:22px;padding:0 9%}.playerfoot{position:absolute;bottom:0;width:100%;text-align:center;padding:25px;background:linear-gradient(transparent,#000a);font-size:20px}
 #toast{position:absolute;z-index:30;left:50%;transform:translateX(-50%);bottom:11%;padding:17px 25px;border-radius:14px;background:#0563ae;color:#fff;font-size:20px;max-width:70%;overflow-wrap:anywhere;line-height:1.45}
+
+/* TV first home redesign — large keys, unified outlined SVG icons, high contrast */
+#app{--home-inset:2.1vw;--home-gap:15px;--home-target:68px;--accent:#35e6d7;--focus-bg:#71ffed;--focus-ink:#042b2d;--active-bg:#123f45;background:radial-gradient(ellipse at 94% 0%,#183945 0%,transparent 58%),#080f1b;color:#f4f9ff}
+#app .top{min-height:106px;padding:16px 0;gap:18px}
+#app .brand{gap:17px;flex-shrink:0}
+#app .brandicon{width:70px;height:70px;border-radius:19px;background:linear-gradient(140deg,#4cf1de,#06acb5)}
+#app .brand-svg{width:43px;height:43px;color:#053438}
+#app .brand strong{font-size:34px;font-weight:850;letter-spacing:-.5px}
+#app .brand p{font-size:18px;color:#aabfcf}
+#app .toolbar{gap:11px}
+#app .clock{font-size:24px;color:#d3e5f4;font-weight:700}
+#app button{display:inline-flex;align-items:center;justify-content:center;gap:11px;min-height:68px;padding:12px 16px;border:2px solid #34536c;border-radius:16px;background:#162b3e;color:#f1f8ff;font-size:22px;font-weight:750}
+#app button:focus,#app button:focus-visible{outline:3px solid #e1fffa;outline-offset:3px;background:var(--focus-bg);border-color:var(--focus-bg);color:var(--focus-ink);box-shadow:0 0 0 5px #20e8d048}
+#app button.active{background:#123f45;border-color:#34c8c1;color:#e6fffe}
+#app button.active:focus{background:var(--focus-bg);color:var(--focus-ink)}
+#app .ui-icon{width:26px;height:26px;flex:none;stroke:currentColor}
+#app .main{grid-template-columns:minmax(222px,17fr) minmax(0,43fr) minmax(0,40fr);gap:var(--home-gap)}
+#app .nav,#app .listpane,#app .details{background:#0e1b2b;border:2px solid #2a455a;border-radius:23px}
+#app .nav{padding:14px;gap:12px;overflow-y:auto}
+#app .nav button{justify-content:flex-start;width:100%;min-height:77px;padding:12px 16px;font-size:24px}
+#app .nav button span.nav-icon{display:grid;place-items:center;width:30px;flex:none;color:#4fddd6}
+#app .nav button:focus span.nav-icon,#app .nav button.active:focus span.nav-icon{color:inherit}
+#app .nav .sidebar-shortcuts{margin-top:auto;padding-top:15px;gap:10px}
+#app .nav .sidebar-shortcuts button{min-height:68px;font-size:21px}
+#app .listpane{padding:20px 17px 16px}
+#app .heading{margin-bottom:12px}
+#app .heading h1{font-size:36px;font-weight:850}
+#app .heading span{font-size:21px;color:#add4dd;font-weight:700}
+#app .groups{gap:10px;margin-bottom:10px}
+#app .groups button{min-height:55px;font-size:21px}
+#app .channels{padding:5px}
+#app .channel{min-height:85px;padding:11px 13px;gap:13px;margin-bottom:9px;border-radius:16px;border-color:#2f4b60;background:#182c40;justify-content:flex-start}
+#app .channel .num{min-width:45px;font-size:17px;font-weight:800;color:#c5d7e5}
+#app .channel .logo,#app .channel .placeholder{width:67px;height:46px}
+#app .channel .chtext strong{font-size:26px;font-weight:800}
+#app .channel .chtext small{font-size:18px;color:#b4cada}
+#app .channel .heart{font-size:25px}
+#app .channel.is-selected{border-color:#2f9999;background:#193944}
+#app .channel:focus{background:#71ffed;border-color:#bffff7;color:#062d2c}
+#app .channel:focus .chtext small{color:#254947}
+#app .details{padding:19px;gap:14px;max-height:100%;overflow-y:auto}
+#app .preview{width:100%;height:39vh;min-height:208px;max-height:430px;position:relative;display:grid;place-items:center;overflow:hidden;border:2px solid #496e7b;border-radius:19px;background:radial-gradient(ellipse at 50% 28%,#1b4652,#07121f 78%)}
+#app .preview video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#050a13;z-index:1;pointer-events:none}
+#app .preview-art{position:absolute;inset:0;display:grid;place-items:center;z-index:1}
+#app .preview-art b{font-size:69px}
+#app .preview-art img{width:52%;height:55%;object-fit:contain;max-width:290px;max-height:182px;border-radius:13px;background:#f6faff;padding:12px}
+#app .preview-live{display:inline-flex;align-items:center;gap:8px;position:absolute;top:13px;left:13px;z-index:3;background:#061b27e8;border:1px solid #6be2d599;border-radius:10px;color:#c2fff7;padding:7px 11px;font-size:16px;font-weight:850}
+#app .preview-live .ui-icon{width:18px;height:18px}
+#app .preview-state{position:absolute;bottom:0;left:0;right:0;z-index:3;padding:25px 14px 14px;background:linear-gradient(transparent,#061522e8);color:#f2fdff;font-size:20px;line-height:1.4;text-align:center;font-weight:700}
+#app .preview.preview-playing .preview-state{display:none}
+#app .channel-summary h2{font-size:38px;line-height:1.14;font-weight:850}
+#app .channel-summary p{font-size:21px;color:#b2d0d8}
+#app .actions{padding:0;gap:12px}
+#app .actions button{min-height:74px;font-size:22px}
+#app .actions .primary{background:#33e9d9;border-color:#33e9d9;color:#07312e;font-weight:850}
+#app .footer{min-height:61px;gap:25px;justify-content:center;color:#b9ccda;font-size:19px;font-weight:650}
+#app .footer b{font-size:18px;color:#f2f8ff}
+#app .footer .preview-footer{color:#76e8dc}
+@media(max-width:1366px),(max-height:820px){
+ #app{--home-inset:1.75vw;--home-gap:12px;--home-target:57px}
+ #app .top{min-height:83px;padding:10px 0}
+ #app .brandicon{width:54px;height:54px;border-radius:15px}
+ #app .brand-svg{width:34px;height:34px}
+ #app .brand strong{font-size:28px}
+ #app .brand p{font-size:14px}
+ #app .clock{font-size:19px;margin-right:2px}
+ #app button{min-height:57px;font-size:19px;padding:9px 11px;gap:8px}
+ #app .ui-icon{width:22px;height:22px}
+ #app .main{grid-template-columns:minmax(171px,17fr) minmax(0,43fr) minmax(0,40fr)}
+ #app .nav,#app .listpane,#app .details{border-radius:18px}
+ #app .nav{padding:9px;gap:8px}
+ #app .nav button{min-height:64px;font-size:20px;padding:10px 12px}
+ #app .nav button span.nav-icon{width:23px}
+ #app .nav .sidebar-shortcuts{padding-top:10px;gap:7px}
+ #app .nav .sidebar-shortcuts button{min-height:57px;font-size:18px}
+ #app .listpane{padding:12px 10px}
+ #app .heading{margin-bottom:8px}
+ #app .heading h1{font-size:30px}
+ #app .heading span{font-size:17px}
+ #app .groups{margin-bottom:5px;gap:7px}
+ #app .groups button{min-height:44px;font-size:18px}
+ #app .channel{min-height:68px;padding:8px 10px;gap:9px;margin-bottom:7px}
+ #app .channel .num{min-width:34px;font-size:15px}
+ #app .channel .logo,#app .channel .placeholder{width:51px;height:38px}
+ #app .channel .chtext strong{font-size:21px}
+ #app .channel .chtext small{font-size:16px}
+ #app .details{padding:12px;gap:11px}
+ #app .preview{height:37vh;min-height:176px}
+ #app .preview-live{font-size:13px;padding:6px 9px}
+ #app .preview-state{font-size:17px}
+ #app .channel-summary h2{font-size:30px}
+ #app .channel-summary p{font-size:18px}
+ #app .actions button{min-height:62px;font-size:19px}
+ #app .footer{min-height:48px;gap:15px;font-size:16px}
+ #app .footer b{font-size:15px}
+}
+@media(max-height:620px){
+ #app .top{min-height:70px}
+ #app .nav button{min-height:56px}
+ #app .channel{min-height:60px}
+ #app .preview{height:34vh;min-height:144px}
+ #app .footer .preview-footer{display:none}
+}
+
 /* Large TV QR and explicit Samsung remote navigation */
 .dialog.source-mode{width:min(1300px,94vw);max-height:94vh;padding:26px 30px}
 .source-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,0.94fr);gap:25px}
@@ -241,25 +345,25 @@ body[data-theme=light] #app .primary{color:#fff}
 </head><body data-theme="dark">
 <div id="app">
 <header class="top">
-  <div class="brand"><div class="brandicon" aria-hidden="true">▶</div>
+  <div class="brand"><div class="brandicon" aria-hidden="true"><svg class="brand-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="15" rx="3"/><path d="M8 22h8M12 19v3m-2-13 5 3-5 3z"/></svg></div>
     <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.42</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
-    <button id="searchBtn">⌕ Tìm kênh</button>
-    <button id="addBtn">＋ Nguồn M3U</button>
-    <button id="themeBtn">◐ Giao diện</button>
+    <button id="searchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="7.1"/><path d="m16 16 5.5 5.5"/></svg>Tìm kênh</button>
+    <button id="addBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg>Thêm nguồn</button>
+    <button id="themeBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9c0 2.2-1.3 3.5-3.3 3.5h-2.1c-1 0-1.5.8-1.3 1.7.4 1.8-1.1 3.5-3.7 3.5"/><path d="M7.5 8h.01M12.5 6.5h.01M17 9h.01M7.7 14h.01"/></svg>Giao diện</button>
   </div>
 </header>
 <div class="main">
   <nav class="nav">
-    <button class="active" data-nav="all"><span aria-hidden="true">▣</span>Trực tiếp</button>
-    <button data-nav="favorites"><span aria-hidden="true">♡</span>Yêu thích</button>
-    <button data-nav="recent"><span aria-hidden="true">◷</span>Đã xem</button>
-    <button data-nav="help"><span aria-hidden="true">?</span>Hướng dẫn</button>
+    <button class="active" data-nav="all"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="15" rx="3"/><path d="M8 22h8M12 19v3m-2-13 5 3-5 3z"/></svg></span>Trực tiếp</button>
+    <button data-nav="favorites"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg></span>Yêu thích</button>
+    <button data-nav="recent"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 3"/></svg></span>Đã xem</button>
+    <button data-nav="help"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.2 9a3 3 0 1 1 5.6 1.6c-.8 1-2.8 1.5-2.8 3.4M12 17h.01"/></svg></span>Hướng dẫn</button>
     <div id="sidebarShortcuts" class="sidebar-shortcuts">
-      <button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew"><span aria-hidden="true">▶</span>TizenTube</button>
-      <button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew"><span aria-hidden="true">×</span>Thoát</button>
+      <button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 12 7-12 7z"/></svg></span>TizenTube</button>
+      <button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5m9-10 4 4-4 4m4-4H8"/></svg></span>Thoát</button>
     </div>
   </nav>
   <section class="listpane" aria-labelledby="heading">
@@ -275,15 +379,19 @@ body[data-theme=light] #app .primary{color:#fff}
     <button id="more" hidden>Tải thêm kênh ↓</button>
   </section>
   <aside class="details" aria-label="Kênh đang chọn">
-    <div class="preview" aria-hidden="true"><b id="previewText">TV</b><img id="previewLogo" alt="" hidden></div>
+    <div class="preview" id="previewStage" aria-label="Xem thử kênh đang chọn">
+<video id="homePreviewVideo" playsinline muted preload="none" aria-label="Video xem thử tắt tiếng" hidden></video>
+<div class="preview-art" id="previewArt"><b id="previewText">TV</b><img id="previewLogo" alt="" hidden></div>
+<div class="preview-live"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6"/></svg><span>XEM THỬ · TẮT TIẾNG</span></div>
+<div class="preview-state" id="previewStatus" role="status">Chọn kênh để xem thử</div></div>
     <div class="channel-summary"><h2 id="channelTitle">Chọn kênh</h2><p id="channelGroup" hidden></p></div>
     <div class="actions">
-      <button class="primary" id="watchBtn">▶ Xem kênh</button>
-      <button id="favBtn">♡ Thêm yêu thích</button>
+      <button class="primary" id="watchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4m13-5h4a1 1 0 0 1 1 1v4M3 16v4a1 1 0 0 0 1 1h4m13-5v4a1 1 0 0 1-1 1h-4"/></svg>Xem toàn màn hình</button>
+      <button id="favBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg><span class="fav-label">Thêm yêu thích</span></button>
     </div>
   </aside>
 </div>
-<footer class="footer"><span><b>↑ ↓ ← →</b>Di chuyển</span><span><b>OK</b>Chọn / phát kênh</span><span><b>↶</b>Quay lại</span></footer>
+<footer class="footer"><span><b>↑ ↓ ← →</b> Di chuyển</span><span><b>OK</b> Xem toàn màn hình</span><span><b>Back</b> Quay lại</span><span class="preview-footer">Xem thử tự động · tắt tiếng</span></footer>
 </div>
 <div class="overlay" id="modal" hidden><div class="dialog" role="dialog" aria-modal="true"><h2 id="dialogTitle">Thêm nguồn IPTV</h2><div id="sourceDialog">
 <div class="source-grid"><section class="source-manual">
@@ -841,9 +949,119 @@ function select(c){
  byId('watchBtn').disabled=!c;
  var favorite=byId('favBtn'),isFavorite=!!(c&&state.favorites[c.id]);
  favorite.disabled=!c;
- favorite.textContent=isFavorite?'♥ Bỏ yêu thích':'♡ Thêm yêu thích';
+ favorite.querySelector('.fav-label').textContent=isFavorite?'Bỏ yêu thích':'Thêm yêu thích';
  favorite.setAttribute('aria-pressed',String(isFavorite));
+ var rows=byId('channels').children;
+ for(var i=0;i<rows.length;i++){
+  if(rows[i].dataset&&rows[i].dataset.channelId)
+   rows[i].classList.toggle('is-selected',!!(c&&rows[i].dataset.channelId===c.id));
+ }
+ scheduleHomePreview(c);
 }
+
+/* Muted preview uses the same TV-local HLS relay, isolated from fullscreen playback. */
+var previewTimer=0,previewFallback=0,previewToken=0,previewAttempt=0,previewHls=null,previewKey='',previewNativeTried=false,previewRelayTried=false;
+function previewStatus(message){var el=byId('previewStatus');el.textContent=String(message||'');el.hidden=!message;}
+function stopHomePreview(){
+ previewToken++;previewAttempt++;clearTimeout(previewTimer);clearTimeout(previewFallback);
+ previewTimer=0;previewFallback=0;
+ if(previewHls){try{previewHls.destroy();}catch(e){}previewHls=null;}
+ var v=byId('homePreviewVideo');v.onplaying=null;v.ontimeupdate=null;v.onerror=null;
+ try{v.pause();v.removeAttribute('src');v.load();}catch(e){}
+ v.hidden=true;byId('previewStage').classList.remove('preview-playing');byId('previewArt').hidden=false;
+ previewKey='';previewNativeTried=false;previewRelayTried=false;
+}
+function previewIsCurrent(channel,token,attempt){
+ return token===previewToken&&(!attempt||attempt===previewAttempt)&&byId('player').hidden&&
+ byId('modal').hidden&&selected&&selected.id===channel.id&&selected.url===channel.url;
+}
+function previewPlayed(channel,token,attempt){
+ if(!previewIsCurrent(channel,token,attempt))return;
+ var v=byId('homePreviewVideo');if(v.paused||v.readyState<2)return;
+ clearTimeout(previewFallback);previewFallback=0;byId('previewArt').hidden=true;
+ byId('previewStage').classList.add('preview-playing');previewStatus('');
+ if(previewRelayTried&&previewHls)provenRelayUrls[channel.url]=Date.now();
+}
+function previewFailed(channel,token,attempt){
+ if(!previewIsCurrent(channel,token,attempt))return;
+ clearTimeout(previewFallback);previewFallback=0;
+ if(!previewNativeTried){startNativePreview(channel,token);return;}
+ if(!previewRelayTried){startRelayPreview(channel,token);return;}
+ var v=byId('homePreviewVideo');v.onerror=null;v.onplaying=null;v.ontimeupdate=null;
+ try{v.pause();v.removeAttribute('src');v.load();}catch(e){}
+ v.hidden=true;byId('previewArt').hidden=false;
+ if(previewHls){try{previewHls.destroy();}catch(e){}previewHls=null;}
+ byId('previewStage').classList.remove('preview-playing');
+ previewStatus('Không phát thử được · Chọn Xem toàn màn hình');
+}
+function attachPreviewEvents(v,channel,token,attempt){
+ v.onplaying=function(){previewPlayed(channel,token,attempt);};
+ v.ontimeupdate=function(){if(!v.paused&&v.readyState>=2)previewPlayed(channel,token,attempt);};
+ v.onerror=function(){previewFailed(channel,token,attempt);};
+ v.muted=true;v.volume=0;v.hidden=false;
+}
+function startNativePreview(channel,token){
+ if(!previewIsCurrent(channel,token)||previewNativeTried)return;
+ previewNativeTried=true;var attempt=++previewAttempt,v=byId('homePreviewVideo');
+ clearTimeout(previewFallback);
+ if(previewHls){try{previewHls.destroy();}catch(e){}previewHls=null;}
+ try{v.pause();v.removeAttribute('src');v.load();}catch(e){}
+ attachPreviewEvents(v,channel,token,attempt);previewStatus('Đang xem thử '+channel.name+'…');
+ previewFallback=setTimeout(function(){
+  if(previewIsCurrent(channel,token,attempt)&&!byId('previewStage').classList.contains('preview-playing'))
+   previewFailed(channel,token,attempt);
+ },3500);
+ try{v.src=channel.url;v.load();var p=v.play();
+  if(p&&typeof p.catch==='function')p.catch(function(){previewFailed(channel,token,attempt);});
+ }catch(e){previewFailed(channel,token,attempt);}
+}
+function startRelayPreview(channel,token){
+ if(!previewIsCurrent(channel,token)||previewRelayTried)return;
+ previewRelayTried=true;var attempt=++previewAttempt,v=byId('homePreviewVideo');
+ clearTimeout(previewFallback);
+ try{v.pause();v.removeAttribute('src');v.load();}catch(e){}
+ if(previewHls){try{previewHls.destroy();}catch(e){}previewHls=null;}
+ attachPreviewEvents(v,channel,token,attempt);
+ previewStatus('Đang kết nối bản xem thử trên TV…');ensureTizenHlsRelayService();
+ previewFallback=setTimeout(function(){previewFailed(channel,token,attempt);},8000);
+ Promise.all([loadHlsLibrary(),requestLocalHlsSession(channel,0)]).then(function(data){
+  if(!previewIsCurrent(channel,token,attempt))return;
+  var Hls=data[0],address=String(data[1]&&data[1].url||'');
+  if(!Hls||!Hls.isSupported||!Hls.isSupported())throw Error('HLS unavailable');
+  if(!/^http:\/\/127\.0\.0\.1:17869\/r\/[0-9a-f]{40}\/0$/.test(address))throw Error('Invalid local relay');
+  var hls=new Hls({enableWorker:false,lowLatencyMode:false,maxBufferLength:12,
+   xhrSetup:function(xhr){try{xhr.setRequestHeader('X-Open-IPTV-Relay','1');}catch(e){}}
+  });
+  previewHls=hls;
+  hls.on(Hls.Events.MANIFEST_PARSED,function(){
+   if(!previewIsCurrent(channel,token,attempt))return;
+   var p=v.play();if(p&&typeof p.catch==='function')p.catch(function(){previewFailed(channel,token,attempt);});
+  });
+  hls.on(Hls.Events.ERROR,function(_evt,error){if(error&&error.fatal)previewFailed(channel,token,attempt);});
+  hls.attachMedia(v);hls.loadSource(address);
+ }).catch(function(){previewFailed(channel,token,attempt);});
+}
+function startHomePreview(channel,token){
+ if(!previewIsCurrent(channel,token))return;
+ if(!/^https?:\/\//i.test(String(channel.url||''))){previewStatus('Nguồn này không hỗ trợ xem thử');return;}
+ if(hlsAddress(channel.url)&&(!provenDirectUrls[channel.url]||relayFastStartHint(channel)))
+  startRelayPreview(channel,token);
+ else startNativePreview(channel,token);
+}
+function scheduleHomePreview(channel){
+ if(!channel||!byId('player').hidden||!byId('modal').hidden){
+  if(previewKey)stopHomePreview();
+  if(!channel)previewStatus('Chọn kênh để xem thử');
+  return;
+ }
+ var key=String(channel.id||'')+'|'+String(channel.url||'');
+ if(key===previewKey)return;
+ stopHomePreview();previewKey=key;previewStatus('Đang chuẩn bị xem thử…');
+ var token=previewToken;
+ // Avoid opening a new stream for every rapid arrow-key event.
+ previewTimer=setTimeout(function(){startHomePreview(channel,token);},400);
+}
+
 function draw(){
  rememberHomeFocus(document.activeElement);
  items=all();
@@ -922,14 +1140,14 @@ function draw(){
  });
  restoreHomeFocus();
 }
-function openDialog(kind){byId('modal').hidden=false;byId('sourceDialog').hidden=kind==='search';byId('searchDialog').hidden=kind!=='search';
+function openDialog(kind){if(typeof stopHomePreview==='function')stopHomePreview();byId('modal').hidden=false;byId('sourceDialog').hidden=kind==='search';byId('searchDialog').hidden=kind!=='search';
 byId('modal').firstElementChild.classList.toggle('source-mode',kind!=='search');
 byId('dialogTitle').textContent=kind==='search'?'Tìm kiếm kênh':'Thêm nguồn IPTV';
 if(kind==='source'){setRightsChecked(false);void openPair();}else stopPair();
 setTimeout(function(){byId(kind==='search'?'searchInput':'toSourceUrl').focus();},40);}
 function setRightsChecked(on){byId('rights').setAttribute('aria-checked',on?'true':'false');}
 function toggleRights(){setRightsChecked(byId('rights').getAttribute('aria-checked')!=='true');}
-function closeDialog(){stopPair();byId('modal').hidden=true;if(!restoreHomeFocus())byId('addBtn').focus();}
+function closeDialog(){stopPair();byId('modal').hidden=true;if(!restoreHomeFocus())byId('addBtn').focus();if(typeof scheduleHomePreview==='function')scheduleHomePreview(selected);}
 async function addSource(data,fromPhone){
 var rights=fromPhone?data&&data.rights:byId('rights').getAttribute('aria-checked')==='true';
 if(rights!==true){notify('Cần xác nhận quyền sử dụng danh sách.');return {ok:false,error:'Cần xác nhận quyền sử dụng.'};}
@@ -1596,6 +1814,7 @@ function startAvplay(channel,token){
 }
 function play(c){
  if(!c)return;
+ if(typeof stopHomePreview==='function')stopHomePreview();
  byId('browserFallback').hidden=true;
  playbackSerial++;var token=playbackSerial;stopPlaybackEngine();playing=c;
  hlsAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
@@ -1807,6 +2026,7 @@ function isRemoteBack(e){
  return code===10009||code===461||['Escape','Back','Return','BrowserBack','GoBack','XF86Back','Backspace'].indexOf(key)!==-1;
 }
 function exitModule(){
+ if(typeof stopHomePreview==='function')stopHomePreview();
  // In TizenBrew the launcher navigates with location.href to this module.
  // Back through the WebView history returns to the real bundled launcher.
  // Port 8081 is only the module proxy service; /tizenbrew-ui does not exist there.
