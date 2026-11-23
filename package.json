@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.376",
-  "description": "Positron P5.1.291: phân biệt đổi chủ đề AI với thay đổi độ chắc chắn",
+  "version": "4.23.377",
+  "description": "Positron P5.1.292: cảnh báo suy giảm bao phủ chủ đề AI trước nhập mô hình",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

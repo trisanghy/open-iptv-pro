@@ -393,8 +393,13 @@
      after:after?KINDS[after.key]:'Chưa đủ chắc chắn'});
    }
   }
+  const coverageBefore=sample.length?Math.round(classifiedBefore*1000/sample.length)/10:0;
+  const coverageAfter=sample.length?Math.round(classifiedAfter*1000/sample.length)/10:0;
+  const coverageDropPoints=Math.max(0,Math.round((coverageBefore-coverageAfter)*10)/10);
+  const coverageRisk=sample.length>=10&&classifiedBefore>=5&&coverageDropPoints>=20?'high':'normal';
   return {ok:true,scanned:sample.length,changed,classifiedBefore,classifiedAfter,
    relabeled,newlyClassified,becameUncertain,confidenceTransitions:newlyClassified+becameUncertain,
+   coverageBefore,coverageAfter,coverageDropPoints,coverageRisk,
    examplesBefore:present.examples,examplesAfter:future.examples,differences,
    caution:'Đây là dự đoán dựa trên tên/nhóm kênh và nhãn đã dạy, không phải kết quả xem luồng hay sự thật từ EPG.'};
  }

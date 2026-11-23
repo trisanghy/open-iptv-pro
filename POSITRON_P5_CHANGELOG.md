@@ -1,3 +1,12 @@
+## P5.1.292 — AI cảnh báo suy giảm độ bao phủ trước nhập mô hình / Electron 4.23.377
+- Feature priority: NEW — Bộ xem trước Naive Bayes tự đo tỷ lệ kênh còn đủ chắc chắn phân loại trước và sau khi khôi phục JSON; khi tỷ lệ giảm trên ngưỡng lớn có cảnh báo rõ ràng ngay trong bản xem trước, tránh vô tình thay mô hình đang hữu ích bằng mô hình thiếu dữ liệu.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON; xem cảnh báo độ bao phủ trước khi quyết định có nhấn Xác nhận khôi phục trọng số AI hay không.
+- Electron screenshot: positron-p51292-ai-risk-before-1920x1080-real.png / positron-p51292-ai-risk-after-1920x1080-real.png.
+- Evidence: Unit test huấn luyện Naive Bayes trên nhiều kênh rồi thử nhập mô hình rỗng và không đổi, chứng minh cảnh báo chỉ khi suy giảm bao phủ mẫu rõ rệt; Electron thật kiểm tra vai trò cảnh báo, văn bản và hình ảnh trước/sau; không tự khôi phục, không phát video.
+- Privacy: Chỉ dùng tên/nhóm kênh trên thiết bị, không gửi M3U, URL stream, lịch sử xem hay bản sao mô hình ra ngoài; cảnh báo không suy diễn độ chính xác AI hoặc tính ổn định luồng.
+- Status: CANDIDATE — Chỉ ghi thành công sau khi CI/build và mở ảnh Electron thật.
+
 ## P5.1.291 — AI tách đổi chủ đề khỏi thay đổi độ chắc chắn / Electron 4.23.376
 - Feature priority: NEW — Bộ xem trước Naive Bayes bổ sung thống kê riêng những kênh thật sự chuyển giữa hai dự đoán chủ đề đủ chắc chắn, những kênh mới được dự đoán đủ chắc chắn, và những kênh không còn đạt ngưỡng; tránh gộp sai thành tất cả đều “đổi nhãn”.
 - Feature class: AI
@@ -5,7 +14,7 @@
 - Electron screenshot: positron-p51291-confidence-before-1920x1080-real.png / positron-p51291-confidence-after-1920x1080-real.png.
 - Evidence: Unit test tách và đối chiếu từng loại chuyển trạng thái khi nhập hai mô hình trái chiều, kiểm tra tổng số thay đổi và bảo mật URL; Electron thật so sánh cùng danh sách 180 kênh, xác minh ba bộ đếm khớp tổng, không sửa dữ liệu trước xác nhận và không phát kênh.
 - Privacy: Chỉ tính toán trên máy với thông tin tên/nhóm kênh; không gửi URL M3U/stream, lịch sử xem, dữ liệu người dùng hoặc mô hình lên mạng.
-- Status: CANDIDATE — Chỉ công bố hoàn tất khi CI xanh và mở ảnh Electron thật; phát hành thử nghiệm trên Actions Artifacts, Releases chỉ Stable.
+- Status: ĐÃ KIỂM CHỨNG tại Actions 45126649753; 999 test pass, 0 fail, 5 skipped; ba bản build và capture xanh; QA 10/10 true, ảnh trước/sau Electron thật đã MỞ để đối chiếu. Phát hành thử nghiệm trên Actions Artifacts; Releases chỉ Stable.
 
 ## P5.1.290 — Giữ nút xác nhận khôi phục AI luôn trong tầm nhìn / Electron 4.23.375
 - Feature priority: BLOCKER_FIX — Nút xác nhận khôi phục dữ liệu mô hình AI biến mất khỏi vùng nhìn thấy khi mở dự báo Naive Bayes; chặn thao tác đồng ý có chủ đích và gây nhầm lẫn trạng thái dữ liệu.

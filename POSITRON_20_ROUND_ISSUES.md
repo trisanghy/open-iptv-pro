@@ -37,9 +37,17 @@
 - Bằng chứng dự kiến: `positron-p51290-confirm-sticky-before-1920x1080-real.png` / `positron-p51290-confirm-sticky-after-1920x1080-real.png`.
 - Xác minh: GitHub Actions 45125073609 hoàn tất; test 998 pass, 5 skipped, 0 fail; Windows x64, Mac ARM64, Mac x64 và capture success. Đã tải và trực tiếp MỞ hai ảnh Electron P290; QA riêng 8/8 true; nút Xác nhận luôn hiện khi xem chi tiết.
 
-## Vòng 05/20 — P5.1.291 / Electron 4.23.376 (CANDIDATE)
+## Vòng 05/20 — P5.1.291 / Electron 4.23.376 (ĐÃ XÁC MINH)
 - Phát hiện từ ảnh P290: dự báo 167 kênh “đổi nhãn” nhưng thực chất phần lớn chuyển từ có nhãn đủ chắc chắn sang “Chưa đủ chắc chắn”; thuật ngữ cũ gộp đổi chủ đề với đổi độ chắc chắn, dễ gây hiểu sai.
 - Tính năng AI mới: đếm riêng số kênh chuyển giữa hai chủ đề đủ chắc chắn, số kênh mới đạt ngưỡng dự báo, và số kênh mất ngưỡng dự báo; tổng thay đổi vẫn giữ tương thích với kết quả trước.
 - Regression: unit đối chứng ba tình huống có nhãn→nhãn, chưa chắc chắn→có nhãn, có nhãn→chưa chắc chắn; Electron chụp trước/sau giao diện, đo tính nhất quán bộ đếm, nội dung và bảo toàn playlist, mô hình, playback.
 - Ảnh dự kiến: `positron-p51291-confidence-before-1920x1080-real.png` / `positron-p51291-confidence-after-1920x1080-real.png`.
-- Chỉ ghi hoàn tất sau khi test/build/ảnh Electron thật thành công và ảnh SAU được mở trực tiếp.
+- Xác minh: Actions 45126649753 thành công; 999 test pass, 0 fail, 5 skipped; Windows x64, Mac ARM64, Mac x64 và Electron capture xanh. Đã tải/MỞ hai ảnh, QA riêng 10/10 true; số thực nghiệm 0 kênh đổi hai chủ đề, 2 mới đủ chắc chắn, 165 không còn đủ chắc chắn.
+
+## Vòng 06/20 — P5.1.292 / Electron 4.23.377 (CANDIDATE)
+- Đầu vào từ ảnh P291: một bản sao Naive Bayes khiến độ bao phủ phân loại đủ chắc chắn giảm mạnh từ 165/180 xuống 2/180, nhưng không có cảnh báo nổi bật trước khi người dùng xác nhận nhập mô hình.
+- Tính năng mới: ước tính độ bao phủ trước/sau nhập mô hình theo mẫu tối đa 180 kênh; cảnh báo có ngữ nghĩa role=alert khi suy giảm ít nhất 20 điểm %, mẫu từ 10 kênh và phân loại hiện tại có ít nhất 5 kênh. Không coi số này là độ chính xác ML hay chất lượng stream.
+- Node regression: so sánh mất bao phủ mạnh, không thay đổi, và tăng bao phủ; kiểm tra không làm lộ M3U/URL.
+- Electron QA: chụp trước/sau cảnh báo thật, role và chữ có nghĩa, giữ nút xác nhận, playlist, model và playback bất biến.
+- Ảnh dự kiến: `positron-p51292-ai-risk-before-1920x1080-real.png` / `positron-p51292-ai-risk-after-1920x1080-real.png`.
+- Chưa hoàn thành đến khi CI + screenshot thực + mở soát ảnh đạt.

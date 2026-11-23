@@ -801,3 +801,38 @@ test('P291 splits Naive Bayes topic swaps from confidence transitions',()=>{
  for(const x of ['qa291','positron-p51291-confidence-before-1920x1080-real.png',
   'positron-p51291-confidence-after-1920x1080-real.png'])assert.ok(qa.includes(x),x);
 });
+
+test('P292 warns only when a meaningful Naive Bayes coverage collapse is predicted locally',()=>{
+ const movie={id:'p292-film',name:'Phim hành động mới',group:'Truyền hình'};
+ const football={id:'p292-sport',name:'Bóng đá thể thao',group:'Truyền hình'};
+ let learned=C.emptyCategoryModel();
+ for(let i=0;i<10;i++){
+  learned=C.teachCategory(learned,movie,'cinema');
+  learned=C.teachCategory(learned,football,'sport');
+ }
+ const sample=Array.from({length:12},(_,i)=>({
+  id:'sample-p292-'+i,name:i%2?football.name:movie.name,group:'Truyền hình'
+ }));
+ const emptyFile=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const modelFile=C.buildLearningBackup({model:C.emptyModel(),categoryModel:learned,bandit:{}});
+ const before=JSON.stringify(sample);
+ const drop=C.previewCategoryImpact({categoryModel:learned},emptyFile,sample);
+ assert.equal(drop.ok,true);assert.equal(drop.coverageRisk,'high');
+ assert.ok(drop.coverageBefore>=90);assert.equal(drop.coverageAfter,0);
+ assert.ok(drop.coverageDropPoints>=90);
+ assert.equal(drop.becameUncertain,12);
+ const stable=C.previewCategoryImpact({categoryModel:learned},modelFile,sample);
+ assert.equal(stable.coverageRisk,'normal');assert.equal(stable.coverageDropPoints,0);
+ const gain=C.previewCategoryImpact({categoryModel:C.emptyCategoryModel()},modelFile,sample);
+ assert.equal(gain.coverageRisk,'normal');assert.equal(gain.coverageDropPoints,0);
+ assert.equal(JSON.stringify(sample),before);
+ assert.ok(!JSON.stringify(drop).includes('.m3u8'));
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("risk.id='poAICategoryCoverageRisk'"));
+ assert.ok(ui.includes("risk.setAttribute('role','alert')"));
+ assert.ok(css.includes('#poWatchFlowPanel #poAICategoryCoverageRisk'));
+ for(const x of ['qa292','positron-p51292-ai-risk-before-1920x1080-real.png',
+  'positron-p51292-ai-risk-after-1920x1080-real.png'])assert.ok(qa.includes(x),x);
+});

@@ -781,6 +781,15 @@
     }
     const note=d.createElement('small');note.textContent=categoryImpact.caution;
     details.append(note);importPreview.append(details);
+    if(categoryImpact.coverageRisk==='high'){
+     const risk=d.createElement('p');risk.id='poAICategoryCoverageRisk';
+     risk.className='po-ai-coverage-risk';risk.setAttribute('role','alert');
+     risk.textContent='Cảnh báo AI: độ bao phủ phân loại đủ chắc chắn giảm từ '+
+      categoryImpact.coverageBefore+'% xuống '+categoryImpact.coverageAfter+
+      '% (giảm '+categoryImpact.coverageDropPoints+' điểm % trong '+
+      categoryImpact.scanned+' kênh được thử). Đây chỉ là dự báo theo tên/nhóm kênh; không phải lỗi phát video hay thước đo độ chính xác thực.';
+     importPreview.append(risk);
+    }
    }
 
    pendingLearningImport=parsed;importConfirm.hidden=false;

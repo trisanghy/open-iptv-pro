@@ -219,3 +219,10 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
  border-radius:7px;background:#1d3c3c;color:#e7fff3;line-height:1.5;font-size:11px;
  overflow-wrap:anywhere}
 #poWatchFlowPanel #poAICategoryBreakdown[hidden]{display:none!important}
+
+/* P292: warn about dramatic loss of locally predicted category coverage,
+   not about stream quality or actual classifier accuracy. */
+#poWatchFlowPanel #poAICategoryCoverageRisk{padding:10px 12px;margin:8px 0;
+ border:1px solid #b78352;border-radius:9px;background:#423327;
+ color:#fff0d8;font-size:11px;line-height:1.55;overflow-wrap:anywhere}
+#poWatchFlowPanel #poAICategoryCoverageRisk[hidden]{display:none!important}
