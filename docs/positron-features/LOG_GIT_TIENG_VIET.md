@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.311 — không ghi nhãn AI giả khi bộ nhớ đầy, rollback Naive Bayes an toàn
+## P5.1.312 — trợ lý sao lưu trọng số AI khi bộ nhớ đầy, cảnh báo lưu lỗi rõ ràng
 
-**Ứng dụng:** 4.23.396 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.397 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Khi ghi nhãn AI gặp lỗi lưu bộ nhớ, thêm nút cứu hộ xuất bản sao trọng số Naive Bayes bằng JSON ngay tại hàng đợi dạy AI; người dùng không phải tìm sâu trong cài đặt và không bị mất trọng số đã lưu. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c94c1c9d179d4d9dbf10cc008b51c92685d8775a)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.311 — Electron 4.23.396 — Lưu nhãn Naive Bayes an toàn khi bộ nhớ đầy (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: BLOCKER_FIX — Ngăn mất dữ liệu nhãn Naive Bayes khi localStorage đầy: RAM trước đây vẫn báo học thành công dù dữ liệu trên đĩa không được ghi, gây sai mô hình sau khi mở lại. Electron screenshot: positron-p51311-storage-fail-before-1920x1080-real.png / positron-p51311-storage-fail-after-1920x1080-real.png.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/abf987ab384aa5b0929d1e718b4ecb1f54e2e208)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.310 — Đọc rộng phân tích AI theo lựa chọn / Electron 4.23.395
 
