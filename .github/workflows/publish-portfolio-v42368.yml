@@ -142,6 +142,7 @@ jobs:
           retention-days: 14
 
   publish:
+    if: false # published immutable Stable version; QA artifacts only
     name: Publish immutable stable v4.23.68 with all 3 codebases
     needs: [regression, web, rust, electron]
     runs-on: ubuntu-latest
