@@ -445,7 +445,7 @@
 
  // P295: read-only risk by channel group from local Naive Bayes predictions.
  // No stream URL, viewing history, EPG fetch or playlist changes.
- function previewCategoryGroupRisks(current,loaded,channelRows,{limit=5,maxChannels=1000}={}){
+ function previewCategoryGroupRisks(current,loaded,channelRows,{limit=5,maxChannels=1000,sortBy='count'}={}){
   const imported=loaded?.ok===true?loaded:parseLearningBackup(loaded);
   if(!imported?.ok)return {ok:false,reason:imported?.reason||'Không đọc được dữ liệu AI.'};
   const present=sanitizedCategoryModel(current?.categoryModel),future=sanitizedCategoryModel(imported.categoryModel);
@@ -467,9 +467,15 @@
    if(!before&&after)bucket.gained++;
   }
   const size=Math.max(1,Math.min(10,Math.trunc(limit)||5));
-  const rows=[...groups.values()].sort((a,b)=>b.lost-a.lost||b.relabeled-a.relabeled||
-   b.count-a.count||a.label.localeCompare(b.label,'vi'));
-  return {ok:true,scanned:entries.length,totalGroups:rows.length,lostTotal,groups:rows.slice(0,size),
+  // P297: compare a small group fairly with a large one, without hiding absolute counts.
+  // The rate is a share of THIS group's scanned channels, not model accuracy.
+  const rows=[...groups.values()].map(row=>({...row,
+   lossRate:row.count?Math.round(row.lost*1000/row.count)/10:0}));
+  rows.sort((a,b)=>sortBy==='rate'
+   ?b.lossRate-a.lossRate||b.lost-a.lost||b.relabeled-a.relabeled||a.label.localeCompare(b.label,'vi')
+   :b.lost-a.lost||b.relabeled-a.relabeled||b.count-a.count||a.label.localeCompare(b.label,'vi'));
+  return {ok:true,scanned:entries.length,totalGroups:rows.length,lostTotal,
+   sortBy:sortBy==='rate'?'rate':'count',groups:rows.slice(0,size),
    caution:'Rủi ro chỉ dự báo từ nhãn, tên và nhóm kênh trên máy; không phải thống kê chất lượng phát hoặc độ chính xác AI.'};
  }
 

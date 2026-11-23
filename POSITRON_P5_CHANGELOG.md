@@ -1,3 +1,12 @@
+## P5.1.297 — AI so sánh tỷ lệ kênh mất dự đoán theo nhóm / Electron 4.23.382
+- Feature priority: NEW — AI tính tỷ lệ kênh có thể mất dự đoán đủ chắc chắn riêng trong từng nhóm và cho phép đổi thứ tự ưu tiên từ số lượng sang tỷ lệ; tránh xem nhóm đông luôn là nhóm chịu rủi ro tương đối lớn nhất.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → Naive Bayes → Nhóm bị ảnh hưởng → chọn “Xem theo tỷ lệ %”.
+- Electron screenshot: positron-p51297-group-rate-before-1920x1080-real.png / positron-p51297-group-rate-after-1920x1080-real.png.
+- Evidence: Bộ phân tích Naive Bayes tại chỗ so sánh trọng số hiện tại với mô hình trong JSON, tính lost/count cho từng nhóm, sắp xếp danh sách theo tỷ lệ có thể mất dự đoán, kiểm thử Node giữ nguyên dữ liệu và xác thực Electron thực với phím/nút, ảnh trước/sau cùng viewport 1920×1080, trạng thái không tự phát video.
+- Privacy: Dùng tên và nhóm kênh trong bộ nhớ cục bộ; không gửi stream URL, M3U, lịch sử xem, trọng số hoặc EPG ra ngoài; tỷ lệ không phải độ chính xác mô hình hay chất lượng stream.
+- Status: CANDIDATE — chờ CI, build và MỞ ảnh Electron thật trước khi coi là hoàn tất; Releases chỉ Stable.
+
 ## P5.1.296 — Chi tiết nhóm rủi ro AI: selector chính xác và bàn phím / Electron 4.23.381
 - Feature priority: BLOCKER_FIX — Khôi phục CI Electron bị chặn vì bộ chọn nhầm hai mục chi tiết Naive Bayes; bảo vệ dữ liệu AI, playlist và thao tác phát video khỏi hồi quy.
 - Feature class: AI

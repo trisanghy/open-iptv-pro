@@ -818,12 +818,31 @@
      overall.textContent='Đã phân tích '+groupsRisk.scanned+' kênh; '+groupsRisk.lostTotal+
       ' kênh có thể mất dự đoán đủ chắc chắn khi nhập mô hình.';
      riskDetails.append(overall);
-     for(const group of groupsRisk.groups){
-      const line=d.createElement('p');line.className='po-ai-category-diff';
-      line.textContent=group.label+': '+group.lost+' mất dự đoán · '+
-       group.relabeled+' đổi chủ đề · '+group.gained+' mới đủ chắc chắn / '+group.count+' kênh.';
-      riskDetails.append(line);
-     }
+     // P297: let viewers compare absolute loss with the proportion affected.
+     // Sorting is read-only and never applies/retrains the imported model.
+     const riskSort=d.createElement('button');riskSort.type='button';
+     riskSort.id='poAICategoryRiskSort';riskSort.className='po-ai-risk-sort';
+     const riskRows=d.createElement('div');riskRows.id='poAICategoryRiskRows';
+     riskDetails.append(riskSort,riskRows);
+     let rateMode=false;
+     const renderRiskRows=()=>{
+      const ranked=rateMode
+       ?core.previewCategoryGroupRisks({categoryModel},parsed,channels(),{limit:5,maxChannels:1000,sortBy:'rate'})
+       :groupsRisk;
+      riskRows.replaceChildren();
+      for(const group of ranked.groups){
+       const line=d.createElement('p');line.className='po-ai-category-diff';
+       line.textContent=group.label+': '+group.lost+'/'+group.count+
+        ' kênh có thể mất dự đoán ('+group.lossRate+'% của nhóm) · '+
+        group.relabeled+' đổi chủ đề · '+group.gained+' mới đủ chắc chắn.';
+       riskRows.append(line);
+      }
+      riskSort.textContent=rateMode?'Đang ưu tiên tỷ lệ % · Xem theo số kênh':
+       'Theo số kênh · Xem theo tỷ lệ %';
+      riskSort.setAttribute('aria-pressed',String(rateMode));
+     };
+     riskSort.addEventListener('click',()=>{rateMode=!rateMode;renderRiskRows();});
+     renderRiskRows();
      const riskNote=d.createElement('small');riskNote.textContent=groupsRisk.caution;
      riskDetails.append(riskNote);details.append(riskDetails);
     }

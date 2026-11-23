@@ -231,3 +231,10 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel #poAICategoryGroupRisks{margin:10px 0 4px;border-color:#60998c;background:#102f34}
 #poWatchFlowPanel #poAICategoryGroupRisks > summary{min-height:42px;color:#d6fff2}
 #poWatchFlowPanel #poAICategoryGroupRisks > summary:focus-visible{outline:2px solid #b3f0df;outline-offset:2px}
+
+/* P297: risk-ratio comparison is an explicit, accessible local AI view. */
+#poWatchFlowPanel #poAICategoryRiskSort{width:100%;min-height:39px;margin:5px 0;padding:7px 10px;
+ border:1px solid #4f9d91;background:#16463e;color:#d9fff2;border-radius:7px;font-weight:700;
+ cursor:pointer;text-align:left;font-size:11px}
+#poWatchFlowPanel #poAICategoryRiskSort[aria-pressed="true"]{background:#245b4b;border-color:#8cdebb}
+#poWatchFlowPanel #poAICategoryRiskSort:focus-visible{outline:2px solid #b3f0df;outline-offset:2px}

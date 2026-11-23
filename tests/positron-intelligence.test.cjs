@@ -930,3 +930,29 @@ test('P296 nested Naive Bayes disclosure avoids ambiguous selector and supports 
   'positron-p51296-risk-keyboard-after-1920x1080-real.png'])assert.ok(qa.includes(name));
  assert.ok(css.includes('#poWatchFlowPanel #poAICategoryGroupRisks > summary:focus-visible'));
 });
+
+test('P297 compares relative local Naive Bayes classification losses across groups',()=>{
+ const film={id:'f',name:'Phim hành động',group:'Phim',url:'https://private.invalid/secret.m3u8'};
+ const sport={id:'s',name:'Bóng đá thể thao',group:'Thể thao',url:'https://private.invalid/secret.m3u8'};
+ let model=C.emptyCategoryModel();
+ for(let i=0;i<12;i++){model=C.teachCategory(model,film,'cinema');model=C.teachCategory(model,sport,'sport');}
+ const channels=[...Array.from({length:12},(_,i)=>({...film,id:'film'+i})),
+  ...Array.from({length:8},(_,i)=>({...sport,id:'sport'+i})),
+  ...Array.from({length:5},(_,i)=>({id:'news'+i,name:'Bản tin',group:'Tin tức'}))];
+ const backup=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const original=JSON.stringify(channels),weights=JSON.stringify(model);
+ const absolute=C.previewCategoryGroupRisks({categoryModel:model},backup,channels,{limit:5});
+ const relative=C.previewCategoryGroupRisks({categoryModel:model},backup,channels,{limit:5,sortBy:'rate'});
+ assert.equal(absolute.ok,true);assert.equal(relative.sortBy,'rate');assert.equal(absolute.sortBy,'count');
+ assert.ok(absolute.groups.every(g=>g.lossRate===Math.round(g.lost*1000/g.count)/10));
+ assert.ok(relative.groups.every((g,i,arr)=>i===0||arr[i-1].lossRate>=g.lossRate));
+ assert.equal(relative.groups.length,3);
+ assert.equal(JSON.stringify(channels),original);assert.equal(JSON.stringify(model),weights);
+ assert.ok(!JSON.stringify(relative).includes('https://'));
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8'),qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("riskSort.id='poAICategoryRiskSort'"));
+ assert.ok(ui.includes("sortBy:'rate'"));
+ assert.ok(ui.includes("riskSort.addEventListener('click'"));
+ for(const term of ['qa297','positron-p51297-group-rate-before-1920x1080-real.png',
+ 'positron-p51297-group-rate-after-1920x1080-real.png'])assert.ok(qa.includes(term));
+});
