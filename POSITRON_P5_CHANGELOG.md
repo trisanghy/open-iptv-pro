@@ -1,3 +1,12 @@
+## P5.1.343 / Electron 4.23.428 — Home/End nhảy đầu/cuối gợi ý AI bằng remote (CANDIDATE)
+- Feature priority: NEW — Khi danh sách AI có nhiều gợi ý, dùng phím mũi tên đi từng thẻ rất chậm. Bổ sung Home/End từ nút Xem để nhảy ngay đến thẻ đầu/cuối mà vẫn thấy tiêu đề, nút phát và tên kênh ở dải thông tin, không tự phát.
+- Feature class: AI
+- User action: Mở WatchFlow AI, dùng Alt+Shift+J tới gợi ý đầu, nhấn End tới gợi ý cuối, Home về đầu; dùng ArrowUp/Down để duyệt tiếp; Enter mới thực sự phát kênh.
+- Root cause: P341 hỗ trợ chỉ ArrowUp/ArrowDown, P342 sửa vị trí cuộn, nhưng chưa có phím nhảy nhanh vào đầu/cuối của tập gợi ý.
+- Electron screenshot: positron-p51343-home-end-ai-after-720x900-real.png
+- Evidence: scripts/positron-343-audit.cjs chạy Electron thật trên 1920×1080 và 720×900, chụp trước focus đầu và sau End focus cuối, xác minh Home trả đầu, tên đầy đủ và badge đồng bộ, ArrowUp/Down vẫn hoạt động, không autoplay/overflow/mất M3U.
+- Privacy: Chỉ chuyển focus trong tập gợi ý cục bộ; không gửi stream URL, M3U, lịch sử hoặc hành vi lên mạng.
+
 ## P5.1.342 / Electron 4.23.427 — Điều hướng gợi ý AI hiển thị trọn tiêu đề (CANDIDATE)
 - Feature priority: NEW — Khi chuyển gợi ý bằng bàn phím hoặc remote, ứng dụng tự tính vùng trống và căn lại vị trí cuộn theo toàn bộ thẻ thay vì chỉ đưa nút Xem vào màn hình, giúp đọc tên kênh chính xác trên màn hình hẹp trước khi phát video.
 - Feature class: AI
