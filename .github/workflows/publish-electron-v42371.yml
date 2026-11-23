@@ -82,6 +82,7 @@ jobs:
           if-no-files-found: error
 
   publish:
+    if: false # Experimental builds stay in Actions
     needs: [tests, build]
     runs-on: ubuntu-latest
     permissions:
