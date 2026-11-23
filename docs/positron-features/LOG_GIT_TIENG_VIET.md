@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.364 · **Trạng thái:** Chưa có bản phát hành
 
-Sửa trạng thái mở danh sách con trong thư mục EPG ảo khi WatchFlow Intelligence render lại hoặc khi người dùng dạy AI, bỏ qua kênh. Đồng bộ kiểm thử P272 với DOM lồng thực tế P278; kiểm tra cả nhánh thư mục thường và danh sách kênh con, không xóa assertion.
+Feature priority: BLOCKER_FIX — CI không thể build bản phát hành khi kiểm thử P272 đã lỗi sau P278, đồng thời danh sách con đang mở bị đóng lúc dạy AI và render lại, khiến người dùng không xem hết dữ liệu. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1f5ba9fa6c5164fdd0655a2ff8d36337b24c1da6)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)

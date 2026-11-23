@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.364 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Sửa trạng thái mở danh sách con trong thư mục EPG ảo khi WatchFlow Intelligence render lại hoặc khi người dùng dạy AI, bỏ qua kênh. Đồng bộ kiểm thử P272 với DOM lồng thực tế P278; kiểm tra cả nhánh thư mục thường và danh sách kênh con, không xóa assertion.
+Feature priority: BLOCKER_FIX — CI không thể build bản phát hành khi kiểm thử P272 đã lỗi sau P278, đồng thời danh sách con đang mở bị đóng lúc dạy AI và render lại, khiến người dùng không xem hết dữ liệu. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

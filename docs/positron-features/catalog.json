@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T02:33:40.128268+00:00",
+  "generatedAt": "2026-11-23T02:35:51.207177+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.279",
       "appVersion": "4.23.364",
       "title": "giữ trạng thái mở thư mục con khi WatchFlow render lại",
-      "description": "Sửa trạng thái mở danh sách con trong thư mục EPG ảo khi WatchFlow Intelligence render lại hoặc khi người dùng dạy AI, bỏ qua kênh. Đồng bộ kiểm thử P272 với DOM lồng thực tế P278; kiểm tra cả nhánh thư mục thường và danh sách kênh con, không xóa assertion.",
+      "description": "Feature priority: BLOCKER_FIX — CI không thể build bản phát hành khi kiểm thử P272 đã lỗi sau P278, đồng thời danh sách con đang mở bị đóng lúc dạy AI và render lại, khiến người dùng không xem hết dữ liệu. Feature class: AI",
       "kind": "fix",
       "status": "candidate",
       "published": "",
