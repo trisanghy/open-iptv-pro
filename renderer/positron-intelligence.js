@@ -758,7 +758,7 @@
    win.setTimeout(()=>win.URL.revokeObjectURL(url),30000);
    lastBackupSnapshot={data:snapshot,filename:a.download,size:bytes.size};
    verifyBackup.hidden=false;
-   modelStatus.textContent='Đã yêu cầu lưu '+a.download+' ('+bytes.size+' byte). Chọn lại tệp để kiểm tra; chưa xác nhận tải thành công.';
+   modelStatus.textContent='Đã yêu cầu lưu bản sao '+a.download+' ('+bytes.size+' byte). Chọn lại tệp để kiểm tra; chưa xác nhận tải thành công.';
   }catch{
    modelStatus.textContent='Không tạo được tệp sao lưu AI; kiểm tra quyền tải tệp rồi thử lại.';
   }
