@@ -6,25 +6,135 @@
 body[data-theme=amoled]{--bg:#000;--panel:#080808;--item:#181818;--edge:#343434}
 body[data-theme=light]{--bg:#f0f4fa;--panel:#fff;--item:#e5eef8;--fg:#15263b;--muted:#526781;--edge:#c8d4e2}
 button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2px solid transparent;border-radius:14px;background:var(--item);color:var(--fg);padding:15px;font-weight:600}button:focus-visible,input:focus,textarea:focus{outline:4px solid var(--focus);outline-offset:2px;box-shadow:0 0 0 6px #168df844;background:var(--blue);color:white}[hidden]{display:none!important}
-#app{height:100%;display:flex;flex-direction:column}.top{height:11%;min-height:75px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--edge);padding:12px 30px}
-.brand{display:flex;gap:15px;align-items:center}.brandicon{border:4px solid var(--blue);border-radius:10px;padding:9px;color:#42b5ff;font-size:30px}.brand strong{display:block;font-size:31px}.brand small{background:var(--blue);font-size:17px;border-radius:6px;padding:3px 8px;color:white}.brand p{margin:4px 0 0;font-size:16px;color:var(--muted)}
-.toolbar{display:flex;align-items:center;gap:12px}.toolbar button{font-size:19px}.clock{font-size:27px;margin-right:12px}
-.main{height:81%;display:grid;grid-template-columns:21% 38% 41%;min-height:0}.nav{background:var(--panel);border-right:1px solid var(--edge);padding:24px 16px;display:flex;flex-direction:column;gap:12px}
-.nav button{text-align:left;font-size:23px;padding:21px 17px}.nav button.active{background:linear-gradient(120deg,#138af0,#0757c6);color:#fff}.tip{margin-top:auto;color:var(--muted);font-size:16px;line-height:1.5;padding:12px}
-.listpane{padding:26px 20px;border-right:1px solid var(--edge);display:flex;flex-direction:column;min-height:0}.eyebrow{font-size:15px;letter-spacing:2px;color:var(--muted);font-weight:bold}.heading{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px}.heading h1{font-size:32px;margin:6px 0}.heading span{font-size:16px;color:var(--muted)}
-.groups{display:flex;gap:9px;overflow-x:auto;padding:5px 5px 16px;flex-shrink:0;scrollbar-width:none}.groups button{font-size:19px;padding:12px 19px;white-space:nowrap}.groups button.active{background:var(--blue);color:white}
-.channels{flex:1;overflow-y:auto;scrollbar-width:thin;padding:6px}.channel{display:flex;align-items:center;text-align:left;gap:13px;width:100%;margin-bottom:10px;background:var(--item);border:1px solid var(--edge);padding:17px 12px}.channel.selected{border-color:var(--focus)}
-.num{font-size:16px;color:var(--muted);background:var(--bg);border-radius:8px;padding:10px;min-width:50px;text-align:center}.logo{width:56px;height:43px;object-fit:contain}.placeholder{width:56px;font-size:20px;font-weight:bold;color:#4bc0ff;text-align:center}
-.chtext{flex:1;min-width:0}.chtext strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:21px}.chtext small{display:block;color:var(--muted);font-size:15px;margin-top:5px}.heart{font-size:25px;color:#ff72aa}
-.empty{text-align:center;padding:50px 12px;overflow:auto}.empty h2{font-size:30px}.empty p{font-size:18px;color:var(--muted);line-height:1.5}.empty button{display:block;margin:15px auto}
-.more{margin-top:8px;font-size:18px}.details{padding:26px 27px;overflow:auto}.preview{height:42%;min-height:170px;max-height:340px;background:radial-gradient(ellipse at 50% 30%,#1b5180,#071326 75%);border-radius:20px;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:22px;border:1px solid var(--edge)}.preview b{font-size:67px;color:white}.live{position:absolute;right:17px;top:17px;background:#be243e;color:white;font-size:16px;border-radius:9px;padding:8px 12px}.watermark{position:absolute;bottom:17px;left:18px;color:#b5dfff;font-size:17px;font-weight:bold}
-.details h2{font-size:32px;margin:10px 0}.details p{font-size:19px;color:var(--muted);margin:8px 0}.info{background:var(--item);padding:22px;border:1px solid var(--edge);border-radius:16px;margin:20px 0;min-height:110px;overflow-wrap:anywhere}.info p{line-height:1.5;font-size:17px}.actions{display:flex;gap:12px}.actions button{flex:1;font-size:19px}.primary{background:var(--blue);color:#fff}
-.footer{height:8%;background:var(--panel);border-top:1px solid var(--edge);display:flex;align-items:center;justify-content:space-around;font-size:16px;color:var(--muted)}.footer b{color:var(--fg);padding:8px;border-radius:8px;background:var(--item);margin-right:7px}
+/* Home is laid out for a 16:9 TV and directional navigation. */
+#app{
+ --home-inset:3vw;--home-gap:18px;--home-target:68px;--accent:#50ead5;
+ --focus-bg:#a1ffef;--focus-ink:#062724;--active-bg:#163e4b;
+ height:100%;display:flex;flex-direction:column;padding:0 var(--home-inset);
+ background:radial-gradient(ellipse at 100% 0%,#112a38 0%,transparent 55%),var(--bg);
+}
+body[data-theme=light] #app{--focus-bg:#07594e;--focus-ink:#fff;--accent:#07594e;--active-bg:#dcf4ef;background:var(--bg)}
+body[data-theme=amoled] #app{background:#000;--active-bg:#123333}
+.top{
+ display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+ min-height:112px;padding:16px 0;
+}
+.brand,.toolbar,.footer{display:flex;align-items:center}
+.brand{gap:15px}
+.brandicon{
+ display:grid;place-items:center;width:62px;height:62px;border-radius:18px;
+ background:var(--accent);color:var(--bg);font-size:25px;
+}
+body[data-theme=light] .brandicon{color:#fff}
+.brand strong{display:block;font-size:32px;line-height:1.12}
+.brand p{margin:5px 0 0;color:var(--muted);font-size:17px}
+.toolbar{gap:12px}
+.clock{color:var(--muted);font-size:24px;margin-right:10px;font-variant-numeric:tabular-nums}
+#app button{
+ min-height:var(--home-target);padding:10px 18px;border:1px solid var(--edge);
+ border-radius:13px;font-size:23px;line-height:1.18;
+}
+#app button:focus{
+ position:relative;z-index:1;background:var(--focus-bg);color:var(--focus-ink);
+ border-color:var(--focus-bg);outline:3px solid var(--focus-bg);outline-offset:3px;box-shadow:none;
+}
+#app button:focus .num,#app button:focus small,#app button:focus .placeholder,#app button:focus .heart{color:inherit}
+#app button:focus .num{background:transparent}
+#app button:disabled{opacity:.45;cursor:default}
+.main{
+ display:grid;grid-template-columns:minmax(186px,16fr) minmax(0,49fr) minmax(0,35fr);
+ gap:var(--home-gap);flex:1;min-height:0;
+}
+.nav,.listpane,.details{min-width:0;min-height:0;border:1px solid var(--edge);border-radius:21px;background:var(--panel)}
+.nav{display:flex;flex-direction:column;gap:8px;padding:15px;overflow:auto;scrollbar-width:none;align-self:start;max-height:100%}
+.nav button{text-align:left;flex-shrink:0;white-space:nowrap}
+.nav button span{display:inline-block;width:1.45em;color:var(--accent)}
+#app .nav button:focus span{color:inherit}
+#app button.active{background:var(--active-bg);color:var(--fg);border-color:var(--accent)}
+#app button.active:focus{background:var(--focus-bg);color:var(--focus-ink);border-color:var(--focus-bg)}
+.nav .sidebar-shortcuts{
+ margin-top:12px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;
+ padding-top:14px;border-top:1px solid var(--edge);
+}
+.nav .sidebar-shortcuts button{width:100%}
+.listpane{display:flex;flex-direction:column;padding:20px}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 6px;margin-bottom:8px}
+.heading h1{font-size:40px;line-height:1.12;margin:0}
+.heading span{color:var(--muted);font-size:20px;white-space:nowrap}
+.groups,.channels{padding:7px;scrollbar-width:thin;scrollbar-color:var(--edge) transparent}
+.groups{display:flex;gap:10px;overflow-x:auto;flex-shrink:0;margin-bottom:6px}
+#app .groups button{min-height:54px;flex:none;max-width:82%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:20px}
+.channels{flex:1;min-height:0;overflow-y:auto}
+#app .channel{
+ display:flex;align-items:center;gap:13px;width:100%;min-height:78px;margin:0 0 9px;
+ padding:9px 14px;text-align:left;
+}
+#app .channel:last-child{margin-bottom:0}
+.num{
+ flex:none;min-width:47px;border-radius:8px;padding:8px 4px;text-align:center;
+ font-size:17px;font-variant-numeric:tabular-nums;background:var(--bg);color:var(--muted);
+}
+.logo,.placeholder{
+ flex:none;width:66px;height:44px;border-radius:8px;background:#f2f7fa;color:#164c58;
+}
+.logo{object-fit:contain;padding:3px}
+.placeholder{display:grid;place-items:center;font-size:17px}
+.chtext{flex:1;min-width:0}
+.chtext strong,.chtext small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chtext strong{font-size:25px}
+.chtext small{margin-top:3px;color:var(--muted);font-size:17px}
+.heart{flex:none;color:#ff8fbb;font-size:23px}
+#app #more{margin:6px 7px 0;flex-shrink:0}
+.empty{flex:1;overflow:auto;padding:14px 8px}
+.empty h2{font-size:28px;margin:0 0 10px}
+.empty p{font-size:20px;color:var(--muted);line-height:1.45;margin:0 0 14px}
+.empty button{display:block;width:100%;margin:6px 0 12px}
+.details{display:flex;flex-direction:column;gap:17px;padding:20px;overflow:auto;align-self:start;max-height:100%}
+.preview{
+ position:relative;overflow:hidden;display:grid;place-items:center;flex:none;height:29vh;min-height:86px;
+ max-height:300px;border:1px solid #26505d;border-radius:16px;color:#effffa;
+ background:radial-gradient(ellipse at 76% 0%,#1e6267 0%,transparent 72%),#102836;
+}
+.preview b{font-size:68px;letter-spacing:.035em}
+.preview img{
+ width:52%;height:60%;max-width:270px;max-height:142px;object-fit:contain;
+ border-radius:12px;background:#f3f7fa;padding:14px;
+}
+.channel-summary{min-width:0}
+.channel-summary h2{
+ margin:0;font-size:38px;line-height:1.1;overflow-wrap:anywhere;
+ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.channel-summary p{color:var(--muted);font-size:22px;margin:7px 0 0}
+.actions{display:flex;flex-direction:column;gap:10px;padding:5px;flex-shrink:0}
+#app .primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+body[data-theme=light] #app .primary{color:#fff}
+#app .primary:focus{background:var(--focus-bg);color:var(--focus-ink);border-color:var(--focus-bg)}
+.primary{background:var(--blue);color:#fff}
+.footer{min-height:67px;justify-content:center;gap:36px;flex-shrink:0;color:var(--muted);font-size:19px}
+.footer b{display:inline-block;color:var(--fg);background:var(--item);border:1px solid var(--edge);padding:5px 9px;border-radius:7px;margin-right:7px}
+@media(max-width:1350px),(max-height:820px){
+ #app{--home-gap:12px;--home-target:53px}
+ .top{min-height:80px;padding:10px 0}.brandicon{width:48px;height:48px;border-radius:13px}
+ .brand strong{font-size:25px}.brand p{font-size:14px}.toolbar{gap:8px}.clock{font-size:20px}
+ .main{grid-template-columns:minmax(144px,17fr) minmax(0,48fr) minmax(0,35fr)}
+ .nav,.listpane,.details{padding:12px;border-radius:16px}.nav{gap:6px}
+ #app button{font-size:18px;padding:8px 11px}
+ .heading h1{font-size:29px}.heading span{font-size:16px}
+ #app .groups button{min-height:44px;font-size:16px}
+ #app .channel{min-height:59px;gap:9px;padding:6px 9px;margin-bottom:7px}
+ .logo,.placeholder{width:50px;height:34px}.num{min-width:35px;font-size:14px}
+ .chtext strong{font-size:19px}.chtext small{font-size:14px}
+ .details{gap:10px}.preview b{font-size:52px}.channel-summary h2{font-size:29px}.channel-summary p{font-size:17px}
+ .footer{min-height:48px;gap:21px;font-size:15px}
+}
+@media(max-height:620px){
+ #app{--home-target:46px}.top{min-height:66px}.footer{min-height:39px}
+ .preview{height:23vh}.preview img{padding:5px}
+}
 .overlay{position:absolute;inset:0;background:#000d;display:grid;place-items:center;z-index:10}.dialog{width:min(800px,85vw);max-height:90vh;overflow-y:auto;background:var(--panel);border:2px solid var(--edge);border-radius:20px;padding:28px 35px}.dialog h2{margin:0 0 16px}.dialog label{display:block;margin-top:15px;font-size:18px;font-weight:bold}.dialog input:not([type=checkbox]),.dialog textarea{background:var(--bg);border:1px solid var(--edge);border-radius:10px;padding:14px;width:100%;margin-top:7px;font-size:19px}.dialog .consent{display:flex;gap:12px;align-items:center;line-height:1.45}.dialog .consent input{width:26px;height:26px}.dialog .hint{color:var(--muted);font-size:16px;line-height:1.4}.dialog .buttons{display:flex;justify-content:flex-end;gap:12px;margin-top:18px}
 #player{position:absolute;inset:0;background:#000;z-index:7}#video{width:100%;height:100%;object-fit:contain}.playerhead{position:absolute;top:0;left:0;right:0;padding:24px 32px;background:linear-gradient(#000b,transparent);display:flex;justify-content:space-between;align-items:center}.playerhead strong{font-size:30px}.playerstatus{position:absolute;top:45%;width:100%;text-align:center;color:#fff;font-size:22px;padding:0 9%}.playerfoot{position:absolute;bottom:0;width:100%;text-align:center;padding:25px;background:linear-gradient(transparent,#000a);font-size:20px}
 #toast{position:absolute;z-index:30;left:50%;transform:translateX(-50%);bottom:11%;padding:17px 25px;border-radius:14px;background:#0563ae;color:#fff;font-size:20px;max-width:70%;overflow-wrap:anywhere;line-height:1.45}
-@media(max-width:1100px){body{font-size:18px}.brand strong{font-size:24px}.nav button{font-size:18px;padding:14px}.listpane,.details{padding:15px}.top{padding:10px}.toolbar button{font-size:16px}.footer{font-size:13px}}
-
 /* Large TV QR and explicit Samsung remote navigation */
 .dialog.source-mode{width:min(1300px,94vw);max-height:94vh;padding:26px 30px}
 .source-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,0.94fr);gap:25px}
@@ -48,12 +158,6 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 .dialog .rights-toggle[aria-checked=true] .rights-box::before{content:"✓";font-weight:800}
 .dialog .rights-toggle:focus,.dialog .rights-toggle:focus-visible{outline:4px solid var(--focus);outline-offset:3px;box-shadow:0 0 0 7px #168df833}
 
-/* Shortcuts belong only to the home sidebar, never to the video player. */
-.nav .sidebar-shortcuts{margin-top:12px;display:flex;flex-direction:column;gap:12px;align-items:stretch;padding:0 5px;flex-shrink:0}
-.nav .tip{margin-top:auto;flex-shrink:0}
-.nav .sidebar-shortcuts button{flex:0 0 auto;width:100%;min-height:52px;padding:11px 15px;text-align:left;font-size:17px;line-height:1.3;border:1px solid #61738d;background:var(--item);color:var(--fg);border-radius:11px;white-space:nowrap}
-.nav .sidebar-shortcuts .exit-small{background:#782238;color:#fff;border-color:#ad5468}
-.nav .sidebar-shortcuts button:focus-visible{background:var(--blue);color:#fff;outline:3px solid var(--focus);outline-offset:2px}
 .playerfoot{pointer-events:none;transition:opacity .25s}
 .playerhead{pointer-events:none;transition:opacity .25s}
 #player.is-playing .playerfoot,#player.is-playing .playerhead{opacity:0}
@@ -89,16 +193,55 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 @media(max-height:620px){#channelPicker{padding-top:10px;padding-bottom:10px}.picker-panel{padding:14px 17px;gap:8px}.picker-row{min-height:40px;padding:6px 10px;margin-bottom:5px}.picker-groups{min-height:38px}}
 .playerdiag{position:absolute;z-index:3;top:calc(45% + 55px);left:7%;right:7%;max-height:30vh;overflow:auto;white-space:pre-line;overflow-wrap:anywhere;padding:12px 18px;border:1px solid #8b6c3b;border-radius:10px;background:#080a0ee8;color:#ffe0aa;font-size:19px;line-height:1.45;text-align:left;text-shadow:0 1px 3px #000}
 #player.is-playing .playerdiag{display:none}
-@media(max-width:1100px){.nav .sidebar-shortcuts{gap:6px;padding:0 2px}.nav .sidebar-shortcuts button{font-size:13px;padding:8px 9px}}
 </style>
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.42</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
-<div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
-<section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
-<aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
-<footer class="footer"><span><b>↑ ↓ ← →</b> Di chuyển</span><span><b>OK</b> Chọn</span><span><b>↶</b> Trở lại / Thoát</span><span><b>CH ±</b> Chuyển kênh</span></footer></div>
+<header class="top">
+  <div class="brand"><div class="brandicon" aria-hidden="true">▶</div>
+    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.42</p></div>
+  </div>
+  <div class="toolbar">
+    <span class="clock" id="clock">--:--</span>
+    <button id="searchBtn">⌕ Tìm kênh</button>
+    <button id="addBtn">＋ Nguồn M3U</button>
+    <button id="themeBtn">◐ Giao diện</button>
+  </div>
+</header>
+<div class="main">
+  <nav class="nav">
+    <button class="active" data-nav="all"><span aria-hidden="true">▣</span>Trực tiếp</button>
+    <button data-nav="favorites"><span aria-hidden="true">♡</span>Yêu thích</button>
+    <button data-nav="recent"><span aria-hidden="true">◷</span>Đã xem</button>
+    <button data-nav="help"><span aria-hidden="true">?</span>Hướng dẫn</button>
+    <div id="sidebarShortcuts" class="sidebar-shortcuts">
+      <button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew"><span aria-hidden="true">▶</span>TizenTube</button>
+      <button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew"><span aria-hidden="true">×</span>Thoát</button>
+    </div>
+  </nav>
+  <section class="listpane" aria-labelledby="heading">
+    <div class="heading"><h1 id="heading">Trực tiếp</h1><span id="count">0 kênh</span></div>
+    <div class="groups" id="groups" aria-label="Nhóm kênh"></div>
+    <div class="channels" id="channels"></div>
+    <div class="empty" id="empty" hidden>
+      <h2 id="emptyTitle">Chưa có kênh IPTV</h2>
+      <p id="emptyHint">Thêm nguồn bằng URL hoặc quét QR bằng điện thoại.</p>
+      <button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button>
+      <button id="sampleBtn">▶ Thêm kênh thử nghiệm</button>
+    </div>
+    <button id="more" hidden>Tải thêm kênh ↓</button>
+  </section>
+  <aside class="details" aria-label="Kênh đang chọn">
+    <div class="preview" aria-hidden="true"><b id="previewText">TV</b><img id="previewLogo" alt="" hidden></div>
+    <div class="channel-summary"><h2 id="channelTitle">Chọn kênh</h2><p id="channelGroup" hidden></p></div>
+    <div class="actions">
+      <button class="primary" id="watchBtn">▶ Xem kênh</button>
+      <button id="favBtn">♡ Thêm yêu thích</button>
+    </div>
+  </aside>
+</div>
+<footer class="footer"><span><b>↑ ↓ ← →</b>Di chuyển</span><span><b>OK</b>Chọn / phát kênh</span><span><b>↶</b>Quay lại</span></footer>
+</div>
 <div class="overlay" id="modal" hidden><div class="dialog" role="dialog" aria-modal="true"><h2 id="dialogTitle">Thêm nguồn IPTV</h2><div id="sourceDialog">
 <div class="source-grid"><section class="source-manual">
 <label for="sourceName">Tên nguồn (không bắt buộc)</label><input id="sourceName" placeholder="Để trống để tự đặt tên" maxlength="80" autocomplete="off">
@@ -637,23 +780,105 @@ function rememberPickerPosition(){
  lastPickerPosition={group:pickerGroup,id:channel.id};
  try{localStorage.setItem(pickerFocusStorageKey,JSON.stringify(lastPickerPosition));}catch(e){}
 }
-function select(c){selected=c;byId('channelTitle').textContent=c?c.name:'Open IPTV Pro TV';byId('channelGroup').textContent=c?c.group:'Chọn một kênh để xem';byId('channelInfo').textContent=c?'Nguồn: '+c.url.slice(0,130):'Thêm danh sách M3U từ mục Nguồn.';byId('previewText').textContent=c?c.name.slice(0,4).toUpperCase():'TV';byId('watchBtn').disabled=!c;byId('favBtn').disabled=!c;byId('favBtn').textContent=c&&state.favorites[c.id]?'♥ Đã thích':'♡ Yêu thích';}
+function select(c){
+ selected=c;
+ byId('channelTitle').textContent=c?c.name:'Chọn kênh';
+ var channelGroup=byId('channelGroup');
+ channelGroup.textContent=c?c.group:'';
+ channelGroup.hidden=!c;
+ var logo=byId('previewLogo'),fallback=byId('previewText');
+ fallback.textContent=c?c.name.slice(0,4).toUpperCase():'TV';
+ var nextLogo=c&&c.logo||'';
+ if((logo.getAttribute('src')||'')!==nextLogo){
+  logo.hidden=!nextLogo;
+  if(nextLogo)logo.src=nextLogo;
+  else logo.removeAttribute('src');
+ }
+ fallback.hidden=!logo.hidden;
+ byId('watchBtn').disabled=!c;
+ var favorite=byId('favBtn'),isFavorite=!!(c&&state.favorites[c.id]);
+ favorite.disabled=!c;
+ favorite.textContent=isFavorite?'♥ Bỏ yêu thích':'♡ Thêm yêu thích';
+ favorite.setAttribute('aria-pressed',String(isFavorite));
+}
 function draw(){
  rememberHomeFocus(document.activeElement);
- items=all();if(selected)selected=items.filter(function(c){return c.id===selected.id;})[0]||null;
-var list=items.filter(function(c){return section==='favorites'?!!state.favorites[c.id]:section==='recent'?state.recent.indexOf(c.id)>=0:true;});
-if(section==='recent')list.sort(function(a,b){return state.recent.indexOf(a.id)-state.recent.indexOf(b.id);});
-var gs=['Tất cả'];list.forEach(function(c){if(gs.indexOf(c.group)<0)gs.push(c.group);});if(gs.indexOf(group)<0)group='Tất cả';
-byId('groups').replaceChildren();gs.slice(0,80).forEach(function(g){var b=elem('button',g===group?'active':'',g);b.dataset.groupName=g;b.onclick=function(){group=g;lastHomeFocus='group:'+g;try{localStorage.setItem(focusStorageKey,lastHomeFocus);}catch(e){}showLimit=160;draw();};byId('groups').appendChild(b);});
-list=list.filter(function(c){return (group==='Tất cả'||c.group===group)&&(!search||(c.name+' '+c.group).toLowerCase().indexOf(search)>=0);});
-byId('count').textContent=list.length+' kênh';byId('heading').textContent=section==='favorites'?'Yêu thích':section==='recent'?'Đã xem':'Trực tiếp';
-var holder=byId('channels');holder.replaceChildren();list.slice(0,showLimit).forEach(function(c,i){var b=elem('button','channel'+(selected&&selected.id===c.id?' selected':''));b.dataset.channelId=c.id;b.appendChild(elem('span','num',String(i+1).padStart(3,'0')));
-if(c.logo){var image=elem('img','logo');image.src=c.logo;image.alt='';image.onerror=function(){image.replaceWith(elem('span','placeholder','TV'));};b.appendChild(image);}else b.appendChild(elem('span','placeholder','TV'));
-var meta=elem('span','chtext');meta.appendChild(elem('strong','',c.name));meta.appendChild(elem('small','',c.group));b.appendChild(meta);if(state.favorites[c.id])b.appendChild(elem('span','heart','♥'));b.onfocus=function(){select(c);};b.onclick=function(){select(c);play(c);};holder.appendChild(b);});
-byId('more').hidden=list.length<=showLimit;byId('empty').hidden=list.length>0;
-if(!selected&&list.length)select(list[0]);else select(selected);
-document.querySelectorAll('[data-nav]').forEach(function(b){b.classList.toggle('active',b.dataset.nav===section);});
- restoreHomeFocus();}
+ items=all();
+ var list=items.filter(function(c){
+  if(section==='favorites')return !!state.favorites[c.id];
+  if(section==='recent')return state.recent.indexOf(c.id)>=0;
+  return true;
+ });
+ if(section==='recent')list.sort(function(a,b){return state.recent.indexOf(a.id)-state.recent.indexOf(b.id);});
+ var groups=['Tất cả'];
+ list.forEach(function(c){if(groups.indexOf(c.group)<0)groups.push(c.group);});
+ if(groups.indexOf(group)<0)group='Tất cả';
+ var groupBar=byId('groups');
+ groupBar.hidden=groups.length<=1;
+ groupBar.replaceChildren();
+ groups.slice(0,80).forEach(function(g){
+  var button=elem('button',g===group?'active':'',g);
+  button.dataset.groupName=g;
+  button.setAttribute('aria-pressed',String(g===group));
+  button.onclick=function(){
+   group=g;
+   rememberHomeFocus(button);
+   showLimit=160;
+   byId('channels').scrollTop=0;
+   draw();
+  };
+  groupBar.appendChild(button);
+ });
+ list=list.filter(function(c){
+  return (group==='Tất cả'||c.group===group)&&(!search||(c.name+' '+c.group).toLowerCase().indexOf(search)>=0);
+ });
+ byId('count').textContent=list.length+' kênh';
+ byId('heading').textContent=section==='favorites'?'Yêu thích':section==='recent'?'Đã xem':'Trực tiếp';
+ var visible=list.slice(0,showLimit),holder=byId('channels');
+ var preview=selected&&visible.find(function(c){return c.id===selected.id;});
+ holder.replaceChildren();
+ holder.hidden=!list.length;
+ visible.forEach(function(c,i){
+  var b=elem('button','channel');
+  b.dataset.channelId=c.id;
+  b.appendChild(elem('span','num',String(i+1).padStart(3,'0')));
+  if(c.logo){
+   var image=elem('img','logo');
+   image.loading='lazy';
+   image.src=c.logo;
+   image.alt='';
+   image.onerror=function(){image.replaceWith(elem('span','placeholder','TV'));};
+   b.appendChild(image);
+  }else b.appendChild(elem('span','placeholder','TV'));
+  var meta=elem('span','chtext');
+  meta.appendChild(elem('strong','',c.name));
+  meta.appendChild(elem('small','',c.group));
+  b.appendChild(meta);
+  if(state.favorites[c.id])b.appendChild(elem('span','heart','♥'));
+  b.onfocus=function(){select(c);};
+  b.onclick=function(){select(c);play(c);};
+  holder.appendChild(b);
+ });
+ byId('more').hidden=list.length<=showLimit;
+ byId('empty').hidden=!!list.length;
+ if(!list.length){
+  var needsSource=!items.length&&!search&&section==='all';
+  byId('emptyTitle').textContent=search?'Không tìm thấy kênh':section==='favorites'?'Chưa có kênh yêu thích':section==='recent'?'Chưa xem kênh nào':'Chưa có kênh IPTV';
+  byId('emptyHint').textContent=search?'Thử từ khóa khác hoặc xóa nội dung tìm kiếm.':
+   section==='favorites'?'Chọn một kênh rồi bấm Thêm yêu thích.':
+   section==='recent'?'Kênh đã phát sẽ xuất hiện ở đây.':'Thêm nguồn bằng URL hoặc quét QR bằng điện thoại.';
+  byId('emptyAdd').hidden=!needsSource;
+  byId('sampleBtn').hidden=!needsSource;
+ }
+ select(preview||visible[0]||null);
+ document.querySelectorAll('[data-nav]').forEach(function(b){
+  var active=b.dataset.nav===section;
+  b.classList.toggle('active',active);
+  if(active)b.setAttribute('aria-current','page');
+  else b.removeAttribute('aria-current');
+ });
+ restoreHomeFocus();
+}
 function openDialog(kind){byId('modal').hidden=false;byId('sourceDialog').hidden=kind==='search';byId('searchDialog').hidden=kind!=='search';
 byId('modal').firstElementChild.classList.toggle('source-mode',kind!=='search');
 byId('dialogTitle').textContent=kind==='search'?'Tìm kiếm kênh':'Thêm nguồn IPTV';
@@ -1483,7 +1708,53 @@ function resumeLastChannel(){
  return true;
 }
 function changeChannel(offset){var i=items.findIndex(function(c){return playing&&c.id===playing.id;});if(i>=0)play(items[(i+offset+items.length)%items.length]);}
-function move(key){var scope=byId('modal').hidden?document:byId('modal');var nodes=Array.from(scope.querySelectorAll('button:not([disabled]),input:not([disabled])')).filter(function(e){return e.getClientRects().length>0;});
+function homeButtons(selector){
+ return Array.from(document.querySelectorAll(selector)).filter(function(button){
+  return !button.disabled&&button.getClientRects().length>0;
+ });
+}
+function focusHomeButton(button){
+ if(!button)return;
+ try{button.focus({preventScroll:true});}catch(e){button.focus();}
+ try{button.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}
+}
+function moveHome(key){
+ var active=document.activeElement;
+ var toolbar=homeButtons('#app .toolbar button');
+ var menu=homeButtons('#app .nav button');
+ var groups=homeButtons('#groups button');
+ var list=homeButtons('#channels button,#empty button,#more');
+ var actions=homeButtons('#app .actions button');
+ var selectedMenu=menu.find(function(button){return button.dataset.nav===section;})||menu[0];
+ var selectedGroup=groups.find(function(button){return button.dataset.groupName===group;})||groups[0];
+ var selectedRow=list.find(function(button){return selected&&button.dataset.channelId===selected.id;})||list[0];
+ var up=key==='ArrowUp',down=key==='ArrowDown',left=key==='ArrowLeft',right=key==='ArrowRight';
+ var index=toolbar.indexOf(active),target;
+ if(index>=0){
+  if(left||right)target=toolbar[index+(left?-1:1)];
+  if(down)target=(index===0?selectedGroup||selectedRow:actions[0])||selectedGroup||selectedRow||selectedMenu;
+ }else if((index=menu.indexOf(active))>=0){
+  if(up)target=menu[index-1]||toolbar[0];
+  if(down)target=menu[index+1];
+  if(right)target=selectedRow||selectedGroup||toolbar[0];
+ }else if((index=groups.indexOf(active))>=0){
+  if(up)target=toolbar[0];
+  if(down)target=selectedRow;
+  if(left)target=groups[index-1]||selectedMenu;
+  if(right)target=groups[index+1]||actions[0];
+ }else if((index=list.indexOf(active))>=0){
+  if(up)target=list[index-1]||selectedGroup||toolbar[0];
+  if(down)target=list[index+1];
+  if(left)target=selectedMenu;
+  if(right)target=actions[0];
+ }else if((index=actions.indexOf(active))>=0){
+  if(up)target=actions[index-1]||toolbar[2];
+  if(down)target=actions[index+1];
+  if(left)target=selectedRow||selectedGroup||selectedMenu;
+ }else target=selectedRow||selectedMenu||toolbar[0];
+ focusHomeButton(target);
+}
+function move(key){var scope=byId('modal');var nodes=Array.from(scope.querySelectorAll('button:not([disabled]),input:not([disabled])')).filter(function(e){return e.getClientRects().length>0;});
 var active=document.activeElement,r=active&&active.getBoundingClientRect();if(!r||nodes.indexOf(active)<0){if(nodes.length)nodes[0].focus();return;}var x=r.left+r.width/2,y=r.top+r.height/2,best=null,min=Infinity;
 nodes.forEach(function(el){if(el===active)return;var q=el.getBoundingClientRect(),dx=q.left+q.width/2-x,dy=q.top+q.height/2-y;if(key==='ArrowLeft'&&dx>=0||key==='ArrowRight'&&dx<=0||key==='ArrowUp'&&dy>=0||key==='ArrowDown'&&dy<=0)return;var s=(key==='ArrowLeft'||key==='ArrowRight')?Math.abs(dx)+Math.abs(dy)*2.3:Math.abs(dy)+Math.abs(dx)*2.3;if(s<min){min=s;best=el;}});if(best){best.focus();best.scrollIntoView({block:'nearest',inline:'nearest'});}}
 var lastBackEventAt=0;
@@ -1635,21 +1906,32 @@ if(!byId('player').hidden){
  }
  return;
 }
-if(k.indexOf('Arrow')===0){e.preventDefault();move(k);}}
-document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){var which=b.dataset.nav;if(which==='sources'){openDialog('source');return;}if(which==='help'){notify('Điều khiển bằng ↑↓←→, OK, Back, CH±. Thêm M3U bằng + Nguồn.');return;}section=which;group='Tất cả';showLimit=160;draw();};});
+if(k.indexOf('Arrow')===0){e.preventDefault();moveHome(k);return;}
+if((k==='Enter'||k==='OK'||c===13)&&document.activeElement&&
+ document.activeElement.tagName==='BUTTON'&&byId('app').contains(document.activeElement)){
+ e.preventDefault();
+ if(!e.repeat)document.activeElement.click();
+}}
+document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){var which=b.dataset.nav;if(which==='help'){notify('Điều khiển bằng ↑↓←→, OK, Back, CH±. Thêm M3U bằng + Nguồn.');return;}section=which;group='Tất cả';showLimit=160;byId('channels').scrollTop=0;draw();};});
 byId('addBtn').onclick=function(){openDialog('source');};byId('emptyAdd').onclick=byId('addBtn').onclick;
 byId('searchBtn').onclick=function(){byId('searchInput').value=search;openDialog('search');};
 byId('cancelSource').onclick=closeDialog;byId('cancelSearch').onclick=closeDialog;byId('saveSource').onclick=function(){void addSource(null,false);};
 byId('rights').onclick=toggleRights;
 byId('toSourceUrl').onclick=function(){byId('sourceUrl').focus();};
 byId('refreshSourceQR').onclick=function(){void openPair();};
-byId('applySearch').onclick=function(){search=byId('searchInput').value.trim().toLowerCase();showLimit=160;closeDialog();draw();};
+byId('applySearch').onclick=function(){search=byId('searchInput').value.trim().toLowerCase();showLimit=160;byId('channels').scrollTop=0;closeDialog();draw();};
 byId('exitModuleBtn').onclick=exitModule;
 byId('browserFallback').onclick=openChannelInSamsungBrowser;
 byId('tizenTubeBtn').onclick=openTizenTube;
 byId('themeBtn').onclick=function(){var themes=['dark','light','amoled'],previous=state.theme;state.theme=themes[(themes.indexOf(state.theme)+1)%3];if(!save()){state.theme=previous;document.body.dataset.theme=previous;return;}document.body.dataset.theme=state.theme;notify('Giao diện: '+state.theme);};
 byId('watchBtn').onclick=function(){play(selected);};byId('favBtn').onclick=function(){if(!selected)return;var id=selected.id,old=state.favorites[id];if(old)delete state.favorites[id];else state.favorites[id]=true;if(!save()){if(old===undefined)delete state.favorites[id];else state.favorites[id]=old;}draw();};
-byId('more').onclick=function(){showLimit+=160;draw();};byId('sampleBtn').onclick=function(){if(!state.sources.some(function(s){return s.name==='Thử nghiệm';})){state.sources.push({name:'Thử nghiệm',channels:parse('#EXTM3U\n#EXTINF:-1,Mux Test HLS\nhttps://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8','Thử nghiệm')});if(!save()){state.sources.pop();draw();return;}}draw();notify('Đã thêm luồng thử nghiệm HLS.');};
+byId('more').onclick=function(){
+ var firstNew=showLimit;
+ showLimit+=160;
+ draw();
+ focusHomeButton(byId('channels').children[firstNew]);
+};byId('sampleBtn').onclick=function(){if(!state.sources.some(function(s){return s.name==='Thử nghiệm';})){state.sources.push({name:'Thử nghiệm',channels:parse('#EXTM3U\n#EXTINF:-1,Mux Test HLS\nhttps://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8','Thử nghiệm')});if(!save()){state.sources.pop();draw();return;}}draw();notify('Đã thêm luồng thử nghiệm HLS.');};
+byId('previewLogo').onerror=function(){this.hidden=true;byId('previewText').hidden=false;};
 byId('video').onplaying=function(){if(playbackEngine==='html5')playbackReady(playbackSerial);};
 byId('video').ontimeupdate=function(){if(playbackEngine==='html5'&&!this.paused&&this.readyState>=2)playbackReady(playbackSerial);};
 byId('video').onpause=function(){if(playbackEngine==='html5')byId('player').classList.remove('is-playing');};

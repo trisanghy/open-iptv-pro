@@ -3,7 +3,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 function block(a,b){let x=html.indexOf(a),y=html.indexOf(b,x);assert.ok(x>=0&&y>x,'Expected '+a);return html.slice(x,y);}
-test('Only one small exit remains; a separate TizenTube button is provided',()=>{
+test('Only one exit remains; a separate TizenTube button is provided',()=>{
  assert.equal((html.match(/id="exitModuleBtn"/g)||[]).length,1);
  assert.equal((html.match(/id="tizenTubeBtn"/g)||[]).length,1);
  assert.doesNotMatch(html,/id="navExitBtn"|id="exitPlayer"/);
@@ -13,14 +13,12 @@ test('Only one small exit remains; a separate TizenTube button is provided',()=>
  const player=html.slice(html.indexOf('<div id="player"'),html.indexOf('<div id="toast"'));
  assert.ok(nav.includes('id="sidebarShortcuts"'),'Both shortcuts should be inside the left sidebar');
  assert.ok(nav.indexOf('data-nav="help"')<nav.indexOf('id="sidebarShortcuts"'),'Below Hướng dẫn');
- assert.ok(nav.indexOf('id="sidebarShortcuts"')<nav.indexOf('class="tip"'),'Above remote guidance');
  assert.match(nav,/id="tizenTubeBtn"/);
  assert.match(nav,/id="exitModuleBtn"/);
  assert.doesNotMatch(player,/id="exitModuleBtn"|id="tizenTubeBtn"|sidebarShortcuts/);
  assert.doesNotMatch(html,/\.tv-shortcuts\{|position:fixed;z-index:8;right:18px/);
- assert.match(html,/\.nav \.sidebar-shortcuts\{margin-top:12px;display:flex;flex-direction:column;/,'shortcuts should appear vertically below Hướng dẫn');
- assert.match(html,/\.nav \.sidebar-shortcuts button\{flex:0 0 auto;width:100%;min-height:52px;/,'TizenTube and Exit should occupy separate full-width rows');
- assert.match(html,/\.nav \.tip\{margin-top:auto;/,'TV remote instructions should remain at the bottom');
+ assert.match(html,/\.nav \.sidebar-shortcuts\s*\{[^}]*flex-direction:column/,'shortcuts should appear vertically below Hướng dẫn');
+ assert.match(html,/\.nav \.sidebar-shortcuts button\{width:100%\}/,'shortcuts occupy separate full-width rows');
  const footer=html.slice(html.indexOf('<footer class="footer">'),html.indexOf('</footer>')+9);
  assert.doesNotMatch(footer,/id="exitModuleBtn"|id="tizenTubeBtn"/,'neither shortcut may appear in footer');
 
@@ -89,4 +87,36 @@ test('Main script remains syntactically valid and playback events are wired',()=
  assert.match(html,/onplaying=function\(\)\{if\(playbackEngine==='html5'\)playbackReady\(playbackSerial\);\}/);
  assert.match(html,/ontimeupdate=function\(\)/);
  assert.match(html,/function startAvplay\(channel,token\)/);assert.match(html,/api\.prepareAsync\(/);assert.match(html,/fallbackFromAvplay\(/);
+});
+
+test('Home D-pad keeps vertical movement within the list and returns to the selected channel from actions',()=>{
+ const button=(kind,name)=>({dataset:{[kind]:name},getClientRects(){return [{}];},
+  focus(){document.activeElement=this;},scrollIntoView(){}});
+ const search=button('id','search'),add=button('id','add'),theme=button('id','theme');
+ const live=button('nav','all'),favorites=button('nav','favorites');
+ const all=button('groupName','Tất cả'),sports=button('groupName','Thể thao');
+ const first=button('channelId','one'),second=button('channelId','two'),more=button('id','more');
+ const watch=button('id','watch'),fav=button('id','fav');
+ const zones={
+  '#app .toolbar button':[search,add,theme],
+  '#app .nav button':[live,favorites],
+  '#groups button':[all,sports],
+  '#channels button,#empty button,#more':[first,second,more],
+  '#app .actions button':[watch,fav]
+ };
+ const document={activeElement:live,querySelectorAll:selector=>zones[selector]};
+ const context={document,section:'all',group:'Tất cả',selected:{id:'one'}};
+ const move=vm.runInNewContext(block('function homeButtons(selector){','function move(key){')+'\nmoveHome;',context);
+ const step=(key,expected)=>{move('Arrow'+key);assert.equal(document.activeElement,expected);};
+ step('Right',first);
+ step('Up',all);
+ step('Right',sports);
+ step('Down',first);
+ step('Down',second);
+ context.selected={id:'two'};
+ step('Right',watch);
+ step('Down',fav);
+ step('Left',second);
+ step('Down',more);
+ step('Left',live);
 });

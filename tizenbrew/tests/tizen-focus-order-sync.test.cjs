@@ -108,7 +108,7 @@ test('TV focus restoration never steals input focus from open modal or fullscree
  assert.equal(s.doc.activeElement,null);
 });
 test('TV main draw and modal close restore focus after replacing buttons',()=>{
- assert.match(html,/b\.dataset\.groupName=g/);
+ assert.match(html,/\.dataset\.groupName=g/);
  assert.match(html,/b\.dataset\.channelId=c\.id/);
  assert.match(html,/restoreHomeFocus\(\);\}/);
  assert.match(html,/closeDialog\(\)\{stopPair\(\);byId\('modal'\)\.hidden=true;if\(!restoreHomeFocus\(\)\)/);
