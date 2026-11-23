@@ -1,4 +1,6 @@
 ## P5.1.311 / Electron 4.23.396 — Lưu nhãn Naive Bayes an toàn khi bộ nhớ đầy (CANDIDATE)
+- Feature priority: BLOCKER_FIX — Ngăn mất dữ liệu nhãn Naive Bayes khi localStorage đầy: RAM trước đây vẫn báo học thành công dù dữ liệu trên đĩa không được ghi, gây sai mô hình sau khi mở lại.
+- Electron screenshot: positron-p51311-storage-fail-before-1920x1080-real.png / positron-p51311-storage-fail-after-1920x1080-real.png.
 - Feature class: AI
 - Evidence: QA Electron thật `qa311` giả lập QuotaExceededError với localStorage của mô hình AI; ảnh `positron-p51311-storage-fail-before-1920x1080-real.png` / `positron-p51311-storage-fail-after-1920x1080-real.png`, Node regression.
 - Nguyên nhân: nút Ghi nhãn & tiếp cập nhật trọng số Naive Bayes và danh sách đã học trong RAM trước khi lưu; nếu lưu lỗi, giao diện báo đã học dù lần khởi động tiếp theo sẽ mất nhãn.
