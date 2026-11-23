@@ -71,12 +71,15 @@
  const importFile=d.createElement('input');importFile.type='file';importFile.id='poAIImportFile';
  importFile.accept='.json,application/json';importFile.hidden=true;
  importFile.setAttribute('aria-label','Chọn tệp sao lưu mô hình AI JSON');
+ const importPreview=d.createElement('section');importPreview.id='poAIImportPreview';
+ importPreview.className='po-ai-compare';importPreview.hidden=true;
+ importPreview.setAttribute('aria-label','So sánh trọng số học AI hiện tại với tệp sao lưu');
  const importConfirm=d.createElement('button');importConfirm.type='button';importConfirm.id='poAIImportConfirm';
  importConfirm.className='po-ai-import-confirm';importConfirm.hidden=true;
  importConfirm.textContent='Xác nhận khôi phục trọng số AI';
  const bulk=d.createElement('button');bulk.type='button';bulk.id='poAIClearAll';
  bulk.className='po-ai-clear-all';bulk.textContent='Xóa toàn bộ dữ liệu học';bulk.title='Xóa tất cả ba mô hình học sau khi xác nhận hai lần';
- modelManager.append(modelToggle,modelRows,backup,importButton,importFile,importConfirm,bulk,modelStatus,modelHint);
+ modelManager.append(modelToggle,modelRows,backup,importButton,importFile,importPreview,importConfirm,bulk,modelStatus,modelHint);
  let pendingModel='',pendingAt=0;
  const modelBytes=value=>new TextEncoder().encode(JSON.stringify(value||{})).byteLength;
  const learnedInventory=()=>[
@@ -675,18 +678,34 @@
  // P285: validate and preview a chosen local backup, then require second confirmation.
  let pendingLearningImport=null,importSequence=0;
  importButton.addEventListener('click',()=>{
-  ++importSequence;pendingLearningImport=null;importConfirm.hidden=true;
+  ++importSequence;pendingLearningImport=null;importConfirm.hidden=true;importPreview.hidden=true;importPreview.replaceChildren();
   importFile.click();
  });
  importFile.addEventListener('change',async()=>{
   const file=importFile.files?.[0];importFile.value='';
-  const sequence=++importSequence;pendingLearningImport=null;importConfirm.hidden=true;
+  const sequence=++importSequence;pendingLearningImport=null;importConfirm.hidden=true;importPreview.hidden=true;importPreview.replaceChildren();
   if(!file)return;
   if(file.size>512000){modelStatus.textContent='Tệp sao lưu vượt giới hạn 500 KB; dữ liệu hiện tại chưa thay đổi.';return;}
   try{
    const raw=JSON.parse(await file.text());if(sequence!==importSequence)return;
    const parsed=core.parseLearningBackup(raw);
    if(!parsed.ok){modelStatus.textContent='Không thể khôi phục: '+parsed.reason+' Dữ liệu hiện tại vẫn giữ nguyên.';return;}
+   const comparison=core.compareLearningBackup({model,categoryModel,bandit},parsed);
+   if(!comparison.ok){modelStatus.textContent='Không thể so sánh: '+comparison.reason;return;}
+   const heading=d.createElement('strong');heading.textContent='So sánh với mô hình đang dùng';
+   importPreview.append(heading);
+   for(const row of comparison.rows){
+    const line=d.createElement('div');line.className='po-ai-compare-row';
+    if(row.delta<0)line.classList.add('po-ai-compare-loss');
+    const label=d.createElement('span');label.textContent=row.label;
+    const counts=d.createElement('span');counts.className='po-ai-compare-count';
+    counts.textContent=row.before+' → '+row.after+' '+row.unit+' ('+(row.delta>0?'+':'')+row.delta+')';
+    line.append(label,counts);importPreview.append(line);
+   }
+   const warning=d.createElement('p');warning.id='poAIImportWarning';
+   warning.className=comparison.lossCount?'po-ai-compare-warning po-ai-compare-risk':'po-ai-compare-warning';
+   warning.textContent=comparison.warning+' '+comparison.caution;
+   importPreview.append(warning);importPreview.hidden=false;
    pendingLearningImport=parsed;importConfirm.hidden=false;
    modelStatus.textContent='Xem trước: '+parsed.summary.preferenceObservations+' phản hồi, '
     +parsed.summary.categoryLabels+' nhãn và '+parsed.summary.exploredTopics
@@ -707,7 +726,7 @@
    modelStatus.textContent='Không thể lưu dữ liệu khôi phục; mô hình cũ đã được giữ nguyên.';
    return;
   }
-  pendingLearningImport=null;importConfirm.hidden=true;
+  pendingLearningImport=null;importConfirm.hidden=true;importPreview.hidden=true;importPreview.replaceChildren();
   active=null;activeTeachIndex=0;sessionSkippedIds.clear();lastActiveTeachUndo=null;
   activeStatusMessage='Đã khôi phục trọng số AI đã xác nhận từ tệp JSON.';
   render();

@@ -617,3 +617,41 @@ test('P285 khôi phục bản sao AI v1 có xem trước và chặn JSON giả m
   'positron-p51285-ai-restore-after-1920x1080-real.png'])
   assert.ok(qa.includes(name),name);
 });
+
+test('P286 xem trước chênh lệch mẫu ba thuật toán AI, không thay trọng số',()=>{
+ let currentCategory=C.emptyCategoryModel();
+ currentCategory=C.teachCategory(currentCategory,{name:'Science Documentary'},'documentary');
+ currentCategory=C.teachCategory(currentCategory,{name:'Study Academy'},'education');
+ const currentLog=C.learn(C.emptyModel(),{bias:1,'topic:education':1},1);
+ const currentBandit=C.observeBandit(C.observeBandit({},'education'),'documentary');
+ const current={model:currentLog,categoryModel:currentCategory,bandit:currentBandit};
+ const previous=JSON.stringify(current);
+ const weak=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const loss=C.compareLearningBackup(current,C.parseLearningBackup(weak));
+ assert.equal(loss.ok,true);
+ assert.equal(loss.rows.length,3);
+ assert.deepEqual(loss.rows.map(x=>x.delta),[-1,-2,-2]);
+ assert.equal(loss.lossCount,3);
+ assert.ok(loss.warning.includes('ít mẫu hơn'));
+ assert.ok(loss.caution.includes('không chứng minh'));
+ let betterCategory=C.teachCategory(currentCategory,{name:'News Daily Channel'},'news');
+ const better=C.buildLearningBackup({model:currentLog,categoryModel:betterCategory,bandit:currentBandit});
+ const gain=C.compareLearningBackup(current,better);
+ assert.equal(gain.ok,true);assert.equal(gain.lossCount,0);
+ assert.deepEqual(gain.rows.map(x=>x.delta),[0,1,0]);
+ assert.equal(gain.gainCount,1);
+ assert.equal(C.compareLearningBackup(current,{}).ok,false);
+ assert.equal(JSON.stringify(current),previous,'preview must be read-only');
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8'),
+  css=fs.readFileSync('renderer/positron-intelligence.css','utf8'),
+  qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ['poAIImportPreview','poAIImportWarning',
+  'core.compareLearningBackup({model,categoryModel,bandit},parsed)','po-ai-compare-loss',
+  "comparison.warning+' '+comparison.caution"])
+  assert.ok(ui.includes(token),token);
+ assert.ok(css.includes('#poWatchFlowPanel #poAIImportPreview[hidden]'));
+ for(const image of ['positron-p51286-ai-compare-before-1920x1080-real.png',
+  'positron-p51286-ai-compare-preview-1920x1080-real.png',
+  'positron-p51286-ai-compare-after-1920x1080-real.png'])
+  assert.ok(qa.includes(image),image);
+});

@@ -1,3 +1,11 @@
+## P5.1.286 — So sánh trọng số AI hiện tại với bản sao trước khôi phục / Electron 4.23.371
+- Feature priority: NEW — Hiển thị chênh lệch mẫu học Logistic ML, Naive Bayes và lượt khám phá UCB trong bảng so sánh ngay trước khi xác nhận, cảnh báo khi bản sao ít dữ liệu học hơn và nêu rõ không đánh đồng số mẫu với độ chính xác.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục mô hình AI → chọn JSON để xem ba hàng hiện tại/trong tệp, cảnh báo mất mẫu trước khi xác nhận.
+- Electron screenshot: positron-p51286-ai-compare-before-1920x1080-real.png / positron-p51286-ai-compare-preview-1920x1080-real.png / positron-p51286-ai-compare-after-1920x1080-real.png.
+- Evidence: Unit test đo ba mức chênh lệch khi ít/nhiều mẫu, bảo toàn mô hình trước xác nhận; Electron dùng bản sao ít mẫu để kiểm tra cảnh báo, đổi sang bản sao nhiều mẫu, mới xác nhận ghi ML, chứng minh danh sách kênh và playback bất biến.
+- Status: CANDIDATE — Chỉ có bằng chứng sau khi CI và ảnh Electron thật đã mở kiểm tra, không tạo bản thử nghiệm trên GitHub Releases Stable.
+
 ## P5.1.285 — Khôi phục mô hình AI từ JSON có xác nhận / Electron 4.23.370
 - Feature priority: NEW — Bổ sung chọn file sao lưu JSON cục bộ, từ chối tệp sai định dạng, giả mạo, vượt 500KB hoặc tổng số mẫu không khớp. Hiển thị xem trước Logistic, Naive Bayes, UCB và bắt buộc nhấn nút xác nhận trước khi thay thế trọng số.
 - Chỉ đọc tệp trong Electron, không tải lên Internet. Bảo toàn quyền bật AI, thông báo, dữ liệu M3U/kênh, EPG, Favorites và trình phát; nếu ghi localStorage thất bại, khôi phục các giá trị cũ trong bộ nhớ.

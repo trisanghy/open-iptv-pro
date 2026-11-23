@@ -176,3 +176,13 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-import:focus-visible,#poWatchFlowPanel .po-ai-import-confirm:focus-visible{outline:2px solid #afe2ff;outline-offset:2px}
 #poWatchFlowPanel .po-ai-import-confirm{width:100%;min-height:38px;margin-top:5px;padding:8px 12px;border:1px solid #9fcdb7;border-radius:8px;background:#247150;color:#f1fff8;cursor:pointer;font-size:12px;font-weight:700}
 #poWatchFlowPanel #poAIImportConfirm[hidden]{display:none!important}
+
+/* P286: count deltas before applying an AI backup; warning never claims accuracy. */
+#poWatchFlowPanel #poAIImportPreview[hidden]{display:none!important}
+#poWatchFlowPanel .po-ai-compare{margin:7px 0;padding:9px;border:1px solid #436c76;border-radius:9px;background:#102a37;color:#e5f5f3;font-size:12px}
+#poWatchFlowPanel .po-ai-compare>strong{display:block;margin:0 0 6px;font-size:12px}
+#poWatchFlowPanel .po-ai-compare-row{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;padding:4px 0;border-top:1px solid #365761}
+#poWatchFlowPanel .po-ai-compare-count{font-variant-numeric:tabular-nums;font-size:11px;color:#bfe8de}
+#poWatchFlowPanel .po-ai-compare-loss .po-ai-compare-count{color:#ffc2a8}
+#poWatchFlowPanel .po-ai-compare-warning{margin:6px 0 0;font-size:11px;line-height:1.4;color:#bdcfd4}
+#poWatchFlowPanel .po-ai-compare-risk{color:#ffd2b3}

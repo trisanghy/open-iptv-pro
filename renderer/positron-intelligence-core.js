@@ -318,6 +318,28 @@
   return {ok:true,model,categoryModel,bandit,summary};
  }
 
+ // P286: pure count-level comparison. Counts are evidence size, not ML accuracy.
+ function compareLearningBackup(current,loaded){
+  const imported=loaded?.ok===true?loaded:parseLearningBackup(loaded);
+  if(!imported?.ok)return {ok:false,reason:imported?.reason||'Không thể so sánh bản sao.'};
+  const raw=current&&typeof current==='object'?current:{};
+  const model=sanitizedModel(raw.model),category=sanitizedCategoryModel(raw.categoryModel),bandit=sanitizedBandit(raw.bandit);
+  const sum=value=>Object.values(value).reduce((n,x)=>n+Math.max(0,Number(x)||0),0);
+  const rows=[
+   {key:'preference',label:'Logistic ML',unit:'phản hồi',
+    before:model.observations,after:imported.model.observations},
+   {key:'category',label:'Naive Bayes',unit:'nhãn',
+    before:category.examples,after:imported.categoryModel.examples},
+   {key:'explore',label:'Khám phá UCB',unit:'quan sát',
+    before:sum(bandit),after:sum(imported.bandit)}
+  ].map(row=>({...row,delta:row.after-row.before}));
+  const lossCount=rows.filter(row=>row.delta<0).length;
+  return {ok:true,rows,lossCount,gainCount:rows.filter(row=>row.delta>0).length,
+   warning:lossCount?'Bản sao có ít mẫu hơn ở '+lossCount+' mô hình. Khôi phục sẽ ghi đè, không ghép dữ liệu.':
+    'Khôi phục sẽ thay thế trọng số hiện tại, không ghép dữ liệu.',
+   caution:'Số lượng mẫu không chứng minh mô hình chính xác hơn.'};
+ }
+
  // P282: explain learned Naive Bayes evidence using only channel-name tokens.
  // Never show a prediction from shared generic group names or unsupervised web data.
  function explainCategory(raw,channel){
@@ -574,5 +596,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,compareLearningBackup,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

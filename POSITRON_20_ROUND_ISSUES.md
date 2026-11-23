@@ -40,3 +40,8 @@ Vòng 01 dự kiến P5.1.279:
 - Commit tính năng 40a2e226441378a244dcb824cc531211eb51fbe4; QA fix d5abf87d0b11598197089f71c865e568bb17625e. CI 45116563561: 992 pass, 5 skipped, 0 fail, capture và Win/Mac builds success.
 - Bộ ảnh thật artifact 14792206663 đã tải, mở và soát TRƯỚC/SAU; nội dung thông báo sao lưu xuất hiện, không tràn/chồng trong vùng quản lý. Dữ liệu M3U, playback, ML storage bất biến.
 - Vòng 02/20 — P5.1.285 từ ảnh P284: chưa có nút khôi phục, cần xem trước và xác nhận trước khi ghi trọng số, không ảnh hưởng dữ liệu kênh.
+
+## Vòng 02/20 P5.1.285 — ĐẠT (23/11/2026)
+- Feature commit 53be84edbdaf9715cdee9a245dd73e706bd91b19, fix 0b4a70679db25c5360e63e77d4d0e754726798f1, Actions 45118018946 thành công: 993 pass, 5 skipped, 0 fail và 3/3 build.
+- Tải và MỞ hai ảnh thật trước/sau P285: nút Khôi phục xuất hiện ngay dưới Sao lưu, sau xác nhận số nhãn thay đổi 1→2 và thông báo hiển thị; QA 10/10, không đổi M3U/kênh/phát video.
+- Vòng 03 P5.1.286 phát hiện: preview chưa so sánh số mẫu AI giữa máy hiện tại với bản sao, có nguy cơ người dùng ghi đè mô hình nhiều ví dụ hơn mà không biết.
