@@ -8,7 +8,7 @@ test('P333 active AI hides redundant WatchFlow modes and preserves original path
  assert.ok(css.includes('#poWatchFlowPanel[data-po-ai-active="true"] .po-flowplus-nav'));
  assert.ok(css.includes('display:none!important'));
  assert.ok(js.includes("tab.addEventListener('click',()=>{if(aiOpen)"));
- for(const p of ['legacyToolbarReproduced','oldNarrowActionWasClipped','narrowFirstActionReachable',
+ for(const p of ['legacyToolbarReproduced','layoutReclaimed','narrowFirstActionReachable',
   'redundantToolbarHidden','playlistUnchanged','modelUnchanged','noAutoplay',
   'positron-p51333-ai-actions-before-1920x1080-real.png',
   'positron-p51333-ai-actions-after-1920x1080-real.png',

@@ -1,5 +1,6 @@
 ## P5.1.333 / Electron 4.23.418 — Sửa trùng thanh điều hướng che nút Xem AI (CANDIDATE)
-- Feature priority: BLOCKER_FIX
+- Feature priority: BLOCKER_FIX — Sửa lỗi CI kiểm thử Electron làm thất bại bước chụp ảnh và chặn kiểm chứng bản phát hành, đồng thời khôi phục nút Xem AI bị che trên màn 720px.
+- Feature class: AI
 - Root cause: Full Electron CI P332, Actions 45253296908, thất bại tại kịch bản P326 vì năm nút WatchFlow thường hiển thị ngay phía trên sáu chế độ AI; ảnh 720x900 cho thấy nút Xem của gợi ý đầu nằm dưới mép panel.
 - Fix: Ẩn thanh năm chế độ WatchFlow thường **chỉ khi chế độ AI đang mở**. Người dùng vẫn nhấn «AI hợp gu» để quay về WatchFlow thường; không xóa tính năng.
 - Electron screenshot: positron-p51333-ai-actions-before-1920x1080-real.png / positron-p51333-ai-actions-after-1920x1080-real.png / positron-p51333-ai-actions-before-720x900-real.png / positron-p51333-ai-actions-after-720x900-real.png.
