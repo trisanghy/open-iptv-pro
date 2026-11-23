@@ -15,7 +15,7 @@
  let alertEnabled=enabled&&record?.alertEnabled===true;const notified=new Set();
  const taughtIds=new Set((Array.isArray(record?.taughtIds)?record.taughtIds:[]).slice(-1000)
   .filter(x=>typeof x==='string'&&x.length<=160));
- let activeStatusMessage='',activeTeachIndex=0;
+ let activeStatusMessage='',activeTeachIndex=0;const sessionSkippedIds=new Set();
  let web=load(WEB_KEY);if(!web||typeof web!=='object'||Array.isArray(web))web={};
  const webValid=()=>{
   const live={};const now=Date.now();
@@ -347,12 +347,24 @@
    }
    // P277: learn only after explicit selection. Preserve EPG virtual folders and M3U playlist.
    if(key==='other'&&enabled){
-    const candidates=core.rankUnclassified(items,categoryModel,{limit:5,excludeIds:[...taughtIds]});
+    const candidates=core.rankUnclassified(items,categoryModel,{limit:5,excludeIds:[...taughtIds,...sessionSkippedIds]});
     const trainer=d.createElement('section');trainer.id='poAIActiveLearning';trainer.className='po-ai-active-learning';
-    const heading=d.createElement('strong');heading.textContent='Dạy AI nhanh · '+candidates.length+' kênh ưu tiên';
+    const heading=d.createElement('strong');heading.textContent='Dạy AI nhanh · '+candidates.length+' kênh ưu tiên'+(sessionSkippedIds.size?' · '+sessionSkippedIds.size+' đã bỏ qua trong phiên':'');
     const hint=d.createElement('p');hint.textContent='AI ưu tiên tên chưa đủ chắc chắn. Chọn chủ đề đúng để mô hình Naive Bayes học tại máy; không tự thay đổi thư mục gốc.';
     const status=d.createElement('p');status.id='poAIActiveStatus';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.textContent=activeStatusMessage;
     trainer.append(heading,hint,status);
+    // P280: session-only exclusions, never persisted as a label or preference.
+    if(sessionSkippedIds.size){
+     const restore=d.createElement('button');restore.type='button';restore.id='poAIActiveResetSkips';
+     restore.textContent='Xem lại '+sessionSkippedIds.size+' kênh đã bỏ qua';
+     restore.title='Khôi phục kênh bỏ qua trong phiên, giữ nguyên nhãn AI đã dạy';
+     restore.addEventListener('click',()=>{
+      sessionSkippedIds.clear();activeTeachIndex=0;
+      activeStatusMessage='Đã khôi phục hàng đợi, các nhãn đã dạy được giữ nguyên.';
+      render();
+     });
+     trainer.append(restore);
+    }
     if(!candidates.length){
      const empty=d.createElement('p');empty.textContent='Chưa có kênh phù hợp để dạy; đã hoàn thành những kênh ưu tiên hiện có.';trainer.append(empty);
     }
@@ -387,8 +399,10 @@
      const skip=d.createElement('button');skip.type='button';skip.id='poAIActiveSkip';skip.textContent='Bỏ qua';
      skip.title='Chuyển sang kênh tiếp theo mà không lưu bất kỳ nhãn nào';
      skip.addEventListener('click',()=>{
-      activeTeachIndex=(activeTeachIndex+1)%candidates.length;
-      activeStatusMessage='Đã bỏ qua kênh trước. Không ghi nhãn hay sửa nguồn.';
+      sessionSkippedIds.add(String(suggestion.channel.id).slice(0,160));
+      while(sessionSkippedIds.size>1000)sessionSkippedIds.delete(sessionSkippedIds.values().next().value);
+      activeTeachIndex=0;
+      activeStatusMessage='Đã bỏ qua kênh trong phiên; AI chọn ứng viên khác mà không ghi nhãn.';
       render();
      });
      actions.append(select,teach,skip);row.append(text,actions);trainer.append(progress,row);

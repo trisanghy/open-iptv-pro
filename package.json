@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.364",
-  "description": "Positron P5.1.279: giữ trạng thái mở thư mục con khi WatchFlow render lại",
+  "version": "4.23.365",
+  "description": "Positron P5.1.280: hàng đợi dạy AI không lặp và khôi phục bỏ qua",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

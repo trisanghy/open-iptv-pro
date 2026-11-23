@@ -11,3 +11,9 @@ Vòng 01 dự kiến P5.1.279:
 - Ảnh cần xác minh: `positron-p51279-folders-persist-before-1920x1080-real.png` / after.
 - Trạng thái: **CHƯA ĐẠT** cho tới khi CI và ảnh Electron được tải, MỞ xem trực tiếp.
 - Không có kết luận về stream/GPU/DVR/Cast trên máy thật.
+
+## Đợt mới từ P5.1.279 — 23/11/2026
+- Baseline đã xác minh: HEAD 03cb3e724ebc7032132466d7b4bfa031d50e0ebe; P5.1.279 v4.23.364; Actions 45101613049 có test/capture/Win x64/Mac ARM/x64 thành công, release skip theo Stable-only.
+- Ảnh thật đã tải và trực tiếp MỞ: positron-p51279-folders-persist-before-1920x1080-real.png, positron-p51279-folders-persist-after-1920x1080-real.png. Danh sách con giữ open sau render; phần Dạy AI ở nhóm chưa phân loại đang hiển thị năm ứng viên.
+- Vòng 01 dự kiến P5.1.280: khắc phục giới hạn Bỏ qua chạy vòng lặp năm ứng viên; thêm hàng đợi không lặp qua nhiều hơn năm kênh, khôi phục bỏ qua trong phiên. Không cập nhật mô hình khi bỏ qua, không đổi M3U và không tự phát.
+- Bằng chứng phải có: Node regression, trước/sau Electron 1920x1080 mới, mở trực tiếp ảnh sau, commit SHA, Actions/Artifacts. Trạng thái CHƯA ĐẠT cho đến khi kiểm chứng đầy đủ.

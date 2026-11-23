@@ -411,7 +411,7 @@ test('P278 AI hướng dẫn từng kênh, Bỏ qua không thay đổi trọng s
  const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
  const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
  for(const token of ['activeTeachIndex=0','poAIActiveProgress','poAIActiveSkip',
-  'activeTeachIndex=(activeTeachIndex+1)%candidates.length',
+  'sessionSkippedIds.add(String(suggestion.channel.id)',
   'folder.append(trainer)','po-ai-folder-raw','po-ai-active-controls'])
   assert.ok(ui.includes(token),token);
  assert.ok(!ui.includes('candidates.forEach((suggestion,index)=>'),'only one suggested channel at a time');
@@ -433,4 +433,32 @@ test('P279 giữ trạng thái mở danh sách con sau mỗi lần render',()=>{
  for(const name of ['positron-p51279-folders-persist-before-1920x1080-real.png',
   'positron-p51279-folders-persist-after-1920x1080-real.png','rawOpen:raw?.open===true'])
   assert.ok(qa.includes(name),name);
+});
+
+// P280: skip uncertainty-ranked channels beyond the old five-item loop.
+test('P280 hàng đợi AI qua hơn năm kênh, có hoàn tác bỏ qua trong phiên',()=>{
+ const items=Array.from({length:15},(_,i)=>({
+  channel:mk('queue-'+i,'Atlas Unsorted Channel '+String(i).padStart(2,'0')),
+  topic:{source:'other'}
+ }));
+ const original=JSON.stringify(items),model=C.emptyCategoryModel(),excluded=[],seen=new Set();
+ for(let i=0;i<8;i++){
+  const next=C.rankUnclassified(items,model,{limit:5,excludeIds:excluded})[0];
+  assert.ok(next,'next unknown channel available beyond original group of five');
+  assert.ok(!seen.has(next.channel.id),'no repeated skipped channel');
+  seen.add(next.channel.id);excluded.push(next.channel.id);
+ }
+ assert.equal(seen.size,8);
+ assert.ok(C.rankUnclassified(items,model,{limit:5,excludeIds:excluded})
+  .every(row=>!seen.has(row.channel.id)));
+ assert.equal(JSON.stringify(items),original,'playlist unchanged');
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ['sessionSkippedIds=new Set()','excludeIds:[...taughtIds,...sessionSkippedIds]',
+  'sessionSkippedIds.add(String(suggestion.channel.id)','sessionSkippedIds.clear()',
+  'poAIActiveResetSkips','đã bỏ qua trong phiên'])assert.ok(ui.includes(token),token);
+ const skip=ui.slice(ui.indexOf("skip.addEventListener('click'"),ui.indexOf("actions.append(select,teach,skip)"));
+ assert.ok(!skip.includes('save(')&&!skip.includes('teachCategory('),'skip never trains or persists');
+ for(const name of ['positron-p51280-active-queue-before-1920x1080-real.png',
+  'positron-p51280-active-queue-after-1920x1080-real.png'])assert.ok(qa.includes(name),name);
 });

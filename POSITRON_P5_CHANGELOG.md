@@ -1,3 +1,17 @@
+## P5.1.280 — Hàng đợi AI dạy chủ đề không lặp / Electron 4.23.365
+- Feature priority: NEW — Dạy AI nhanh chuyển qua hơn năm kênh chưa phân loại sau mỗi lần Bỏ qua; giữ danh sách bỏ qua chỉ trong phiên, tránh xuất hiện lại kênh cũ, cho phép Xem lại toàn bộ kênh đã bỏ qua. Xếp hạng vẫn dựa trên độ chưa chắc chắn của Naive Bayes và quyền người dùng tự gán nhãn.
+- Feature class: AI
+- Evidence: Regression kiểm tra tám ứng viên liên tiếp không lặp và playlist bất biến; kiểm thử Electron 1920x1080 chụp trước/sau sáu lần Bỏ qua, xác thực nhãn/mô hình lưu không đổi, không autoplay, nút khôi phục xuất hiện. Chỉ công nhận sau khi Actions và ảnh thực đã được mở xem.
+- User action: TV → WatchFlow → AI hợp gu → Thư mục EPG → Chưa có chủ đề EPG → Dạy AI nhanh → Bỏ qua nhiều lần; Xem lại kênh đã bỏ qua để khôi phục hàng đợi.
+- Privacy: Bỏ qua lưu trong RAM và mất khi thoát ứng dụng; không lưu hồ sơ, không gửi tên kênh/URL/hành vi lên web, không thay playlist hoặc auto phát.
+- Electron screenshot: positron-p51280-active-queue-before-1920x1080-real.png / positron-p51280-active-queue-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE — Actions-only, GitHub Releases chỉ giữ Stable.
+
+## P5.1.279 — Giữ thư mục con mở khi AI tự render / Electron 4.23.364
+- Lỗi đã sửa: trạng thái chi tiết danh sách chưa phân loại được khôi phục khi giao diện render lại, không quét lại EPG, không phát kênh hoặc sửa playlist.
+- Evidence: GitHub Actions 45101613049 test/capture/build thành công; ảnh Electron thật trước/sau đã mở xem trong đợt tiếp nối 23/11/2026.
+- Trạng thái: Actions-only; GitHub Releases Stable-only.
+
 # Positron P5 Changelog
 
 ## P5.1.278 — Hướng dẫn dạy AI từng kênh / Electron 4.23.363
