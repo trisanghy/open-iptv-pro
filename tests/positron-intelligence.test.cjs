@@ -753,3 +753,14 @@ test('P289 xem trước nhãn Naive Bayes sẽ thay đổi, không ghi dữ li�
   'positron-p51289-ai-category-after-1920x1080-real.png'])
   assert.ok(qa.includes(name));
 });
+
+test('P290 confirmation remains visible when Naive Bayes preview expands',()=>{
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const script=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(css.includes('#poWatchFlowPanel #poAIImportConfirm:not([hidden])'));
+ assert.ok(css.includes('position:sticky;bottom:8px'));
+ assert.ok(css.includes('#poWatchFlowPanel #poAIImportConfirm[hidden]{display:none!important}'));
+ for(const token of ['baselineClipped','confirmVisible','categoryStillOpen','playlistUntouched',
+  'noAutoplay','positron-p51290-confirm-sticky-before-1920x1080-real.png',
+  'positron-p51290-confirm-sticky-after-1920x1080-real.png'])assert.ok(script.includes(token),token);
+});

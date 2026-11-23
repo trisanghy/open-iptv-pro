@@ -1,3 +1,10 @@
+## P5.1.290 — Giữ nút xác nhận khôi phục AI luôn trong tầm nhìn / Electron 4.23.375
+- Phát hiện từ ảnh P289: xem chi tiết Naive Bayes đẩy nút xác nhận khỏi vùng nhìn thấy.
+- Sửa CSS sticky với bộ lọc :not([hidden]), không thay đổi luồng khôi phục AI.
+- Regression: kiểm thử Node và Electron screenshot trước/sau thật, xác nhận không tự phát video, không thay playlist hoặc dữ liệu AI khi chỉ xem dự báo.
+- Ảnh: positron-p51290-confirm-sticky-before-1920x1080-real.png / positron-p51290-confirm-sticky-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE; dùng Actions Artifacts, không tạo Release thử nghiệm trên Stable.
+
 ## P5.1.289 — Dự báo kênh đổi chủ đề Naive Bayes trước khôi phục / Electron 4.23.374
 - Feature priority: NEW — Sau khi chọn JSON sao lưu, AI thử phân loại tối đa 180 kênh theo mô hình Naive Bayes hiện tại và mô hình trong tệp, đếm số kênh có thể đổi nhãn, liệt kê tối đa 4 khác biệt và nêu rõ đây chỉ là dự đoán dựa trên tên/nhóm kênh, không xác nhận từ EPG/luồng. Bảng thu gọn để giữ nút Xác nhận dễ truy cập.
 - Feature class: AI

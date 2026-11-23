@@ -21,7 +21,7 @@
 - Trực tiếp mở ảnh thật `positron-p51288-ai-ranking-before-1920x1080-real.png` và `positron-p51288-ai-ranking-after-1920x1080-real.png`. Bảng mới hiển thị rõ, không tràn; toàn bộ 7/7 kiểm tra QA preview true.
 - Phát hiện sau ảnh: phần gợi ý Logistic ML có nhưng chưa cho biết liệu bản sao Naive Bayes sẽ làm thay đổi nhãn chủ đề của các kênh đang nhập.
 
-## Vòng 03/20 — P5.1.289 / Electron 4.23.374 (CANDIDATE)
+## Vòng 03/20 — P5.1.289 / Electron 4.23.374 (ĐÃ KIỂM CHỨNG CI + MỞ ẢNH)
 - Mục tiêu mới: xem trước số kênh thay đổi nhãn Naive Bayes và ví dụ nhãn trước/sau, trong mục có thể mở rộng để giữ nút Xác nhận không bị đẩy khỏi khung.
 - Test yêu cầu: 2 mô hình huấn luyện đối nghịch phải đổi nhãn Phim→Tin tức; Electron dùng danh sách QA thật, chứng minh preview chỉ đọc, không phát video, không lộ URL; ảnh `positron-p51289-ai-category-before-1920x1080-real.png` / `positron-p51289-ai-category-after-1920x1080-real.png`.
 - Chưa đánh dấu hoàn thành cho đến khi build Actions, QA và mở ảnh Electron thật.
@@ -29,3 +29,10 @@
 ## Quy tắc bắt đầu vòng 04
 - Bắt đầu từ HEAD mới nhất trên nhánh Positron; đọc ảnh P289 và QA trước, tìm vấn đề/tính năng mới có ý nghĩa.
 - Mỗi vòng gồm mã sửa thật, test, chụp/mở ảnh Electron, QA, tăng version, commit, Windows/Mac artifacts và báo cáo. Không tăng bộ đếm khi chỉ đổi số version.
+
+## Vòng 04/20 — P5.1.290 / Electron 4.23.375 (CANDIDATE)
+- Phát hiện qua ảnh Electron P289: mở rộng chi tiết Naive Bayes khiến nút Xác nhận khôi phục AI nằm ngoài vùng nhìn thấy của bảng WatchFlow.
+- Sửa: nút xác nhận theo vùng cuộn bằng sticky, vẫn chỉ hiện sau khi chọn file hợp lệ. Không tự nhập trọng số.
+- QA: ảnh trước/sau cùng trạng thái trên Electron thật, đo hình học nút, sự khác biệt PNG, dữ liệu AI, playlist và kênh phát không đổi.
+- Bằng chứng dự kiến: `positron-p51290-confirm-sticky-before-1920x1080-real.png` / `positron-p51290-confirm-sticky-after-1920x1080-real.png`.
+- Chưa đánh dấu hoàn thành đến khi Actions và ảnh Electron thật được kiểm chứng.

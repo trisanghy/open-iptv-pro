@@ -206,3 +206,10 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-category-impact p{margin:4px 0 7px;line-height:1.5}
 #poWatchFlowPanel .po-ai-category-diff{border-top:1px solid #365568;padding:6px 0;overflow-wrap:anywhere}
 #poWatchFlowPanel .po-ai-category-impact small{display:block;margin-top:7px;color:#b2cde1;font-size:11px;line-height:1.45}
+
+/* P290: retain explicit import confirmation in the WatchFlow viewport while
+   Naive Bayes details expand. CSS does not override the secure hidden state. */
+#poWatchFlowPanel #poAIImportConfirm:not([hidden]){
+ position:sticky;bottom:8px;z-index:6;
+ box-shadow:0 0 0 3px #10282f,0 8px 20px rgba(0,0,0,.5);
+}
