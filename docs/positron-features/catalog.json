@@ -1,20 +1,35 @@
 {
-  "generatedAt": "2026-11-23T16:21:25.235968+00:00",
+  "generatedAt": "2026-11-23T16:51:02.096516+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
+      "number": 323,
+      "version": "P5.1.323",
+      "appVersion": "4.23.408",
+      "title": "nút gợi ý AI cao 44px, dễ bấm chuột và bàn phím",
+      "description": "Increase action hit areas to 44px with larger labels, visible keyboard focus and wrapping at narrow viewport. Node regression and real Electron CDP before/after 1920×1080 plus 720×900 geometry and state invariants.",
+      "kind": "fix",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "142da0430604f1acdcf0ba57ee504a72a43e9ed3",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 322,
       "version": "P5.1.322",
-      "appVersion": "4.23.407",
-      "title": "giữ nút Xem/Hợp gu ở trên phần giải thích AI",
+      "appVersion": "Chưa xác minh",
+      "title": "Electron 4.23.407 — Header WatchFlow theo chế độ AI (CANDIDATE)",
       "description": "Feature priority: NEW — Khi đọc WatchFlow Intelligence, header cố định phải nói rõ đang ở chế độ AI hợp gu thay vì nhãn Gợi ý thường, đặc biệt khi cuộn sâu. Feature class: AI",
       "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "834fc39e9fde32e056d3ef252a286644b8c186c2",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
       "image": null
     },
@@ -1936,7 +1951,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
     },
     {
       "number": 193,

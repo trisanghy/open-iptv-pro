@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.322 — giữ nút Xem/Hợp gu ở trên phần giải thích AI
+## P5.1.323 — nút gợi ý AI cao 44px, dễ bấm chuột và bàn phím
 
-**Ứng dụng:** 4.23.407 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.408 · **Trạng thái:** Chưa có bản phát hành
+
+Increase action hit areas to 44px with larger labels, visible keyboard focus and wrapping at narrow viewport. Node regression and real Electron CDP before/after 1920×1080 plus 720×900 geometry and state invariants.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/142da0430604f1acdcf0ba57ee504a72a43e9ed3)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.322 — Electron 4.23.407 — Header WatchFlow theo chế độ AI (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Khi đọc WatchFlow Intelligence, header cố định phải nói rõ đang ở chế độ AI hợp gu thay vì nhãn Gợi ý thường, đặc biệt khi cuộn sâu. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/834fc39e9fde32e056d3ef252a286644b8c186c2)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.321 — Electron 4.23.406 — Về đầu bảng WatchFlow AI khi cuộn sâu (CANDIDATE)
 
