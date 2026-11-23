@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.340</strong> · AI xem tên kênh đầy đủ bằng Alt+Shift+I (NEW) · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.341</strong> · AI dùng mũi tên remote ↑↓ để di chuyển gợi ý (NEW) · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.425 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.426 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Các phím Alt+Shift+J/K/P của WatchFlow AI dùng trên bàn phím PC nhưng không thuận tiện khi điều khiển bằng remote TV hoặc phím mũi tên cơ bản. Bổ sung ArrowUp/ArrowDown trực tiếp khi nút Xem đang được focus, tự cuộn và quay vòng danh sách. Feature class: AI
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/658582c46d748503748ab4da973eda20fbb6c2cb)
+
+</details>
+
+<details>
+<summary><strong>P5.1.340</strong> · Electron 4.23.425 — AI mở tên kênh đầy đủ bằng bàn phím (CANDIDATE) · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Ở giao diện WatchFlow AI 720px, chip tên kênh P339 cố ý rút gọn để tránh chiếm chỗ; nhưng remote và bàn phím không có hover để biết tên đầy đủ. Bổ sung phím xem thông tin kênh và chủ đề khi cần, luôn theo gợi ý đang focus. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/2c1d2623c935f24a3797d87c11e321eab7c2422e)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 

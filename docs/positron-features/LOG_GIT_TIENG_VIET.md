@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.340 — AI xem tên kênh đầy đủ bằng Alt+Shift+I (NEW)
+## P5.1.341 — AI dùng mũi tên remote ↑↓ để di chuyển gợi ý (NEW)
 
-**Ứng dụng:** 4.23.425 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.426 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Các phím Alt+Shift+J/K/P của WatchFlow AI dùng trên bàn phím PC nhưng không thuận tiện khi điều khiển bằng remote TV hoặc phím mũi tên cơ bản. Bổ sung ArrowUp/ArrowDown trực tiếp khi nút Xem đang được focus, tự cuộn và quay vòng danh sách. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/658582c46d748503748ab4da973eda20fbb6c2cb)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.340 — Electron 4.23.425 — AI mở tên kênh đầy đủ bằng bàn phím (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Ở giao diện WatchFlow AI 720px, chip tên kênh P339 cố ý rút gọn để tránh chiếm chỗ; nhưng remote và bàn phím không có hover để biết tên đầy đủ. Bổ sung phím xem thông tin kênh và chủ đề khi cần, luôn theo gợi ý đang focus. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/2c1d2623c935f24a3797d87c11e321eab7c2422e)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.339 — Electron 4.23.424 — AI luôn hiện tên kênh đang chọn khi cuộn (CANDIDATE)
 
