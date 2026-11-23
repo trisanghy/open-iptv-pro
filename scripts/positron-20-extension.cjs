@@ -11881,6 +11881,12 @@ async function runTwenty(page){
  await require('./positron-336-audit.cjs').run(page);
  await require('./positron-337-audit.cjs').run(page);
  await require('./positron-338-audit.cjs').run(page);
+ await require('./positron-339-audit.cjs').run(page);
+ // P339 native Electron focused channel in sticky AI header:
+ // positron-p51339-channel-context-before-1920x1080-real.png
+ // positron-p51339-channel-context-after-1920x1080-real.png
+ // positron-p51339-channel-context-before-720x900-real.png
+ // positron-p51339-channel-context-after-720x900-real.png
  // P338 native Electron reverse keyboard shortcut QA:
  // positron-p51338-previous-ai-before-1920x1080-real.png
  // positron-p51338-previous-ai-after-1920x1080-real.png

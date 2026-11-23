@@ -444,3 +444,20 @@ html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-en
  font-size:11px!important;line-height:1.2!important;letter-spacing:0!important;
  font-weight:800;white-space:nowrap;
 }
+
+
+/* P5.1.339: currently selected channel stays identifiable when focus scrolls
+   the heading behind the WatchFlow sticky bar; text is local-only. */
+#poWatchFlowPanel .po-watchflow-head #poWatchFlowTitle .po-ai-focused-channel[hidden]{display:none!important}
+#poWatchFlowPanel .po-watchflow-head #poWatchFlowTitle .po-ai-focused-channel{
+ display:inline-block!important;vertical-align:middle;max-width:92px;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ margin-left:6px;padding:3px 0 3px 7px;border-left:1px solid #4b9f97;
+ color:#b1ece1;font-size:11px!important;font-weight:700!important;
+ line-height:1.2!important;letter-spacing:0!important;
+}
+@media (max-width:760px){
+ #poWatchFlowPanel .po-watchflow-head #poWatchFlowTitle .po-ai-focused-channel{
+  max-width:77px;
+ }
+}

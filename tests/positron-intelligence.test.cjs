@@ -1592,3 +1592,36 @@ test('P338 AI reverse recommendation shortcut wraps and stays focus-only',()=>{
   'positron-p51338-previous-ai-after-720x900-real.png'
  ])assert.ok(extension.includes(image)&&workflow.includes(image),image);
 });
+
+
+test('P339 sticky AI channel identity tracks the focused recommendation without clipping',()=>{
+ const js=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-339-audit.cjs','utf8');
+ const extension=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const workflow=fs.readFileSync('.github/workflows/positron-lab.yml','utf8');
+ for(const term of [
+  "focusChannel.id='poAIFocusedChannel'",
+  "focusChannel.setAttribute('aria-hidden','true')",
+  "card?.querySelector('.po-ai-card-header strong')",
+  "focusChannel.title=name?'Kênh đang chọn: '+name:''",
+  "watchTitle.append(focusProgress,focusChannel)"
+ ])assert.ok(js.includes(term),'missing selected channel context '+term);
+ assert.ok(css.includes('.po-ai-focused-channel[hidden]'));
+ assert.ok(css.includes('text-overflow:ellipsis'));
+ assert.ok(css.includes('max-width:77px'));
+ for(const testTerm of [
+  "'live sticky context equals actual focused channel'",
+  "'context updates on reverse traversal'",
+  "'visible channel title must not collide with sticky controls'",
+  "'context clears when keyboard focus leaves recommendations'",
+  "assert.deepEqual(restored,originals"
+ ])assert.ok(qa.includes(testTerm),'native Electron QA missing '+testTerm);
+ assert.ok(extension.includes("require('./positron-339-audit.cjs').run(page)"));
+ for(const filename of [
+  'positron-p51339-channel-context-before-1920x1080-real.png',
+  'positron-p51339-channel-context-after-1920x1080-real.png',
+  'positron-p51339-channel-context-before-720x900-real.png',
+  'positron-p51339-channel-context-after-720x900-real.png'
+ ])assert.ok(extension.includes(filename)&&workflow.includes(filename),'screenshot missing '+filename);
+});

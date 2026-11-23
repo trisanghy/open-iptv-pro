@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.423",
-  "description": "Positron P5.1.338: AI đi ngược gợi ý bằng Alt+Shift+P, quay vòng, không tự phát (NEW)",
+  "version": "4.23.424",
+  "description": "Positron P5.1.339: AI hiển thị tên kênh đang chọn trên tiêu đề cố định (NEW)",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

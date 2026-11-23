@@ -1,3 +1,13 @@
+## P5.1.339 / Electron 4.23.424 — AI luôn hiện tên kênh đang chọn khi cuộn (CANDIDATE)
+- Feature priority: NEW — Khi điều hướng các gợi ý bằng Tab/J/K/P trên cửa sổ hẹp, card được cuộn vào vùng nhìn và tiêu đề tên kênh phía trên thẻ có thể bị thanh sticky che; người dùng chỉ thấy nút Xem mà không biết chính xác kênh nào. Thêm ngữ cảnh tên kênh đang focus vào tiêu đề cố định, không cần phát video.
+- Feature class: AI
+- User action: Mở WatchFlow Intelligence bằng F6 rồi Tab vào nút Xem hoặc bấm Alt+Shift+J/K/P; ngay trên thanh tiêu đề AI xuất hiện tên kênh của gợi ý đang chọn, hover để xem tên đầy đủ. Ra ngoài danh sách thì tên biến mất.
+- Root cause: P338 chỉ có badge N/N trong thanh sticky; khi cuộn card đầu tiên, tên kênh ở phía trên bị khuất. P339 hiển thị ngữ cảnh động lấy trực tiếp từ tên thẻ được focus, không lấy từ mạng hoặc dữ liệu mới.
+- Electron screenshot: positron-p51339-channel-context-before-1920x1080-real.png / positron-p51339-channel-context-after-1920x1080-real.png / positron-p51339-channel-context-before-720x900-real.png / positron-p51339-channel-context-after-720x900-real.png.
+- Evidence: Ảnh Electron P338 đã MỞ cho thấy phần tên thẻ đầu bị khuất bởi header sticky ở 720px; bài P339 chụp thật before/after cùng gợi ý, kiểm tra chip hiển thị đúng tên, tiêu đề hover đầy đủ, không đè nút quay đầu, không tràn tại 1920/720, cập nhật khi phím P đi lùi, tự ẩn khi focus rời danh sách, playlist/model/channel không đổi và không autoplay.
+- Privacy: Hiện tên kênh từ thẻ cục bộ; không gửi URL M3U, EPG, lịch sử xem, mô hình học hoặc stream ra bên ngoài.
+- Status: CANDIDATE tới khi full test, Electron screenshot review và Actions installers được xác minh; GitHub Releases chỉ dùng cho Stable theo AGENTS.md.
+
 ## P5.1.338 / Electron 4.23.423 — AI điều hướng ngược gợi ý qua Alt+Shift+P (CANDIDATE)
 - Feature priority: NEW — Người dùng trước đây có thể nhấn Alt+Shift+K để đi tới gợi ý kế nhưng không thể quay về gợi ý trước mà không Tab qua các nút đánh giá; bổ sung hành trình hai chiều thực sự cho WatchFlow AI trên remote và desktop.
 - Feature class: AI

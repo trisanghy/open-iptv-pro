@@ -17,3 +17,12 @@
 ## Vòng 02/20 — P5.1.338 / 4.23.423 (CANDIDATE)
 - Feature class: AI. Mục tiêu: Alt+Shift+P đưa focus tới gợi ý trước, quay về cuối nếu ở đầu; dùng cùng bộ counter P337; không tự phát, bảo toàn dữ liệu.
 - Cần xác minh: test Node, Electron before/after 1920×1080 và 720×900, mở PNG, screenshot geometry, CI Mac/Win, artifacts SHA. Không đánh dấu hoàn thành trước khi các bằng chứng có thật.
+
+## Vòng 02/20 — P5.1.338 / 4.23.423
+- Commit tính năng: cba8548e75890958781dd6fe1f817612079d616c. Native fast QA run 45266137637 PASS, 16 checks; Node 1.054 pass / 5 skipped / 0 fail; Windows x64 + Mac arm64 + Mac Intel build PASSED trong full CI 45266137724; capture/full regression theo Actions run.
+- Đã MỞ PNG Electron P338 trước/sau 1920×1080/720×900. Ấn Alt+Shift+P từ gợi ý 1/3 tới gợi ý 3/3; tiếp P tới 2/3; K lại tới 3/3; không autoplay, model và nguồn dữ liệu không đổi.
+- Lỗi nhìn thấy từ ảnh P338 720: tiêu đề gợi ý 1 có thể bị che khi danh sách cuộn và thanh sticky luôn hiện, người dùng không nhận diện kênh đang focus nếu chỉ nhìn nút Xem.
+- Vòng 03 đầu vào: hiển thị tên kênh đang chọn trong header sticky, có tooltip đầy đủ, không tràn hay che nút; chỉ tính khi QA/ảnh thật pass.
+
+## Vòng 03/20 — P5.1.339 / 4.23.424 (CANDIDATE)
+- New AI channel context. Chờ QA native, Node test, bản dựng và ảnh đã trực tiếp mở xem. Giữ các phiên bản/tags/Release bất biến.

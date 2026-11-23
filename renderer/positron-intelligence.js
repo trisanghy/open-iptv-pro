@@ -235,19 +235,33 @@
  focusProgress.hidden=true;
  focusProgress.setAttribute('role','status');
  focusProgress.setAttribute('aria-live','polite');
+ // P339: the selected channel name remains visible when its card heading is
+ // scrolled behind the sticky WatchFlow title (seen in P338 720px PNG).
+ const focusChannel=d.createElement('span');
+ focusChannel.id='poAIFocusedChannel';
+ focusChannel.className='po-ai-focused-channel';
+ focusChannel.hidden=true;
+ focusChannel.setAttribute('aria-hidden','true');
  // The badge is attached to the sticky title by syncWatchHeader,
  // so the counter remains visible as the recommendation list scrolls.
  const updateFocusProgress=(target)=>{
   const cards=[...area.querySelectorAll('.po-ai-card .po-ai-actions button:first-child')]
    .filter(button=>!button.disabled&&button.getClientRects().length);
   const index=cards.indexOf(target);
-  if(index<0){focusProgress.hidden=true;focusProgress.textContent='';return;}
+  if(index<0){focusProgress.hidden=true;focusProgress.textContent='';
+  focusChannel.hidden=true;focusChannel.textContent='';focusChannel.title='';return;}
   const next='Gợi ý '+(index+1)+'/'+cards.length;
   // Avoid repeating an aria-live announcement when focus stays on this card.
   if(focusProgress.hidden||focusProgress.textContent!==next){
    focusProgress.hidden=false;
    focusProgress.textContent='Gợi ý '+(index+1)+'/'+cards.length;
   }
+  const card=target.closest('.po-ai-card');
+  const name=(card?.querySelector('.po-ai-card-header strong')?.textContent||'')
+   .replace(/^\\d+\\.\\s*/,'').trim();
+  focusChannel.hidden=!name;
+  focusChannel.textContent=name;
+  focusChannel.title=name?'Kênh đang chọn: '+name:'';
  };
  // P337: keep the recommendation index synchronized with standard Tab, click,
  // remote focus and the existing J/K shortcuts. A focused feedback / lookup
@@ -282,7 +296,7 @@
    watchTitle.textContent=isAI?'AI hợp gu':originalWatchTitle;
    // Keep the keyboard position badge in the sticky header, not in
    // the scrollable AI mode description (visually discovered in P336 PNG).
-   if(isAI)watchTitle.append(focusProgress);
+   if(isAI)watchTitle.append(focusProgress,focusChannel);
   }
   if(watchKicker)watchKicker.textContent=isAI?'WATCHFLOW INTELLIGENCE':originalWatchKicker;
  };
@@ -306,6 +320,7 @@
  function showAI(){aiOpen=true;syncAIView();render();}
  function hideAI(){
   focusProgress.hidden=true;focusProgress.textContent='';
+  focusChannel.hidden=true;focusChannel.textContent='';focusChannel.title='';
   aiOpen=false;wideAI=false;wideButton.hidden=true;
   wideButton.setAttribute('aria-pressed','false');wideButton.textContent='Đọc rộng';
   delete panel.dataset.poAiActive;delete panel.dataset.poAiTraining;
@@ -815,6 +830,7 @@
  function render(){
   if(!aiOpen)return;
   focusProgress.hidden=true;focusProgress.textContent='';
+  focusChannel.hidden=true;focusChannel.textContent='';focusChannel.title='';
   if(!foldersOpen)delete panel.dataset.poAiTraining;
   renderModelManager();
   const collection=channels();const profile=profileFor(collection);
