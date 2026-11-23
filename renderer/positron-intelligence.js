@@ -227,7 +227,7 @@
  // P332: reveal the P331 remote keys and their safe focus-only semantics.
  const modeHelp=d.createElement('p');modeHelp.className='po-ai-keyboard-help';
  modeHelp.id='poAIKeyboardHelp';
- modeHelp.textContent='← → ↑ ↓: chế độ · Enter/Space: chọn · Alt+Shift+J: Xem đầu';
+ modeHelp.textContent='← →: chế độ · Enter/Space: chọn · Alt+Shift+J: tới nút Xem đầu';
  // P336: show + announce which recommendation was reached by keyboard.
  const focusProgress=d.createElement('span');
  focusProgress.id='poAIFocusProgress';
