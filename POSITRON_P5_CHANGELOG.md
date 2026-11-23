@@ -1,3 +1,13 @@
+## P5.1.310 — Đọc rộng phân tích AI theo lựa chọn / Electron 4.23.395
+- Feature priority: NEW — Bảng WatchFlow AI mặc định chỉ rộng khoảng 528 px trên desktop 1920 px dù còn nhiều khoảng trống; thêm nút “Đọc rộng” để tăng lên 820 px, cùng “Thu gọn” trở lại. Không tác động mô hình hoặc luồng phát.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → xem báo cáo hoặc khôi phục mô hình AI → nhấn “Đọc rộng” khi dùng desktop, có thể bấm “Thu gọn” để trở về; trên cửa sổ hẹp nút tự ẩn.
+- Electron screenshot: positron-p51310-wide-reading-before-1920x1080-real.png / positron-p51310-wide-reading-after-1920x1080-real.png.
+- Evidence: QA Electron thật 1920x1080 đo panel tăng bề ngang, thử trạng thái nút aria-pressed, thu gọn phục hồi và viewport 720 px giữ kích thước cũ; mô hình, playlist, phát video và dữ liệu JSON đang chờ không đổi. Chỉ tính vòng thành công sau CI xanh và mở soát PNG thật.
+- Privacy: Chỉ đổi hiển thị trong phiên; không gửi stream URL, M3U, nhãn học hay lịch sử lên Internet.
+- Baseline: Ảnh P5.1.309 đã mở xem, phần mô hình quá dài trong bảng hẹp 528 px trên desktop.
+- Status: CANDIDATE — chờ CI, native PNG và build.
+
 ## P5.1.309 — Tách xác nhận khôi phục khỏi dạy AI và quay lại an toàn / Electron 4.23.394
 - Feature priority: NEW — Ở hàng đợi dạy nhãn, tạm ẩn nút xác nhận nhập trọng số đang nổi chồng lên bộ chọn chủ đề, đồng thời thêm lối “Trở lại kiểm tra bản sao AI” để quay về xem xét mô hình khôi phục chưa xác nhận. Chuyển chế độ không tự nhập hay mất dữ liệu.
 - Feature class: AI

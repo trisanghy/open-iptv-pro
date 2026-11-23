@@ -311,3 +311,18 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
  padding:8px 10px;border-radius:9px;border:1px solid #6e999f;background:#1b3e49;
  color:#e5fff9;font:inherit;font-size:12px;font-weight:750;cursor:pointer;text-align:left}
 #poWatchFlowPanel #poAIBackToImport:focus-visible{outline:2px solid #aeffe5;outline-offset:2px}
+
+/* P310: opt-in, desktop-only AI model report reader width. */
+#poWatchFlowPanel #poAIWide[hidden]{display:none!important}
+#poWatchFlowPanel .po-ai-entry #poAIWide{min-height:36px;padding:7px 11px;margin-left:8px;
+ border:1px solid #6baca1;border-radius:9px;background:#1b4644;color:#e4fff6;
+ font-size:12px;font-weight:700;cursor:pointer}
+#poWatchFlowPanel .po-ai-entry #poAIWide[aria-pressed="true"]{background:#346f60;color:#fff}
+#poWatchFlowPanel .po-ai-entry #poAIWide:focus-visible{outline:2px solid #a6ffdf;outline-offset:2px}
+@media(min-width:1100px){
+ html[data-positron="true"].po-horizon body
+ #poWatchFlowPanel.po-watchflow-panel[data-po-ai-active="true"][data-po-ai-wide="true"]:not([data-empty-playlist="true"]){
+  width:min(820px,calc(100vw - 40px))!important;
+ }
+}
+@media(max-width:1099px){#poWatchFlowPanel .po-ai-entry #poAIWide{display:none!important}}

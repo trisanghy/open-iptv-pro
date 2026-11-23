@@ -1283,3 +1283,15 @@ test('P309 hides sticky AI restore only while teaching and offers safe return',(
  for(const p of ['qa309','positron-p51309-return-review-before-1920x1080-real.png','positron-p51309-return-review-after-1920x1080-real.png'])
   assert.ok(qa.includes(p),'P309 native screenshot/test '+p);
 });
+
+test('P310 AI wide reading is user-controlled and preserves narrow responsive mode',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const s of ["wideButton.id='poAIWide'","panel.dataset.poAiWide=String(wideAI)","wideButton.setAttribute('aria-pressed'","delete panel.dataset.poAiWide"])
+  assert.ok(ui.includes(s),s);
+ for(const s of ['@media(min-width:1100px)','width:min(820px,calc(100vw - 40px))!important','@media(max-width:1099px)'])
+  assert.ok(css.includes(s),s);
+ for(const s of ['qa310','positron-p51310-wide-reading-before-1920x1080-real.png','positron-p51310-wide-reading-after-1920x1080-real.png'])
+  assert.ok(qa.includes(s),s);
+});

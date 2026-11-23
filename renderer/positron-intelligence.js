@@ -38,7 +38,12 @@
  tab.setAttribute('aria-label','WatchFlow Intelligence: học máy sở thích và chủ đề theo EPG');
  tab.setAttribute('aria-pressed','false');
  const aiSlot=d.createElement('div');aiSlot.id='poAIEntry';aiSlot.className='po-ai-entry';
- aiSlot.append(tab);toolbar.after(aiSlot);
+ // P310: user-controlled wide view, no changes to learned weights or M3U.
+ let wideAI=false;
+ const wideButton=d.createElement('button');wideButton.type='button';wideButton.id='poAIWide';
+ wideButton.textContent='Đọc rộng';wideButton.title='Mở rộng báo cáo AI trên desktop';
+ wideButton.hidden=true;wideButton.setAttribute('aria-pressed','false');
+ aiSlot.append(tab,wideButton);toolbar.after(aiSlot);
  const area=d.createElement('section');area.id='poIntelligenceResults';area.className='po-ai-panel';
  area.hidden=true;area.setAttribute('aria-live','polite');
  panel.querySelector('#poFlowPlusResults')?.after(area);
@@ -173,7 +178,8 @@
  // shadow AI controls underneath a scrollable card list.
  function syncAIView(){
   if(!aiOpen||panel.hidden)return;
-  panel.dataset.poAiActive='true';area.hidden=false;
+  panel.dataset.poAiActive='true';panel.dataset.poAiWide=String(wideAI);
+  wideButton.hidden=false;area.hidden=false;
   tab.setAttribute('aria-pressed','true');
   for(const button of toolbar.querySelectorAll('button[data-flowplus-mode]'))button.setAttribute('aria-pressed','false');
   for(const el of extras)el.classList.add('po-flowplus-hidden');
@@ -182,9 +188,18 @@
  }
  function showAI(){aiOpen=true;syncAIView();render();}
  function hideAI(){
-  aiOpen=false;delete panel.dataset.poAiActive;delete panel.dataset.poAiTraining;area.hidden=true;
+  aiOpen=false;wideAI=false;wideButton.hidden=true;
+  wideButton.setAttribute('aria-pressed','false');wideButton.textContent='Đọc rộng';
+  delete panel.dataset.poAiActive;delete panel.dataset.poAiTraining;
+  delete panel.dataset.poAiWide;area.hidden=true;
   tab.setAttribute('aria-pressed','false');
  }
+ wideButton.addEventListener('click',()=>{
+  if(!aiOpen||panel.hidden)return;
+  wideAI=!wideAI;panel.dataset.poAiWide=String(wideAI);
+  wideButton.setAttribute('aria-pressed',String(wideAI));
+  wideButton.textContent=wideAI?'Thu gọn':'Đọc rộng';
+ });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
  const learnedSource=(channel,cache=null)=>{

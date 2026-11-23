@@ -37,3 +37,6 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 
 ## P5.1.309 — CANDIDATE
 - Từ ảnh Electron P5.1.308: CTA khôi phục vẫn nổi ở cuối khi đang chọn nhãn dạy AI. Bổ sung trạng thái nhập chưa xác nhận tách khỏi dạy AI, ẩn CTA trong trainer và nút quay về preview, giữ nguyên dữ liệu/đồng ý, QA bảo vệ việc phát kênh. Chờ ảnh P309 và kiểm thử.
+
+## P5.1.310 — CANDIDATE
+- Từ ảnh P5.1.309, WatchFlow AI hẹp ở desktop. Thêm Đọc rộng/Thu gọn tùy chọn; CI sẽ xác minh Electron ở 1920 và 720px; chỉ tính sau soát ảnh.
