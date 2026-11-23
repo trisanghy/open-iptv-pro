@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.303 — lọc riêng nhóm mất dự đoán chắc chắn bằng Naive Bayes
+## P5.1.304 — AI phát hiện chuyển chủ đề khi khôi phục
 
-**Ứng dụng:** 4.23.388 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.389 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Bổ sung ma trận so sánh chủ đề trước/sau của Naive Bayes, tìm tình huống kênh vẫn đủ chắc chắn nhưng chuyển từ chủ đề A sang B; cảnh báo khi nhiều kênh đổi nhãn dù tỷ lệ bao phủ không giảm. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/105d428b64a7448252724baa4b504da03b7f1f91)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.303 — AI lọc nhóm thật sự mất phân loại / Electron 4.23.388
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Thêm bộ lọc chỉ nhóm có kênh mất dự đoán đủ chắc chắn trong phân tích rủi ro mô hình Naive Bayes; giúp người xem bỏ qua các dòng không có suy giảm ngay trong báo cáo khôi phục mà không xóa bất kỳ nhãn hay kênh nào. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/2b3a8e487b4c003dd2ffd83a948bb6917b0b50ab)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.302 — AI mở ngay danh sách kênh nguy cơ từ cảnh báo khôi phục / Electron 4.23.387
 
