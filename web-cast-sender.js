@@ -230,7 +230,7 @@
  loadSdk();
  const getAirplayState=()=>{
   const media=video();
-  const connected=hasAirPlay()&&!!(media&&(media.webkitCurrentPlaybackTargetIsWireless===true||
+  const connected=(isSafari()||(isAppleMobile()&&hasAirPlay()))&&!!(media&&(media.webkitCurrentPlaybackTargetIsWireless===true||
    media.remote?.state==='connected'));
   return {connected,name:connected?'AirPlay TV':''};
  };
