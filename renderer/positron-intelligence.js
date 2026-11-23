@@ -188,6 +188,42 @@
  programmesMode.textContent='Chương trình EPG';programmesMode.setAttribute('aria-pressed','false');
  modeBar.append(programmesMode);
  programmesMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=false;programmesOpen=true;render();});
+ // P331: navigate the six AI modes with a remote/keyboard without activating a mode.
+ // The three-column grid stays authoritative; a disabled target is skipped.
+ modeBar.setAttribute('aria-label','Chọn chế độ WatchFlow Intelligence');
+ modeBar.setAttribute('aria-keyshortcuts','ArrowLeft ArrowRight ArrowUp ArrowDown Home End');
+ modeBar.addEventListener('keydown',event=>{
+  const button=event.target?.closest?.('button');
+  if(!button||button.parentElement!==modeBar||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||event.isComposing)return;
+  const key=event.key;
+  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(key))return;
+  const buttons=[...modeBar.querySelectorAll('button')];
+  const at=buttons.indexOf(button);
+  if(at<0)return;
+  const visible=index=>buttons[index]&&!buttons[index].disabled&&buttons[index].getClientRects().length>0;
+  let next=-1;
+  if(key==='Home'||key==='End'){
+   const choices=buttons.map((_,index)=>index).filter(visible);
+   next=key==='Home'?choices[0]:choices[choices.length-1];
+  }else if(key==='ArrowLeft'||key==='ArrowRight'){
+   const delta=key==='ArrowRight'?1:-1;
+   for(let step=1;step<=buttons.length;step++){
+    const index=(at+delta*step+buttons.length*step)%buttons.length;
+    if(visible(index)){next=index;break;}
+   }
+  }else{
+   // Change only grid row; keep the column if possible and pick nearest enabled neighbour.
+   const cols=3,rows=Math.ceil(buttons.length/cols),row=Math.floor(at/cols);
+   const targetRow=row+(key==='ArrowDown'?1:-1);
+   if(targetRow<0||targetRow>=rows)return; // Allow native page scrolling at boundaries.
+   const col=at%cols;
+   const order=[0,-1,1,-2,2].map(delta=>col+delta).filter(c=>c>=0&&c<cols);
+   next=order.map(c=>targetRow*cols+c).find(visible)??-1;
+  }
+  if(next<0||next===at)return;
+  event.preventDefault();event.stopPropagation();
+  buttons[next].focus({preventScroll:true});
+ });
  const alertRow=d.createElement('label');alertRow.className='po-ai-alerts';
  const alertCheck=d.createElement('input');alertCheck.type='checkbox';alertCheck.id='poAIAlerts';
  alertCheck.checked=alertEnabled;alertCheck.disabled=!enabled;

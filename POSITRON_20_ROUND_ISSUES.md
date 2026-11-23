@@ -84,3 +84,11 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Lỗi phát hiện trong mã: shortcut F6/Alt+Shift+W có thể chồng AI lên dialog Thêm nguồn/Cast, chặn contenteditable="true" nhưng không chặn các biến thể contenteditable="" hoặc "plaintext-only".
 - Sửa P330: thêm guard isContentEditable và .modal-backdrop thật trong renderer/positron-intelligence.js; giữ nguyên cơ chế toggle hai chiều P329. Không ảnh hưởng playlist/model.
 - Electron QA script: source/cast native modal, 2 loại ô editable, shortcut hoạt động ở TV thường, F6 nhấn lại đóng, viewport 1920/720, không tràn, không tự phát. Ảnh before/after 1920 và after 720. Chỉ công nhận vòng đạt khi CI thành công và trực tiếp mở PNG sau.
+
+
+## Vòng tiếp — P5.1.331: CANDIDATE
+- Baseline: ảnh P5.1.330 thật ở 720x900 đã được mở; sáu chế độ AI nằm 3 cột x 2 hàng, cần ấn Tab để di chuyển. P330 Node 1046 pass, 5 skip, 11/11 Electron flags; Windows/Intel/capture pass, Mac ARM còn queued khi bắt đầu P331.
+- Nguyên nhân: .po-ai-modes chỉ có click handlers, chưa có keyboard navigation 6 chế độ; khác với thanh WatchFlow chính đã được P325 thêm mũi tên.
+- Sửa P331: ArrowLeft/Right (vòng qua các nút đang bật), ArrowUp/Down (đổi hàng, giữ cột nếu được), Home/End, tránh nút disabled, viền focus-visible dễ nhận. Tất cả thao tác chỉ chuyển focus; Enter/Space mới kích hoạt mode.
+- QA thật: Electron desktop 1920 và màn hẹp 720; before/after, kiểm tra nhãn aria-pressed không thay đổi, không phát kênh, mô hình/playlist giữ nguyên, không tràn ngang.
+- Không đánh dấu hoàn tất trước khi CI Node/capture và trực tiếp mở PNG.

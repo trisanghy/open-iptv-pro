@@ -398,3 +398,10 @@ html[data-positron="true"] #poWatchFlowPanel .po-ai-card .po-ai-actions button:f
   margin:0 -13px 12px!important;padding:7px 13px 9px!important;
  }
 }
+
+
+/* P5.1.331: show remote / keyboard focus on the six WatchFlow Intelligence modes. */
+#poWatchFlowPanel .po-ai-modes button:focus-visible{
+ outline:3px solid #9af0cd!important;outline-offset:2px!important;
+ box-shadow:0 0 0 4px rgba(19,45,51,.95)!important;
+}

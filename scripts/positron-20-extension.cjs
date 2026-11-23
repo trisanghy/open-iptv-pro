@@ -11873,6 +11873,9 @@ async function runTwenty(page){
  await require('./positron-328-audit.cjs').run(page);
  await require('./positron-329-audit.cjs').run(page);
  await require('./positron-330-audit.cjs').run(page);
+ await require('./positron-331-audit.cjs').run(page);
+ for(const name of ['positron-p51331-mode-focus-before-1920x1080-real.png','positron-p51331-mode-focus-after-1920x1080-real.png','positron-p51331-mode-focus-after-720x900-real.png'])
+  assert.ok(fs.existsSync(path.join(out,name)),'P331 native Electron screenshot missing '+name);
  for(const name of ['positron-p51330-modal-f6-before-1920x1080-real.png','positron-p51330-modal-f6-after-1920x1080-real.png','positron-p51330-ai-after-720x900-real.png'])
   assert.ok(fs.existsSync(path.join(out,name)),'P330 missing native Electron PNG '+name);
  for(const png of ["positron-p51329-ai-key-toggle-before-1920x1080-real.png","positron-p51329-ai-key-toggle-after-1920x1080-real.png","positron-p51329-ai-key-toggle-open-720x900-real.png","positron-p51329-ai-key-toggle-after-720x900-real.png"])

@@ -11,5 +11,6 @@ test('P330 prevents global AI hotkeys when a native dialog or editable field is 
  assert.ok(extension.includes("require('./positron-330-audit.cjs').run(page)"));
  assert.ok(workflow.includes('node --check scripts/positron-330-audit.cjs'));
  assert.ok(workflow.includes('audit-p51330-modal-f6.json'));
- assert.equal(pkg.version,'4.23.415');assert.ok(pkg.description.includes('P5.1.330'));
+ assert.ok(Number(pkg.version.split('.')[2])>=415,'P330 minimum application version retained');
+ assert.ok(read('POSITRON_P5_CHANGELOG.md').includes('## P5.1.330 / Electron 4.23.415'),'P330 immutable changelog entry retained');
 });

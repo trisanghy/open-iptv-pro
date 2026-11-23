@@ -1,3 +1,12 @@
+## P5.1.331 / Electron 4.23.416 — Điều khiển sáu chế độ AI bằng remote/mũi tên (CANDIDATE)
+- Feature priority: NEW — bổ sung điều hướng phím mũi tên lên, xuống, trái, phải, Home và End cho sáu chế độ WatchFlow Intelligence trên lưới hai hàng; không còn phải bấm Tab nhiều lần khi sử dụng remote/bàn phím.
+- Feature class: AI
+- User action: TV → F6 → WatchFlow AI → chuyển tiêu điểm trên sáu chế độ bằng ArrowLeft/ArrowRight/ArrowUp/ArrowDown/Home/End; nhấn Enter hoặc Space để thật sự chọn chế độ, còn mũi tên chỉ di chuyển focus.
+- Electron screenshot: positron-p51331-mode-focus-before-1920x1080-real.png / positron-p51331-mode-focus-after-1920x1080-real.png / positron-p51331-mode-focus-after-720x900-real.png.
+- Evidence: Ảnh Electron P330 tại 720x900 cho thấy sáu chế độ AI xếp lưới 3 cột x 2 hàng nhưng mã nguồn chưa gắn keydown; trước sửa chỉ có Tab tuần tự. Bài QA Electron P331 đo focus ArrowRight, ArrowDown/Up, Home/End, vòng lặp trái/phải, bỏ qua nút Khám phá AI bị khóa, ảnh thật desktop/hẹp, không đổi aria-pressed, không tự phát, không mất playlist hay mô hình AI.
+- Privacy: chuyển focus chỉ là DOM cục bộ, không gửi stream URL, M3U, EPG, lịch sử xem hay trọng số AI lên server.
+- Status: CANDIDATE tới khi Node, Electron QA, ảnh đã MỞ và build kiểm chứng; public Release stable-only.
+
 ## P5.1.330 / Electron 4.23.415 — Phím tắt AI an toàn theo ngữ cảnh (CANDIDATE)
 - Feature priority: NEW — bổ sung khả năng nhận biết vùng biên tập và hộp thoại đang hoạt động trước khi mở bảng AI, tránh F6/Alt+Shift+W chiếm tiêu điểm gây gián đoạn nhập dữ liệu hoặc thao tác nguồn và Cast.
 - Feature class: AI

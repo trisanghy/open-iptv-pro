@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.415",
-  "description": "Positron P5.1.330: bảo vệ phím tắt WatchFlow AI trong hộp thoại Cast/Thêm nguồn và khi nhập văn bản",
+  "version": "4.23.416",
+  "description": "Positron P5.1.331: điều hướng 6 chế độ AI bằng mũi tên/Home/End không tự chọn chế độ hoặc phát kênh",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
