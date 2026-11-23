@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.277 — AI học chủ động các kênh chưa phân loại từ EPG
+## P5.1.278 — Hướng dẫn dạy AI từng kênh và bỏ qua an toàn
 
-**Ứng dụng:** 4.23.362 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.363 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Hướng dẫn dạy AI theo từng kênh chưa phân loại: hiển thị một đề xuất có độ chắc chắn thấp nhất, cho phép Ghi nhãn & tiếp hoặc Bỏ qua an toàn; chuyển danh sách đầy đủ kênh chưa phân loại vào mục mở rộng riêng để không có hai thanh cuộn chen nhau. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/92bba48ee5a70c1eacde9616b74b732a27ba653b)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.277 — AI học chủ động từ kênh chưa phân loại / Electron 4.23.362
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Học chủ động từ các kênh chưa có chủ đề EPG: xếp hạng độ không chắc chắn của Naive Bayes, hiển thị năm kênh ưu tiên, cho người dùng gán nhãn trực tiếp, không phỏng đoán khi thiếu nhãn hay tự phát video. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5f6c65ba6624777207ff96e4929906caa6a5dc18)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.276 — Quản lý mô hình học AI và xóa riêng / Electron 4.23.361
 
