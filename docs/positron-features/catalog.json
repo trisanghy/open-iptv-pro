@@ -1,19 +1,34 @@
 {
-  "generatedAt": "2026-11-23T06:59:14.677838+00:00",
+  "generatedAt": "2026-11-23T07:19:22.010518+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
+      "number": 293,
+      "version": "P5.1.293",
+      "appVersion": "Chưa xác minh",
+      "title": "AI kiểm tra chéo kênh theo nhóm trước khôi phục / Electron 4.23.378",
+      "description": "Feature priority: NEW — Bên cạnh dự báo Naive Bayes theo 180 kênh đầu, thêm kiểm tra chéo luân phiên lấy mẫu theo nhóm để không bỏ sót nhóm kênh ở cuối playlist. Hiển thị riêng độ bao phủ và cảnh báo suy giảm trên mẫu đa nhóm. Feature class: AI",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 292,
       "version": "P5.1.292",
-      "appVersion": "4.23.377",
+      "appVersion": "4.23.378",
       "title": "cảnh báo suy giảm bao phủ chủ đề AI trước nhập mô hình",
       "description": "Feature priority: NEW — Bộ xem trước Naive Bayes tự đo tỷ lệ kênh còn đủ chắc chắn phân loại trước và sau khi khôi phục JSON; khi tỷ lệ giảm trên ngưỡng lớn có cảnh báo rõ ràng ngay trong bản xem trước, tránh vô tình thay mô hình đang hữu ích bằng mô hình thiếu dữ liệu. Feature class: AI",
       "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "87aed14ec3809dcd709e230c14ea0b72c13f6d24",
+      "commit": "44b5d0c40aa1c5e48ce7db857217e088f83fb0be",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
       "image": null
@@ -1486,7 +1501,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
     },
     {
       "number": 193,

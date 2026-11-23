@@ -2,13 +2,21 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
+## P5.1.293 — AI kiểm tra chéo kênh theo nhóm trước khôi phục / Electron 4.23.378
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Bên cạnh dự báo Naive Bayes theo 180 kênh đầu, thêm kiểm tra chéo luân phiên lấy mẫu theo nhóm để không bỏ sót nhóm kênh ở cuối playlist. Hiển thị riêng độ bao phủ và cảnh báo suy giảm trên mẫu đa nhóm. Feature class: AI
+
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
 ## P5.1.292 — cảnh báo suy giảm bao phủ chủ đề AI trước nhập mô hình
 
-**Ứng dụng:** 4.23.377 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.378 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Bộ xem trước Naive Bayes tự đo tỷ lệ kênh còn đủ chắc chắn phân loại trước và sau khi khôi phục JSON; khi tỷ lệ giảm trên ngưỡng lớn có cảnh báo rõ ràng ngay trong bản xem trước, tránh vô tình thay mô hình đang hữu ích bằng mô hình thiếu dữ liệu. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/87aed14ec3809dcd709e230c14ea0b72c13f6d24)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/44b5d0c40aa1c5e48ce7db857217e088f83fb0be)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
 
 ## P5.1.291 — AI tách đổi chủ đề khỏi thay đổi độ chắc chắn / Electron 4.23.376
