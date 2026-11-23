@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T21:49:36.415780+00:00",
+  "generatedAt": "2026-11-23T21:50:17.262340+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.343",
       "appVersion": "4.23.428",
       "title": "AI nhảy tới gợi ý đầu/cuối bằng Home/End trên remote (NEW)",
-      "description": "AI nhảy tới gợi ý đầu/cuối bằng Home/End trên remote (NEW)",
-      "kind": "fix",
+      "description": "Feature priority: NEW — Khi danh sách AI có nhiều gợi ý, dùng phím mũi tên đi từng thẻ rất chậm. Bổ sung Home/End từ nút Xem để nhảy ngay đến thẻ đầu/cuối mà vẫn thấy tiêu đề, nút phát và tên kênh ở dải thông tin, không tự phát. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
