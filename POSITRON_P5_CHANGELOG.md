@@ -1,3 +1,13 @@
+## P5.1.303 — AI lọc nhóm thật sự mất phân loại / Electron 4.23.388
+- Feature priority: NEW — Thêm bộ lọc chỉ nhóm có kênh mất dự đoán đủ chắc chắn trong phân tích rủi ro mô hình Naive Bayes; giúp người xem bỏ qua các dòng không có suy giảm ngay trong báo cáo khôi phục mà không xóa bất kỳ nhãn hay kênh nào.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Khôi phục JSON → mở Nhóm bị ảnh hưởng → bấm “Chỉ nhóm mất phân loại”; bấm lại để khôi phục danh sách đầy đủ các nhóm.
+- Electron screenshot: positron-p51303-risk-only-before-1920x1080-real.png / positron-p51303-risk-only-after-1920x1080-real.png.
+- Evidence: Chỉ tính toán chênh lệch dự đoán Naive Bayes cục bộ trước/sau nhập; Node test xác nhận bỏ nhóm lost=0, giữ lostTotal/playlist; Electron QA đo số dòng giảm, nhãn lọc aria-pressed, ảnh thật 1920×1080, mô hình không đổi, không autoplay.
+- Privacy: Không gửi URL luồng, M3U, lịch sử xem, mô hình hoặc metadata ra ngoài; chỉ đọc tên/nhóm và trọng số sẵn có trên máy.
+- Baseline: Ảnh Electron P5.1.302 đã mở sau CI 45151303832 cho thấy nhóm 0/15 vẫn chen giữa các nhóm có nhiều kênh mất dự đoán.
+- Status: CANDIDATE, cần CI và soát ảnh thật trước khi tính vòng; Release Stable không dùng nhánh thử nghiệm.
+
 ## P5.1.302 — AI mở ngay danh sách kênh nguy cơ từ cảnh báo khôi phục / Electron 4.23.387
 - Feature priority: NEW — Thêm thao tác điều hướng một chạm trực tiếp từ cảnh báo Naive Bayes đến danh sách tên kênh đang bị ảnh hưởng, tự mở phần chi tiết và đặt mẫu kênh vào vùng nhìn không bị nút xác nhận cố định che, giảm thao tác cuộn dài.
 - Feature class: AI

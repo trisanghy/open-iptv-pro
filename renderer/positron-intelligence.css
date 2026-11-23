@@ -276,3 +276,10 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel #poAIInspectRisk:hover{background:#795333}
 #poWatchFlowPanel #poAIInspectRisk:focus-visible{outline:2px solid #ffe5ae;outline-offset:3px}
 #poWatchFlowPanel .po-ai-category-samples{scroll-margin-top:70px;scroll-margin-bottom:96px}
+
+/* P303: compact risk-only filter distinguishes evidence loss from benign groups. */
+#poWatchFlowPanel #poAICategoryRiskOnly{display:block;width:100%;min-height:39px;margin:5px 0;
+ padding:8px 10px;border:1px solid #587f81;border-radius:7px;background:#233e46;
+ color:#e0fcf3;text-align:left;font-size:11px;font-weight:730;cursor:pointer}
+#poWatchFlowPanel #poAICategoryRiskOnly[aria-pressed="true"]{border-color:#8ddebd;background:#235444;color:#f1fff8}
+#poWatchFlowPanel #poAICategoryRiskOnly:focus-visible{outline:2px solid #9af7d6;outline-offset:2px}

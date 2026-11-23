@@ -445,7 +445,7 @@
 
  // P295: read-only risk by channel group from local Naive Bayes predictions.
  // No stream URL, viewing history, EPG fetch or playlist changes.
- function previewCategoryGroupRisks(current,loaded,channelRows,{limit=5,maxChannels=1000,sortBy='count',minGroupSize=1}={}){
+ function previewCategoryGroupRisks(current,loaded,channelRows,{limit=5,maxChannels=1000,sortBy='count',minGroupSize=1,onlyAtRisk=false}={}){
   const imported=loaded?.ok===true?loaded:parseLearningBackup(loaded);
   if(!imported?.ok)return {ok:false,reason:imported?.reason||'Không đọc được dữ liệu AI.'};
   const present=sanitizedCategoryModel(current?.categoryModel),future=sanitizedCategoryModel(imported.categoryModel);
@@ -485,7 +485,10 @@
   // P298: a one-channel group can show "100% risk" without enough observations.
   // Explicitly filter small groups during comparison, never mutate user channels.
   const minimum=Math.max(1,Math.min(100,Math.trunc(Number(minGroupSize))||1));
-  const eligible=rows.filter(row=>row.count>=minimum);
+  const sizeEligible=rows.filter(row=>row.count>=minimum);
+  // P303: optionally hide groups with no local classifier coverage loss.
+  // This does not change model predictions, labels or saved playlist data.
+  const eligible=sizeEligible.filter(row=>!onlyAtRisk||row.lost>0);
   // P299: detect concentrated Naive Bayes coverage regressions that the
   // whole-library average can hide. This is model-output drift, NOT accuracy.
   // Requiring 5 affected channels in a group of at least 5 avoids tiny samples.
@@ -493,7 +496,8 @@
    .sort((a,b)=>b.lossRate-a.lossRate||b.lost-a.lost||a.label.localeCompare(b.label,'vi'))
    .slice(0,3).map(({label,count,lost,lossRate})=>({label,count,lost,lossRate}));
   return {ok:true,scanned:entries.length,totalGroups:rows.length,lostTotal,criticalGroups,
-   eligibleGroups:eligible.length,excludedSmallGroups:rows.length-eligible.length,
+   eligibleGroups:eligible.length,excludedSmallGroups:rows.length-sizeEligible.length,
+   excludedNoLossGroups:sizeEligible.length-eligible.length,onlyAtRisk:!!onlyAtRisk,
    minGroupSize:minimum,sortBy:sortBy==='rate'?'rate':'count',groups:eligible.slice(0,size),
    caution:'Rủi ro chỉ dự báo từ nhãn, tên và nhóm kênh trên máy; không phải thống kê chất lượng phát hoặc độ chính xác AI.'};
  }

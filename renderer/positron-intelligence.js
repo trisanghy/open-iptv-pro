@@ -824,15 +824,17 @@
      riskSort.id='poAICategoryRiskSort';riskSort.className='po-ai-risk-sort';
      const riskSmall=d.createElement('button');riskSmall.type='button';
      riskSmall.id='poAICategorySampleFilter';riskSmall.className='po-ai-risk-sort';
+     const riskOnly=d.createElement('button');riskOnly.type='button';
+     riskOnly.id='poAICategoryRiskOnly';riskOnly.className='po-ai-risk-sort';
      const sampleNote=d.createElement('small');sampleNote.id='poAICategorySampleNote';
      const namesToggle=d.createElement('button');namesToggle.type='button';
      namesToggle.id='poAICategoryNamesToggle';namesToggle.className='po-ai-risk-sort';
      const riskRows=d.createElement('div');riskRows.id='poAICategoryRiskRows';
-     riskDetails.append(riskSort,riskSmall,namesToggle,sampleNote,riskRows);
-     let rateMode=false,hideSmall=false,namesVisible=false;
+     riskDetails.append(riskSort,riskSmall,riskOnly,namesToggle,sampleNote,riskRows);
+     let rateMode=false,hideSmall=false,namesVisible=false,onlyAtRisk=false;
      const renderRiskRows=()=>{
       const ranked=core.previewCategoryGroupRisks({categoryModel},parsed,channels(),{
-       limit:5,maxChannels:1000,sortBy:rateMode?'rate':'count',minGroupSize:hideSmall?5:1});
+       limit:5,maxChannels:1000,sortBy:rateMode?'rate':'count',minGroupSize:hideSmall?5:1,onlyAtRisk});
       riskRows.replaceChildren();
       for(const group of ranked.groups){
        const line=d.createElement('p');line.className='po-ai-category-diff';
@@ -849,6 +851,12 @@
        line.append(examples);
        riskRows.append(line);
       }
+      // P303: direct filter based on the actual local Naive Bayes loss tally.
+      riskOnly.setAttribute('aria-pressed',String(onlyAtRisk));
+      riskOnly.textContent=onlyAtRisk
+       ?'Đang chỉ hiện nhóm có nguy cơ ('+ranked.eligibleGroups+') · Hiện tất cả'
+       :'Chỉ nhóm mất phân loại';
+      riskOnly.title=onlyAtRisk?'Bỏ lọc rủi ro, hiện lại mọi nhóm đã lấy mẫu':'Ẩn nhóm không có kênh mất dự đoán đủ chắc chắn';
       riskSort.textContent=rateMode?'Đang ưu tiên tỷ lệ % · Xem theo số kênh':
        'Theo số kênh · Xem theo tỷ lệ %';
       riskSort.setAttribute('aria-pressed',String(rateMode));
@@ -862,6 +870,7 @@
      };
      riskSort.addEventListener('click',()=>{rateMode=!rateMode;renderRiskRows();});
      riskSmall.addEventListener('click',()=>{hideSmall=!hideSmall;renderRiskRows();});
+     riskOnly.addEventListener('click',()=>{onlyAtRisk=!onlyAtRisk;renderRiskRows();});
      namesToggle.addEventListener('click',()=>{namesVisible=!namesVisible;renderRiskRows();});
      renderRiskRows();
      const riskNote=d.createElement('small');riskNote.textContent=groupsRisk.caution;

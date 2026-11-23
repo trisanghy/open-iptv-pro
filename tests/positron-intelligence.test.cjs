@@ -1066,3 +1066,32 @@ test('P302 AI jumps from severe restore warning to local affected channel eviden
  for(const marker of ['qa302','positron-p51302-risk-jump-before-1920x1080-real.png',
   'positron-p51302-risk-jump-after-1920x1080-real.png'])assert.ok(qa.includes(marker),marker);
 });
+
+test('P303 classifier risk-only filter hides zero-loss groups without mutating data',()=>{
+ const seed={id:'film',name:'Phim hành động',group:'Phim'};
+ const sport={id:'sport',name:'Bóng đá thể thao',group:'Thể thao'};
+ const other={id:'other',name:'Thời tiết khu vực',group:'Tổng hợp'};
+ let taught=C.emptyCategoryModel();
+ for(let i=0;i<14;i++){taught=C.teachCategory(taught,seed,'cinema');taught=C.teachCategory(taught,sport,'sport');}
+ const channels=[...Array.from({length:8},(_,i)=>({...seed,id:'film'+i})),
+  ...Array.from({length:7},(_,i)=>({...other,id:'weather'+i}))];
+ const incoming=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const original=JSON.stringify(channels);
+ const all=C.previewCategoryGroupRisks({categoryModel:taught},incoming,channels,{limit:10});
+ const focused=C.previewCategoryGroupRisks({categoryModel:taught},incoming,channels,{limit:10,onlyAtRisk:true});
+ assert.ok(all.ok&&focused.ok);
+ assert.ok(all.groups.some(x=>x.lost===0),'baseline includes a harmless group');
+ assert.ok(focused.groups.length<all.groups.length,'risky groups remain after filter');
+ assert.ok(focused.groups.every(x=>x.lost>0),'filter must discard zero-loss groups only');
+ assert.ok(focused.excludedNoLossGroups>=1);
+ assert.equal(focused.lostTotal,all.lostTotal,'total model prediction loss must not change');
+ assert.equal(JSON.stringify(channels),original,'no mutation of playlist');
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("riskOnly.id='poAICategoryRiskOnly'"));
+ assert.ok(ui.includes("riskOnly.addEventListener('click'"));
+ assert.ok(css.includes('#poAICategoryRiskOnly[aria-pressed="true"]'));
+ for(const m of ['qa303','positron-p51303-risk-only-before-1920x1080-real.png',
+  'positron-p51303-risk-only-after-1920x1080-real.png'])assert.ok(qa.includes(m),m);
+});

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.387",
-  "description": "Positron P5.1.302: mở trực tiếp nhóm kênh AI có nguy cơ mất phân loại",
+  "version": "4.23.388",
+  "description": "Positron P5.1.303: lọc riêng nhóm mất dự đoán chắc chắn bằng Naive Bayes",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
