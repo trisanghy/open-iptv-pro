@@ -1,7 +1,10 @@
 ## P5.1.323 / Electron 4.23.408 — AI recommendation actions 44px (CANDIDATE)
-- Input: inspected genuine Electron P322 1920×1080 screenshot: Xem/Hợp gu/Không hợp/Tra cứu web controls are 34px tall.
-- Increase action hit areas to 44px with larger labels, visible keyboard focus and wrapping at narrow viewport.
-- Node regression and real Electron CDP before/after 1920×1080 plus 720×900 geometry and state invariants.
+- Feature priority: NEW — AI hợp gu có thao tác vùng chạm 44px dễ dùng trên máy tính và cửa sổ hẹp, hỗ trợ điều hướng bàn phím rõ nét ngay trong đề xuất kênh.
+- Feature class: AI
+- User action: Mở TV → WatchFlow → AI hợp gu, chọn Xem/Hợp gu/Không hợp/Tra cứu web bằng chuột hoặc phím Tab trong thẻ đề xuất.
+- Electron screenshot: positron-p51323-ai-targets-before-1920x1080-real.png / positron-p51323-ai-targets-after-1920x1080-real.png; narrow positron-p51323-ai-targets-after-720x900-real.png.
+- Evidence: Ảnh Electron P322 thực tế cho thấy vùng bấm 34px; QA323 đo kích thước 44px từng nút ở 1920×1080 và 720×900, bảo toàn playlist, local model và current channel, kiểm tra tràn ngang và focus không tự phát.
+- Privacy: Không gửi URL stream, danh sách M3U, lịch sử hay trọng số cá nhân lên mạng; chỉ sửa CSS và kiểm tra DOM cục bộ.
 - Experimental CI assets only; stable-only public Release policy unchanged. Do not mark complete before reviewing CI images.
 
 ## P5.1.322 / Electron 4.23.407 — Header WatchFlow theo chế độ AI (CANDIDATE)
