@@ -227,7 +227,7 @@
  // P332: reveal the P331 remote keys and their safe focus-only semantics.
  const modeHelp=d.createElement('p');modeHelp.className='po-ai-keyboard-help';
  modeHelp.id='poAIKeyboardHelp';
- modeHelp.textContent='← → ↑ ↓: chuyển chế độ · Enter/Space: chọn · Alt+Shift+J: tới nút Xem đầu';
+ modeHelp.textContent='← → ↑ ↓: chế độ · Enter/Space: chọn · Alt+Shift+J: Xem đầu';
  // P336: show + announce which recommendation was reached by keyboard.
  const focusProgress=d.createElement('span');
  focusProgress.id='poAIFocusProgress';
@@ -358,7 +358,7 @@
  // P346 repair from actual P326 native screenshot regression:
  // anchor the collapsed guide inside the already-existing keyboard hint row,
  // so first-card Play actions are not pushed below the modal's viewport.
- modeHelp.append(shortcutGuide);
+ modeHelp.after(shortcutGuide);
 
  // P322: context-aware accessible header; preserve native wording for non-AI.
  const watchTitle=byId('poWatchFlowTitle'),watchKicker=panel.querySelector('.po-watchflow-kicker');

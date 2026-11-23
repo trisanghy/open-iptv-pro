@@ -541,3 +541,14 @@ html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-en
 #poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide>summary{
  font-size:11px!important;text-align:center!important;
 }
+
+/* P346 replay safeguard: a <details> in a <p> can be reparented by native
+   panel refresh. Use valid sibling DOM and negative margin to reserve ZERO
+   additional vertical space, preserving the first Play button at 720px. */
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide,
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide[open]{
+ display:block!important;position:relative!important;
+ top:-6px!important;right:auto!important;left:auto!important;
+ width:132px!important;max-width:132px!important;
+ margin:-27px 0 -17px auto!important;
+}

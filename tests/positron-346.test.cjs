@@ -8,8 +8,8 @@ test('P346 Escape collapses only native AI guide and returns focus without mutat
   "shortcutSummary.focus({preventScroll:true})","shortcutGuide.setAttribute('aria-keyshortcuts','Escape')",
   "shortcutGuide.open=false; // P346: fresh modal reopens with compact help"])
   assert.ok(js.includes(value),'missing P346 nested Escape guard '+value);
- assert.ok(js.includes('modeHelp.append(shortcutGuide)'),'P326 regression: guide must not reserve a new vertical row');
- assert.ok(read('renderer/positron-intelligence.css').includes('position:absolute!important;top:-13px'),'collapsed guide must overlay existing help row');
+ assert.ok(js.includes('modeHelp.after(shortcutGuide)'),'P326 regression: guide must not reserve a new vertical row');
+ assert.ok(read('renderer/positron-intelligence.css').includes('margin:-27px 0 -17px auto!important'),'collapsed guide must overlay existing help row');
 
  const p=JSON.parse(read('package.json'));assert.ok(Number.parseInt(p.description.split('Positron P5.1.')[1],10)>=346);
 });
