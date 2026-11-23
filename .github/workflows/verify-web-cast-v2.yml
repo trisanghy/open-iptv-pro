@@ -22,6 +22,8 @@ on:
       - 'web-online/tests/tv-hls-playback-recovery.test.cjs'
       - 'tv.html'
       - 'web-online/tests/web-cast-v2*.cjs'
+      - 'web-online/tests/web-airplay.test.cjs'
+      - 'tests/web-cast-native-picker-20261123.test.cjs'
       - 'web-online/tests/web-tv-remote-buttons-browser.test.cjs'
       - 'web-online/tests/web-cast-sender.test.cjs'
       - 'app.js'
@@ -57,6 +59,7 @@ jobs:
           grep -Fq 'web-cast-icons.js?v=dual-links-20261122a' tv.html
       - name: Test real encrypted TV pairing with mocked Realtime channels
         run: |
+          node --test tests/web-cast-native-picker-20261123.test.cjs
           node --test web-online/tests/web-cast-v2.test.cjs
           node --test web-online/tests/tv-hls-playback-recovery.test.cjs
           node --test web-online/tests/web-cast-icons.test.cjs
