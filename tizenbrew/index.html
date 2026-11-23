@@ -777,12 +777,20 @@ body[data-theme=glass] .dialog{
 }
 
 
-/* Match preview to the incoming stream ratio without stretching/cropping. */
-#app .preview{background:#050a13!important}
-#app .preview video{position:absolute;left:50%;top:50%;right:auto;bottom:auto;inset:auto;
- width:100%;height:100%;max-width:100%;max-height:100%;transform:translate(-50%,-50%);
- object-fit:contain!important;object-position:center center;
- aspect-ratio:var(--preview-video-ratio,16/9);background:#050a13;pointer-events:none}
+/* Samsung/Tizen preview: keep the VIDEO ELEMENT full size. object-fit:contain
+   centers the decoded picture inside it, without CSS transforms, aspect-ratio
+   overrides, or runtime pixel resizing (which shifted footage to top-left). */
+#app .preview{position:relative;overflow:hidden;background:#050a13!important}
+#app .preview #homePreviewVideo{
+ position:absolute!important;inset:0!important;
+ left:0!important;top:0!important;right:0!important;bottom:0!important;
+ width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ transform:none!important;aspect-ratio:auto!important;
+ object-fit:contain!important;object-position:50% 50%!important;
+ margin:0!important;padding:0!important;background:#050a13;
+ pointer-events:none;
+}
 </style>
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
@@ -793,7 +801,7 @@ body[data-theme=glass] .dialog{
 <rect width="1024" height="1024" rx="220" fill="#ffffff"/>
 <path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
 </svg></div>
-    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.47</p></div>
+    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.48</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
@@ -1794,22 +1802,17 @@ function previewIsCurrent(channel,token,attempt){
  byId('modal').hidden&&selected&&selected.id===channel.id&&selected.url===channel.url;
 }
 
+/* Metadata is informational only. The browser/TV composites video inside its
+ * full-size element using object-fit:contain. Never set pixel width/height here:
+ * Samsung video surfaces may ignore translate(), leaving the frame at top-left. */
 function fitHomePreviewVideo(video){
- var w=Number(video&&video.videoWidth),h=Number(video&&video.videoHeight),stage=byId('previewStage');
- if(!stage||!stage.dataset||!w||!h)return;
- var rect=stage.getBoundingClientRect?stage.getBoundingClientRect():{width:0,height:0};
- var maxW=Number(rect.width),maxH=Number(rect.height);
- if(!maxW||!maxH||!Number.isFinite(w/h))return;
- var wide=(w/h)>maxW/maxH;
- var fittedW=wide?maxW:maxH*w/h,fittedH=wide?maxW*h/w:maxH;
- if(!Number.isFinite(fittedW)||!Number.isFinite(fittedH))return;
- video.style.width=Math.max(1,Math.floor(fittedW))+'px';
- video.style.height=Math.max(1,Math.floor(fittedH))+'px';
- video.style.aspectRatio=w+' / '+h;
- stage.dataset.videoShape=w/h<0.9?'portrait':w/h<1.49?'standard':w/h>2?'wide':'landscape';
- stage.dataset.videoRatio=w+':'+h;
+ var stage=byId('previewStage'),width=Number(video&&video.videoWidth),height=Number(video&&video.videoHeight);
+ if(!stage||!stage.dataset||width<=0||height<=0)return;
+ var ratio=width/height;
+ if(!Number.isFinite(ratio))return;
+ stage.dataset.videoShape=ratio<0.9?'portrait':ratio<1.49?'standard':ratio>2?'wide':'landscape';
+ stage.dataset.videoRatio=width+':'+height;
 }
-
 function previewPlayed(channel,token,attempt){
  if(!previewIsCurrent(channel,token,attempt))return;
  var v=byId('homePreviewVideo');if(v.paused||v.readyState<2)return;
@@ -1839,7 +1842,8 @@ function attachPreviewEvents(v,channel,token,attempt){
  v.onerror=function(){previewFailed(channel,token,attempt);};
  v.onloadedmetadata=function(){if(previewIsCurrent(channel,token,attempt))fitHomePreviewVideo(v);};
  v.onresize=function(){if(previewIsCurrent(channel,token,attempt))fitHomePreviewVideo(v);};
- v.style.width='100%';v.style.height='100%';v.style.aspectRatio='16 / 9';
+ // Clear sizing retained from older app sessions before attaching the next source.
+ if(v.style){v.style.width='';v.style.height='';v.style.aspectRatio='';v.style.transform='';}
  v.muted=true;v.volume=0;v.hidden=false;
 }
 function startNativePreview(channel,token){

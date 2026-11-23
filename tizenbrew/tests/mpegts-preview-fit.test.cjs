@@ -36,27 +36,31 @@ test('MPEGTS routes only genuine .ts/.m2ts/.flv/ .mpegts URLs',()=>{
  assert.equal(ctx.mpegtsType('http://e.test/live.flv'),'flv');
  assert.equal(ctx.mpegtsType('http://e.test/live.ts'),'mse');
 });
-test('Preview fits 4:3, 16:9, portrait and cinematic video inside stable panel bounds',()=>{
+test('Preview retains a full-size video layer for 4:3, 16:9, portrait and cinematic sources',()=>{
  const source=extract('function fitHomePreviewVideo(video){','function previewPlayed(channel,token,attempt){');
- const stage={dataset:{},getBoundingClientRect:()=>({width:600,height:330})};
+ const stage={dataset:{}};
  const ctx=vm.createContext({byId:id=>id==='previewStage'?stage:null});
  vm.runInContext(source,ctx);
- const results=[
-  {w:1920,h:1080,shape:'landscape',fitW:Math.floor(330*1920/1080),fitH:330},
-  {w:640,h:480,shape:'standard',fitW:440,fitH:330},
-  {w:1080,h:1920,shape:'portrait',fitW:Math.floor(330*1080/1920),fitH:330},
-  {w:2560,h:1080,shape:'wide',fitW:600,fitH:Math.floor(600*1080/2560)}
- ];
- for(const item of results){
+ for(const item of [
+  {w:1920,h:1080,shape:'landscape'},
+  {w:640,h:480,shape:'standard'},
+  {w:1080,h:1920,shape:'portrait'},
+  {w:2560,h:1080,shape:'wide'}
+ ]){
   const v={videoWidth:item.w,videoHeight:item.h,style:{}};
   ctx.fitHomePreviewVideo(v);
   assert.equal(stage.dataset.videoShape,item.shape);
-  assert.equal(v.style.width,item.fitW+'px');
-  assert.equal(v.style.height,item.fitH+'px');
-  assert.equal(v.style.aspectRatio,item.w+' / '+item.h);
-  assert.ok(item.fitW<=600&&item.fitH<=330,'no crop or stretch');
+  assert.equal(stage.dataset.videoRatio,item.w+':'+item.h);
+  assert.deepEqual(v.style,{},'no pixel size or transform overrides on Samsung hardware surfaces');
  }
- assert.match(html,/object-fit:contain!important/);
+ const css=html.slice(html.indexOf('/* Samsung/Tizen preview:'),html.indexOf('</style>'));
+ assert.match(css,/width:100%!important;height:100%!important/);
+ assert.match(css,/inset:0!important/);
+ assert.match(css,/transform:none!important/);
+ assert.match(css,/object-fit:contain!important/);
+ assert.match(css,/aspect-ratio:auto!important/);
+ assert.doesNotMatch(css,/translate\(/);
+ assert.doesNotMatch(source,/\.style\.(?:width|height|transform|aspectRatio)\s*=/);
  assert.match(html,/v\.onloadedmetadata=function\(\)/);
  assert.match(html,/v\.onresize=function\(\)/);
 });

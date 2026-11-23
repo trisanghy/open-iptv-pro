@@ -424,3 +424,11 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$f=Join-Path $env:TE
 - **mpegts.js 1.8.2** được cài từ npm bản khóa chính xác khi GitHub Actions dựng WGT. Để có fallback cho TizenBrew chạy trực tiếp, repo có bản vendored 1.8.0 theo Apache-2.0, và loader có URL CDN 1.8.2 khi cần. Dùng MPEG-TS/FLV HTTP `.ts`, `.m2ts`, `.flv` có MSE và codec phù hợp; khi lỗi chuyển AVPlay/HTML5.
 - Khung xem thử đọc `videoWidth`/`videoHeight` từ metadata, tự tính vùng trình chiếu nằm gọn trong khung, giữ đủ 4:3, 16:9, 21:9, video dọc mà không crop, kéo méo, hoặc mở thêm trình phát. Chế độ điều chỉnh khi có kích thước video và không áp dụng blur lên video.
 - Giữ giới hạn thử nhiều lượt HLS/DASH, hủy instance cũ khi chuyển kênh và không tích hợp LibVLC.wasm chưa được xác minh trên model Samsung TV cụ thể (bộ WASM giải mã phần mềm tiêu thụ tài nguyên, không bảo đảm MSE/codec/DRM).
+
+
+## v0.1.48 — Sửa video xem thử bị dồn góc trên trái (Samsung/Chromium)
+
+- Nguyên nhân: logic `fitHomePreviewVideo()` đã ép kích thước pixel theo metadata, trong khi CSS đồng thời đặt `left:50%/top:50%` và `transform:translate(-50%,-50%)`. WebView và surface video Samsung có thể định vị khác lớp DOM, khiến hình bị lệch góc và phần còn lại đen.
+- Sửa: giữ hẳn lớp `<video>` tại `inset:0;width:100%;height:100%`, bỏ transform và `aspect-ratio` cưỡng bức; sử dụng `object-fit:contain` để trình duyệt tự căn video 4:3 / 16:9 / dọc / siêu rộng.
+- Metadata chỉ phục vụ phân loại tỷ lệ, không thay đổi kích thước CSS video trong quá trình phát. Khi chuyển nguồn, dọn mọi kiểu inline còn sót. Không đổi pipeline HLS/DASH/mpegts/HTML5/AVPlay.
+- Thêm test chống tái phát lỗi lệch góc. Cần kiểm tra thêm trên chính model TV đang dùng vì Samsung AVPlay và HTML5 compositing có thể khác Chromium.
