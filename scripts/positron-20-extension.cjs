@@ -11885,6 +11885,12 @@ async function runTwenty(page){
  await require('./positron-340-audit.cjs').run(page);
  await require('./positron-341-audit.cjs').run(page);
  await require('./positron-342-audit.cjs').run(page);
+ await require('./positron-343-audit.cjs').run(page);
+ // P343 actual Electron Home/End recommendation before/after screenshots:
+ // positron-p51343-home-end-ai-before-1920x1080-real.png
+ // positron-p51343-home-end-ai-after-1920x1080-real.png
+ // positron-p51343-home-end-ai-before-720x900-real.png
+ // positron-p51343-home-end-ai-after-720x900-real.png
  // P342 REAL Electron sticky heading before/after evidence:
  // positron-p51342-sticky-recommendation-before-1920x1080-real.png
  // positron-p51342-sticky-recommendation-after-1920x1080-real.png
