@@ -7,11 +7,11 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.344</strong> · PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.344</strong> · PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.429 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus
+Feature priority: NEW — Người dùng TV/remote có danh sách 8 gợi ý AI phải bấm mũi tên từng lần hoặc Home/End; nay PageUp/PageDown di chuyển nhanh năm thẻ mà vẫn giữ nút Xem trong tầm nhìn. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

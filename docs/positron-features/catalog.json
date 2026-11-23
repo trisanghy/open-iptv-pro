@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T22:21:07.685612+00:00",
+  "generatedAt": "2026-11-23T22:23:05.924572+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.344",
       "appVersion": "4.23.429",
       "title": "PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus",
-      "description": "PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus",
-      "kind": "fix",
+      "description": "Feature priority: NEW — Người dùng TV/remote có danh sách 8 gợi ý AI phải bấm mũi tên từng lần hoặc Home/End; nay PageUp/PageDown di chuyển nhanh năm thẻ mà vẫn giữ nút Xem trong tầm nhìn. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
