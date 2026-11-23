@@ -470,7 +470,7 @@
   }
   if(castState().connected)void root.OpenIPTVWebCast?.setReceiverVolume?.(level,!!muted);
  }
- function syncAirplayState(){renderConnectionStatus();}
+ function syncAirplayState(){renderConnectionStatus();if(overlay)syncAir();}
  function getStatus(){const cast=castState(),air=root.OpenIPTVWebCast?.getAirplayState?.()||{};return {pair:!!pair?.connected,cast:!!cast.connected,airplay:!!air.connected,remoteState};}
  function setCastFeedback(message,error=false){if(overlay)notice('cxCastNotice',message,error?'error':'');}
  root.OpenIPTVWebCastV2=Object.freeze({open,close,disconnectPair:disconnect,onChannelChanged,syncCast,syncAirplayState,setCastFeedback,onLocalStop,toggleRemotePlayback,isRemoteActive,onLocalVolumeChanged,getStatus,shouldUseRemotePlayer,syncRemoteControls});
