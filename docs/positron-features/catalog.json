@@ -1,20 +1,35 @@
 {
-  "generatedAt": "2026-11-23T13:23:18.563323+00:00",
+  "generatedAt": "2026-11-23T13:44:29.741749+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
+      "number": 313,
+      "version": "P5.1.313",
+      "appVersion": "4.23.398",
+      "title": "kiểm chứng bản sao AI đã tải bằng đối chiếu trọng số cục bộ",
+      "description": "Feature priority: NEW — Chọn lại bản sao JSON đã tải, kiểm tra định dạng, bộ đếm và trọng số Logistic/Naive Bayes/UCB với bản vừa xuất. Cảnh báo khi không khớp, không tự ghi đè dữ liệu học. Feature class: AI",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "ca14956cea49fa5be4512833839e62838089f107",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 312,
       "version": "P5.1.312",
-      "appVersion": "4.23.397",
-      "title": "trợ lý sao lưu trọng số AI khi bộ nhớ đầy, cảnh báo lưu lỗi rõ ràng",
+      "appVersion": "Chưa xác minh",
+      "title": "Electron 4.23.397 — Cứu hộ sao lưu trọng số AI khi bộ nhớ đầy (CANDIDATE)",
       "description": "Feature priority: NEW — Khi ghi nhãn AI gặp lỗi lưu bộ nhớ, thêm nút cứu hộ xuất bản sao trọng số Naive Bayes bằng JSON ngay tại hàng đợi dạy AI; người dùng không phải tìm sâu trong cài đặt và không bị mất trọng số đã lưu. Feature class: AI",
       "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "c94c1c9d179d4d9dbf10cc008b51c92685d8775a",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
       "image": null
     },
@@ -1786,7 +1801,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
     },
     {
       "number": 193,

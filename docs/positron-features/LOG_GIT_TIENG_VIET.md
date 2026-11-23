@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.312 — trợ lý sao lưu trọng số AI khi bộ nhớ đầy, cảnh báo lưu lỗi rõ ràng
+## P5.1.313 — kiểm chứng bản sao AI đã tải bằng đối chiếu trọng số cục bộ
 
-**Ứng dụng:** 4.23.397 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.398 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Chọn lại bản sao JSON đã tải, kiểm tra định dạng, bộ đếm và trọng số Logistic/Naive Bayes/UCB với bản vừa xuất. Cảnh báo khi không khớp, không tự ghi đè dữ liệu học. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ca14956cea49fa5be4512833839e62838089f107)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.312 — Electron 4.23.397 — Cứu hộ sao lưu trọng số AI khi bộ nhớ đầy (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Khi ghi nhãn AI gặp lỗi lưu bộ nhớ, thêm nút cứu hộ xuất bản sao trọng số Naive Bayes bằng JSON ngay tại hàng đợi dạy AI; người dùng không phải tìm sâu trong cài đặt và không bị mất trọng số đã lưu. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c94c1c9d179d4d9dbf10cc008b51c92685d8775a)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.311 — Electron 4.23.396 — Lưu nhãn Naive Bayes an toàn khi bộ nhớ đầy (CANDIDATE)
 
