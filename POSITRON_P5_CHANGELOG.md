@@ -1,3 +1,12 @@
+## P5.1.312 / Electron 4.23.397 — Cứu hộ sao lưu trọng số AI khi bộ nhớ đầy (CANDIDATE)
+- Feature priority: NEW — Khi ghi nhãn AI gặp lỗi lưu bộ nhớ, thêm nút cứu hộ xuất bản sao trọng số Naive Bayes bằng JSON ngay tại hàng đợi dạy AI; người dùng không phải tìm sâu trong cài đặt và không bị mất trọng số đã lưu.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Dạy AI nhanh → khi máy không lưu được nhãn, chọn “Sao lưu trọng số AI đang dùng (.json)”; tệp được tải về tại máy, không tự xóa dữ liệu.
+- Electron screenshot: positron-p51312-ai-recovery-before-1920x1080-real.png / positron-p51312-ai-recovery-after-1920x1080-real.png.
+- Evidence: qa312 trong Electron thật kiểm chứng cảnh báo có role alert, màu hổ phách, nút xuất JSON chủ động, gọi đúng bộ sao lưu local đã có, phản hồi và trả focus; mô hình, playlist, current player giữ nguyên.
+- Ảnh P5.1.311 đã mở: lỗi bộ nhớ được báo bằng chữ xanh giống thành công; sửa phân biệt thông báo bằng aria-live và nền cảnh báo.
+- Chưa tính ĐẠT trước khi Node, Electron screenshot QA và build CI thành công, tải ảnh thật về mở soát.
+
 ## P5.1.311 / Electron 4.23.396 — Lưu nhãn Naive Bayes an toàn khi bộ nhớ đầy (CANDIDATE)
 - Feature priority: BLOCKER_FIX — Ngăn mất dữ liệu nhãn Naive Bayes khi localStorage đầy: RAM trước đây vẫn báo học thành công dù dữ liệu trên đĩa không được ghi, gây sai mô hình sau khi mở lại.
 - Electron screenshot: positron-p51311-storage-fail-before-1920x1080-real.png / positron-p51311-storage-fail-after-1920x1080-real.png.

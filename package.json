@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.396",
-  "description": "Positron P5.1.311: không ghi nhãn AI giả khi bộ nhớ đầy, rollback Naive Bayes an toàn",
+  "version": "4.23.397",
+  "description": "Positron P5.1.312: trợ lý sao lưu trọng số AI khi bộ nhớ đầy, cảnh báo lưu lỗi rõ ràng",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

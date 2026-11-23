@@ -326,3 +326,9 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
  }
 }
 @media(max-width:1099px){#poWatchFlowPanel .po-ai-entry #poAIWide{display:none!important}}
+
+/* P312: distinguish unpersisted AI training from the green success status. */
+#poWatchFlowPanel #poAIActiveStatus.po-ai-save-error{display:block;margin:9px 0;padding:10px 12px;border:1px solid #e6a96b;border-left:4px solid #ffd08b;border-radius:9px;background:#473327;color:#fff2df;font-size:12px;font-weight:750;line-height:1.45}
+#poWatchFlowPanel #poAIActiveBackupRecovery{display:block;width:100%;min-height:42px;margin:6px 0 10px;padding:9px 12px;border:1px solid #f1c28a;border-radius:9px;background:#634627;color:#fff5e7;font-size:12px;font-weight:750;cursor:pointer;text-align:center}
+#poWatchFlowPanel #poAIActiveBackupRecovery:focus-visible{outline:2px solid #ffe4a4;outline-offset:2px}
+#poWatchFlowPanel #poAIActiveBackupRecovery:disabled{opacity:.5;cursor:not-allowed}

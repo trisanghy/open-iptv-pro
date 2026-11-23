@@ -48,4 +48,9 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 ## Đợt mới từ P5.1.310 — Vòng 01/20: P5.1.311 (CANDIDATE)
 - Baseline P5.1.310 / Electron 4.23.395: Actions 45179155802 đã đạt test/capture/Windows/Mac; qa310 9/9 true, mở cả ảnh wide-reading trước/sau 1920×1080.
 - Lỗi trong mã: huấn luyện Naive Bayes cập nhật RAM trước save; nếu localStorage đầy, nhãn mất khi khởi động lại. Sửa giao dịch ghi nhãn có rollback trọng số và hàng đợi; QA ép lỗi quota tại khóa AI riêng, kiểm tra playlist không đổi và no-autoplay.
-- Ảnh P311 và kết quả CI chưa có; không nhận ĐẠT trước khi xem PNG thật.
+- ĐẠT sau CI 45181291993: 1024/1029 Node tests pass, 5 skipped, 0 fail; 5/5 job test/capture/Windows x64/macOS x64/ARM64 thành công; qa311 7/7 true. Đã tải và mở hai PNG P311 trước/sau 1920×1080 từ artifact 14822051859. Ảnh sau cho thấy lỗi màu chữ xanh dễ nhầm với thành công → ưu tiên P312.
+
+## Đợt hiện tại — Vòng 02/20: P5.1.312 (CANDIDATE)
+- Input: mở ảnh P311 sau và thấy trạng thái Không lưu được nhãn AI vẫn màu xanh giống thành công, thiếu lối sao lưu trọng số an toàn tại chỗ.
+- Thêm cảnh báo màu hổ phách, role alert assertive và nút xuất JSON từ AI trainer, ẩn khi không có lỗi. Không xóa mô hình, playlist, EPG hoặc Favorites. QA312 click thao tác thực tế, đối chiếu model/playlist và ảnh trước/sau.
+- Chỉ hoàn thành sau CI và mở ảnh P312 thật.

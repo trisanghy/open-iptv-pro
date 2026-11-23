@@ -1319,3 +1319,17 @@ test('P311 label training rollback handles localStorage failure without claiming
   'positron-p51311-storage-fail-after-1920x1080-real.png'])
   assert.ok(qa.includes(part),part);
 });
+
+test('P312 quota recovery adds native AI backup action and an accessible warning',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ["status.classList.toggle('po-ai-save-error',failedSave)",
+   "failedSave?'alert':'status'","rescue.id='poAIActiveBackupRecovery'",
+   "backup.click();","rescue.addEventListener('click'","modelStatus.textContent.includes('Đã yêu cầu')"])
+  assert.ok(ui.includes(token),token);
+ for(const token of ['#poAIActiveStatus.po-ai-save-error','#poAIActiveBackupRecovery:focus-visible','background:#473327'])
+  assert.ok(css.includes(token),token);
+ for(const token of ['qa312','positron-p51312-ai-recovery-before-1920x1080-real.png',
+   'positron-p51312-ai-recovery-after-1920x1080-real.png'])assert.ok(qa.includes(token),token);
+});

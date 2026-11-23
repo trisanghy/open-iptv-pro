@@ -402,8 +402,32 @@
 
     const heading=d.createElement('strong');heading.textContent='Dạy AI nhanh · '+candidates.length+' kênh ưu tiên'+(sessionSkippedIds.size?' · '+sessionSkippedIds.size+' đã bỏ qua trong phiên':'');
     const hint=d.createElement('p');hint.textContent='AI ưu tiên tên chưa đủ chắc chắn. Chọn chủ đề đúng để mô hình Naive Bayes học tại máy; không tự thay đổi thư mục gốc.';
-    const status=d.createElement('p');status.id='poAIActiveStatus';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.textContent=activeStatusMessage;
+    // P312: a failed local model write must not look like AI-training success.
+    const failedSave=activeStatusMessage.startsWith('Không lưu được nhãn AI.');
+    const status=d.createElement('p');status.id='poAIActiveStatus';
+    status.classList.toggle('po-ai-save-error',failedSave);
+    status.setAttribute('role',failedSave?'alert':'status');
+    status.setAttribute('aria-live',failedSave?'assertive':'polite');
+    status.tabIndex=-1;status.textContent=activeStatusMessage;
     trainer.append(heading,hint,status);
+    if(failedSave){
+     const rescue=d.createElement('button');rescue.type='button';rescue.id='poAIActiveBackupRecovery';
+     rescue.textContent='Sao lưu trọng số AI đang dùng (.json)';
+     rescue.title='Xuất trọng số AI tại máy, không xóa mô hình hay dữ liệu kênh';
+     rescue.disabled=backup.disabled;
+     rescue.addEventListener('click',()=>{
+      modelStatus.textContent='';
+      backup.click(); // User-initiated reuse of existing local-only export.
+      activeStatusMessage=modelStatus.textContent.includes('Đã yêu cầu')
+       ?'Đã yêu cầu tải bản sao trọng số AI (.json). Giữ tệp trước khi dọn bộ nhớ; chưa thử ghi nhãn lại.'
+       :'Không thể tạo bản sao AI; mô hình hiện tại vẫn giữ nguyên. Kiểm tra quyền tải tệp rồi thử lại.';
+      render();
+      const feedback=byId('poAIActiveStatus');
+      feedback?.scrollIntoView({block:'center',behavior:'instant'});
+      feedback?.focus({preventScroll:true});
+     });
+     trainer.append(rescue);
+    }
     // P281: undo the latest confirmed label without deleting earlier training data.
     if(lastActiveTeachUndo){
      const undo=d.createElement('button');undo.type='button';undo.id='poAIActiveUndoLabel';
