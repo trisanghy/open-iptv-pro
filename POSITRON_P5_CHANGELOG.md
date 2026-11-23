@@ -1,3 +1,12 @@
+## P5.1.281 — Hoàn tác chính xác nhãn AI gần nhất / Electron 4.23.366
+- Feature priority: NEW — Khôi phục chính xác trọng số Naive Bayes và ID của các kênh đã gán nhãn trước khi dạy sai, không xóa nhãn cũ.
+- Feature class: AI
+- Evidence: Node regression và Electron CDP 1920×1080 chụp trước/sau/khôi phục; kiểm tra mô hình localStorage, số nhãn, playlist, kênh bỏ qua, không autoplay. Chỉ xác nhận đạt sau Actions và mở PNG.
+- User action: TV → WatchFlow → AI hợp gu → Thư mục EPG → Dạy AI nhanh → Ghi nhãn & tiếp → Hoàn tác nhãn AI vừa dạy.
+- Privacy: Snapshot một bước chỉ tồn tại trong RAM, không thay playlist/EPG, không gửi dữ liệu lên mạng.
+- Screenshot: positron-p51281-undo-ai-before-1920x1080-real.png / positron-p51281-undo-ai-after-1920x1080-real.png / positron-p51281-undo-ai-restored-1920x1080-real.png.
+- Trạng thái: CANDIDATE — chỉ lưu GitHub Actions; Releases Stable-only.
+
 ## P5.1.280 — Hàng đợi AI dạy chủ đề không lặp / Electron 4.23.365
 - Feature priority: NEW — Dạy AI nhanh chuyển qua hơn năm kênh chưa phân loại sau mỗi lần Bỏ qua; giữ danh sách bỏ qua chỉ trong phiên, tránh xuất hiện lại kênh cũ, cho phép Xem lại toàn bộ kênh đã bỏ qua. Xếp hạng vẫn dựa trên độ chưa chắc chắn của Naive Bayes và quyền người dùng tự gán nhãn.
 - Feature class: AI

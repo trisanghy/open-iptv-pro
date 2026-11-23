@@ -16,6 +16,8 @@
  const taughtIds=new Set((Array.isArray(record?.taughtIds)?record.taughtIds:[]).slice(-1000)
   .filter(x=>typeof x==='string'&&x.length<=160));
  let activeStatusMessage='',activeTeachIndex=0;const sessionSkippedIds=new Set();
+  // P281: retain one reversible Naive Bayes training snapshot, only in RAM.
+  let lastActiveTeachUndo=null;
  let web=load(WEB_KEY);if(!web||typeof web!=='object'||Array.isArray(web))web={};
  const webValid=()=>{
   const live={};const now=Date.now();
@@ -98,7 +100,7 @@
     if(!item.count)return;
     confirmDelete(item.id,remove,()=>{
      if(item.id==='preference'){model=core.emptyModel();active=null;notified.clear();}
-     if(item.id==='category'){categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';}
+     if(item.id==='category'){categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';lastActiveTeachUndo=null;}
      if(item.id==='explore')bandit={};
     },item.name);
    });
@@ -353,6 +355,23 @@
     const hint=d.createElement('p');hint.textContent='AI ưu tiên tên chưa đủ chắc chắn. Chọn chủ đề đúng để mô hình Naive Bayes học tại máy; không tự thay đổi thư mục gốc.';
     const status=d.createElement('p');status.id='poAIActiveStatus';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.textContent=activeStatusMessage;
     trainer.append(heading,hint,status);
+    // P281: undo the latest confirmed label without deleting earlier training data.
+    if(lastActiveTeachUndo){
+     const undo=d.createElement('button');undo.type='button';undo.id='poAIActiveUndoLabel';
+     undo.textContent='Hoàn tác nhãn AI vừa dạy';
+     undo.title='Khôi phục trọng số trước khi dạy kênh '+lastActiveTeachUndo.name;
+     undo.addEventListener('click',()=>{
+      if(!lastActiveTeachUndo)return;
+      const previous=lastActiveTeachUndo;lastActiveTeachUndo=null;
+      categoryModel=core.sanitizedCategoryModel(previous.model);
+      taughtIds.clear();for(const id of previous.taughtIds)taughtIds.add(id);
+      activeTeachIndex=0;
+      activeStatusMessage='Đã hoàn tác nhãn cho '+previous.name+'; giữ nguyên các nhãn AI cũ.';
+      const stored=save();render();
+      if(!stored)state()?.toast?.('Chưa lưu được thao tác hoàn tác nhãn AI','warn');
+     });
+     trainer.append(undo);
+    }
     // P280: session-only exclusions, never persisted as a label or preference.
     if(sessionSkippedIds.size){
      const restore=d.createElement('button');restore.type='button';restore.id='poAIActiveResetSkips';
@@ -388,10 +407,12 @@
      teach.addEventListener('click',()=>{
       if(!enabled||!core.KINDS[select.value]||select.value==='other')return;
       const count=categoryModel.examples;
+      const previousModel=core.sanitizedCategoryModel(categoryModel),previousTaughtIds=[...taughtIds];
       categoryModel=core.teachCategory(categoryModel,suggestion.channel,select.value);
       if(categoryModel.examples<=count){state()?.toast?.('Không thể học nhãn: cần tên kênh có thông tin','warn');return;}
       taughtIds.add(String(suggestion.channel.id).slice(0,160));
       while(taughtIds.size>1000)taughtIds.delete(taughtIds.values().next().value);
+      lastActiveTeachUndo={model:previousModel,taughtIds:previousTaughtIds,name:String(suggestion.channel.name).slice(0,120)};
       activeStatusMessage='Đã học nhãn '+core.KINDS[select.value]+' cho '+suggestion.channel.name+'.';
       const stored=save();render();
       if(!stored)state()?.toast?.('Chưa lưu được mô hình mới vào bộ nhớ','warn');
@@ -560,7 +581,7 @@
     }
     select.addEventListener('change',()=>{
      if(!enabled||!select.value)return;
-     categoryModel=core.teachCategory(categoryModel,ch,select.value);
+     lastActiveTeachUndo=null;categoryModel=core.teachCategory(categoryModel,ch,select.value);
      if(!save())state()?.toast?.('Không lưu được nhãn học AI','warn');
      else state()?.toast?.('AI đã học thể loại từ nhãn xác nhận','info');
      render();
@@ -590,7 +611,7 @@
   else clear.focus();
  });
  bulk.addEventListener('click',()=>confirmDelete('all',bulk,()=>{
-  model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';active=null;alertEnabled=false;alertCheck.checked=false;
+  model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';lastActiveTeachUndo=null;active=null;alertEnabled=false;alertCheck.checked=false;
   notified.clear();
  },'toàn bộ dữ liệu học AI trên máy'));
  // Opt-in, in-app alert only: score actual imported EPG against locally

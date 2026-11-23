@@ -367,7 +367,7 @@ test('P276 WatchFlow quản lý 3 mô hình có trọng số và xóa riêng an 
  for(const s of ['poAIModelManager','poAIModelRows','poAIModelStatus','learnedInventory',
   'Tiêu chuẩn · Gợi ý sở thích (Logistic ML)','Smart · Phân loại chủ đề (Naive Bayes)',
   'Smart · Khám phá (UCB)',"bulk.addEventListener('click'",
-  "if(item.id==='category'){categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';}",
+  "if(item.id==='category'){categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';lastActiveTeachUndo=null;}",
   'modelInventory:()=>learnedInventory()'])assert.ok(ui.includes(s),s);
  assert.ok(!ui.includes("win.confirm('Xóa toàn bộ trọng số"));
  assert.ok(ui.includes('modelManager.hidden=true;')&&ui.includes('area.append(title,controls,alertRow,modeBar,summary,list,privacy,modelManager)'),
@@ -461,4 +461,27 @@ test('P280 hàng đợi AI qua hơn năm kênh, có hoàn tác bỏ qua trong ph
  assert.ok(!skip.includes('save(')&&!skip.includes('teachCategory('),'skip never trains or persists');
  for(const name of ['positron-p51280-active-queue-before-1920x1080-real.png',
   'positron-p51280-active-queue-after-1920x1080-real.png'])assert.ok(qa.includes(name),name);
+});
+
+// P281: safe one-step rollback of a supervised Naive Bayes label.
+test('P281 hoàn tác một nhãn AI, giữ nguyên trọng số học trước',()=>{
+ const previous=C.teachCategory(C.emptyCategoryModel(),mk('old-news','Business Daily Report'),'news');
+ const before=C.sanitizedCategoryModel(previous);
+ const trained=C.teachCategory(before,mk('new-education','Atlas Academy Alpha'),'education');
+ assert.equal(trained.examples,before.examples+1);
+ assert.deepEqual(C.sanitizedCategoryModel(before),previous,'old labels intact');
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ['lastActiveTeachUndo=null','previousModel=core.sanitizedCategoryModel(categoryModel)',
+  'previousTaughtIds=[...taughtIds]','poAIActiveUndoLabel',
+  'categoryModel=core.sanitizedCategoryModel(previous.model)',
+  'taughtIds.clear();for(const id of previous.taughtIds)taughtIds.add(id)',
+  'lastActiveTeachUndo={model:previousModel,taughtIds:previousTaughtIds'])
+   assert.ok(ui.includes(token),token);
+ assert.ok(css.includes('#poWatchFlowPanel #poAIActiveUndoLabel:focus-visible'));
+ for(const png of ['positron-p51281-undo-ai-before-1920x1080-real.png',
+  'positron-p51281-undo-ai-after-1920x1080-real.png',
+  'positron-p51281-undo-ai-restored-1920x1080-real.png'])
+   assert.ok(qa.includes(png),png);
 });
