@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.333 — sửa chồng thanh điều hướng AI và nút Xem bị che (BLOCKER_FIX)
+## P5.1.334 — AI chuyển thẳng đến nút Xem đầu bằng Alt+Shift+J và sửa vùng nút dính header (NEW)
 
-**Ứng dụng:** 4.23.418 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.419 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm phím tắt điều hướng trực tiếp tới gợi ý có thể phát trong WatchFlow Intelligence, để không phải Tab qua nhiều công tắc mô hình trước khi chọn nội dung. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/272c19dd585419679a3fe66eadcba64ee122cfd5)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.333 — Electron 4.23.418 — Sửa trùng thanh điều hướng che nút Xem AI (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: BLOCKER_FIX — Sửa lỗi CI kiểm thử Electron làm thất bại bước chụp ảnh và chặn kiểm chứng bản phát hành, đồng thời khôi phục nút Xem AI bị che trên màn 720px. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4cf381311eb081cd09ab25c1674c40d31de5cb83)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.332 — Electron 4.23.417 — WatchFlow AI không nguồn: khung đọc rộng, nút 44px và gợi ý phím (CANDIDATE)
 
