@@ -1,3 +1,13 @@
+## P5.1.307 — Xem kênh AI chưa đủ chắc chắn, tránh che nội dung / Electron 4.23.392
+- Feature priority: NEW — Hiển thị ví dụ từ kênh mà cả Naive Bayes hiện tại và mô hình khôi phục đều chưa đủ chắc chắn phân loại, thay vì chỉ số đếm; ngăn tên nhúng URL lộ địa chỉ và giữ dòng mẫu khỏi nút xác nhận khôi phục sticky.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → chọn bản sao JSON → mở “AI kiểm tra độ chắc chắn” → xem nhóm “Chưa đủ chắc chắn ở cả hai” để tìm kênh cần dạy nhãn thủ công.
+- Electron screenshot: positron-p51307-both-uncertain-before-1920x1080-real.png / positron-p51307-both-uncertain-after-1920x1080-real.png.
+- Evidence: Dự báo cục bộ trả tối đa ba tên mẫu của nhóm cả hai mô hình không chắc; kiểm thử năm kênh gồm một tên có URL bí mật, bất biến playlist/mô hình; thêm QA Electron 1920×1080 trước/sau, kiểm tra số nhóm, bảo vệ URL, không autoplay, giới hạn vùng nhìn và khoảng cách khỏi nút khôi phục cố định. Chỉ đánh dấu hoàn tất khi CI xanh và ảnh Electron thật đã được mở soát.
+- Privacy: Không gửi stream URL, M3U, lịch sử hoặc dữ liệu người dùng lên mạng; không cập nhật playlist/trọng số và không phát video.
+- Baseline: Đã mở ảnh Electron P5.1.306 trước/sau, thấy danh sách mẫu ở đáy viewport bị nút khôi phục sticky che.
+- Status: CANDIDATE — chờ kiểm tra CI, build Mac/Windows, artifact ảnh P5.1.307 và đánh giá trực tiếp.
+
 ## P5.1.306 — AI chỉ ra nhóm kênh mất độ chắc chắn khi khôi phục / Electron 4.23.391
 - Feature priority: NEW — Phân tích 4 nhóm bằng chứng Naive Bayes (cũ chắc/mới không, mới chắc/cũ không, cả hai không chắc, cả hai chắc), cho xem các tên kênh bị giảm độ chắc chắn trước khi nhập sao lưu, và không kết luận không đổi chủ đề khi thiếu mẫu giao.
 - Feature class: AI
