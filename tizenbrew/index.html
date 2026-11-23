@@ -501,19 +501,141 @@ body #player .playerdiag{
 
 .playerdiag{position:absolute;z-index:3;top:calc(45% + 55px);left:7%;right:7%;max-height:30vh;overflow:auto;white-space:pre-line;overflow-wrap:anywhere;padding:12px 18px;border:1px solid #8b6c3b;border-radius:10px;background:#080a0ee8;color:#ffe0aa;font-size:19px;line-height:1.45;text-align:left;text-shadow:0 1px 3px #000}
 #player.is-playing .playerdiag{display:none}
+
+/* GOOGLE TV / MATERIAL 3 DESIGN — aligned with approved 16:9 dark reference.
+   Styling only: no external fonts, images or decorative corner graphics. */
+body{--bg:#0c1321;--panel:#101827;--item:#202938;--fg:#f5f7fb;--muted:#a3afc3;--edge:#283246;--blue:#337df3;--focus:#a0c7ff;background:#0b1120}
+body[data-theme=amoled]{--bg:#000;--panel:#05080d;--item:#171b24;--edge:#303746}
+body[data-theme=light]{--bg:#f4f7fc;--panel:#fff;--item:#e9effa;--fg:#16233a;--muted:#65758e;--edge:#c7d4e7;--blue:#2672e6;--focus:#225cbd}
+#app{--home-inset:1.4vw;--home-gap:20px;--home-target:61px;--accent:#83b5ff;--focus-bg:#a7ccff;--focus-ink:#12284c;--active-bg:#a0c6ff;background:#0c1321;gap:0}
+body[data-theme=light] #app{--accent:#2774dc;--focus-bg:#215aaf;--focus-ink:#fff;--active-bg:#b1d3ff;background:#f3f6fc}
+body[data-theme=amoled] #app{background:#000}
+#app .top{min-height:104px;padding:14px 0 19px;gap:16px}
+#app .brand{gap:15px;min-width:320px}
+body #app .brandicon{display:flex;align-items:center;justify-content:center;width:74px;height:74px;border-radius:22px;background:#fff!important;box-shadow:0 5px 18px #0006!important;overflow:hidden;flex:none}
+body #app .brand-svg.official-web-logo{display:block;width:100%;height:100%;color:inherit}
+#app .brand strong{font-size:34px;font-weight:800;color:var(--fg)}
+#app .brand p{font-size:17px;color:var(--muted)}
+#app .toolbar{gap:14px}
+#app .clock{font-size:23px;color:var(--fg);margin-right:8px;font-weight:700}
+#app .toolbar button{border-radius:30px;min-height:60px;padding:12px 20px;font-size:20px;white-space:nowrap}
+body #app button{background:var(--item);color:var(--fg);border:1px solid transparent;border-radius:19px}
+body #app button:focus,body #app button:focus-visible{
+ outline:3px solid #d4e5ff;outline-offset:3px;border-color:#2f78ea;
+ background:#98c3fc;color:#0b2343;box-shadow:0 0 0 6px #67a5fd44}
+body #app button.active{background:#9bc4ff;border-color:#b6d5ff;color:#101f39}
+body #app button.active:focus{background:#bedbff;color:#071a36;border-color:#fff}
+body[data-theme=light] #app button.active{background:#a5cafa;color:#132d54}
+#app .main{grid-template-columns:minmax(210px,17fr) minmax(500px,43fr) minmax(460px,39fr);gap:var(--home-gap)}
+body #app .nav{padding:15px 0;background:transparent;border:0;overflow:auto;gap:10px}
+#app .nav button{display:flex;align-items:center;width:100%;min-height:71px;padding:13px 22px;font-size:23px;font-weight:660;text-align:left;white-space:nowrap;background:transparent;border:1px solid transparent;border-radius:26px;gap:10px}
+body #app .nav button.active{background:#8fbafb;color:#061c3b}
+body #app .nav button span.nav-icon{color:currentColor;display:grid;place-items:center;width:42px;margin:0;flex:none}
+#app .nav button .ui-icon{width:28px;height:28px}
+#app .nav .sidebar-shortcuts{border:0;padding-top:0;margin-top:0;gap:10px}
+#app .nav #exitModuleBtn{font-size:18px;opacity:.8;margin-top:10px}
+body #app .listpane{padding:17px 20px 16px;background:#0d1626;border:1px solid #25314a;border-radius:25px}
+body #app .details{padding:20px 0 0;background:transparent;border:0;border-radius:0;gap:14px;max-height:100%}
+#app .heading{padding:2px 12px;margin:0 0 10px}
+#app .heading h1{font-size:40px;letter-spacing:-.6px}
+#app .heading span{font-size:21px;font-weight:700;color:#b9c3d2}
+#app .groups{gap:10px;margin:0 0 3px;padding:5px 4px 8px}
+#app .groups button{min-height:56px!important;border:0;border-radius:30px;font-size:18px;padding:10px 18px;max-width:90%}
+body #app .groups button.active{background:#87b7ff;color:#102e60;border:0}
+#app .epg-indicator{font-size:13px;color:#829ab8;padding:0 12px 8px;max-height:22px;overflow:hidden}
+#app .channels{padding:4px 2px 8px}
+body #app .channel{background:#202938;border:1px solid transparent;border-radius:20px;min-height:86px;padding:11px 15px;margin:0 0 10px;gap:12px}
+body #app .channel.is-selected{background:#9dc6ff;border-color:#add3ff;color:#0b1e39}
+body #app .channel.is-selected .chtext small{color:#234269}
+body #app .channel.is-selected .num{background:#77a5e5;color:#fff}
+body #app .channel:focus,body #app .channel:focus-visible{background:#b7d7ff;border:2px solid #fff;color:#0a2447;box-shadow:0 0 0 4px #3b8be855}
+body #app .channel:focus .chtext small{color:#244467}
+body #app .channel:focus .num{background:#6b9fdf;color:#fff}
+#app .num{font-size:18px;min-width:50px;border-radius:13px;padding:12px 5px;background:#344359;color:#b7c5d8}
+#app .logo,#app .placeholder{width:77px;height:58px;border-radius:15px;background:#fff;font-size:17px}
+#app .chtext strong{font-size:24px;font-weight:800}
+#app .chtext small{font-size:18px;color:#9eafc7}
+#app .channel .heart{color:#428eff}
+#app .channel .match-programme{font-size:14px;color:#a6c7ec}
+#app .channel.is-selected .match-programme{color:#234269}
+#app #more{width:calc(100% - 12px);margin:4px 6px 0;min-height:52px;font-size:18px}
+#app .search-notice{font-size:14px;color:#b1ccff;padding:2px 10px;max-height:32px}
+body #app .preview{height:36.6vh;max-height:390px;min-height:180px;border:1px solid #283750;border-radius:23px;background:#131e32;box-shadow:none}
+body #app .preview-art{background:#1b2842}
+body #app .preview-live{background:#d81736d9;border:0;border-radius:22px;font-size:15px;font-weight:800;top:18px;right:18px;left:auto}
+body #app .preview .preview-state{font-size:14px}
+#app .channel-summary{display:flex;align-items:center;gap:16px;min-height:80px;padding:0 3px}
+#app .selected-logo{width:77px;height:65px;background:#fff;color:#314362;display:grid;place-items:center;border-radius:16px;flex:none;overflow:hidden}
+#app .selected-logo img{max-width:100%;max-height:100%;object-fit:contain}
+#app .selected-logo span{font-size:18px}
+#app .channel-summary h2{font-size:33px;font-weight:800}
+#app .channel-summary p{font-size:20px;margin:3px 0 0}
+#app .guide-card{padding:16px 16px 13px;background:#202939;border:1px solid #27344a;border-radius:22px;min-height:168px;flex:none}
+#app .guide-row{display:flex;align-items:center;gap:14px;min-height:55px}
+#app .guide-tag{font-size:15px;background:#315d9c;color:#b0d6ff;border-radius:22px;padding:9px 13px;flex:none}
+#app .guide-next-tag{background:#303a4b;color:#c4cbd7}
+#app .guide-row div{min-width:0}
+#app .guide-row strong{display:block;font-size:19px;font-weight:720;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#app .guide-row small{font-size:15px;color:#aab9cc;display:block;margin-top:2px}
+#app .guide-track{height:7px;border-radius:10px;background:#3a475d;margin:7px 0;overflow:hidden}
+#app .guide-track div{height:100%;width:0;background:#4894ff;border-radius:10px}
+#app .actions{display:grid;grid-template-columns:1.55fr 1fr .85fr;gap:9px;padding:3px 0;flex:none}
+#app .actions button{min-height:64px;padding:10px 9px;border-radius:22px;font-size:17px;white-space:nowrap}
+body #app .actions .primary{background:#2f85f9;color:#fff;border:0}
+#app #favBtn{font-size:0}
+#app #favBtn .ui-icon{width:26px;height:26px}
+#app #favBtn .fav-label{font-size:0}
+body #app .actions button:focus{outline:3px solid #d3e4ff;outline-offset:3px;background:#95c2ff;color:#082347}
+#app .footer{display:none}
+#searchDialog .search-dialog-hint{font-size:17px;color:var(--muted);line-height:1.4}
+#searchDialog .search-suggestions{max-height:26vh;overflow:auto;display:flex;flex-wrap:wrap;gap:9px;padding:12px 3px}
+#searchDialog .search-suggestions button{min-height:48px;font-size:17px}
+body .dialog button:focus,body .dialog input:focus,body .dialog textarea:focus{outline-color:#70b0ff;border-color:#70b0ff}
+body .dialog .buttons .primary,body .dialog #saveSource,body .dialog #applySearch{background:#307ff1;border-color:#307ff1}
+body .dialog .rights-toggle[aria-checked=true]{background:#307ff122;border-color:#307ff1}
+body .dialog .rights-toggle[aria-checked=true] .rights-box{background:#307ff1;border-color:#307ff1}
+body #app .nav button:focus span.nav-icon,body #app .nav button.active:focus span.nav-icon{color:inherit}
+@media(max-width:1460px),(max-height:850px){
+ #app{--home-gap:12px;--home-inset:1.2vw}
+ #app .top{min-height:82px;padding:7px 0}
+ body #app .brandicon{width:55px;height:55px;border-radius:15px}
+ #app .brand strong{font-size:25px}
+ #app .brand p{font-size:13px}
+ #app .toolbar button{min-height:46px;font-size:16px;padding:9px 12px}
+ #app .main{grid-template-columns:minmax(155px,17fr) minmax(350px,43fr) minmax(320px,39fr)}
+ #app .nav button{font-size:16px;min-height:53px;padding:9px 14px;border-radius:17px}
+ #app .heading h1{font-size:29px}
+ #app .heading span{font-size:15px}
+ body #app .listpane{padding:10px}
+ body #app .details{padding:10px 0 0}
+ body #app .channel{min-height:61px;border-radius:13px;padding:6px 9px}
+ #app .num{font-size:13px;min-width:34px;padding:7px 3px}
+ #app .logo,#app .placeholder{width:50px;height:43px;border-radius:9px}
+ #app .chtext strong{font-size:17px}
+ #app .chtext small{font-size:13px}
+ #app .guide-card{padding:9px;min-height:140px}
+ #app .guide-row strong{font-size:15px}
+ #app .guide-row small{font-size:12px}
+ #app .actions button{min-height:48px;font-size:13px}
+}
+
 </style>
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
 <div id="app">
 <header class="top">
-  <div class="brand"><div class="brandicon" aria-hidden="true"><svg class="brand-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="15" rx="3"/><path d="M8 22h8M12 19v3m-2-13 5 3-5 3z"/></svg></div>
+  <div class="brand"><div class="brandicon" aria-hidden="true"><svg class="brand-svg official-web-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+<defs><linearGradient id="tri" x1="0" y1="0" x2=".95" y2=".95"><stop offset="0" stop-color="#00e6d4"/><stop offset=".4" stop-color="#22a6f8"/><stop offset=".74" stop-color="#5a60f7"/><stop offset="1" stop-color="#ba35fa"/></linearGradient></defs>
+<rect width="1024" height="1024" rx="220" fill="#ffffff"/>
+<path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
+</svg></div>
     <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.44</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
     <button id="searchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="7.1"/><path d="m16 16 5.5 5.5"/></svg>Tìm kênh</button>
     <button id="addBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg>Thêm nguồn</button>
-    <button id="themeBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 9 9c0 2.2-1.3 3.5-3.3 3.5h-2.1c-1 0-1.5.8-1.3 1.7.4 1.8-1.1 3.5-3.7 3.5"/><path d="M7.5 8h.01M12.5 6.5h.01M17 9h.01M7.7 14h.01"/></svg>Giao diện</button>
+    <button id="themeBtn" title="Đổi sáng / tối / AMOLED"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v2m0 14v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M3 12h2m14 0h2M4.22 19.78l1.42-1.42m12.72-12.72 1.42-1.42"/><circle cx="12" cy="12" r="4"/></svg>Cài đặt</button>
   </div>
 </header>
 <div class="main">
@@ -521,15 +643,16 @@ body #player .playerdiag{
     <button class="active" data-nav="all"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="15" rx="3"/><path d="M8 22h8M12 19v3m-2-13 5 3-5 3z"/></svg></span>Trực tiếp</button>
     <button data-nav="favorites"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg></span>Yêu thích</button>
     <button data-nav="recent"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 3"/></svg></span>Đã xem</button>
-    <button data-nav="help"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.2 9a3 3 0 1 1 5.6 1.6c-.8 1-2.8 1.5-2.8 3.4M12 17h.01"/></svg></span>Hướng dẫn</button>
+
     <div id="sidebarShortcuts" class="sidebar-shortcuts">
-      <button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 12 7-12 7z"/></svg></span>TizenTube</button>
+      <button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m8 5 12 7-12 7z"/></svg></span>TizenTube</button><button id="appsBtn" type="button" title="Mở danh sách ứng dụng TizenBrew"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="19" cy="19" r="2"/></svg></span>Ứng dụng</button>
+          <button data-nav="help"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.2 9a3 3 0 1 1 5.6 1.6c-.8 1-2.8 1.5-2.8 3.4M12 17h.01"/></svg></span>Hướng dẫn</button>
       <button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5m9-10 4 4-4 4m4-4H8"/></svg></span>Thoát</button>
     </div>
   </nav>
   <section class="listpane" aria-labelledby="heading">
     <div class="heading"><h1 id="heading">Trực tiếp</h1><span id="count">0 kênh</span></div>
-    <div class="groups" id="groups" aria-label="Nhóm kênh"></div>
+    <div class="groups" id="groups" aria-label="Nhóm kênh"></div><div class="epg-indicator" id="epgIndicator" role="status">Lịch EPG: đang kiểm tra bộ nhớ…</div>
     <div class="channels" id="channels"></div>
     <div class="empty" id="empty" hidden>
       <h2 id="emptyTitle">Chưa có kênh IPTV</h2>
@@ -537,7 +660,7 @@ body #player .playerdiag{
       <button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button>
       <button id="sampleBtn">▶ Thêm kênh thử nghiệm</button>
     </div>
-    <button id="more" hidden>Tải thêm kênh ↓</button>
+    <p id="searchNotice" class="search-notice" hidden role="status"></p><button id="more" hidden>Tải thêm kênh ↓</button>
   </section>
   <aside class="details" aria-label="Kênh đang chọn">
     <div class="preview" id="previewStage" aria-label="Xem thử kênh đang chọn">
@@ -545,10 +668,15 @@ body #player .playerdiag{
 <div class="preview-art" id="previewArt"><b id="previewText">TV</b><img id="previewLogo" alt="" hidden></div>
 <div class="preview-live"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6"/></svg><span>XEM THỬ · TẮT TIẾNG</span></div>
 <div class="preview-state" id="previewStatus" role="status">Chọn kênh để xem thử</div></div>
-    <div class="channel-summary"><h2 id="channelTitle">Chọn kênh</h2><p id="channelGroup" hidden></p></div>
+    <div class="channel-summary"><div class="selected-logo"><img id="selectedChannelLogo" alt="" hidden><span id="selectedChannelPlaceholder">TV</span></div><div class="selected-channel-text"><h2 id="channelTitle">Chọn kênh</h2><p id="channelGroup" hidden></p></div></div>
+    <section class="guide-card" id="guideCard" aria-label="Lịch phát sóng của kênh đang chọn">
+      <div class="guide-row guide-now"><span class="guide-tag">Đang phát</span><div><strong id="guideNowTitle">Chưa có chương trình</strong><small id="guideNowTime">Đang chờ EPG</small></div></div>
+      <div class="guide-track"><div id="guideProgress"></div></div>
+      <div class="guide-row"><span class="guide-tag guide-next-tag">Tiếp theo</span><div><strong id="guideNextTitle">Chưa có dữ liệu</strong><small id="guideNextTime"></small></div></div>
+    </section>
     <div class="actions">
       <button class="primary" id="watchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4m13-5h4a1 1 0 0 1 1 1v4M3 16v4a1 1 0 0 0 1 1h4m13-5v4a1 1 0 0 1-1 1h-4"/></svg>Xem toàn màn hình</button>
-      <button id="favBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg><span class="fav-label">Thêm yêu thích</span></button>
+      <button id="favBtn" title="Yêu thích" aria-label="Yêu thích"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg><span class="fav-label">Thêm yêu thích</span></button><button type="button" id="guideBtn" title="Lịch phát sóng" aria-label="Lịch phát sóng">☷ <span>Lịch phát sóng</span></button><button type="button" id="infoBtn" title="Thông tin kênh" aria-label="Thông tin kênh">ⓘ <span>Thông tin</span></button>
     </div>
   </aside>
 </div>
@@ -566,7 +694,7 @@ body #player .playerdiag{
 <div id="sourceQR" aria-label="Mã QR nhập nguồn IPTV"></div>
 <p id="sourceQRStatus" role="status">Đang tạo mã QR…</p><p id="sourcePhoneLink"></p>
 <button type="button" id="refreshSourceQR">↻ Tạo mã QR mới</button></section></div></div>
-<div id="searchDialog" hidden><label for="searchInput">Tìm kênh</label><input id="searchInput" placeholder="Nhập tên kênh..."><div class="buttons"><button id="cancelSearch">Hủy</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
+<div id="searchDialog" hidden><label for="searchInput">Tìm kênh / chương trình EPG</label><input id="searchInput" placeholder="VTV, tin tuc, thoi su, phim..." autocomplete="off"><p class="search-dialog-hint">Tìm không dấu, tự sửa lỗi chính tả và tìm theo tên chương trình đã tải từ EPG.</p><div id="searchSuggestions" class="search-suggestions" role="status">Kênh gợi ý sẽ xuất hiện tại đây.</div><div class="buttons"><button id="cancelSearch">Hủy</button><button id="clearSearch" type="button">Xóa tìm kiếm</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
 <div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><iframe id="castPlayerFrame" hidden tabindex="-1" title="Bộ phát Cast HTTPS" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerdiag" id="playbackDiag" hidden></div><button id="browserFallback" type="button" hidden>Mở Cast chuẩn · ghép mã 6 số</button><div class="playerfoot">↑ ↓ Chuyển ngay và hiện danh sách　·　← → Chọn thư mục　·　CH ± Chuyển nhanh　·　OK Phát/Tạm dừng　·　Đỏ: Trình duyệt　·　Back Danh sách</div>
 <div id="channelPicker" hidden tabindex="-1" role="dialog" aria-label="Chọn kênh">
   <div class="picker-panel">
@@ -581,6 +709,155 @@ body #player .playerdiag{
 <!-- QRCode.js © davidshimjs, MIT license. Embedded to work on older Tizen browsers. -->
 <script>
 var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this.parsedData=[];for(var b=[],d=0,e=this.data.length;e>d;d++){var f=this.data.charCodeAt(d);f>65536?(b[0]=240|(1835008&f)>>>18,b[1]=128|(258048&f)>>>12,b[2]=128|(4032&f)>>>6,b[3]=128|63&f):f>2048?(b[0]=224|(61440&f)>>>12,b[1]=128|(4032&f)>>>6,b[2]=128|63&f):f>128?(b[0]=192|(1984&f)>>>6,b[1]=128|63&f):b[0]=f,this.parsedData=this.parsedData.concat(b)}this.parsedData.length!=this.data.length&&(this.parsedData.unshift(191),this.parsedData.unshift(187),this.parsedData.unshift(239))}function b(a,b){this.typeNumber=a,this.errorCorrectLevel=b,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}function i(a,b){if(void 0==a.length)throw new Error(a.length+"/"+b);for(var c=0;c<a.length&&0==a[c];)c++;this.num=new Array(a.length-c+b);for(var d=0;d<a.length-c;d++)this.num[d]=a[d+c]}function j(a,b){this.totalCount=a,this.dataCount=b}function k(){this.buffer=[],this.length=0}function m(){return"undefined"!=typeof CanvasRenderingContext2D}function n(){var a=!1,b=navigator.userAgent;return/android/i.test(b)&&(a=!0,aMat=b.toString().match(/android ([0-9]\.[0-9])/i),aMat&&aMat[1]&&(a=parseFloat(aMat[1]))),a}function r(a,b){for(var c=1,e=s(a),f=0,g=l.length;g>=f;f++){var h=0;switch(b){case d.L:h=l[f][0];break;case d.M:h=l[f][1];break;case d.Q:h=l[f][2];break;case d.H:h=l[f][3]}if(h>=e)break;c++}if(c>l.length)throw new Error("Too long data");return c}function s(a){var b=encodeURI(a).toString().replace(/\%[0-9a-fA-F]{2}/g,"a");return b.length+(b.length!=a?3:0)}a.prototype={getLength:function(){return this.parsedData.length},write:function(a){for(var b=0,c=this.parsedData.length;c>b;b++)a.put(this.parsedData[b],8)}},b.prototype={addData:function(b){var c=new a(b);this.dataList.push(c),this.dataCache=null},isDark:function(a,b){if(0>a||this.moduleCount<=a||0>b||this.moduleCount<=b)throw new Error(a+","+b);return this.modules[a][b]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(a,c){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var d=0;d<this.moduleCount;d++){this.modules[d]=new Array(this.moduleCount);for(var e=0;e<this.moduleCount;e++)this.modules[d][e]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(a,c),this.typeNumber>=7&&this.setupTypeNumber(a),null==this.dataCache&&(this.dataCache=b.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,c)},setupPositionProbePattern:function(a,b){for(var c=-1;7>=c;c++)if(!(-1>=a+c||this.moduleCount<=a+c))for(var d=-1;7>=d;d++)-1>=b+d||this.moduleCount<=b+d||(this.modules[a+c][b+d]=c>=0&&6>=c&&(0==d||6==d)||d>=0&&6>=d&&(0==c||6==c)||c>=2&&4>=c&&d>=2&&4>=d?!0:!1)},getBestMaskPattern:function(){for(var a=0,b=0,c=0;8>c;c++){this.makeImpl(!0,c);var d=f.getLostPoint(this);(0==c||a>d)&&(a=d,b=c)}return b},createMovieClip:function(a,b,c){var d=a.createEmptyMovieClip(b,c),e=1;this.make();for(var f=0;f<this.modules.length;f++)for(var g=f*e,h=0;h<this.modules[f].length;h++){var i=h*e,j=this.modules[f][h];j&&(d.beginFill(0,100),d.moveTo(i,g),d.lineTo(i+e,g),d.lineTo(i+e,g+e),d.lineTo(i,g+e),d.endFill())}return d},setupTimingPattern:function(){for(var a=8;a<this.moduleCount-8;a++)null==this.modules[a][6]&&(this.modules[a][6]=0==a%2);for(var b=8;b<this.moduleCount-8;b++)null==this.modules[6][b]&&(this.modules[6][b]=0==b%2)},setupPositionAdjustPattern:function(){for(var a=f.getPatternPosition(this.typeNumber),b=0;b<a.length;b++)for(var c=0;c<a.length;c++){var d=a[b],e=a[c];if(null==this.modules[d][e])for(var g=-2;2>=g;g++)for(var h=-2;2>=h;h++)this.modules[d+g][e+h]=-2==g||2==g||-2==h||2==h||0==g&&0==h?!0:!1}},setupTypeNumber:function(a){for(var b=f.getBCHTypeNumber(this.typeNumber),c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[Math.floor(c/3)][c%3+this.moduleCount-8-3]=d}for(var c=0;18>c;c++){var d=!a&&1==(1&b>>c);this.modules[c%3+this.moduleCount-8-3][Math.floor(c/3)]=d}},setupTypeInfo:function(a,b){for(var c=this.errorCorrectLevel<<3|b,d=f.getBCHTypeInfo(c),e=0;15>e;e++){var g=!a&&1==(1&d>>e);6>e?this.modules[e][8]=g:8>e?this.modules[e+1][8]=g:this.modules[this.moduleCount-15+e][8]=g}for(var e=0;15>e;e++){var g=!a&&1==(1&d>>e);8>e?this.modules[8][this.moduleCount-e-1]=g:9>e?this.modules[8][15-e-1+1]=g:this.modules[8][15-e-1]=g}this.modules[this.moduleCount-8][8]=!a},mapData:function(a,b){for(var c=-1,d=this.moduleCount-1,e=7,g=0,h=this.moduleCount-1;h>0;h-=2)for(6==h&&h--;;){for(var i=0;2>i;i++)if(null==this.modules[d][h-i]){var j=!1;g<a.length&&(j=1==(1&a[g]>>>e));var k=f.getMask(b,d,h-i);k&&(j=!j),this.modules[d][h-i]=j,e--,-1==e&&(g++,e=7)}if(d+=c,0>d||this.moduleCount<=d){d-=c,c=-c;break}}}},b.PAD0=236,b.PAD1=17,b.createData=function(a,c,d){for(var e=j.getRSBlocks(a,c),g=new k,h=0;h<d.length;h++){var i=d[h];g.put(i.mode,4),g.put(i.getLength(),f.getLengthInBits(i.mode,a)),i.write(g)}for(var l=0,h=0;h<e.length;h++)l+=e[h].dataCount;if(g.getLengthInBits()>8*l)throw new Error("code length overflow. ("+g.getLengthInBits()+">"+8*l+")");for(g.getLengthInBits()+4<=8*l&&g.put(0,4);0!=g.getLengthInBits()%8;)g.putBit(!1);for(;;){if(g.getLengthInBits()>=8*l)break;if(g.put(b.PAD0,8),g.getLengthInBits()>=8*l)break;g.put(b.PAD1,8)}return b.createBytes(g,e)},b.createBytes=function(a,b){for(var c=0,d=0,e=0,g=new Array(b.length),h=new Array(b.length),j=0;j<b.length;j++){var k=b[j].dataCount,l=b[j].totalCount-k;d=Math.max(d,k),e=Math.max(e,l),g[j]=new Array(k);for(var m=0;m<g[j].length;m++)g[j][m]=255&a.buffer[m+c];c+=k;var n=f.getErrorCorrectPolynomial(l),o=new i(g[j],n.getLength()-1),p=o.mod(n);h[j]=new Array(n.getLength()-1);for(var m=0;m<h[j].length;m++){var q=m+p.getLength()-h[j].length;h[j][m]=q>=0?p.get(q):0}}for(var r=0,m=0;m<b.length;m++)r+=b[m].totalCount;for(var s=new Array(r),t=0,m=0;d>m;m++)for(var j=0;j<b.length;j++)m<g[j].length&&(s[t++]=g[j][m]);for(var m=0;e>m;m++)for(var j=0;j<b.length;j++)m<h[j].length&&(s[t++]=h[j][m]);return s};for(var c={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},d={L:1,M:0,Q:3,H:2},e={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},f={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(a){for(var b=a<<10;f.getBCHDigit(b)-f.getBCHDigit(f.G15)>=0;)b^=f.G15<<f.getBCHDigit(b)-f.getBCHDigit(f.G15);return(a<<10|b)^f.G15_MASK},getBCHTypeNumber:function(a){for(var b=a<<12;f.getBCHDigit(b)-f.getBCHDigit(f.G18)>=0;)b^=f.G18<<f.getBCHDigit(b)-f.getBCHDigit(f.G18);return a<<12|b},getBCHDigit:function(a){for(var b=0;0!=a;)b++,a>>>=1;return b},getPatternPosition:function(a){return f.PATTERN_POSITION_TABLE[a-1]},getMask:function(a,b,c){switch(a){case e.PATTERN000:return 0==(b+c)%2;case e.PATTERN001:return 0==b%2;case e.PATTERN010:return 0==c%3;case e.PATTERN011:return 0==(b+c)%3;case e.PATTERN100:return 0==(Math.floor(b/2)+Math.floor(c/3))%2;case e.PATTERN101:return 0==b*c%2+b*c%3;case e.PATTERN110:return 0==(b*c%2+b*c%3)%2;case e.PATTERN111:return 0==(b*c%3+(b+c)%2)%2;default:throw new Error("bad maskPattern:"+a)}},getErrorCorrectPolynomial:function(a){for(var b=new i([1],0),c=0;a>c;c++)b=b.multiply(new i([1,g.gexp(c)],0));return b},getLengthInBits:function(a,b){if(b>=1&&10>b)switch(a){case c.MODE_NUMBER:return 10;case c.MODE_ALPHA_NUM:return 9;case c.MODE_8BIT_BYTE:return 8;case c.MODE_KANJI:return 8;default:throw new Error("mode:"+a)}else if(27>b)switch(a){case c.MODE_NUMBER:return 12;case c.MODE_ALPHA_NUM:return 11;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 10;default:throw new Error("mode:"+a)}else{if(!(41>b))throw new Error("type:"+b);switch(a){case c.MODE_NUMBER:return 14;case c.MODE_ALPHA_NUM:return 13;case c.MODE_8BIT_BYTE:return 16;case c.MODE_KANJI:return 12;default:throw new Error("mode:"+a)}}},getLostPoint:function(a){for(var b=a.getModuleCount(),c=0,d=0;b>d;d++)for(var e=0;b>e;e++){for(var f=0,g=a.isDark(d,e),h=-1;1>=h;h++)if(!(0>d+h||d+h>=b))for(var i=-1;1>=i;i++)0>e+i||e+i>=b||(0!=h||0!=i)&&g==a.isDark(d+h,e+i)&&f++;f>5&&(c+=3+f-5)}for(var d=0;b-1>d;d++)for(var e=0;b-1>e;e++){var j=0;a.isDark(d,e)&&j++,a.isDark(d+1,e)&&j++,a.isDark(d,e+1)&&j++,a.isDark(d+1,e+1)&&j++,(0==j||4==j)&&(c+=3)}for(var d=0;b>d;d++)for(var e=0;b-6>e;e++)a.isDark(d,e)&&!a.isDark(d,e+1)&&a.isDark(d,e+2)&&a.isDark(d,e+3)&&a.isDark(d,e+4)&&!a.isDark(d,e+5)&&a.isDark(d,e+6)&&(c+=40);for(var e=0;b>e;e++)for(var d=0;b-6>d;d++)a.isDark(d,e)&&!a.isDark(d+1,e)&&a.isDark(d+2,e)&&a.isDark(d+3,e)&&a.isDark(d+4,e)&&!a.isDark(d+5,e)&&a.isDark(d+6,e)&&(c+=40);for(var k=0,e=0;b>e;e++)for(var d=0;b>d;d++)a.isDark(d,e)&&k++;var l=Math.abs(100*k/b/b-50)/5;return c+=10*l}},g={glog:function(a){if(1>a)throw new Error("glog("+a+")");return g.LOG_TABLE[a]},gexp:function(a){for(;0>a;)a+=255;for(;a>=256;)a-=255;return g.EXP_TABLE[a]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},h=0;8>h;h++)g.EXP_TABLE[h]=1<<h;for(var h=8;256>h;h++)g.EXP_TABLE[h]=g.EXP_TABLE[h-4]^g.EXP_TABLE[h-5]^g.EXP_TABLE[h-6]^g.EXP_TABLE[h-8];for(var h=0;255>h;h++)g.LOG_TABLE[g.EXP_TABLE[h]]=h;i.prototype={get:function(a){return this.num[a]},getLength:function(){return this.num.length},multiply:function(a){for(var b=new Array(this.getLength()+a.getLength()-1),c=0;c<this.getLength();c++)for(var d=0;d<a.getLength();d++)b[c+d]^=g.gexp(g.glog(this.get(c))+g.glog(a.get(d)));return new i(b,0)},mod:function(a){if(this.getLength()-a.getLength()<0)return this;for(var b=g.glog(this.get(0))-g.glog(a.get(0)),c=new Array(this.getLength()),d=0;d<this.getLength();d++)c[d]=this.get(d);for(var d=0;d<a.getLength();d++)c[d]^=g.gexp(g.glog(a.get(d))+b);return new i(c,0).mod(a)}},j.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],j.getRSBlocks=function(a,b){var c=j.getRsBlockTable(a,b);if(void 0==c)throw new Error("bad rs block @ typeNumber:"+a+"/errorCorrectLevel:"+b);for(var d=c.length/3,e=[],f=0;d>f;f++)for(var g=c[3*f+0],h=c[3*f+1],i=c[3*f+2],k=0;g>k;k++)e.push(new j(h,i));return e},j.getRsBlockTable=function(a,b){switch(b){case d.L:return j.RS_BLOCK_TABLE[4*(a-1)+0];case d.M:return j.RS_BLOCK_TABLE[4*(a-1)+1];case d.Q:return j.RS_BLOCK_TABLE[4*(a-1)+2];case d.H:return j.RS_BLOCK_TABLE[4*(a-1)+3];default:return void 0}},k.prototype={get:function(a){var b=Math.floor(a/8);return 1==(1&this.buffer[b]>>>7-a%8)},put:function(a,b){for(var c=0;b>c;c++)this.putBit(1==(1&a>>>b-c-1))},getLengthInBits:function(){return this.length},putBit:function(a){var b=Math.floor(this.length/8);this.buffer.length<=b&&this.buffer.push(0),a&&(this.buffer[b]|=128>>>this.length%8),this.length++}};var l=[[17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],[134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],[321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],[586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],[929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],[1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],[1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],[2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273]],o=function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){function g(a,b){var c=document.createElementNS("http://www.w3.org/2000/svg",a);for(var d in b)b.hasOwnProperty(d)&&c.setAttribute(d,b[d]);return c}var b=this._htOption,c=this._el,d=a.getModuleCount();Math.floor(b.width/d),Math.floor(b.height/d),this.clear();var h=g("svg",{viewBox:"0 0 "+String(d)+" "+String(d),width:"100%",height:"100%",fill:b.colorLight});h.setAttributeNS("http://www.w3.org/2000/xmlns/","xmlns:xlink","http://www.w3.org/1999/xlink"),c.appendChild(h),h.appendChild(g("rect",{fill:b.colorDark,width:"1",height:"1",id:"template"}));for(var i=0;d>i;i++)for(var j=0;d>j;j++)if(a.isDark(i,j)){var k=g("use",{x:String(i),y:String(j)});k.setAttributeNS("http://www.w3.org/1999/xlink","href","#template"),h.appendChild(k)}},a.prototype.clear=function(){for(;this._el.hasChildNodes();)this._el.removeChild(this._el.lastChild)},a}(),p="svg"===document.documentElement.tagName.toLowerCase(),q=p?o:m()?function(){function a(){this._elImage.src=this._elCanvas.toDataURL("image/png"),this._elImage.style.display="block",this._elCanvas.style.display="none"}function d(a,b){var c=this;if(c._fFail=b,c._fSuccess=a,null===c._bSupportDataURI){var d=document.createElement("img"),e=function(){c._bSupportDataURI=!1,c._fFail&&_fFail.call(c)},f=function(){c._bSupportDataURI=!0,c._fSuccess&&c._fSuccess.call(c)};return d.onabort=e,d.onerror=e,d.onload=f,d.src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",void 0}c._bSupportDataURI===!0&&c._fSuccess?c._fSuccess.call(c):c._bSupportDataURI===!1&&c._fFail&&c._fFail.call(c)}if(this._android&&this._android<=2.1){var b=1/window.devicePixelRatio,c=CanvasRenderingContext2D.prototype.drawImage;CanvasRenderingContext2D.prototype.drawImage=function(a,d,e,f,g,h,i,j){if("nodeName"in a&&/img/i.test(a.nodeName))for(var l=arguments.length-1;l>=1;l--)arguments[l]=arguments[l]*b;else"undefined"==typeof j&&(arguments[1]*=b,arguments[2]*=b,arguments[3]*=b,arguments[4]*=b);c.apply(this,arguments)}}var e=function(a,b){this._bIsPainted=!1,this._android=n(),this._htOption=b,this._elCanvas=document.createElement("canvas"),this._elCanvas.width=b.width,this._elCanvas.height=b.height,a.appendChild(this._elCanvas),this._el=a,this._oContext=this._elCanvas.getContext("2d"),this._bIsPainted=!1,this._elImage=document.createElement("img"),this._elImage.style.display="none",this._el.appendChild(this._elImage),this._bSupportDataURI=null};return e.prototype.draw=function(a){var b=this._elImage,c=this._oContext,d=this._htOption,e=a.getModuleCount(),f=d.width/e,g=d.height/e,h=Math.round(f),i=Math.round(g);b.style.display="none",this.clear();for(var j=0;e>j;j++)for(var k=0;e>k;k++){var l=a.isDark(j,k),m=k*f,n=j*g;c.strokeStyle=l?d.colorDark:d.colorLight,c.lineWidth=1,c.fillStyle=l?d.colorDark:d.colorLight,c.fillRect(m,n,f,g),c.strokeRect(Math.floor(m)+.5,Math.floor(n)+.5,h,i),c.strokeRect(Math.ceil(m)-.5,Math.ceil(n)-.5,h,i)}this._bIsPainted=!0},e.prototype.makeImage=function(){this._bIsPainted&&d.call(this,a)},e.prototype.isPainted=function(){return this._bIsPainted},e.prototype.clear=function(){this._oContext.clearRect(0,0,this._elCanvas.width,this._elCanvas.height),this._bIsPainted=!1},e.prototype.round=function(a){return a?Math.floor(1e3*a)/1e3:a},e}():function(){var a=function(a,b){this._el=a,this._htOption=b};return a.prototype.draw=function(a){for(var b=this._htOption,c=this._el,d=a.getModuleCount(),e=Math.floor(b.width/d),f=Math.floor(b.height/d),g=['<table style="border:0;border-collapse:collapse;">'],h=0;d>h;h++){g.push("<tr>");for(var i=0;d>i;i++)g.push('<td style="border:0;border-collapse:collapse;padding:0;margin:0;width:'+e+"px;height:"+f+"px;background-color:"+(a.isDark(h,i)?b.colorDark:b.colorLight)+';"></td>');g.push("</tr>")}g.push("</table>"),c.innerHTML=g.join("");var j=c.childNodes[0],k=(b.width-j.offsetWidth)/2,l=(b.height-j.offsetHeight)/2;k>0&&l>0&&(j.style.margin=l+"px "+k+"px")},a.prototype.clear=function(){this._el.innerHTML=""},a}();QRCode=function(a,b){if(this._htOption={width:256,height:256,typeNumber:4,colorDark:"#000000",colorLight:"#ffffff",correctLevel:d.H},"string"==typeof b&&(b={text:b}),b)for(var c in b)this._htOption[c]=b[c];"string"==typeof a&&(a=document.getElementById(a)),this._android=n(),this._el=a,this._oQRCode=null,this._oDrawing=new q(this._el,this._htOption),this._htOption.text&&this.makeCode(this._htOption.text)},QRCode.prototype.makeCode=function(a){this._oQRCode=new b(r(a,this._htOption.correctLevel),this._htOption.correctLevel),this._oQRCode.addData(a),this._oQRCode.make(),this._el.title=a,this._oDrawing.draw(this._oQRCode),this.makeImage()},QRCode.prototype.makeImage=function(){"function"==typeof this._oDrawing.makeImage&&(!this._android||this._android>=3)&&this._oDrawing.makeImage()},QRCode.prototype.clear=function(){this._oDrawing.clear()},QRCode.CorrectLevel=d}();
+</script>
+<script>
+'use strict';
+/* Web channel search: diacritics-insensitive, typo-tolerant and XMLTV-aware.
+ * Never changes M3U/EPG or creates remote network requests. EPG is indexed
+ * once per guide revision, rather than rescanned on every keystroke. */
+(function(root,build){
+ const api=build();
+ if(typeof module==='object'&&module.exports)module.exports=api;
+ if(root)root.OpenIPTVChannelSearch=api;
+})(typeof window!=='undefined'?window:null,function(){
+ const emptyIndex={byId:new Map(),aliases:new Map()};
+ const cache=new WeakMap();
+ function normalize(text){
+  return String(text||'').normalize('NFD')
+   .replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D')
+   .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+ }
+ function compact(text){return normalize(text).replace(/\s+/g,'');}
+ function words(text){return normalize(text).split(' ').filter(Boolean);}
+ function tidy(text){
+  return normalize(text).replace(/\b(?:hd|fhd|uhd|4k|1080p|720p)\b/g,'').replace(/\s+/g,'');
+ }
+ function distance(a,b,limit=1){
+  if(a===b)return 0;
+  if(!a||!b||Math.abs(a.length-b.length)>limit)return limit+1;
+  // Bounded Damerau-Levenshtein, including adjacent swapped letters.
+  const matrix=Array.from({length:a.length+1},()=>new Array(b.length+1).fill(0));
+  for(let i=0;i<=a.length;i++)matrix[i][0]=i;
+  for(let j=0;j<=b.length;j++)matrix[0][j]=j;
+  for(let i=1;i<=a.length;i++){
+   let min=limit+1;
+   for(let j=1;j<=b.length;j++){
+    let cost=a[i-1]===b[j-1]?0:1;
+    let value=Math.min(matrix[i-1][j]+1,matrix[i][j-1]+1,matrix[i-1][j-1]+cost);
+    if(i>1&&j>1&&a[i-1]===b[j-2]&&a[i-2]===b[j-1])value=Math.min(value,matrix[i-2][j-2]+1);
+    matrix[i][j]=value;
+    if(value<min)min=value;
+   }
+   if(min>limit)return limit+1;
+  }
+  return matrix[a.length][b.length];
+ }
+ function near(queryTokens,textTokens){
+  if(!queryTokens.length||!textTokens.length)return false;
+  const set=new Set(textTokens);
+  const allowShort=queryTokens.length>1;
+  return queryTokens.every(q=>{
+   if(set.has(q)||textTokens.some(t=>t.startsWith(q)&&q.length>=3))return true;
+   if(q.length<(allowShort?2:4))return false;
+   const edits=q.length>=8?2:1;
+   return textTokens.some(t=>Math.abs(t.length-q.length)<=edits&&distance(q,t,edits)<=edits);
+  });
+ }
+ function indexGuide(guide,now=Date.now()){
+  if(!guide||!Array.isArray(guide.programmes))return emptyIndex;
+  const programmes=guide.programmes;
+  const hour=Math.floor(now/3600000);
+  const old=cache.get(guide);
+  if(old&&old.programmes===programmes&&old.count===programmes.length&&old.hour===hour)return old.index;
+  const byId=new Map(),aliases=new Map();
+  const min=now-3600000,max=now+8*86400000;
+  // Only future/current titles from the bounded XMLTV schedule are indexed.
+  for(const programme of programmes){
+   if(!programme||typeof programme.id!=='string'||!programme.id||typeof programme.title!=='string')continue;
+   if(!Number.isFinite(programme.start)||!Number.isFinite(programme.end)||programme.end<min||programme.start>max)continue;
+   let bucket=byId.get(programme.id);
+   if(!bucket){bucket={entries:[],text:'',tokens:[]};byId.set(programme.id,bucket);}
+   if(bucket.entries.length>=650)continue;
+   const text=normalize(programme.title+' '+String(programme.description||'').slice(0,96));
+   if(!text)continue;
+   bucket.entries.push({title:programme.title,start:programme.start,end:programme.end,text,tokens:words(text)});
+  }
+  for(const bucket of byId.values()){
+   bucket.text=bucket.entries.map(p=>p.text).join(' | ');
+   bucket.tokens=[...new Set(bucket.entries.flatMap(p=>p.tokens))];
+  }
+  for(const [id,labels] of Object.entries(guide.aliasesById||{})){
+   const candidates=[id,...(Array.isArray(labels)?labels:[])];
+   for(const label of candidates){const key=tidy(label);if(key&&!aliases.has(key))aliases.set(key,id);}
+  }
+  const index={byId,aliases};
+  cache.set(guide,{programmes,count:programmes.length,hour,index});
+  return index;
+ }
+ function programmeBucket(index,guide,channel){
+  const mapping=guide?.manualMappings?.[channel.id];
+  const tvg=String(channel.tvgId||'');
+  const names=guide?.names||{};
+  const lookup=[mapping,tvg,names[tidy(tvg)],names[tidy(channel.name)],index.aliases.get(tidy(tvg)),index.aliases.get(tidy(channel.name))];
+  for(const id of lookup){if(id&&index.byId.has(id))return index.byId.get(id);}
+  return null;
+ }
+ function exactProgramme(bucket,query,queryTokens){
+  if(!bucket)return null;
+  if(!bucket.text.includes(query)){
+   // Match all words in the SAME programme; never combine unrelated titles.
+   return bucket.entries.find(entry=>queryTokens.every(w=>entry.tokens.some(t=>t===w||t.startsWith(w)&&w.length>=3)))||null;
+  }
+  return bucket.entries.find(entry=>entry.text.includes(query))||
+   bucket.entries.find(entry=>queryTokens.every(w=>entry.tokens.some(t=>t===w||t.startsWith(w)&&w.length>=3)))||null;
+ }
+ function approximateProgramme(bucket,queryTokens){
+  if(!bucket)return null;
+  if(!near(queryTokens,bucket.tokens))return null;
+  return bucket.entries.find(entry=>near(queryTokens,entry.tokens))||null;
+ }
+ function search(channels,query,guide,{clock=Date.now(),categoryFor=null}={}){
+  const list=Array.isArray(channels)?channels:[];
+  const q=normalize(query),qcompact=compact(query),qTokens=words(query);
+  if(!q)return {channels:list,matches:new Map(),approximate:false,usedEPG:false};
+  const index=indexGuide(guide,clock);
+  const exact=[],candidates=[],fuzzy=[],matches=new Map();
+  let usedEPG=false;
+  for(const channel of list){
+   const title=normalize(channel.name),group=normalize(channel.group);
+   const id=normalize(channel.tvgId);
+   const extra=typeof categoryFor==='function'?normalize(categoryFor(channel)):'';
+   const metadata=[title,group,id,extra].filter(Boolean);
+   const exactMeta=metadata.some(text=>text.includes(q))||
+    (qcompact.length>=3&&metadata.some(text=>text.replace(/\s+/g,'').includes(qcompact)))||
+    qTokens.every(t=>metadata.some(text=>words(text).some(w=>w===t||w.startsWith(t)&&t.length>=3)));
+   const bucket=programmeBucket(index,guide,channel);
+   const programme=exactProgramme(bucket,q,qTokens);
+   if(exactMeta||programme){
+    const match={type:exactMeta?'channel':'epg',programme:programme?.title||'',start:programme?.start||0};
+    exact.push(channel);matches.set(String(channel.id),match);
+    if(programme)usedEPG=true;
+    continue;
+   }
+   candidates.push({channel,metadata,bucket});
+  }
+  // Do not run fuzzy edit-distance calculations at all when exact matches exist.
+  if(exact.length)return {channels:exact,matches,approximate:false,usedEPG};
+  for(const {channel,metadata,bucket} of candidates){
+   const metadataTokens=[...new Set(metadata.flatMap(words))];
+   if(near(qTokens,metadataTokens)){
+    fuzzy.push({channel,match:{type:'near',programme:'',start:0}});
+    continue;
+   }
+   const nearby=approximateProgramme(bucket,qTokens);
+   if(nearby)fuzzy.push({channel,match:{type:'near-epg',programme:nearby.title,start:nearby.start}});
+  }
+  return {channels:fuzzy.map(x=>x.channel),matches:new Map(fuzzy.map(x=>[String(x.channel.id),x.match])),
+   approximate:fuzzy.length>0,usedEPG:fuzzy.some(x=>x.match.type==='near-epg')};
+ }
+ return Object.freeze({normalize,compact,words,distance,near,indexGuide,search});
+});
+
 </script>
 <script>
 (function(){
@@ -1040,9 +1317,190 @@ function sourceError(e,address){
 function hash(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(36);}
 function attr(line,key){var r=new RegExp(key+'="([^"]*)"','i'),m=line.match(r);return m?m[1]:'';}
 function parse(text,title){if(text.length>3000000)throw Error('M3U lớn hơn 3 MB');var arr=text.replace(/\r/g,'').split('\n'),out=[],meta=null;
-for(var i=0;i<arr.length&&out.length<5000;i++){var s=arr[i].trim();if(/^#EXTINF:/i.test(s)){var p=s.lastIndexOf(',');meta={name:attr(s,'tvg-name')||s.slice(p+1),group:attr(s,'group-title')||'Khác',logo:url(attr(s,'tvg-logo'))};}
-else if(s&&s[0]!=='#'){var u=url(s);if(u){var name=(meta&&meta.name||title||'IPTV').trim();out.push({id:hash(u+name),name:name.slice(0,140),group:meta?meta.group:'Khác',logo:meta?meta.logo:'',url:u});}meta=null;}}
+for(var i=0;i<arr.length&&out.length<5000;i++){var s=arr[i].trim();if(/^#EXTINF:/i.test(s)){var p=s.lastIndexOf(',');meta={name:attr(s,'tvg-name')||s.slice(p+1),group:attr(s,'group-title')||'Khác',logo:url(attr(s,'tvg-logo')),tvgId:attr(s,'tvg-id')||''};}
+else if(s&&s[0]!=='#'){var u=url(s);if(u){var name=(meta&&meta.name||title||'IPTV').trim();out.push({id:hash(u+name),name:name.slice(0,140),group:meta?meta.group:'Khác',logo:meta?meta.logo:'',tvgId:meta?meta.tvgId:'',url:u});}meta=null;}}
 return out;}
+
+/* BEGIN TIZEN EPG LITE V1
+ * Default feed matches Web/online features.js: VNEPG Gzip; .xml is a format fallback.
+ * A single daily attempt, max 8MB download, 24MB decompressed, 4500 bounded programme rows.
+ * EPG stored separately in one IndexedDB record, never the IPTV localStorage source key.
+ */
+var EPG_DEFAULT='https://epg.io.vn/epg.xml.gz';
+var EPG_PLAIN='https://epg.io.vn/epg.xml';
+var EPG_BACKUP='https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz';
+var EPG_DB='openiptv-tizen-epg-bounded-v1';
+var EPG_DAY_KEY='openiptv-tizen-epg-day-v1';
+var epgGuide={names:{},aliasesById:{},programmes:[]},epgRowsById={};
+var epgReady=false,epgLoading=false,epgAttemptInSession=false,epgDay='',epgError='';
+function epgNorm(v){var s=String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
+ return s.replace(/\b(?:hd|fhd|uhd|1080p|720p|4k)\b/g,'').replace(/[^a-z0-9]/g,'');}
+function epgClock(v){var m=String(v||'').match(/^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)?\s*(Z|[+-]\d{4})?/);
+ if(!m)return NaN;var tz=m[7]||'Z',offset=tz==='Z'?0:(tz.charAt(0)==='-'?-1:1)*(Number(tz.slice(1,3))*60+Number(tz.slice(3,5)));
+ return Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+(m[6]||0))-offset*60000;}
+function epgEntity(raw){return String(raw||'').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,'$1')
+ .replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi,function(_,entity){
+ if(entity[0]==='#'){var n=entity[1].toLowerCase()==='x'?parseInt(entity.slice(2),16):parseInt(entity.slice(1),10);
+ return n>0&&n<=0x10ffff?String.fromCodePoint(n):'';}
+ return {amp:'&',lt:'<',gt:'>',quot:'"',apos:"'"}[entity.toLowerCase()]||'';
+ }).replace(/<[^>]*>/g,'').trim();}
+function epgAttr(attrs,name){var found=String(attrs||'').match(new RegExp('(?:^|\\s)'+name+'\\s*=\\s*["\\x27]([^"\\x27]+)["\\x27]','i'));return found?epgEntity(found[1]):'';}
+function epgParse(xml,channels,now){
+ if(typeof xml!=='string'||xml.length<100||xml.length>24000000||!/<tv(?:\s|>)/i.test(xml))throw Error('XMLTV không hợp lệ hoặc vượt 24 MB.');
+ now=Number(now)||Date.now();
+ var wanted={},names={},aliasesById={},matched={},rows=[],counts={},maxRows=4500;
+ (channels||[]).forEach(function(c){[c.tvgId,c.name].forEach(function(v){var k=epgNorm(v);if(k)wanted[k]=true;});});
+ var matchedChannels=0, m;
+ var channelPattern=/<channel\b([^>]*)>([\s\S]*?)<\/channel>/gi;
+ while((m=channelPattern.exec(xml))){
+  var id=epgAttr(m[1],'id');if(!id)continue;
+  var aliases=[id],n,labels=/<display-name\b[^>]*>([\s\S]*?)<\/display-name>/gi;
+  while((n=labels.exec(m[2]))&&aliases.length<8)aliases.push(epgEntity(n[1]));
+  if(!aliases.some(function(x){return !!wanted[epgNorm(x)];}))continue;
+  matched[id]=true;matchedChannels++;aliasesById[id]=aliases;
+  aliases.forEach(function(a){var key=epgNorm(a);if(key&&!names[key])names[key]=id;});
+ }
+ // Also map channels with direct tvg-id equal to the programme channel ID.
+ (channels||[]).forEach(function(c){if(c.tvgId&&wanted[epgNorm(c.tvgId)]){var id=c.tvgId;
+  if(!matched[id]&&xml.indexOf('channel="'+id+'"')>=0){matched[id]=true;names[epgNorm(c.name)]=id;names[epgNorm(c.tvgId)]=id;aliasesById[id]=[c.name,id];}
+ }});
+ var pat=/<programme\b([^>]*)>([\s\S]*?)<\/programme>/gi;
+ var min=now-4*3600000,max=now+72*3600000;
+ while((m=pat.exec(xml))){
+  var ch=epgAttr(m[1],'channel');if(!matched[ch])continue;
+  var start=epgClock(epgAttr(m[1],'start')),end=epgClock(epgAttr(m[1],'stop'));
+  if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start||end<min||start>max)continue;
+  if((counts[ch]||0)>=32||rows.length>=maxRows)continue;
+  var label=/<title\b[^>]*>([\s\S]*?)<\/title>/i.exec(m[2]),title=epgEntity(label&&label[1]||'').slice(0,120);
+  if(!title)continue;
+  rows.push({id:ch,start:start,end:end,title:title});
+  counts[ch]=(counts[ch]||0)+1;
+ }
+ rows.sort(function(a,b){return a.start-b.start;});
+ if(!rows.length)throw Error('Không tìm thấy chương trình EPG phù hợp với các kênh đã nhập.');
+ return {names:names,aliasesById:aliasesById,programmes:rows,matchedChannels:matchedChannels};
+}
+function epgIndex(guide){
+ epgRowsById={};
+ (guide.programmes||[]).forEach(function(p){if(!epgRowsById[p.id])epgRowsById[p.id]=[];epgRowsById[p.id].push(p);});
+}
+function epgSet(guide){if(!guide||!Array.isArray(guide.programmes)||!guide.programmes.length)return false;
+ epgGuide=guide;epgIndex(guide);epgReady=true;return true;}
+function epgForChannel(channel,now){
+ if(!channel)return {now:null,next:null};
+ var id=epgGuide.names[epgNorm(channel.tvgId)]||epgGuide.names[epgNorm(channel.name)]||'';
+ if(!id&&epgRowsById[channel.tvgId])id=channel.tvgId;
+ var rows=epgRowsById[id]||[],current=null,next=null,clock=now||Date.now();
+ for(var i=0;i<rows.length;i++){var p=rows[i];if(p.start<=clock&&p.end>clock)current=p;
+  else if(p.start>clock){next=p;break;}}
+ return {now:current,next:next};
+}
+function epgTime(ts){if(!Number.isFinite(ts))return '';var d=new Date(ts);return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+function renderSelectedEPG(){
+ var c=selected,g=epgForChannel(c);
+ byId('guideNowTitle').textContent=g.now?g.now.title:epgReady?'Chưa có lịch phát':'Đang chờ EPG';
+ byId('guideNowTime').textContent=g.now?epgTime(g.now.start)+' – '+epgTime(g.now.end):epgError||'';
+ byId('guideNextTitle').textContent=g.next?g.next.title:'Chưa có dữ liệu';
+ byId('guideNextTime').textContent=g.next?epgTime(g.next.start)+' – '+epgTime(g.next.end):'';
+ var percent=g.now?Math.min(100,Math.max(0,(Date.now()-g.now.start)/(g.now.end-g.now.start)*100)):0;
+ byId('guideProgress').style.width=percent.toFixed(1)+'%';
+ var icon=byId('selectedChannelLogo'),fallback=byId('selectedChannelPlaceholder'),url=c&&c.logo||'';
+ if(url){icon.hidden=false;if(icon.getAttribute('src')!==url)icon.src=url;}else{icon.hidden=true;icon.removeAttribute('src');}
+ fallback.hidden=!icon.hidden;fallback.textContent=c?c.name.slice(0,3).toUpperCase():'TV';
+}
+function epgStatus(msg){var n=byId('epgIndicator');if(n)n.textContent=msg;}
+function epgDate(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function epgMeta(){try{return JSON.parse(localStorage.getItem(EPG_DAY_KEY)||'{}')||{};}catch(e){return {};}}
+function epgSaveMeta(patch){try{var m=epgMeta();Object.keys(patch).forEach(function(k){m[k]=patch[k];});localStorage.setItem(EPG_DAY_KEY,JSON.stringify(m));}catch(e){}}
+function epgDatabase(){
+ return new Promise(function(resolve,reject){
+  if(typeof indexedDB==='undefined'){reject(Error('IndexedDB không hỗ trợ'));return;}
+  var req=indexedDB.open(EPG_DB,1);
+  req.onupgradeneeded=function(){if(!req.result.objectStoreNames.contains('guide'))req.result.createObjectStore('guide');};
+  req.onsuccess=function(){resolve(req.result);};
+  req.onerror=function(){reject(req.error||Error('Không mở được cache EPG'));};
+  req.onblocked=function(){reject(Error('Cache EPG đang bận'));};
+ });
+}
+async function epgReadCache(){
+ var db=await epgDatabase();try{
+  return await new Promise(function(resolve,reject){
+   var tx=db.transaction('guide','readonly'),req=tx.objectStore('guide').get('current');
+   req.onsuccess=function(){resolve(req.result||null);};req.onerror=function(){reject(req.error||Error('Không đọc được EPG'));};
+  });
+ }finally{db.close();}
+}
+async function epgWriteCache(day,guide){
+ var json=JSON.stringify(guide);
+ if(json.length>750000)throw Error('EPG quá lớn để cache; chỉ lưu trong RAM phiên này.');
+ var db=await epgDatabase();
+ try{await new Promise(function(resolve,reject){
+  var tx=db.transaction('guide','readwrite');
+  tx.objectStore('guide').put({day:day,guide:guide},'current');
+  tx.oncomplete=function(){resolve();};tx.onabort=function(){reject(tx.error||Error('Bộ nhớ EPG đầy'));};
+  tx.onerror=function(){reject(tx.error||Error('Không thể lưu EPG'));};
+ });}finally{db.close();}
+}
+async function epgLimitedBytes(response,max){
+ var header=Number(response.headers&&response.headers.get&&response.headers.get('content-length')||0);
+ if(header>max)throw Error('EPG vượt giới hạn tải '+Math.round(max/1048576)+' MB.');
+ var reader=response.body&&typeof response.body.getReader==='function'?response.body.getReader():null;
+ if(!reader){
+  if(!header||header>max)throw Error('TV không hỗ trợ đọc EPG có giới hạn dung lượng.');
+  var blob=await response.arrayBuffer();if(blob.byteLength>max)throw Error('EPG quá lớn.');return new Uint8Array(blob);
+ }
+ var parts=[],total=0,chunk;
+ try{while(!(chunk=await reader.read()).done){
+  var value=chunk.value;total+=value.byteLength;
+  if(total>max){try{await reader.cancel();}catch(e){}throw Error('EPG vượt giới hạn bộ nhớ tải.');}
+  parts.push(value);
+ }}finally{try{reader.releaseLock();}catch(e){}}
+ var result=new Uint8Array(total),offset=0;
+ parts.forEach(function(part){result.set(part,offset);offset+=part.byteLength;});
+ return result;
+}
+async function epgDecompress(raw){
+ if(raw[0]!==0x1f||raw[1]!==0x8b)return raw;
+ if(typeof DecompressionStream!=='function'||typeof Blob!=='function')throw Error('TV không hỗ trợ giải nén gzip, thử XML thường.');
+ var stream=new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'));
+ return epgLimitedBytes({body:stream,headers:{get:function(){return '';}}},24000000);
+}
+async function epgDownload(url){
+ var controller=typeof AbortController!=='undefined'?new AbortController():null;
+ var timeout=setTimeout(function(){if(controller)controller.abort();},20000);
+ try{
+  var response=await fetch(url,{cache:'no-store',signal:controller?controller.signal:undefined});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  var raw=await epgLimitedBytes(response,8000000);
+  var unzipped=await epgDecompress(raw);
+  if(unzipped.length>24000000)throw Error('EPG lớn hơn 24 MB giải nén.');
+  return new TextDecoder('utf-8').decode(unzipped);
+ }finally{clearTimeout(timeout);}
+}
+async function epgStartup(){
+ if(epgLoading||epgAttemptInSession)return;
+ epgLoading=true;epgStatus('EPG: đang đọc lịch đã lưu…');
+ try{
+  var saved;try{saved=await epgReadCache();}catch(e){}
+  if(saved&&saved.guide&&epgSet(saved.guide)){epgDay=saved.day||'';epgStatus('EPG: lịch đã lưu '+epgDay);}
+  var today=epgDate(),meta=epgMeta();
+  if(meta.lastAttempt===today){epgStatus(epgReady?'EPG: đã dùng lịch trong bộ nhớ hôm nay':'EPG: đã kiểm tra hôm nay; sẽ thử lại ngày mai');return;}
+  if(!all().length){epgStatus('EPG: sẽ tự tải khi có nguồn kênh');return;}
+  epgAttemptInSession=true;epgSaveMeta({lastAttempt:today});
+  epgStatus('EPG: đang tải VNEPG (1 lần/ngày)…');
+  var raw,error;try{raw=await epgDownload(EPG_DEFAULT);}catch(e){error=e;}
+  if(!raw){epgStatus('EPG: thử bản XML tiêu chuẩn…');try{raw=await epgDownload(EPG_PLAIN);}catch(e){error=e;}}
+  if(!raw){epgStatus('EPG: VNEPG lỗi, đang thử EPGShare01 dự phòng…');try{raw=await epgDownload(EPG_BACKUP);}catch(e){error=e;}}
+  if(!raw)throw error||Error('Không tải được VNEPG hoặc EPGShare01.');
+  var guide=epgParse(raw,all(),Date.now());
+  epgSet(guide);epgError='';epgDay=today;epgSaveMeta({lastSuccess:today});
+  epgStatus('EPG: cập nhật '+guide.programmes.length+' chương trình · '+today);
+  try{await epgWriteCache(today,guide);}catch(e){epgStatus('EPG đã cập nhật trong RAM; bộ nhớ lưu EPG hạn chế.');}
+ }catch(e){epgError='EPG: '+String(e.message||e).slice(0,100);epgStatus(epgError);}
+ finally{epgLoading=false;if(typeof selected!=='undefined')renderSelectedEPG();if(search&&typeof draw==='function')draw();}
+}
+/* END TIZEN EPG LITE V1 */
+
 function elem(tag,cls,text){var x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x;}
 function all(){var seen={},out=[];state.sources.forEach(function(source){orderedManagerEntries(source).forEach(function(entry){var c=entry.channel;if(c.id&&!c.hidden&&!seen[c.id]){seen[c.id]=true;out.push(c);}});});return out;}
 var focusStorageKey='open-iptv-tizen-focus-v1';
@@ -1117,6 +1575,7 @@ function select(c){
   if(rows[i].dataset&&rows[i].dataset.channelId)
    rows[i].classList.toggle('is-selected',!!(c&&rows[i].dataset.channelId===c.id));
  }
+ renderSelectedEPG();
  scheduleHomePreview(c);
 }
 
@@ -1223,6 +1682,33 @@ function scheduleHomePreview(channel){
  previewTimer=setTimeout(function(){startHomePreview(channel,token);},400);
 }
 
+
+/* Local-only recommendations from recent/favorites and currently airing EPG. */
+function recommendChannels(channels){
+ var list=Array.isArray(channels)?channels:[],recent=state.recent||[],now=Date.now();
+ var ranked=list.map(function(c,i){
+  var history=recent.indexOf(c.id),guide=epgForChannel(c,now);
+  var score=(state.favorites[c.id]?10:0)+(history>=0?6/(1+history*.4):0)+(guide.now?1.4:0)+(playing&&playing.id===c.id?2:0);
+  if(!recent.length&&!Object.keys(state.favorites).length)score+=guide.next?.3:0;
+  return {c:c,i:i,score:score};
+ });
+ ranked.sort(function(a,b){return b.score-a.score||a.i-b.i;});
+ return ranked.map(function(x){return x.c;});
+}
+function renderSearchSuggestions(term){
+ var holder=byId('searchSuggestions');if(!holder)return;holder.textContent='';
+ var pool=all(),q=String(term||'').trim(),found=null;
+ if(q){found=window.OpenIPTVChannelSearch.search(pool,q,epgGuide);pool=found.channels.slice(0,7);}
+ else pool=recommendChannels(pool).slice(0,7);
+ if(!pool.length){holder.textContent='Không thấy kênh phù hợp. Thử từ khóa khác.';return;}
+ pool.forEach(function(channel){
+  var button=elem('button','suggest-chip',(q?'▶ ':'☆ ')+channel.name.slice(0,40));
+  button.onclick=function(){search='';group='Tất cả';section='all';closeDialog();draw();play(channel);};
+  holder.appendChild(button);
+ });
+ if(found&&found.approximate)holder.appendChild(elem('span','search-correction','Đã sửa lỗi gõ · kết quả gần đúng.'));
+}
+
 function draw(){
  rememberHomeFocus(document.activeElement);
  items=all();
@@ -1233,6 +1719,7 @@ function draw(){
  });
  if(section==='recent')list.sort(function(a,b){return state.recent.indexOf(a.id)-state.recent.indexOf(b.id);});
  var groups=['Tất cả'];
+ if(section==='all'&&list.length)groups.push('✨ Gợi ý');
  list.forEach(function(c){if(groups.indexOf(c.group)<0)groups.push(c.group);});
  if(groups.indexOf(group)<0)group='Tất cả';
  var groupBar=byId('groups');
@@ -1251,9 +1738,19 @@ function draw(){
   };
   groupBar.appendChild(button);
  });
- list=list.filter(function(c){
-  return (group==='Tất cả'||c.group===group)&&(!search||(c.name+' '+c.group).toLowerCase().indexOf(search)>=0);
- });
+ if(group==='✨ Gợi ý')list=recommendChannels(list).slice(0,24);
+ else if(group!=='Tất cả')list=list.filter(function(c){return c.group===group;});
+ var channelSearch={channels:list,matches:new Map(),approximate:false,usedEPG:false};
+ if(search){
+  try{channelSearch=window.OpenIPTVChannelSearch.search(list,search,epgGuide);}catch(e){
+   channelSearch={channels:list.filter(function(c){return epgNorm(c.name+' '+c.group).indexOf(epgNorm(search))>=0;}),matches:new Map(),approximate:false,usedEPG:false};
+  }
+  list=channelSearch.channels;
+ }
+ var notice=byId('searchNotice');notice.hidden=!search;
+ if(search)notice.textContent=channelSearch.approximate?'Đã tự sửa lỗi gõ: kết quả gần đúng.':
+  channelSearch.usedEPG?'Tìm thấy chương trình trong lịch EPG.':'Kết quả theo tên kênh / nhóm.';
+
  byId('count').textContent=list.length+' kênh';
  byId('heading').textContent=section==='favorites'?'Yêu thích':section==='recent'?'Đã xem':'Trực tiếp';
  var visible=list.slice(0,showLimit),holder=byId('channels');
@@ -1275,6 +1772,8 @@ function draw(){
   var meta=elem('span','chtext');
   meta.appendChild(elem('strong','',c.name));
   meta.appendChild(elem('small','',c.group));
+  var match=channelSearch.matches&&channelSearch.matches.get(String(c.id));
+  if(match&&match.programme)meta.appendChild(elem('small','match-programme','EPG: '+match.programme.slice(0,105)));
   b.appendChild(meta);
   if(state.favorites[c.id])b.appendChild(elem('span','heart','♥'));
   b.onfocus=function(){select(c);};
@@ -1304,7 +1803,7 @@ function draw(){
 function openDialog(kind){if(typeof stopHomePreview==='function')stopHomePreview();byId('modal').hidden=false;byId('sourceDialog').hidden=kind==='search';byId('searchDialog').hidden=kind!=='search';
 byId('modal').firstElementChild.classList.toggle('source-mode',kind!=='search');
 byId('dialogTitle').textContent=kind==='search'?'Tìm kiếm kênh':'Thêm nguồn IPTV';
-if(kind==='source'){setRightsChecked(false);void openPair();}else stopPair();
+if(kind==='source'){setRightsChecked(false);void openPair();}else {stopPair();renderSearchSuggestions(byId('searchInput').value);}
 setTimeout(function(){byId(kind==='search'?'searchInput':'toSourceUrl').focus();},40);}
 function setRightsChecked(on){byId('rights').setAttribute('aria-checked',on?'true':'false');}
 function toggleRights(){setRightsChecked(byId('rights').getAttribute('aria-checked')!=='true');}
@@ -1326,7 +1825,7 @@ else{
 }
 var list=parse(raw,name);if(!list.length)throw Error('M3U không chứa URL hợp lệ');if(state.sources.length>=15)throw Error('Đã đạt 15 nguồn');
 state.sources.push({id:'src-'+newToken(),name:name,address:address,channels:list});if(!save()){state.sources.pop();throw Error('Bộ nhớ TV đầy, không thể lưu nguồn.');}search='';group='Tất cả';section='all';selected=null;draw();
-if(!fromPhone)closeDialog();notify('Đã thêm '+list.length+' kênh'+(webAliasUsed?' qua nguồn HTTPS của bản Web':'')+'.');if(fromPhone&&webAliasUsed)sourceStatus('✓ TV tải được '+list.length+' kênh qua nguồn HTTPS giống bản Web.');
+void epgStartup();if(!fromPhone)closeDialog();notify('Đã thêm '+list.length+' kênh'+(webAliasUsed?' qua nguồn HTTPS của bản Web':'')+'.');if(fromPhone&&webAliasUsed)sourceStatus('✓ TV tải được '+list.length+' kênh qua nguồn HTTPS giống bản Web.');
 return {ok:true,count:list.length,usedFallback:webAliasUsed};}
 catch(e){var error=sourceError(e,address);notify('Không tải được URL. Quét QR trên điện thoại để gửi tệp hoặc dán M3U.');if(fromPhone)sourceStatus('✕ TV không tải được URL. Trên điện thoại hãy chọn tệp hoặc dán M3U qua QR.');return {ok:false,error:error};}
 finally{byId('saveSource').disabled=false;byId('saveSource').textContent='Lưu và tải';}}
@@ -2729,12 +3228,21 @@ byId('cancelSource').onclick=closeDialog;byId('cancelSearch').onclick=closeDialo
 byId('rights').onclick=toggleRights;
 byId('toSourceUrl').onclick=function(){byId('sourceUrl').focus();};
 byId('refreshSourceQR').onclick=function(){void openPair();};
-byId('applySearch').onclick=function(){search=byId('searchInput').value.trim().toLowerCase();showLimit=160;byId('channels').scrollTop=0;closeDialog();draw();};
+byId('applySearch').onclick=function(){search=byId('searchInput').value.trim();group='Tất cả';showLimit=160;byId('channels').scrollTop=0;closeDialog();draw();};
+byId('clearSearch').onclick=function(){search='';byId('searchInput').value='';group='Tất cả';closeDialog();draw();};
+var searchTypingTimer=0;
+byId('searchInput').oninput=function(){clearTimeout(searchTypingTimer);var value=this.value;searchTypingTimer=setTimeout(function(){if(!byId('searchDialog').hidden)renderSearchSuggestions(value);},250);};
+byId('searchInput').onkeydown=function(event){if(event.key==='Enter'){event.preventDefault();byId('applySearch').click();}};
+byId('appsBtn').onclick=exitModule;
 byId('exitModuleBtn').onclick=exitModule;
 byId('browserFallback').onclick=openChannelInSamsungBrowser;
 byId('tizenTubeBtn').onclick=openTizenTube;
 byId('themeBtn').onclick=function(){var themes=['dark','light','amoled'],previous=state.theme;state.theme=themes[(themes.indexOf(state.theme)+1)%3];if(!save()){state.theme=previous;document.body.dataset.theme=previous;return;}document.body.dataset.theme=state.theme;notify('Giao diện: '+state.theme);};
-byId('watchBtn').onclick=function(){play(selected);};byId('favBtn').onclick=function(){if(!selected)return;var id=selected.id,old=state.favorites[id];if(old)delete state.favorites[id];else state.favorites[id]=true;if(!save()){if(old===undefined)delete state.favorites[id];else state.favorites[id]=old;}draw();};
+byId('watchBtn').onclick=function(){play(selected);};
+byId('guideBtn').onclick=function(){if(!selected)return;renderSelectedEPG();byId('guideCard').scrollIntoView({block:'nearest'});notify(epgReady?'Lịch phát sóng đang hiển thị.':epgError||'EPG tự tải một lần mỗi ngày.');};
+byId('infoBtn').onclick=function(){if(selected)notify(selected.name+' · '+selected.group+(epgReady?' · Đã cập nhật EPG':''));};
+byId('selectedChannelLogo').onerror=function(){this.hidden=true;byId('selectedChannelPlaceholder').hidden=false;};
+byId('favBtn').onclick=function(){if(!selected)return;var id=selected.id,old=state.favorites[id];if(old)delete state.favorites[id];else state.favorites[id]=true;if(!save()){if(old===undefined)delete state.favorites[id];else state.favorites[id]=old;}draw();};
 byId('more').onclick=function(){
  var firstNew=showLimit;
  showLimit+=160;
@@ -2763,7 +3271,7 @@ window.addEventListener('keyup',function(e){
 document.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 window.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 document.addEventListener('focusin',function(event){rememberHomeFocus(event.target);},true);
-document.body.dataset.theme=state.theme;draw();updateBottomActions();refreshTizenBrewModules();ensureTizenHlsRelayService();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else restoreHomeFocus();},50);
-function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);
+document.body.dataset.theme=state.theme;draw();void epgStartup();updateBottomActions();refreshTizenBrewModules();ensureTizenHlsRelayService();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else restoreHomeFocus();},50);
+function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);setInterval(function(){if(selected)renderSelectedEPG();},60000);
 })();
 </script></body></html>

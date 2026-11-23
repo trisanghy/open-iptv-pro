@@ -393,3 +393,15 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$f=Join-Path $env:TE
 - Vẫn **lưu nguyên URL nguồn gốc** trong danh sách để quản lý sau; chỉ thay URL khi tải nội dung M3U. Chế độ gửi tệp và dán M3U qua QR v0.1.9 vẫn giữ nguyên.
 - Đã kiểm tra truy cập đích HTTPS bằng nguồn công khai: nội dung bắt đầu bằng `#EXTM3U`. Kiểm thử mô phỏng tải lỗi CORS → dự phòng và không làm thay đổi URL riêng; **chưa xác minh thực tế trên TV Samsung**. Cấu hình giải mã/phát các kênh còn phụ thuộc TV, CORS và codec.
 - Kiểm thử hồi quy: `node --test tizenbrew/tests/source-dialog.test.cjs`. Không sửa nhánh `main`, `web/online`, Electron, Rust hoặc Mobile trong vòng này.
+
+## Google TV Material 3 · EPG mỗi ngày · Tìm kiếm thông minh (23/11/2026)
+
+- Giao diện TizenBrew dùng thiết kế **Google TV Material 3** theo mẫu duyệt: nền đen xanh, chọn kênh xanh da trời, danh sách ba cột, thông tin/lịch EPG cạnh khung xem thử. Logo **Play chuyển sắc xanh–tím trên ô trắng** được nhúng bằng đúng đường vector của `web/online:assets/icon.svg`, nên vẫn hiển thị khi TV không tải được file ảnh từ mạng.
+- Bố cục tối ưu 16:9, nút lớn thao tác bằng remote; giữ các ID, bộ phát và cơ chế ghép QR hiện tại. Mục **Ứng dụng** quay về launcher TizenBrew; mục **Cài đặt** tiếp tục đổi chế độ Sáng / Tối / AMOLED. Không tự sửa dữ liệu danh sách kênh.
+- Nguồn EPG ưu tiên giống Web `https://epg.io.vn/epg.xml.gz`, khi lỗi thử `https://epg.io.vn/epg.xml` rồi `https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz` (dự phòng cũng có trong danh sách Web).
+- Tự tải khi mở app nếu có nguồn M3U; **mỗi ngày lịch chỉ chạy tối đa một chu trình làm mới**, dấu lần thử/ngày lưu ở localStorage cực nhỏ. Nếu chưa có kênh, chờ đến khi người dùng thêm nguồn. Lịch lưu độc lập trong IndexedDB với một bản snapshot; khi tải/cache lỗi không xoá M3U, yêu thích, lịch sử hoặc bản EPG cũ.
+- Giới hạn EPG: tệp nén không quá **8 MB**, sau giải nén không quá **24 MB**, tối đa **4.500 chương trình** (tối đa 32 chương trình/kênh), và bản snapshot lưu không quá **750 KB**. Nếu quá giới hạn, thông báo trạng thái thay vì cố ghi quá dung lượng. Tizen không hỗ trợ giải nén sẽ thử XML thường, nhưng tùy CORS/cấu hình nguồn có thể không tải được EPG.
+- Giữ và đọc `tvg-id` từ M3U để ghép lịch chính xác; tiêu đề “Đang phát”, “Tiếp theo”, giờ bắt đầu/kết thúc và tiến độ phát hiển thị trong panel kênh.
+- Tìm kiếm dùng lại thuật toán **OpenIPTVChannelSearch** của Web: bỏ dấu tiếng Việt, sửa lỗi gõ/transposition, tìm theo tên kênh, nhóm và chương trình EPG; hiển thị nhãn EPG trên kết quả. Nhóm **✨ Gợi ý** dựa trên yêu thích/lịch sử/EPG hiện tại; hoàn toàn tính tại TV, không truyền hành vi lên server.
+- Test: `node --test tizenbrew/tests/*.test.cjs`. Kiểm tra cú pháp JS, XMLTV/timezone, quota, 1 lần/ngày, tìm kiếm/fuzzy, đề xuất, và các kiểm thử từ bản trước.
+- Tất cả thay đổi mã nguồn chỉ thuộc nhánh `tizenbrew`. Gói **WGT xem thử** được tạo trong Actions riêng và *không phải* file cài Samsung TV đã ký. Độ giống ảnh tham khảo là mục tiêu bố cục/thiết kế; dữ liệu kênh và video thực tế phụ thuộc danh sách người dùng.
