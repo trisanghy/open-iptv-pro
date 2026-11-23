@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.396 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Feature class: AI Evidence: QA Electron thật `qa311` giả lập QuotaExceededError với localStorage của mô hình AI; ảnh `positron-p51311-storage-fail-before-1920x1080-real.png` / `positron-p51311-storage-fail-after-1920x1080-real.png`, Node regression.
+Feature priority: BLOCKER_FIX — Ngăn mất dữ liệu nhãn Naive Bayes khi localStorage đầy: RAM trước đây vẫn báo học thành công dù dữ liệu trên đĩa không được ghi, gây sai mô hình sau khi mở lại. Electron screenshot: positron-p51311-storage-fail-before-1920x1080-real.png / positron-p51311-storage-fail-after-1920x1080-real.png.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T13:08:35.338103+00:00",
+  "generatedAt": "2026-11-23T13:10:40.496414+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.311",
       "appVersion": "4.23.396",
       "title": "không ghi nhãn AI giả khi bộ nhớ đầy, rollback Naive Bayes an toàn",
-      "description": "Feature class: AI Evidence: QA Electron thật `qa311` giả lập QuotaExceededError với localStorage của mô hình AI; ảnh `positron-p51311-storage-fail-before-1920x1080-real.png` / `positron-p51311-storage-fail-after-1920x1080-real.png`, Node regression.",
+      "description": "Feature priority: BLOCKER_FIX — Ngăn mất dữ liệu nhãn Naive Bayes khi localStorage đầy: RAM trước đây vẫn báo học thành công dù dữ liệu trên đĩa không được ghi, gây sai mô hình sau khi mở lại. Electron screenshot: positron-p51311-storage-fail-before-1920x1080-real.png / positron-p51311-storage-fail-after-1920x1080-real.png.",
       "kind": "fix",
       "status": "candidate",
       "published": "",

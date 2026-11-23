@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.396 · **Trạng thái:** Chưa có bản phát hành
 
-Feature class: AI Evidence: QA Electron thật `qa311` giả lập QuotaExceededError với localStorage của mô hình AI; ảnh `positron-p51311-storage-fail-before-1920x1080-real.png` / `positron-p51311-storage-fail-after-1920x1080-real.png`, Node regression.
+Feature priority: BLOCKER_FIX — Ngăn mất dữ liệu nhãn Naive Bayes khi localStorage đầy: RAM trước đây vẫn báo học thành công dù dữ liệu trên đĩa không được ghi, gây sai mô hình sau khi mở lại. Electron screenshot: positron-p51311-storage-fail-before-1920x1080-real.png / positron-p51311-storage-fail-after-1920x1080-real.png.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/abf987ab384aa5b0929d1e718b4ecb1f54e2e208)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
