@@ -13,7 +13,7 @@ test('mobile 4.23.17.36 has a new immutable release tag and full cloud login UI'
  assert.equal(lock.version,pkg.version);
  assert.equal(lock.packages[''].version,pkg.version);
  assert.match(workflow,/MOBILE_TAG: mobile\/v4\.23\.17\.36/);
- assert.match(workflow,/MOBILE_VERSION: 4\.23\.17-mobile\.35/);
+ assert.match(workflow,/MOBILE_VERSION: 4\.23\.17-mobile\.36/);
  assert.match(html,/cloud-portable\.css/);
  assert.match(js,/class="oc-head"/);
  assert.match(js,/portableCloudOTPForm/);

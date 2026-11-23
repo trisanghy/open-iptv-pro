@@ -34,11 +34,17 @@ test('PiP action never opens native fullscreen',()=>{
  const start=main.indexOf("$('#pictureInPicture').onclick");
  const end=main.indexOf("$('#addURL').onclick",start);
  assert.ok(start>0&&end>start);
- const pip=main.slice(start,end);
+ const castStart=main.indexOf('const outputPlatform',start);
+ assert.ok(castStart>end?false:castStart>start);
+ const pip=main.slice(start,castStart);
  assert.ok(pip.includes('togglePiP'));
  assert.ok(pip.includes('androidPiP.enter'));
- assert.ok(pip.includes('chooseCast'));
  assert.ok(!pip.includes('VideoPlayer.initPlayer'));
+ assert.ok(!pip.includes('playFullscreen()'));
+ const cast=main.slice(castStart,end);
+ assert.ok(cast.includes('installMobileCastV2'));
+ assert.ok(cast.includes('mobileCast.open()'));
+ assert.ok(!cast.includes('chooseCast('));
 });
 
 test('unmute never renders a large overlay in front of inline video',()=>{
