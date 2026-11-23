@@ -17,8 +17,11 @@ async function run(page){
  fs.mkdirSync(dir,{recursive:true});
  const original=await probe(page);
  // P344's last action can leave an input editor focused. Never intercept F6 there.
- await page.evaluate(()=>{window.IPTVState.setPage('tv');window.PositronWatchFlow?.close?.();
-  document.getElementById('poWatchFlowToggle')?.focus({preventScroll:true});});
+ await page.evaluate(()=>{window.IPTVState.setPage('tv');window.PositronWatchFlow?.close?.();});
+ // Fast Electron launches the audit as soon as WatchFlow exists; its AI extension
+ // registers the F6 handler asynchronously. Wait for the real native disclosure.
+ await page.waitForFunction(()=>!!document.getElementById('poAIShortcutGuide'),null,{timeout:20000});
+ await page.locator('#poWatchFlowToggle').focus();
  await page.keyboard.press('F6');
  await page.waitForFunction(()=>{const p=document.getElementById('poWatchFlowPanel');
   return p&&!p.hidden&&p.dataset.poAiActive==='true';},null,{timeout:15000});
