@@ -522,3 +522,22 @@ html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-en
  #poWatchFlowPanel .po-ai-keyboard-help{padding-right:147px!important;font-size:10px!important}
  #poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide{top:-13px;}
 }
+
+/* P346 visual screenshot correction: 44px summary stays anchored; the seven
+   hints expand upward, above the shortcut row, not below the WatchFlow edge. */
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide,
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide[open]{
+ width:132px!important;max-width:132px!important;
+}
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide[open]>ul{
+ position:absolute!important;right:0;bottom:44px;z-index:95;
+ box-sizing:border-box;width:min(420px,calc(100vw - 100px));
+ max-width:calc(100vw - 100px);max-height:min(350px,52vh);
+ padding:13px 16px 13px 30px!important;margin:0!important;
+ overflow-y:auto;overscroll-behavior:contain;
+ border:1px solid #4e8c81;border-radius:11px 11px 3px 11px;
+ background:#11353b;box-shadow:0 10px 30px #000b;
+}
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide>summary{
+ font-size:11px!important;text-align:center!important;
+}

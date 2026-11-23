@@ -330,7 +330,7 @@
  // The collapsed default leaves channel actions visible; Enter toggles details.
  const shortcutGuide=d.createElement('details');shortcutGuide.id='poAIShortcutGuide';
  shortcutGuide.className='po-ai-shortcut-guide';
- const shortcutSummary=d.createElement('summary');shortcutSummary.textContent='Phím điều khiển AI';
+ const shortcutSummary=d.createElement('summary');shortcutSummary.textContent='⌨ Phím AI';
  shortcutSummary.title='Xem hoặc ẩn hướng dẫn remote và bàn phím';
  shortcutSummary.setAttribute('aria-label','Mở hoặc đóng hướng dẫn phím WatchFlow AI');
  const shortcutList=d.createElement('ul');

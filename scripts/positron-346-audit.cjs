@@ -6,8 +6,12 @@ const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 async function snap(page){return page.evaluate(()=>{
  const panel=document.getElementById('poWatchFlowPanel');
  const guide=document.getElementById('poAIShortcutGuide'),summary=guide.querySelector('summary');
+ const guideList=guide.querySelector('ul').getBoundingClientRect();
+ const panelTitle=panel.querySelector('.po-watchflow-head').getBoundingClientRect();
+ const panelBox=panel.getBoundingClientRect();
  return {panelOpen:!panel.hidden,aiActive:panel.dataset.poAiActive==='true',
   guideOpen:guide.open,summaryFocused:document.activeElement===summary,
+  hintsFullyVisible:!guide.open||(guideList.top>=panelTitle.bottom+2&&guideList.bottom<=panelBox.bottom-2),
   guideShortcuts:guide.getAttribute('aria-keyshortcuts'),guideItems:guide.querySelectorAll('li').length,
   noOverflow:panel.scrollWidth<=panel.clientWidth+3&&document.documentElement.scrollWidth<=innerWidth+3,
   current:window.IPTVState.getCurrent()?.id||'',channels:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id)),
@@ -32,6 +36,7 @@ async function run(page){
   const before=await snap(page);
   assert.ok(before.panelOpen&&before.aiActive&&before.guideOpen);
   assert.equal(before.guideItems,7);assert.equal(before.guideShortcuts,'Escape');
+  assert.ok(before.hintsFullyVisible,'all seven instructions must show inside the Electron modal');
   const stem='positron-p51346-escape-guide-';
   const a=await page.screenshot({path:path.join(dir,stem+'before-'+w+'x'+h+'-real.png'),animations:'disabled'});
   await page.keyboard.press('Escape');

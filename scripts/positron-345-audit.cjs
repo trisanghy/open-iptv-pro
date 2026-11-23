@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const dir='positron-evidence/p5-20-rounds',hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 async function probe(page){return page.evaluate(()=>{
  const p=document.getElementById('poWatchFlowPanel'),g=document.getElementById('poAIShortcutGuide');
- const s=g.querySelector('summary'),r=g.getBoundingClientRect(),m=p.getBoundingClientRect();
+ const s=g.querySelector('summary'),r=(g.open?g.querySelector('ul'):g).getBoundingClientRect(),m=p.getBoundingClientRect();
  return {open:g.open,items:[...g.querySelectorAll('li')].map(x=>x.textContent),
   title:s.textContent,focused:document.activeElement===s,
   minTouch:s.getBoundingClientRect().height,guideWidth:r.width,panelWidth:m.width,
