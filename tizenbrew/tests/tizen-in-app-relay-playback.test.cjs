@@ -123,3 +123,47 @@ test('An extensionless HLS endpoint retries TV-local relay after HTML5 and direc
  assert.equal(s.instances.at(-1).url,local);
  assert.equal(s.elements.browserFallback.hidden,true);
 });
+
+test('Proven relay stream starts instantly on subsequent tuning',async()=>{
+ const s=harness(),channel={id:'vtv3',name:'VTV3',url:'https://cdn.example.org/live/vtv3.m3u8'};
+ s.api.play(channel);await flush();
+ s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed');await flush();
+ s.instances[0].fail();await flush();s.instances[1].ready();await flush();
+ s.api.playbackReady(s.api.current().playbackSerial);
+ s.api.play(channel);await flush();
+ assert.equal(s.api.current().html5Mode,'hls-relay');
+ assert.equal(s.requests.length,2);
+ assert.equal(s.instances.length,3);
+ assert.equal(s.instances[2].url,local);
+});
+test('Fast relay error falls back to native then HLS.js without looping to relay',async()=>{
+ const s=harness(),channel={id:'vtv5',name:'VTV5',url:'https://cdn.example.org/live/vtv5.m3u8'};
+ s.api.play(channel);await flush();
+ s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed');await flush();
+ s.instances[0].fail();await flush();s.instances[1].ready();await flush();
+ s.api.playbackReady(s.api.current().playbackSerial);
+ s.api.play(channel);await flush();
+ assert.equal(s.api.current().html5Mode,'hls-relay');
+ s.instances[2].fail('manifestLoadError',403);await flush();
+ assert.equal(s.api.current().html5Mode,'native');
+ assert.equal(s.video.src,channel.url);
+ const count=s.requests.length;
+ s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed again');await flush();
+ assert.equal(s.api.current().html5Mode,'hlsjs');
+ s.instances[3].fail('manifestLoadError',403);await flush();
+ assert.equal(s.requests.length,count,'never retry the same failed relay');
+});
+test('Two proven relay streams allow same-host HLS channel fast start',async()=>{
+ const s=harness(),url=id=>'https://same.example.org/live/'+id+'.m3u8';
+ for(const id of ['vtv3','vtv5']){
+  s.api.play({id,name:id,url:url(id)});await flush();
+  assert.equal(s.api.current().html5Mode,'native');
+  s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed');await flush();
+  s.instances.at(-1).fail();await flush();s.instances.at(-1).ready();await flush();
+  s.api.playbackReady(s.api.current().playbackSerial);
+ }
+ const count=s.instances.length;
+ s.api.play({id:'vtv6',name:'VTV6',url:url('vtv6')});await flush();
+ assert.equal(s.api.current().html5Mode,'hls-relay');
+ assert.equal(s.instances.length,count+1);
+});
