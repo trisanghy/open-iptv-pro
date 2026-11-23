@@ -191,6 +191,49 @@ body[data-theme=light] #app .primary{color:#fff}
 @keyframes picker-in{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
 @media(max-width:1050px){#channelPicker{padding:14px 0 14px 14px}.picker-panel{width:60vw;min-width:360px;padding:17px;border-radius:17px}.picker-heading{font-size:23px}.picker-row{min-height:46px;font-size:15px}.picker-groups button{font-size:13px;padding:7px 11px}.picker-help{font-size:12px}}
 @media(max-height:620px){#channelPicker{padding-top:10px;padding-bottom:10px}.picker-panel{padding:14px 17px;gap:8px}.picker-row{min-height:40px;padding:6px 10px;margin-bottom:5px}.picker-groups{min-height:38px}}
+/* TV picker large-type override: readable from the sofa, including 720p TVs. */
+#channelPicker{padding:24px 0 24px 30px;background:linear-gradient(90deg,rgba(0,0,0,.85),rgba(0,0,0,.43) 60%,rgba(0,0,0,.06))}
+#channelPicker .picker-panel{width:min(920px,57vw);min-width:0;padding:27px 28px 22px;gap:15px;border:2px solid #6d8fac;border-radius:24px;box-shadow:0 24px 70px #000b}
+#channelPicker .picker-heading{font-size:39px;line-height:1.16;font-weight:800}
+#channelPicker .picker-info{font-size:23px;color:#c8daef}
+#channelPicker .picker-groups{gap:12px;min-height:65px;padding:3px 2px 8px}
+#channelPicker .picker-groups button{font-size:23px;min-height:52px;padding:10px 20px;border:2px solid #536f8c;font-weight:750}
+#channelPicker .picker-groups button.active,#channelPicker .picker-groups button:focus{background:linear-gradient(135deg,#0999f2,#076ad7);border-color:#c2efff;color:#fff;box-shadow:0 0 0 2px #ffffff33,0 8px 24px #078cf570}
+#channelPicker .picker-list{padding:5px 12px 6px 3px}
+#channelPicker .picker-row{min-height:78px;font-size:29px;font-weight:750;line-height:1.23;padding:15px 18px;margin-bottom:10px;gap:16px;border:2px solid #ffffff33;border-radius:17px;background:#203751ee}
+#channelPicker .picker-row.active,#channelPicker .picker-row:focus{background:linear-gradient(110deg,#118ef0,#086bd0);border-color:#def8ff;box-shadow:0 0 0 3px #ffffff55,0 12px 30px #006cb5a9;transform:translateX(3px);color:#fff}
+#channelPicker .picker-row .picker-number{font-size:22px;font-weight:750;width:57px;color:#c8d9ea}
+#channelPicker .picker-row.active .picker-number{color:#fff}
+#channelPicker .picker-row .picker-onair{font-size:16px;font-weight:800;padding:7px 11px;border:2px solid #9eeec577;color:#c6ffdd}
+#channelPicker .picker-row.active .picker-onair{color:#fff;background:#ffffff29;border-color:#ffffff88}
+#channelPicker .picker-help{display:flex;flex-wrap:wrap;align-items:center;gap:11px 17px;font-size:21px;font-weight:700;line-height:1.3;color:#eff7ff;border-top:2px solid #ffffff33;padding:16px 2px 2px}
+#channelPicker .picker-help span{white-space:nowrap}
+#channelPicker .picker-help b{display:inline-block;padding:6px 10px;min-height:35px;border-radius:9px;margin-right:6px;border:1px solid #aac2d6;background:#2a4460;color:#fff;font-size:18px}
+@media(max-width:1350px){
+ #channelPicker{padding:15px 0 15px 16px}
+ #channelPicker .picker-panel{width:68vw;max-width:790px;padding:19px 21px;gap:10px}
+ #channelPicker .picker-heading{font-size:31px}
+ #channelPicker .picker-info{font-size:20px}
+ #channelPicker .picker-groups{min-height:55px;gap:9px}
+ #channelPicker .picker-groups button{min-height:45px;font-size:19px;padding:8px 14px}
+ #channelPicker .picker-row{min-height:64px;font-size:24px;padding:11px 13px;margin-bottom:8px}
+ #channelPicker .picker-row .picker-number{font-size:18px;width:48px}
+ #channelPicker .picker-row .picker-onair{font-size:13px;padding:5px 8px}
+ #channelPicker .picker-help{font-size:18px;padding-top:10px;gap:8px 12px}
+ #channelPicker .picker-help b{font-size:16px;min-height:30px;padding:4px 8px}
+}
+@media(max-height:620px){
+ #channelPicker{padding-top:9px;padding-bottom:9px}
+ #channelPicker .picker-panel{padding:13px 17px;gap:7px}
+ #channelPicker .picker-heading{font-size:27px}
+ #channelPicker .picker-info{font-size:18px}
+ #channelPicker .picker-groups{min-height:45px;padding:1px}
+ #channelPicker .picker-groups button{min-height:39px;font-size:18px;padding:6px 12px}
+ #channelPicker .picker-row{min-height:56px;font-size:21px;padding:9px 11px;margin-bottom:5px}
+ #channelPicker .picker-row .picker-number{font-size:16px;width:42px}
+ #channelPicker .picker-help{font-size:16px;padding-top:6px;gap:6px 8px}
+ #channelPicker .picker-help b{font-size:15px;min-height:26px;padding:3px 7px}
+}
 .playerdiag{position:absolute;z-index:3;top:calc(45% + 55px);left:7%;right:7%;max-height:30vh;overflow:auto;white-space:pre-line;overflow-wrap:anywhere;padding:12px 18px;border:1px solid #8b6c3b;border-radius:10px;background:#080a0ee8;color:#ffe0aa;font-size:19px;line-height:1.45;text-align:left;text-shadow:0 1px 3px #000}
 #player.is-playing .playerdiag{display:none}
 </style>
@@ -262,7 +305,7 @@ body[data-theme=light] #app .primary{color:#fff}
     <div class="picker-info" id="pickerInfo">Dùng điều khiển để chọn kênh</div>
     <div class="picker-groups" id="pickerGroups"></div>
     <div class="picker-list" id="pickerList"></div>
-    <div class="picker-help">↑ ↓ Phát kênh ngay　·　← → Đổi thư mục　·　OK/Back Đóng danh sách</div>
+    <div class="picker-help" aria-label="Phím điều khiển TV"><span><b>↑ ↓</b> Phát kênh ngay</span><span><b>← →</b> Đổi thư mục</span><span><b>OK/Back Đóng danh sách</b></span></div>
   </div>
 </div></div>
 <div id="toast" hidden></div>

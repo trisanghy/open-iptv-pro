@@ -175,3 +175,33 @@ test('Closing and reopening channel picker remembers the last highlighted channe
  s.picker.closeChannelPicker();s.picker.openChannelPicker();
  assert.equal(s.picker.current().pickerGroup,'Tin tức');
 });
+
+test('Full-screen picker provides sofa-readable sizes instead of tiny controls',()=>{
+ const start=html.indexOf('/* TV picker large-type override:');
+ const end=html.indexOf('.playerdiag{position:absolute;',start);
+ assert.ok(start>=0&&end>start);
+ const css=html.slice(start,end);
+ for(const selector of ['#channelPicker .picker-panel','#channelPicker .picker-heading',
+ '#channelPicker .picker-info','#channelPicker .picker-groups button',
+ '#channelPicker .picker-row','#channelPicker .picker-row.active',
+ '#channelPicker .picker-row .picker-onair','#channelPicker .picker-help']){
+  assert.ok(css.includes(selector),'large-size rule for '+selector);
+ }
+ for(const size of ['width:min(920px,57vw)','font-size:39px','font-size:29px',
+  'min-height:78px','font-size:23px','font-size:21px','@media(max-width:1350px)',
+  '@media(max-height:620px)','min-height:56px']){
+  assert.ok(css.includes(size),'missing TV scale rule '+size);
+ }
+ assert.ok(html.includes('<div class="picker-help" aria-label="Phím điều khiển TV">'));
+ assert.ok(html.includes('<b>↑ ↓</b> Phát kênh ngay'));
+ assert.ok(html.includes('<b>← →</b> Đổi thư mục'));
+ assert.ok(html.includes('<b>OK/Back Đóng danh sách</b>'));
+});
+test('Upsizing the picker does not change its 3-second inactivity close or instant tuning',()=>{
+ const s=harness();s.picker.openChannelPicker();
+ assert.deepEqual(s.delays,[3000]);
+ s.picker.pickerMove('ArrowDown');
+ assert.deepEqual(s.delays,[3000,3000]);
+ assert.deepEqual(s.played,['c12']);
+ assert.equal(s.els.channelPicker.hidden,false);
+});
