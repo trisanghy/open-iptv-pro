@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.434",
-  "description": "Positron P5.1.349: hướng dẫn phím AI có thể cuộn bằng remote và không che các nút chọn chế độ",
+  "version": "4.23.435",
+  "description": "Positron P5.1.350: WatchFlow không có kênh có nút mở Quản lý nguồn IPTV hợp pháp, không tự nhập hay phát",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

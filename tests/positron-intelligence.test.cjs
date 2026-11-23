@@ -1751,3 +1751,18 @@ test('P349 real AI help is focusable and scrolls below, never over, mode selecti
  assert.ok(qa.includes('afterSha256'));
  assert.ok(runner.includes("await require('./positron-349-audit.cjs').run(page)"));
 });
+
+test('P350 empty AI guide adds no source by itself and routes to native source consent page',()=>{
+ const js=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-350-audit.cjs','utf8');
+ const runner=fs.readFileSync('scripts/positron-50-audit.cjs','utf8');
+ assert.ok(js.includes("openSources.id='poAIAddLegalSource'"));
+ assert.ok(js.includes("win.IPTVState?.setPage?.('sources')"));
+ assert.ok(js.includes("byId('sourcesUrlBtn')?.focus"));
+ assert.ok(js.includes("win.PositronWatchFlow?.close?.()"));
+ assert.ok(!js.includes("openSources.addEventListener('click',()=>{win.IPTVState.addSource"));
+ assert.ok(css.includes('min-height:44px;min-width:180px'));
+ assert.ok(qa.includes('beforeSha256')&&qa.includes("await page.locator('#poAIAddLegalSource').click()"));
+ assert.ok(runner.includes("await require('./positron-350-audit.cjs').run(page)"));
+});

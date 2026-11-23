@@ -1064,7 +1064,18 @@
   if(!collection.length){
    const empty=d.createElement('p');empty.className='po-ai-empty';
    empty.textContent='Chưa có nguồn IPTV. Hãy thêm playlist hợp lệ và EPG để phân loại, sau đó bật học nếu muốn.';
-   list.append(empty);return;
+   // P350: offer a safe, keyboard-accessible route to native source management.
+   // Never add/import/play a playlist or bypass the normal rights/consent check.
+   const openSources=d.createElement('button');
+   openSources.type='button';openSources.id='poAIAddLegalSource';
+   openSources.className='po-ai-source-cta';openSources.textContent='Thêm nguồn IPTV hợp pháp';
+   openSources.title='Tới Quản lý nguồn. Chỉ nhập playlist bạn có quyền sử dụng.';
+   openSources.addEventListener('click',()=>{
+    win.PositronWatchFlow?.close?.();
+    win.IPTVState?.setPage?.('sources');
+    win.requestAnimationFrame(()=>byId('sourcesUrlBtn')?.focus({preventScroll:true}));
+   });
+   list.append(empty,openSources);return;
   }
   if(foldersOpen){renderEPGFolders(collection);restoreFolders();return;}
   if(programmesOpen){renderEPGProgrammes(collection);restoreFolders();return;}

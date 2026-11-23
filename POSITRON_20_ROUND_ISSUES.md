@@ -30,3 +30,14 @@
 - Full Node suite: workflow 45288453026 test success; capture/build chưa chốt khi ghi checkpoint này.
 - Next issue from real images: expanded guide still OVERLAPS six modes; P349 will move guide underneath grid as bounded list with focusable PageDown scroll.
 - Strict round count: P348 unconfirmed until full capture/build and cross-check complete; no immutable Release because stable-only policy.
+
+## P5.1.349 — phát hiện sau khi đã mở ảnh Electron
+- Real fast native UI QA: run 45289336657, artifact 14874135406, 23 checks pass, 4 screenshots opened and visually compared, SHA-256 recorded.
+- 720px: BEFORE help at y262–482 overlays 6 mode buttons (bottom 468). AFTER help at y526–674, modes uncovered and visible, 72 px inner scroll via PageDown, no horizontal spill; desktop 1920px geometry also passes.
+- Remaining visual issue: popup currently covers some informational/privacy text beneath the mode grid when open; it does NOT cover mode choices or the native video player. Prioritize if it affects the information flow on real sources.
+- Full Node/test success in 45289336686; capture/build and GitHub Release status still need final check when writing this checkpoint.
+
+## P5.1.350 — kế hoạch vòng tiếp
+- Based on after P349 screenshots: when no playlist is loaded, WatchFlow shows a plain message about sources with no in-dialog action. Add one 44px accessible legal-source CTA that only navigates to native Sources page, focuses import URL and does not bypass any permission/consent.
+- QA in Electron with no channels at 1920px and 720px; inspect 4 PNG and test playlist/current/model immutability.
+- Code/product label P5.1.350 maps to SemVer 4.23.435, never overwrite previous tags or other branches.

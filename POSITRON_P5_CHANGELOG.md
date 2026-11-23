@@ -1,3 +1,11 @@
+## P5.1.350 / Electron 4.23.435 — Nút nhập nguồn hợp pháp trong WatchFlow chưa có kênh (CANDIDATE)
+- Feature priority: NEW — Ảnh thật P349 cho thấy WatchFlow Intelligence chưa có playlist chỉ hiển thị một dòng hướng dẫn, trong khi thao tác nhập nguồn nằm bên ngoài bảng AI. Thêm lối vào Quản lý nguồn ở đúng trạng thái trống, không tự nhập hoặc phát kênh.
+- Feature class: AI
+- User action: Mở WatchFlow AI khi chưa có kênh, chọn nút Thêm nguồn IPTV hợp pháp mới xuất hiện dưới dòng giải thích; ứng dụng đóng WatchFlow, mở trang Quản lý nguồn IPTV và đặt focus lên nút URL playlist để người dùng chủ động thao tác theo quy trình xác nhận quyền xem.
+- Electron screenshot: positron-p51350-legal-source-onboarding-after-720x900-real.png
+- Evidence: Native Electron/Playwright screenshots at 1920×1080 and 720×900 with source CTA temporarily hidden for original BEFORE state and restored for AFTER; measure 44px touch target, Sources page activation, focus URL import button and WatchFlow dismissal; assert no channel/current/source/local AI model mutation and no autoplay. Await CI proof.
+- QA: preserve rights/consent, no bypass of import security and no prefilled unauthorized IPTV stream. Build & Release status must be checked before counting this round.
+
 ## P5.1.349 / Electron 4.23.434 — Hướng dẫn AI cuộn được và không che nút chế độ (CANDIDATE)
 - Feature priority: NEW — Ảnh Electron thật P348 720×900 cho thấy cửa sổ hướng dẫn phím phủ cả sáu nút chuyển chế độ AI; người dùng không thể nhìn đủ các lựa chọn khi mở trợ giúp. Cần một bảng trợ giúp cuộn được phía dưới lưới chế độ, vẫn giữ toàn bộ lệnh.
 - Feature class: AI
