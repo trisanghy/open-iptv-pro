@@ -5,11 +5,10 @@
  padding:9px 12px;min-height:38px;cursor:pointer}
 #page-tv .channel-panel .web-ai-quick-filter{white-space:nowrap;min-height:35px;font-weight:700}
 #page-tv .channel-panel .web-ai-quick-filter.active{border-color:var(--accent,#b06cde)}
-@media(max-width:960px){
- html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv #webChannelHub{
+/* iOS desktop-site mode can have a 1024px viewport while still reporting mobile. */
+html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv #webChannelHub{
   display:grid!important;grid-template-columns:minmax(0,1fr)!important;max-width:100%!important}
  html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv #webChannelHub .web-hub-main{width:100%;min-width:0}
  html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv .channel-panel{display:none!important}
  html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv #webChannelIntelligence .web-ai-grid{
   grid-template-columns:repeat(auto-fill,minmax(94px,1fr));max-height:48dvh}
-}
