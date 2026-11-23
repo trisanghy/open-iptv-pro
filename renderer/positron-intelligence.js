@@ -853,6 +853,19 @@
      renderRiskRows();
      const riskNote=d.createElement('small');riskNote.textContent=groupsRisk.caution;
      riskDetails.append(riskNote);details.append(riskDetails);
+     // P299: warn about a single high-loss channel group before any model
+     // replacement, even if whole-playlist coverage conceals its decline.
+     if(groupsRisk.criticalGroups?.length){
+      const groupAlert=d.createElement('p');
+      groupAlert.id='poAICategoryGroupRiskAlert';
+      groupAlert.className='po-ai-coverage-risk';
+      groupAlert.setAttribute('role','alert');
+      groupAlert.textContent='Cảnh báo AI theo nhóm: '+
+       groupsRisk.criticalGroups.map(g=>g.label+' có '+g.lost+'/'+g.count+
+        ' kênh có thể mất phân loại đủ chắc chắn ('+g.lossRate+'%)').join('; ')+
+       '. Hãy kiểm tra các nhóm này trước khi xác nhận khôi phục. Đây chỉ là dự báo dựa trên mô hình Naive Bayes cục bộ, không phải độ chính xác thực tế hay chất lượng luồng phát.';
+      details.append(groupAlert);
+     }
     }
     const note=d.createElement('small');note.textContent=categoryImpact.caution;
     details.append(note);importPreview.append(details);

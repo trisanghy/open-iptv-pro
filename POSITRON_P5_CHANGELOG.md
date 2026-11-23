@@ -1,3 +1,12 @@
+## P5.1.299 — AI phát hiện rủi ro tập trung theo nhóm khi khôi phục mô hình / Electron 4.23.384
+- Feature priority: NEW — Khi mô hình Naive Bayes mới làm ít nhất 5 kênh trong một nhóm mất phân loại đủ chắc chắn, chiếm tối thiểu 60% nhóm, hiện cảnh báo độc lập ngay trước xác nhận khôi phục kể cả khi mức giảm trung bình toàn thư viện còn thấp.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → mở dự báo Naive Bayes; đọc cảnh báo tự động theo từng nhóm trước khi quyết định xác nhận.
+- Electron screenshot: positron-p51299-group-alert-before-1920x1080-real.png / positron-p51299-group-alert-after-1920x1080-real.png.
+- Evidence: Dùng hai bộ trọng số Naive Bayes thật so sánh dự đoán trước/sau trên hơn 200 kênh kiểm thử cục bộ; bài Node bảo đảm một nhóm 8/8 mất nhãn vẫn bị phát hiện dù suy giảm bình quân dưới 20%, từ chối cảnh báo giả với nhóm một kênh và với mô hình không thay đổi; kiểm thử Electron 1920×1080, role=alert, ảnh trước/sau, bảo toàn playlist/trọng số và không tự phát video.
+- Privacy: Tất cả phép dự đoán xử lý cục bộ tên và nhóm kênh; không gửi URL M3U, dữ liệu xem, lịch sử, EPG hay trọng số ra mạng. Tỷ lệ phản ánh biến động dự đoán của mô hình, không phải độ chính xác thực tế hoặc chất lượng phát IPTV.
+- Status: CANDIDATE — chỉ xác nhận sau GitHub Actions, build và trực tiếp MỞ soát ảnh Electron thật; Releases chỉ dành cho Stable.
+
 ## P5.1.298 — AI loại nhóm mẫu quá nhỏ khi so sánh rủi ro / Electron 4.23.383
 - Feature priority: NEW — Cho phép ẩn nhóm chỉ có dưới 5 kênh trong thống kê rủi ro phân loại Naive Bayes để tránh xem tỷ lệ 100% trên 1 kênh tương đương với 100% trên hàng trăm kênh, vẫn có thể hiện lại toàn bộ ngay bằng nút.
 - Feature class: AI

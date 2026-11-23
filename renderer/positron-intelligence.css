@@ -244,3 +244,7 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel #poAICategorySampleFilter[aria-pressed="true"]{background:#304a62;border-color:#99c7ff}
 #poWatchFlowPanel #poAICategorySampleFilter:focus-visible{outline:2px solid #b3f0df;outline-offset:2px}
 #poWatchFlowPanel #poAICategorySampleNote{display:block;font-size:10px;color:#a9cbd2;margin:4px 0 8px}
+
+/* P299: prominent group-specific model-drift warning before confirming restore. */
+#poWatchFlowPanel #poAICategoryGroupRiskAlert{margin:9px 0 11px;padding:11px 12px;border:1px solid #ca9367;border-radius:9px;background:#3f2f26;color:#ffefdd;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
+#poWatchFlowPanel #poAICategoryGroupRiskAlert[hidden]{display:none!important}

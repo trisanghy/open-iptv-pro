@@ -982,3 +982,35 @@ test('P298 flags and filters small AI group samples without mutating model',()=>
  for(const x of ['qa298','positron-p51298-small-samples-before-1920x1080-real.png',
  'positron-p51298-small-samples-after-1920x1080-real.png'])assert.ok(qa.includes(x),x);
 });
+
+
+test('P299 warns when Naive Bayes loss is concentrated in one group',()=>{
+ const film={id:'film',name:'Phim hành động',group:'Phim',url:'https://private.invalid/secret.m3u8'};
+ const sport={id:'sport',name:'Bóng đá thể thao',group:'Thể thao',url:'https://private.invalid/secret.m3u8'};
+ let model=C.emptyCategoryModel();
+ for(let i=0;i<14;i++){model=C.teachCategory(model,film,'cinema');model=C.teachCategory(model,sport,'sport');}
+ const others=Array.from({length:220},(_,i)=>({id:'other-'+i,name:'Nhóm thông tin '+i,group:'Khác'}));
+ const items=[...others,...Array.from({length:8},(_,i)=>({...film,id:'film-'+i})),
+  ...Array.from({length:8},(_,i)=>({...sport,id:'sport-'+i}))];
+ const backup=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const channelSnapshot=JSON.stringify(items),modelSnapshot=JSON.stringify(model);
+ const risk=C.previewCategoryGroupRisks({categoryModel:model},backup,items,{limit:5});
+ assert.equal(risk.ok,true);
+ assert.ok(risk.criticalGroups.some(row=>row.label==='Phim'&&row.lost===8&&row.count===8&&row.lossRate===100));
+ assert.ok(risk.criticalGroups.some(row=>row.label==='Thể thao'&&row.lost===8));
+ assert.ok(risk.criticalGroups.every(row=>row.count>=5&&row.lost>=5&&row.lossRate>=60));
+ assert.ok(risk.lostTotal/items.length<0.2,'P299 tests concentrated risk despite low total sample loss');
+ const small=C.previewCategoryGroupRisks({categoryModel:model},backup,items.slice(0,220).concat([{...film,id:'tiny-film'}]));
+ assert.equal(small.criticalGroups.length,0,'single-channel group must not raise high-risk warning');
+ const stable=C.previewCategoryGroupRisks({categoryModel:model},C.buildLearningBackup({model:C.emptyModel(),categoryModel:model,bandit:{}}),items);
+ assert.equal(stable.criticalGroups.length,0,'unchanged model must not raise warning');
+ assert.equal(JSON.stringify(items),channelSnapshot);assert.equal(JSON.stringify(model),modelSnapshot);
+ assert.ok(!JSON.stringify(risk).includes('https://')&&!JSON.stringify(risk).includes('.m3u8'));
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("groupAlert.id='poAICategoryGroupRiskAlert'"));
+ assert.ok(ui.includes("groupAlert.setAttribute('role','alert')"));
+ assert.ok(css.includes('#poAICategoryGroupRiskAlert[hidden]'));
+ for(const s of ['qa299','positron-p51299-group-alert-before-1920x1080-real.png','positron-p51299-group-alert-after-1920x1080-real.png'])assert.ok(qa.includes(s),s);
+});

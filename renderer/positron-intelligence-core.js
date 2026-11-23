@@ -478,7 +478,13 @@
   // Explicitly filter small groups during comparison, never mutate user channels.
   const minimum=Math.max(1,Math.min(100,Math.trunc(Number(minGroupSize))||1));
   const eligible=rows.filter(row=>row.count>=minimum);
-  return {ok:true,scanned:entries.length,totalGroups:rows.length,lostTotal,
+  // P299: detect concentrated Naive Bayes coverage regressions that the
+  // whole-library average can hide. This is model-output drift, NOT accuracy.
+  // Requiring 5 affected channels in a group of at least 5 avoids tiny samples.
+  const criticalGroups=rows.filter(row=>row.count>=5&&row.lost>=5&&row.lossRate>=60)
+   .sort((a,b)=>b.lossRate-a.lossRate||b.lost-a.lost||a.label.localeCompare(b.label,'vi'))
+   .slice(0,3).map(({label,count,lost,lossRate})=>({label,count,lost,lossRate}));
+  return {ok:true,scanned:entries.length,totalGroups:rows.length,lostTotal,criticalGroups,
    eligibleGroups:eligible.length,excludedSmallGroups:rows.length-eligible.length,
    minGroupSize:minimum,sortBy:sortBy==='rate'?'rate':'count',groups:eligible.slice(0,size),
    caution:'Rủi ro chỉ dự báo từ nhãn, tên và nhóm kênh trên máy; không phải thống kê chất lượng phát hoặc độ chính xác AI.'};
