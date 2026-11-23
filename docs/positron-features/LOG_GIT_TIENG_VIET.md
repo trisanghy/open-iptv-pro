@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.273 — Thư mục chương trình EPG đa chủ đề
+## P5.1.274 — Tìm chương trình EPG xuyên chủ đề không dấu
 
-**Ứng dụng:** 4.23.358 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.359 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm khám phá chương trình XMLTV theo từ khóa trên toàn bộ các chủ đề, tên chương trình và kênh, hỗ trợ dấu/không dấu; chương trình đa nhãn chỉ liệt kê một lần trong kết quả. Tìm trực tiếp trong tập lịch 24 giờ đã nạp, không tự quét hay phát video. Feature class: BREAKTHROUGH
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/78d1a920cd1983e4e831e771e951482dba12f03e)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.273 — Thư mục chương trình EPG 24h đa chủ đề / Electron 4.23.358
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Thêm màn hình **Chương trình EPG** cho phép khám phá lịch phát thật theo chủ đề, không chỉ gom kênh. Một chương trình thời sự kết hợp bóng đá có thể xuất hiện đồng thời trong Tin tức và Thể thao, xem tên/giờ/kênh và chủ động chọn xem kênh; chỉ dùng XMLTV đã tải. Feature class: BREAKTHROUGH
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a63eb3b154ee46b00e07d695d72cd5a63f2134fa)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.272 — Thư mục EPG đa nhãn tự động / Electron 4.23.357
 
