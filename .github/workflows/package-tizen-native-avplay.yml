@@ -7,6 +7,7 @@ on:
       - tizen-native/**
       - tizenbrew/index.html
       - tizenbrew/phone.html
+      - tizenbrew/tests/**
       - supabase-sdk.js
       - hls.min.js
       - dash.all.min.js
