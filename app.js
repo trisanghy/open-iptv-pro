@@ -318,9 +318,20 @@
   });
  }
  function icon(c){return c.logo?`<img loading="lazy" src="${escape(c.logo)}" alt="" onerror="this.style.display='none';this.parentNode.textContent='TV'" />`:'TV';}
+ let lastChannelSearch={matches:new Map(),approximate:false,usedEPG:false};
  function channelView(){let a=filter==='fav'?favCore.visible(store):enabledChannels();
   if(filter==='recent')a=recentCore.select(store.recentChannelIds,enabledChannels());
-  const query=$('#searchBox').value.trim().toLowerCase();if(query)a=a.filter(c=>(c.name+' '+c.group).toLowerCase().includes(query));
+  const query=$('#searchBox').value.trim();
+  lastChannelSearch={matches:new Map(),approximate:false,usedEPG:false};
+  if(query){
+   if(window.OpenIPTVChannelSearch){
+    lastChannelSearch=window.OpenIPTVChannelSearch.search(a,query,window.IPTVExtras?.getGuide?.());
+    a=lastChannelSearch.channels;
+   }else{
+    const clean=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
+    a=a.filter(c=>clean(c.name+' '+c.group).includes(clean(query)));
+   }
+  }
   if(['alive','dead','uncertain'].includes(filter))a=a.filter(c=>c.status===filter);
   return filter==='recent'?a:sortedChannels(a);
  }
@@ -328,6 +339,8 @@
   syncGroupOrder();
   const prev=preserve?preserveListScroll():null;
   const result=channelView();$('#channelMeta').textContent=`${result.length} / ${store.channels.length} kênh`;
+  const searchHelp=$('#channelSearchHelp'),searchQuery=$('#searchBox').value.trim();
+  if(searchHelp)searchHelp.textContent=!searchQuery?'':lastChannelSearch.approximate?'Đã tự sửa lỗi gõ: đang hiển thị kết quả gần đúng.':lastChannelSearch.usedEPG?'Có kết quả theo tên chương trình EPG.':result.length?'':'Không thấy kết quả trong tên kênh, nhóm hoặc EPG đã tải.';
   const target=$('#channelList');target.replaceChildren();
   if(!result.length){updateSelectionBar();target.innerHTML=`<div class="empty-list">${filter==='recent'?'Chưa có kênh vừa xem. Mở một kênh để bắt đầu lưu lịch sử.':store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}</div>`;restoreListScroll(prev);return;}
   const groups=new Map();result.forEach(c=>{const g=groupName(c);if(!groups.has(g))groups.set(g,[]);groups.get(g).push(c)});
@@ -381,7 +394,15 @@
       });
       row.querySelector('.channel-star').addEventListener('click',e=>{e.stopPropagation();favorite(c);});
       row.querySelector('.channel-move').addEventListener('click',e=>{e.stopPropagation();moveChannelToFolder(c);});
-      window.IPTVExtras?.decorateRow?.(c,row);window.IPTVProAdvanced?.decorateRow?.(c,row);f.append(row);
+      window.IPTVExtras?.decorateRow?.(c,row);window.IPTVProAdvanced?.decorateRow?.(c,row);
+      const hit=lastChannelSearch.matches.get(String(c.id));
+      if(hit?.programme){
+       const hint=document.createElement('span');hint.className='channel-search-match';
+       const when=hit.start?new Date(hit.start).toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+       hint.textContent='EPG: '+hit.programme+(when?' · '+when:'')+(hit.type==='near-epg'?' · gần đúng':'');
+       hint.title=hint.textContent;row.querySelector('.channel-text')?.append(hint);
+      }
+      f.append(row);
     });
   });target.append(f);updateSelectionBar();restoreListScroll(prev);
  }

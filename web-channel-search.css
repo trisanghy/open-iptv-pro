@@ -1,0 +1,11 @@
+/* Compact search feedback beneath the existing channel-list search box. */
+#page-tv #channelSearchHelp{
+ display:block;margin:-6px 17px 8px;padding:0 1px;color:var(--muted,#91a5b8);
+ font-size:11px;line-height:1.45;overflow-wrap:anywhere;
+}
+#page-tv #channelSearchHelp:empty{display:none}
+#page-tv .channel-search-match{
+ display:block;margin-top:4px;color:var(--accent,#bc7cff);
+ font-size:10px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+#page-tv .channel-item:has(.channel-search-match) .channel-text{min-width:0}
