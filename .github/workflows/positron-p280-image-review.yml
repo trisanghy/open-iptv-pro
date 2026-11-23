@@ -1,0 +1,45 @@
+name: Positron P280 authentic PNG review bridge
+on:
+  push:
+    branches: [Positron]
+    paths:
+      - '.github/workflows/positron-p280-image-review.yml'
+permissions:
+  actions: read
+  contents: read
+jobs:
+  visual-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Retrieve authentic P280 Electron capture and reveal full-resolution PNGs
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          curl --fail --silent --show-error --location \
+            --header "Authorization: Bearer ${GH_TOKEN}" \
+            --header "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/artifacts/14786983727/zip" \
+            --output /tmp/positron-p280-evidence.zip
+          for mode in before after; do
+            file="positron-p51280-active-queue-${mode}-1920x1080-real.png"
+            entry="$(unzip -Z1 /tmp/positron-p280-evidence.zip | grep -F "/${file}" | head -n1 || true)"
+            if [[ -z "${entry}" ]]; then
+              entry="$(unzip -Z1 /tmp/positron-p280-evidence.zip | grep -Fx "${file}" | head -n1 || true)"
+            fi
+            test -n "${entry}" || { echo "::error::Missing P280 PNG: ${file}"; exit 1; }
+            unzip -p /tmp/positron-p280-evidence.zip "${entry}" > "/tmp/${file}"
+            test -s "/tmp/${file}"
+            python3 - "/tmp/${file}" <<'PY'
+          import sys,struct
+          with open(sys.argv[1],'rb') as f:data=f.read(24)
+          assert data[:8] == b'\x89PNG\r\n\x1a\n'
+          assert struct.unpack('>II',data[16:24])==(1920,1080)
+          print('Verified genuine PNG 1920x1080:',sys.argv[1])
+          PY
+            echo "PIC280_${mode}_BEGIN"
+            base64 -w0 "/tmp/${file}" | fold -w 1024 | sed "s/^/PIC280_${mode}:/"
+            echo "PIC280_${mode}_END"
+          done
