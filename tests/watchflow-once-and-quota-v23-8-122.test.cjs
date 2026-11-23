@@ -63,5 +63,5 @@ test('Intelligence Qwen3 calls native model only for new channels, manual rescan
  doc.dispatchEvent(new w.CustomEvent('openiptv:watchflow-manual-rescan',{}));
  update({local:true,complete:true,manual:true,newChannels:3});
  await until(()=>calls.length===6);
- assert.equal(applied.filter(id=>id==='1').length,2);
+ assert.equal(calls.filter(x=>x.metadata.includes('Kênh: Tin tức TV')).length,2,'Cached display must not count as native AI inference');
 });
