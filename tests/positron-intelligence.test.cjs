@@ -280,7 +280,8 @@ test('P272 WatchFlow hiển thị thư mục có thể mở và kênh đa nhóm,
  const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
  const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
  assert.ok(ui.includes("foldersMode.textContent='Thư mục EPG'"));
- assert.ok(ui.includes("const catalog=core.epgFolders(collection,guide(),win.IPTVGuide"));
+ assert.ok(ui.includes("const catalog=indexed('folders',collection)"));
+ assert.ok(ui.includes('indexCache.folders=core.epgFolders(collection,g,win.IPTVGuide'));
  assert.ok(ui.includes("folder.dataset.topic=key"));
  assert.ok(ui.includes("folder.append(rows);list.append(folder)"));
  assert.ok(css.includes('#poAICards[data-mode="folders"]'));
@@ -313,9 +314,10 @@ test('P273 phân nhóm chương trình XMLTV 24h đa nhãn theo giờ thật, kh
 test('P273 giao diện chương trình EPG có giờ nguồn thực, nhiều thư mục và chỉ phát khi click',()=>{
  const s=fs.readFileSync('renderer/positron-intelligence.js','utf8');
  const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
- for(const token of ["poAIEPGProgrammes","core.programmeFolders(collection,guide(),win.IPTVGuide",
+ for(const token of ["poAIEPGProgrammes","const catalog=indexed('programmes',collection)",
+  "indexCache.programmes=core.programmeFolders(collection,g,win.IPTVGuide",
   "folder.dataset.programmeTopic=key","toLocaleString('vi-VN'",
-  "programmeFolders:()=>core.programmeFolders(channels(),guide(),win.IPTVGuide)"])
+  "programmeFolders:()=>indexed('programmes',channels())"])
   assert.ok(s.includes(token),token);
  assert.ok(qa.includes('positron-p51273-epg-programmes-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51273-epg-programmes-after-1920x1080-real.png'));
