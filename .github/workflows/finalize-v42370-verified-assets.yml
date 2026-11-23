@@ -1,10 +1,8 @@
 name: Finalize v4.23.70 — verified native installers and copyright notices
+# Historical immutable Stable release: manual QA only; no automatic reruns.
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/finalize-v42370-verified-assets.yml'
   workflow_dispatch:
+
 permissions:
   contents: read
   actions: read
