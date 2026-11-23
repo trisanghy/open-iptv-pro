@@ -1,10 +1,8 @@
 name: Open IPTV Pro v4.23.70 — rebuild COPYRIGHT verified Mac/Windows installers + Rust + Web
+# Historical immutable Stable release: manual QA only; no automatic reruns.
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/publish-portfolio-v42370.yml'
   workflow_dispatch:
+
 permissions:
   contents: read
 concurrency:
