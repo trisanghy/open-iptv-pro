@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.304 — AI phát hiện chuyển chủ đề khi khôi phục
+## P5.1.305 — chẩn đoán độ chắc chắn khi so sánh chủ đề AI
 
-**Ứng dụng:** 4.23.389 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.390 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW AI — Chẩn đoán số kênh mô hình hiện tại/bản sao cùng phân loại đủ chắc chắn trước khi nhập mô hình; tránh hiểu nhầm 0/0 là không đổi chủ đề. Feature class: AI / model transparency
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/207dfb18b2ca7bf9a17f4d43663a19f60222d082)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.304 — AI phát hiện chuyển chủ đề ngầm khi khôi phục mô hình / Electron 4.23.389
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Bổ sung ma trận so sánh chủ đề trước/sau của Naive Bayes, tìm tình huống kênh vẫn đủ chắc chắn nhưng chuyển từ chủ đề A sang B; cảnh báo khi nhiều kênh đổi nhãn dù tỷ lệ bao phủ không giảm. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/105d428b64a7448252724baa4b504da03b7f1f91)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.303 — AI lọc nhóm thật sự mất phân loại / Electron 4.23.388
 
