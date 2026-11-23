@@ -12,6 +12,10 @@ on:
       - tests/rust-feature-gallery-v23-8-97.cjs
       - tests/rust-dark-amoled-visual-audit-v23-8-98.cjs
       - tests/rust-dark-amoled-coherence-v23-8-98.test.cjs
+      - renderer/index.html
+      - renderer/watchflow-smart-runtime-v23-8-126.js
+      - tests/watchflow-wasm-csp-v23-8-135.test.cjs
+      - tests/watchflow-wasm-csp-browser-v23-8-135.cjs
       - tests/rust-light-consistency-v23-8-92.test.cjs
       - tests/rust-light-feature-polish-v23-8-97.test.cjs
   workflow_dispatch:
@@ -46,6 +50,14 @@ jobs:
           set -Eeuo pipefail
           node --test tests/rust-light-consistency-v23-8-92.test.cjs tests/rust-light-feature-polish-v23-8-97.test.cjs tests/rust-dark-amoled-coherence-v23-8-98.test.cjs
           CHROME="$(command -v google-chrome)" node tests/rust-light-visual-audit.cjs
+      - name: Regression — compile actual ONNX WASM under real renderer CSP
+        shell: bash
+        env:
+          NODE_PATH: ${{ runner.temp }}/iptv-playwright/node_modules
+        run: |
+          set -Eeuo pipefail
+          node --test tests/watchflow-wasm-csp-v23-8-135.test.cjs
+          CHROME="$(command -v google-chrome)" node tests/watchflow-wasm-csp-browser-v23-8-135.cjs
       - name: Capture all Rust Lab feature pages and expanded panels
         shell: bash
         env:

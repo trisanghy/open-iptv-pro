@@ -59,6 +59,22 @@
   }
   return list;
  }
+ // Preflight prevents silently downloading 118MB of weights into a CSP
+ // that blocks WebAssembly. Both Chromium and WebView2 enforce the HTML meta CSP.
+ async function wasmPreflight(win){
+  const api=win?.WebAssembly||(typeof WebAssembly==='object'?WebAssembly:null);
+  if(typeof api?.compile!=='function')throw Error(
+   'Smart cần WebAssembly nhưng WebView hiện không hỗ trợ. Hãy cập nhật ứng dụng/WebView.');
+  try{
+   await api.compile(new Uint8Array([0,97,115,109,1,0,0,0]));
+  }catch(error){
+   const detail=String(error?.message||error);
+   if(/unsafe-eval|wasm-unsafe-eval|content security policy|csp/i.test(detail))
+    throw Error('Smart bị CSP chặn WebAssembly. Cần bản ứng dụng có script-src wasm-unsafe-eval; không phải lỗi trọng số AI.');
+   throw Error('Không khởi tạo được WebAssembly của Smart: '+detail.slice(0,140));
+  }
+  return true;
+ }
  async function factory(win,id,{remote=false,onProgress=()=>{}}={}){
   const model=supported(id);
   if(!model)throw Error('Mô hình này chưa có bộ chạy và trọng số đa ngôn ngữ được xác minh.');
@@ -66,6 +82,7 @@
   if(engines.has(id))return engines.get(id);
   if(loading.has(id))return loading.get(id);
   const task=(async()=>{
+   await wasmPreflight(win);
    const lib=await import('./vendor/transformers.min.js');
    if(typeof lib.pipeline!=='function'||!lib.env)throw Error('Thiếu Transformers.js cục bộ trong bộ cài.');
    const cache=await win.caches.open(cacheName(id));
@@ -147,5 +164,5 @@
   const selected=high>=0.25?sorted.filter(x=>x.score>=Math.max(0.25,high-0.045)).slice(0,3).map(x=>x.label):[];
   return {labels:selected,score:high,model:id,source:'Smart ONNX offline'};
  }
- return Object.freeze({supported,cacheName,marker,installed,inventory,install,remove,classify,cosine,descriptions});
+ return Object.freeze({supported,cacheName,marker,installed,inventory,install,remove,classify,cosine,descriptions,wasmPreflight});
 });

@@ -1,3 +1,11 @@
+## Rust Lab v23.8.135 — Sửa tận gốc ONNX Smart WebAssembly bị CSP chặn (PRERELEASE)
+
+- Nguyên nhân gốc: thẻ `Content-Security-Policy` trong renderer/index.html có script-src nhưng thiếu `'wasm-unsafe-eval'`, khiến WebView từ chối WebAssembly.compile trước khi khởi tạo ONNX, báo no available backend / Refused to create a WebAssembly object.
+- Bổ sung đúng `script-src 'wasm-unsafe-eval'` (không thêm `'unsafe-eval'` và không tắt CSP), giữ nguyên chính sách Tauri csp:null vì HTML meta vẫn có hiệu lực.
+- ONNX Smart kiểm tra WebAssembly trước khi tải mô hình, hiện thông báo tiếng Việt chính xác nếu WebView còn chặn.
+- Bổ sung test Node + kiểm thử Chromium thật: WebAssembly.compile thành công trên trang CSP thật, biên dịch chính file WASM ONNX đã đóng gói, JS eval vẫn bị chặn.
+- Chỉ nhánh Rust Lab, prerelease bất biến, giữ Standard/Smart/Intelligence, trình phát, EPG, PiP, TTS, Stable và Latest.
+
 ## Rust Lab v23.8.134 — Chọn AI trực tiếp, không cần mở cài đặt (PRERELEASE)
 
 Đưa ba nút Tiêu chuẩn / Smart / Intelligence và mô tả ra phần đầu WatchFlow; khi chọn Smart/Intelligence tự kiểm tra, tải nếu cần và chạy. Các cấu hình mô hình, tải/xóa thủ công được giữ trong phần Nâng cao cho người có kinh nghiệm. Giữ nguyên trình phát và các kiểm thử hồi quy.
