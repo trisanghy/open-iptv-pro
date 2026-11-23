@@ -1,8 +1,8 @@
 ## P5.1.320 / Electron 4.23.405 — Nút Xem/Hợp gu luôn nằm trên phần giải thích AI (CANDIDATE)
-- Feature priority: FIX — Ảnh Electron thật P319 sau khi mở “Vì sao AI gợi ý?” cho thấy nội dung chi tiết đẩy hàng nút ▶ Xem, Hợp gu, Không hợp, Tra cứu web xuống thấp dưới vùng xem. Đặt hành động chính ở trước phần giải thích mở rộng, giữ thứ tự điều khiển bằng phím và nội dung giải thích khi mở.
-- Feature class: UX / AI
+- Feature priority: BLOCKER_FIX — Ảnh Electron thật P319 chứng minh mở giải thích AI đã đẩy nút Xem khởi động playback và Hợp gu ra khỏi vùng bấm, chặn thao tác chính với kênh. Đưa hàng nút lên trên phần giải thích và kiểm chứng click target trong Electron.
+- Feature class: AI
 - User action: TV → WatchFlow → AI hợp gu → mở “Vì sao AI gợi ý?”; các nút hành động của kênh vẫn ở trên phần giải thích và thao tác được không phải cuộn xuống.
-- Electron screenshots: positron-p51320-ai-actions-before-1920x1080-real.png / positron-p51320-ai-actions-after-1920x1080-real.png (chỉ công nhận sau CI thực).
+- Electron screenshot: positron-p51320-ai-actions-before-1920x1080-real.png / positron-p51320-ai-actions-after-1920x1080-real.png (chỉ công nhận sau CI thực).
 - Evidence: Node regression thứ tự DOM; QA320 Electron thật 1920×1080 mở giải thích và kiểm chứng nút còn thấy, kích thước click, playlist, trọng số học, current channel không đổi, không tràn ngang.
 - Giới hạn: kiểm thử UI không xác minh phát IPTV thực, âm thanh, GPU hay Cast.
 
