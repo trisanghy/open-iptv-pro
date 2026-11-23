@@ -95,3 +95,9 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 - Ưu tiên vòng 03: ảnh P322 cho thấy bốn nút thao tác trong thẻ AI (Xem/Hợp gu/Không hợp/Tra cứu web) dùng chữ rất nhỏ và hit target khoảng 34px, khó thao tác remote/bàn phím. Kiểm tra computed geometry và tăng target tối thiểu hợp lý mà không làm tràn panel 528px/720px; test và screenshot thật trước/sau.
 - Bắt đầu trên HEAD hiện hành, dự kiến label P5.1.323 / Electron 4.23.408 **nếu chưa có ai tăng phiên bản**. Không tự khẳng định đã hoàn thành vòng 03.
 - Phải đọc file/hình thật hiện hành, re-verify branch HEAD/Actions/Release, không force push; một vòng = một bản vá riêng đã kiểm chứng.
+
+## Vòng 03/20 — P5.1.323 / Electron 4.23.408 (CANDIDATE)
+- Screenshot input: personally opened P322 before/after from Actions artifact 14837674301; first AI recommendation has four 34px-high actions.
+- Patch: new 44px action hit areas, readable type and focus, mobile wrapping.
+- Added Node test plus actual Electron before/after 1920×1080 and narrow 720×900 audit.
+- Do not count as completed before CI AND direct image review.

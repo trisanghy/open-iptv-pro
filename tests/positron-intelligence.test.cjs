@@ -1534,3 +1534,15 @@ test('P322 changes WatchFlow heading to active Intelligence and restores it on c
  for(const x of ['qa322','positron-p51322-ai-title-before-1920x1080-real.png',
  'positron-p51322-ai-title-after-1920x1080-real.png'])assert.ok(qa.includes(x),x);
 });
+
+test('P323 AI recommendation controls have 44px pointer and keyboard targets',()=>{
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(css.includes('min-height:44px;min-width:64px;padding:9px 12px'));
+ assert.ok(css.includes('.po-ai-actions button:focus-visible'));
+ assert.ok(css.includes('flex:1 1 110px;max-width:100%'));
+ for(const x of ['qa323','narrowHeight44','keyboardFocus',
+  'positron-p51323-ai-targets-before-1920x1080-real.png',
+  'positron-p51323-ai-targets-after-1920x1080-real.png',
+  'positron-p51323-ai-targets-after-720x900-real.png'])assert.ok(qa.includes(x),x);
+});

@@ -1,3 +1,9 @@
+## P5.1.323 / Electron 4.23.408 — AI recommendation actions 44px (CANDIDATE)
+- Input: inspected genuine Electron P322 1920×1080 screenshot: Xem/Hợp gu/Không hợp/Tra cứu web controls are 34px tall.
+- Increase action hit areas to 44px with larger labels, visible keyboard focus and wrapping at narrow viewport.
+- Node regression and real Electron CDP before/after 1920×1080 plus 720×900 geometry and state invariants.
+- Experimental CI assets only; stable-only public Release policy unchanged. Do not mark complete before reviewing CI images.
+
 ## P5.1.322 / Electron 4.23.407 — Header WatchFlow theo chế độ AI (CANDIDATE)
 - Feature priority: NEW — Khi đọc WatchFlow Intelligence, header cố định phải nói rõ đang ở chế độ AI hợp gu thay vì nhãn Gợi ý thường, đặc biệt khi cuộn sâu.
 - Feature class: AI
