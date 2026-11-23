@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T09:44:28.082502+00:00",
+  "generatedAt": "2026-11-23T09:46:52.193981+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.301",
       "appVersion": "4.23.386",
       "title": "hiển thị cảnh báo rủi ro AI trước xác nhận",
-      "description": "Fix: Đưa cảnh báo quan trọng lên trước danh sách nhóm; nút xác nhận có trạng thái màu hổ phách khi có cảnh báo; aria-describedby liên kết cảnh báo thật với nút khôi phục. Safety: Xem trước không thay đổi mô hình AI, playlist, EPG, Favorites và không tự phát kênh.",
-      "kind": "fix",
+      "description": "Feature priority: NEW — Thêm trạng thái cảnh báo riêng trên nút khôi phục AI khi mô hình mới có thể làm mất dữ liệu phân loại đã học, giúp người xem phân biệt thao tác có rủi ro và kiểm tra trước khi xác nhận. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",

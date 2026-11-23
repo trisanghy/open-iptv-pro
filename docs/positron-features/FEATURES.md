@@ -7,11 +7,11 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.301</strong> · hiển thị cảnh báo rủi ro AI trước xác nhận · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.301</strong> · hiển thị cảnh báo rủi ro AI trước xác nhận · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.386 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Fix: Đưa cảnh báo quan trọng lên trước danh sách nhóm; nút xác nhận có trạng thái màu hổ phách khi có cảnh báo; aria-describedby liên kết cảnh báo thật với nút khôi phục. Safety: Xem trước không thay đổi mô hình AI, playlist, EPG, Favorites và không tự phát kênh.
+Feature priority: NEW — Thêm trạng thái cảnh báo riêng trên nút khôi phục AI khi mô hình mới có thể làm mất dữ liệu phân loại đã học, giúp người xem phân biệt thao tác có rủi ro và kiểm tra trước khi xác nhận. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

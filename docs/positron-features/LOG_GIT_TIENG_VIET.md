@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.386 · **Trạng thái:** Chưa có bản phát hành
 
-Fix: Đưa cảnh báo quan trọng lên trước danh sách nhóm; nút xác nhận có trạng thái màu hổ phách khi có cảnh báo; aria-describedby liên kết cảnh báo thật với nút khôi phục. Safety: Xem trước không thay đổi mô hình AI, playlist, EPG, Favorites và không tự phát kênh.
+Feature priority: NEW — Thêm trạng thái cảnh báo riêng trên nút khôi phục AI khi mô hình mới có thể làm mất dữ liệu phân loại đã học, giúp người xem phân biệt thao tác có rủi ro và kiểm tra trước khi xác nhận. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/8ec333440d559cd82b5169307f48b0b8015c8703)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
