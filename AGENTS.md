@@ -5,6 +5,7 @@ Applies to ALL branches and ALL future commits, generated workflows, agents, CI,
 ## The Releases page is STABLE ONLY
 - GitHub Releases in `trisanghy/open-iptv-pro` are repository-wide, not branch-scoped.
 - Publish a GitHub Release ONLY for a tested, official Stable version from `main` with a semantic version tag (e.g. `v4.23.76`). Existing legitimate stable versions must remain available.
+ - A Stable release may contain **only verified Stable installers/assets**. Never attach experimental Rust Lab betas, Mobile debug builds, development previews, or test-only screenshots to an official Stable release. Existing historical Stable assets must not be silently rewritten.
 - **Never** publish prereleases, betas, release-per-commit, screenshot-only releases, experimental test releases, or non-Stable patch releases to GitHub Releases.
 - On every development branch, including `Positron`, `tizenbrew`, Rust Lab/Tauri, Slint, Electron desktop, Web Online and Mobile Capacitor, use GitHub Actions `actions/upload-artifact@v4` for EXE/DMG/WGT/APK/IPA/ZIP files, test reports, screenshots and preview packages.
 - Git commit SHAs, branch histories and immutable experimental tags remain in Git; they are **not** GitHub Release objects. Never delete commits, branches, tags or legitimate Stable releases to enforce this policy.
