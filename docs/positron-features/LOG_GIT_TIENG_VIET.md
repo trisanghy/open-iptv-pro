@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.286 — so sánh số mẫu AI trước khôi phục JSON
+## P5.1.287 — hoàn tác an toàn lần nhập mô hình AI gần nhất
 
-**Ứng dụng:** 4.23.371 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.372 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Sau khi xác nhận nhập JSON trọng số, người dùng có thể Hoàn tác để trở lại chính xác ba mô hình học trước đó và các nhãn đã dạy. Snapshot nằm trong RAM, tự chặn nếu mô hình tiếp tục học để tránh ghi đè dữ liệu mới. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/9b353c4875d26fe396417a47a0c0fd559ea47219)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.286 — So sánh trọng số AI hiện tại với bản sao trước khôi phục / Electron 4.23.371
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Hiển thị chênh lệch mẫu học Logistic ML, Naive Bayes và lượt khám phá UCB trong bảng so sánh ngay trước khi xác nhận, cảnh báo khi bản sao ít dữ liệu học hơn và nêu rõ không đánh đồng số mẫu với độ chính xác. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0904c77af9e1fee2a570b389f5226d437a00d2df)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.285 — Khôi phục mô hình AI từ JSON có xác nhận / Electron 4.23.370
 
