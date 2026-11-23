@@ -636,6 +636,146 @@ body #app .channel-summary #favBtn[aria-pressed=true]{color:#72b2ff;border-color
  #app .channel-summary #favBtn .ui-icon{width:23px;height:23px}
  #app .toolbar #searchBtn{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }
+
+
+/* Five visual systems for the SAME Google-TV 3-column / remote-friendly layout.
+   Avoid theme photos and avoid blurring player/video elements. */
+body[data-theme=dark]{
+ --bg:#05070c;--panel:#0d1119;--item:#151c27;--fg:#f0f3fa;
+ --muted:#91a0b3;--edge:#2e3746;--blue:#83adff;--focus:#d4e5ff;
+ background:#05070c;
+}
+body[data-theme=dark] #app{background:#05070c;color:#f0f3fa}
+body[data-theme=dark] #app .listpane,
+body[data-theme=dark] #app .guide-card{background:#0e141f;border-color:#28303d}
+body[data-theme=dark] #app .nav button{background:transparent;color:#c9d2e0}
+body[data-theme=dark] #app .nav button.active{background:#283345;color:#e1ebff}
+body[data-theme=dark] #app .channel,
+body[data-theme=dark] #app .toolbar button,
+body[data-theme=dark] #app .actions button,
+body[data-theme=dark] #app .groups button{background:#1b2230;color:#f0f3fa;border-color:#323d4c}
+body[data-theme=dark] #app .channel.is-selected{background:#354059;border-color:#83a8df;color:#fff}
+body[data-theme=dark] #app .channel.is-selected .chtext small{color:#c5d5f2}
+body[data-theme=dark] #app .actions .primary{background:#354f83;color:#fff}
+body[data-theme=dark] #app .guide-tag{background:#233d6a;color:#d7e7ff}
+body[data-theme=dark] #app button:focus{background:#aec9ff;color:#101b2f;outline-color:#f2f6ff}
+
+body[data-theme=apple]{
+ --bg:#131820;--panel:#202833;--item:#26303d;--fg:#f7f8fb;
+ --muted:#adb9ca;--edge:#465364;--blue:#f5f7fc;--focus:#fff;
+ background:#111720;
+}
+body[data-theme=apple] #app{background:linear-gradient(150deg,#1a202b,#0d1219);color:#f5f7fb;--home-gap:17px}
+body[data-theme=apple] #app .brand strong{font-weight:700;letter-spacing:-.9px}
+body[data-theme=apple] #app .listpane,
+body[data-theme=apple] #app .guide-card{
+ background:#202936;border:1px solid #435063;border-radius:30px;
+ box-shadow:0 20px 55px #0005;
+}
+body[data-theme=apple] #app .nav button,
+body[data-theme=apple] #app .channel,
+body[data-theme=apple] #app .toolbar button,
+body[data-theme=apple] #app .groups button,
+body[data-theme=apple] #app .actions button{
+ background:#252e3a;border:1px solid #3e4a59;border-radius:28px;color:#f8f9fb;
+}
+body[data-theme=apple] #app .nav button.active{background:#f6f7fa;color:#1b2028;border-color:#fff;box-shadow:0 10px 22px #0004}
+body[data-theme=apple] #app .channel.is-selected{background:#f7f8fa;color:#18202b;border-color:#fff;box-shadow:0 8px 23px #0004}
+body[data-theme=apple] #app .channel.is-selected .chtext small{color:#516073}
+body[data-theme=apple] #app .channel.is-selected .num{background:#e3e7ec;color:#263241}
+body[data-theme=apple] #app .actions .primary{background:#f3f5fa;color:#15202e;border-color:#f3f5fa}
+body[data-theme=apple] #app .guide-tag{background:#e8ecf4;color:#25354b}
+body[data-theme=apple] #app .guide-next-tag{background:#354252;color:#e5ebf3}
+body[data-theme=apple] #app .guide-track div{background:#c8d6ec}
+body[data-theme=apple] #app button:focus{background:#fff;color:#122035;outline:3px solid #fff;outline-offset:3px}
+
+body[data-theme=minimalist]{
+ --bg:#fff;--panel:#fff;--item:#f1f3f5;--fg:#151b23;
+ --muted:#5a6879;--edge:#d5dde6;--blue:#171d27;--focus:#20262e;
+ background:#fff;color:#151b23;
+}
+body[data-theme=minimalist] #app{background:#fff;color:#151b23;--home-gap:13px}
+body[data-theme=minimalist] #app .brand strong,
+body[data-theme=minimalist] #app .clock{color:#121b26}
+body[data-theme=minimalist] #app .brand p{color:#626e7d}
+body[data-theme=minimalist] #app .listpane{
+ background:#fff;border:1px solid #dde3eb;border-radius:12px;
+ box-shadow:none;padding:15px 16px;
+}
+body[data-theme=minimalist] #app .details{background:transparent}
+body[data-theme=minimalist] #app .nav button,
+body[data-theme=minimalist] #app .toolbar button,
+body[data-theme=minimalist] #app .groups button,
+body[data-theme=minimalist] #app .channel,
+body[data-theme=minimalist] #app .actions button{
+ background:#f4f6f8;color:#131b27;border:1px solid #dce3ea;border-radius:10px;
+ box-shadow:none;
+}
+body[data-theme=minimalist] #app .nav button{background:transparent;border-color:transparent}
+body[data-theme=minimalist] #app .nav button.active{background:#182332;color:#fff}
+body[data-theme=minimalist] #app .groups button.active{background:#172334;color:#fff}
+body[data-theme=minimalist] #app .channel.is-selected{background:#151e2a;color:#fff;border-color:#151e2a}
+body[data-theme=minimalist] #app .channel.is-selected .chtext small{color:#c4cedb}
+body[data-theme=minimalist] #app .channel.is-selected .num{background:#3f4957;color:#fff}
+body[data-theme=minimalist] #app .chtext small,
+body[data-theme=minimalist] #app .heading span,
+body[data-theme=minimalist] #app .epg-indicator{color:#526174}
+body[data-theme=minimalist] #app .guide-card{background:#f4f6f8;border:1px solid #dde3ea;border-radius:12px}
+body[data-theme=minimalist] #app .guide-tag{background:#dce4ee;color:#1d2d3c}
+body[data-theme=minimalist] #app .guide-row strong{color:#151b23}
+body[data-theme=minimalist] #app .guide-row small{color:#566374}
+body[data-theme=minimalist] #app .actions .primary{background:#182332;color:#fff}
+body[data-theme=minimalist] #app .preview{border-radius:12px;border-color:#dce3ea}
+body[data-theme=minimalist] #app .selected-logo{border:1px solid #dce3ea}
+body[data-theme=minimalist] #app button:focus{background:#101b29;color:#fff;outline:3px solid #151b23;outline-offset:3px}
+body[data-theme=minimalist] .dialog{background:#fff;color:#101b29}
+body[data-theme=minimalist] .dialog input{color:#101b29;background:#f6f7f9}
+
+body[data-theme=glass]{
+ --bg:#142039;--panel:#243751;--item:#2b405a;--fg:#f8fbff;
+ --muted:#c7d7ef;--edge:#7c97b644;--blue:#80c8ff;--focus:#cfe9ff;
+ background:#131e34;color:#f8fbff;
+}
+body[data-theme=glass] #app{
+ background:linear-gradient(145deg,#0e1c35 0%,#273a59 52%,#161d39 100%);
+ --home-gap:20px;color:#fff;
+}
+body[data-theme=glass] #app .listpane,
+body[data-theme=glass] #app .guide-card{
+ background:rgba(210,231,255,.10);
+ border:1px solid rgba(217,233,255,.27);
+ border-radius:28px;
+ box-shadow:0 16px 40px rgba(2,10,24,.24),inset 0 1px 0 rgba(255,255,255,.16);
+ -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+body[data-theme=glass] #app .nav button,
+body[data-theme=glass] #app .toolbar button,
+body[data-theme=glass] #app .groups button,
+body[data-theme=glass] #app .channel,
+body[data-theme=glass] #app .actions button{
+ background:rgba(227,238,255,.12);color:#f7fbff;
+ border:1px solid rgba(226,240,255,.24);border-radius:25px;
+ -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+body[data-theme=glass] #app .nav button{background:rgba(220,237,255,.04)}
+body[data-theme=glass] #app .nav button.active{background:rgba(192,224,255,.78);color:#11223d;border-color:rgba(255,255,255,.55)}
+body[data-theme=glass] #app .channel.is-selected{background:rgba(193,225,255,.85);color:#102b4f;border-color:#e0f2ff}
+body[data-theme=glass] #app .channel.is-selected .chtext small{color:#27466c}
+body[data-theme=glass] #app .channel.is-selected .num{background:#5785c7;color:#fff}
+body[data-theme=glass] #app .actions .primary{background:rgba(103,174,255,.82);color:#091e3d;border-color:#b2d9ff}
+body[data-theme=glass] #app .guide-tag{background:rgba(133,187,255,.36);color:#f3f9ff}
+body[data-theme=glass] #app .guide-next-tag{background:rgba(225,237,255,.15)}
+body[data-theme=glass] #app .preview{border-color:rgba(213,239,255,.45);box-shadow:0 15px 30px #0004}
+body[data-theme=glass] #app button:focus{background:#daf0ff;color:#102c4e;outline:3px solid #fff;outline-offset:3px}
+body[data-theme=glass] .dialog{
+ background:rgba(24,40,63,.94);color:#fff;border-color:#aec4e166;
+ -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+}
+/* Style transitions are confined to flat UI components; video stays untouched. */
+#app .nav button,#app .toolbar button,#app .channel,#app .listpane,#app .guide-card,#app .actions button{
+ transition:background-color .12s linear,border-color .12s linear,color .12s linear;
+}
+
 </style>
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
@@ -646,13 +786,13 @@ body #app .channel-summary #favBtn[aria-pressed=true]{color:#72b2ff;border-color
 <rect width="1024" height="1024" rx="220" fill="#ffffff"/>
 <path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
 </svg></div>
-    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.44</p></div>
+    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.45</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
     <button id="searchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="7.1"/><path d="m16 16 5.5 5.5"/></svg>Tìm kênh, chương trình...</button>
     <button id="addBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg>Thêm nguồn</button>
-    <button id="themeBtn" title="Đổi sáng / tối / AMOLED"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v2m0 14v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M3 12h2m14 0h2M4.22 19.78l1.42-1.42m12.72-12.72 1.42-1.42"/><circle cx="12" cy="12" r="4"/></svg>Cài đặt</button>
+    <button id="themeBtn" title="Đổi giao diện: Tối, Google, Apple, Minimalist, Glassmorphism" aria-label="Đổi giao diện"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v2m0 14v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M3 12h2m14 0h2M4.22 19.78l1.42-1.42m12.72-12.72 1.42-1.42"/><circle cx="12" cy="12" r="4"/></svg><span id="themeLabel">Giao diện · Google</span></button>
   </div>
 </header>
 <div class="main">
@@ -881,9 +1021,41 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 'use strict';
 var byId=function(id){return document.getElementById(id);};
 var storageKey='openiptv-tizenbrew-tv-v1';
-var state={sources:[],favorites:{},recent:[],theme:'dark'},section='all',group='Tất cả',search='',selected=null,playing=null,showLimit=160,items=[];
-try{var old=JSON.parse(localStorage.getItem(storageKey)||'{}');if(old&&typeof old==='object'){state.sources=Array.isArray(old.sources)?old.sources:[];state.favorites=old.favorites||{};state.recent=Array.isArray(old.recent)?old.recent:[];state.theme=['dark','light','amoled'].indexOf(old.theme)>=0?old.theme:'dark';}}catch(e){}
+var state={sources:[],favorites:{},recent:[],theme:'google'},section='all',group='Tất cả',search='',selected=null,playing=null,showLimit=160,items=[];
+try{var old=JSON.parse(localStorage.getItem(storageKey)||'{}');if(old&&typeof old==='object'){state.sources=Array.isArray(old.sources)?old.sources:[];state.favorites=old.favorites||{};state.recent=Array.isArray(old.recent)?old.recent:[];state.theme=['dark','google','apple','minimalist','glass'].indexOf(old.theme)>=0?old.theme:old.theme==='amoled'?'dark':old.theme==='light'?'minimalist':'google';}}catch(e){}
 function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));return true;}catch(e){notify('Không đủ bộ nhớ để lưu danh sách.');return false;}}
+
+
+/* Five first-class TV visual modes, independent of playback and IPTV storage.
+ * Store tiny theme preference separately so a large M3U playlist cannot block
+ * a simple UI change when the TV's localStorage quota is almost full. */
+var TV_THEME_ORDER=['dark','google','apple','minimalist','glass'];
+var TV_THEME_NAMES={dark:'Tối',google:'Google TV',apple:'Apple TV',minimalist:'Minimalist',glass:'Glassmorphism'};
+var TV_THEME_KEY='openiptv-tizen-ui-theme-v2';
+try{
+ var savedTheme=localStorage.getItem(TV_THEME_KEY);
+ if(TV_THEME_ORDER.indexOf(savedTheme)>=0)state.theme=savedTheme;
+}catch(e){}
+function applyTvTheme(name){
+ if(TV_THEME_ORDER.indexOf(name)<0)name='google';
+ state.theme=name;document.body.dataset.theme=name;
+ var btn=byId('themeBtn'),label=byId('themeLabel');
+ if(label)label.textContent='Giao diện · '+TV_THEME_NAMES[name];
+ if(btn){
+  var next=TV_THEME_ORDER[(TV_THEME_ORDER.indexOf(name)+1)%TV_THEME_ORDER.length];
+  btn.title='Đang dùng '+TV_THEME_NAMES[name]+' · Nhấn OK để chuyển sang '+TV_THEME_NAMES[next];
+  btn.setAttribute('aria-label','Đổi giao diện · '+TV_THEME_NAMES[name]+' · tiếp theo '+TV_THEME_NAMES[next]);
+ }
+}
+function nextTvTheme(){
+ var current=TV_THEME_ORDER.indexOf(state.theme);
+ var next=TV_THEME_ORDER[(current+1)%TV_THEME_ORDER.length];
+ applyTvTheme(next);
+ try{localStorage.setItem(TV_THEME_KEY,next);}
+ catch(e){notify('Đã đổi giao diện nhưng bộ nhớ TV không đủ để lưu lựa chọn.');return next;}
+ notify('Giao diện: '+TV_THEME_NAMES[next]);
+ return next;
+}
 
 var SOURCE_CONFIG={url:'https://zjbsvqryaxtafuffpifu.supabase.co',key:'sb_publishable_j_aWS273AgxBi0JYj4O-WA_bNxHFxM7'};
 var SOURCE_PAGE='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=023';
@@ -1887,7 +2059,7 @@ function updateBottomActions(){byId('exitModuleBtn').title='Thoát về TizenBre
 
 /* Samsung playback engines: AVPlay is preferred for IPTV. HTML5 and HLS.js
  * are fallbacks, not the only engine. Never send playlist URLs to a proxy. */
-var playbackSerial=0,playbackEngine='',avplayInstance=null,hlsInstance=null,playbackTimer=0,hlsLibraryPromise=null;
+var playbackSerial=0,playbackEngine='',avplayInstance=null,hlsInstance=null,dashInstance=null,playbackTimer=0,hlsLibraryPromise=null,dashLibraryPromise=null,dashAttempted=false;
 var html5Video=null,videoRevealTimer=0,videoFrameCallback=null;
 var html5Mode='',hlsAttempted=false,nativeAttempted=false,playbackEvidence=[],playbackFailed=false;
 var playbackConfirmed=false,playbackGraceTimer=0,playbackStreamUrls=[],playbackStreamIndex=0,playbackStream=null,nativeReplayUsed=false;
@@ -1910,9 +2082,9 @@ function playbackRouteFingerprint(address){
  for(var i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}
  return (h>>>0).toString(36)+'-'+text.length.toString(36);
 }
-function currentPlaybackRoute(){return playbackEngine==='avplay'?'avplay':html5Mode==='hls-relay'?'relay':html5Mode==='hlsjs'?'hlsjs':'native';}
+function currentPlaybackRoute(){return playbackEngine==='avplay'?'avplay':html5Mode==='hls-relay'?'relay':html5Mode==='hlsjs'?'hlsjs':html5Mode==='dashjs'?'dashjs':'native';}
 function usablePlaybackProfile(p){
- if(!p||['relay','hlsjs','native','avplay'].indexOf(p.route)<0)return false;
+ if(!p||['relay','hlsjs','dashjs','native','avplay'].indexOf(p.route)<0)return false;
  var now=Date.now();
  return !!p.at&&now-p.at<=10*24*3600*1000&&!(p.blockedUntil&&now<p.blockedUntil);
 }
@@ -1964,7 +2136,7 @@ function markPlaybackRouteBad(route){
   var host=playbackSafeHost(source),hint=host&&provenRelayHosts[host];
   if(hint)hint.blockedAt=Date.now();
  }
- if(route==='native'||route==='hlsjs')delete provenDirectUrls[source];
+ if(route==='native'||route==='hlsjs'||route==='dashjs')delete provenDirectUrls[source];
 }
 var playbackWatchdogTimer=0,playbackLastProgressAt=0,playbackLastMediaTime=null;
 var playbackProgressSeconds=0,playbackStableAt=0,playbackRecoveryAttempts={},playbackRecoveries=0;
@@ -2109,7 +2281,8 @@ function launchPlaybackRoute(channel,token,route){
   if(!started)fastRelayActive=false;
   return started;
  }
- if(route==='hlsjs')return startHlsPlayback(channel,token,'đường phát đã xác nhận');
+ if(route==='hlsjs')return startHlsPlayback(channel,token,'bộ phát ưu tiên');
+ if(route==='dashjs')return startDashPlayback(channel,token);
  return false;
 }
 function recoverStalledPlayback(token,reason){
@@ -2118,10 +2291,11 @@ function recoverStalledPlayback(token,reason){
  playbackRecoveryAttempts[route]=count+1;playbackRecoveries++;
  // Retry a stale player once with a brand-new relay session, then move to
  // another decoder. No URL mixing and no unbounded reload loop.
- var candidates=route==='relay'?['relay','native','hlsjs','avplay']:
+ var candidates=dashAddress(playbackStream&&playbackStream.url)?['dashjs','avplay','native']:
+  route==='relay'?['relay','hlsjs','avplay','native']:
   route==='native'?['native','relay','hlsjs','avplay']:
-  route==='hlsjs'?['hlsjs','relay','native','avplay']:
-  ['avplay','relay','native','hlsjs'];
+  route==='hlsjs'?['hlsjs','relay','avplay','native']:
+  ['hlsjs','avplay','relay','native'];
  var next=count<(route==='relay'?2:1)?route:'';
  if(!next){
   markPlaybackRouteBad(route);
@@ -2135,7 +2309,7 @@ function recoverStalledPlayback(token,reason){
  logPlayback('Khôi phục luồng '+(playbackRecoveries)+' · '+String(reason||'').slice(0,85));
  playbackSerial++;var nextToken=playbackSerial,channel=playbackStream||playing;
  stopPlaybackEngine();
- playbackConfirmed=false;playbackFailed=false;hlsAttempted=false;nativeAttempted=false;
+ playbackConfirmed=false;playbackFailed=false;hlsAttempted=false;dashAttempted=false;nativeAttempted=false;
  hlsRelayAttempted=false;fastRelayActive=false;fastRelayRecovered=false;nativeReplayUsed=false;
  byId('player').classList.remove('is-playing');
  setPlayerStatus('Đang khôi phục hình ảnh bằng '+next+'…');
@@ -2156,7 +2330,7 @@ function learnPlaybackRoute(){
    if(hint.urls.indexOf(url)<0){hint.urls.push(url);if(hint.urls.length>8)hint.urls.shift();}
    hint.at=Date.now();hint.blockedAt=0;
   }
- }else if(html5Mode==='native'||html5Mode==='hlsjs'){
+ }else if(html5Mode==='native'||html5Mode==='hlsjs'||html5Mode==='dashjs'){
   provenDirectUrls[url]=Date.now();delete provenRelayUrls[url];
  }
 }
@@ -2246,7 +2420,20 @@ function startPlaybackStream(channel,token){
  playbackStream=channel;
  var host=playbackSafeHost(channel&&channel.url);
  logPlayback('Nguồn '+(playbackStreamIndex+1)+'/'+Math.max(1,playbackStreamUrls.length)+(host?' · '+host:''));
+ var preferred=dashAddress(channel.url)?'dashjs':hlsAddress(channel.url)?'hlsjs':'';
  var verified=savedPlaybackRoute(channel);
+ // A verified HLS-relay route still runs HLS.js and avoids repeatedly
+ // probing a known CORS-blocked URL (important on older Samsung TVs).
+ if(preferred==='hlsjs'&&verified==='relay'&&launchPlaybackRoute(channel,token,'relay')){
+  logPlayback('Ưu tiên HLS.js qua dịch vụ cục bộ đã được kiểm chứng');
+  return;
+ }
+ // Prefer the bundled HLS/DASH decoder over AVPlay and native HTML5 for
+ // manifest streams. Unsupported MSE immediately falls back to AVPlay.
+ if(preferred&&launchPlaybackRoute(channel,token,preferred)){
+  logPlayback('Ưu tiên '+preferred+' (thư viện đã đóng gói trong WGT)');
+  return;
+ }
  if(verified&&launchPlaybackRoute(channel,token,verified)){
   logPlayback('Dùng bộ phát '+verified+' đã xác nhận ổn định');
   return;
@@ -2272,7 +2459,7 @@ function tryNextChannelSource(token){
  var nextToken=playbackSerial,original=playing,urlValue=playbackStreamUrls[playbackStreamIndex];
  stopPlaybackEngine();
  if(!original||byId('player').hidden)return false;
- playbackFailed=false;playbackConfirmed=false;hlsAttempted=false;nativeAttempted=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
+ playbackFailed=false;playbackConfirmed=false;hlsAttempted=false;dashAttempted=false;nativeAttempted=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
  playbackRecoveryAttempts={};playbackRecoveries=0;
  playbackEvidence=[];
  byId('playbackDiag').hidden=true;byId('playbackDiag').textContent='';
@@ -2358,8 +2545,14 @@ function finishPlaybackError(token,message){
  if(playbackRecoveries>0&&recoverStalledPlayback(token,message))return;
  if(recoverFastRelay(token,message))return;
  if(!nativeAttempted&&playbackEngine==='html5'&&html5Mode!=='native'){
-  markPlaybackRouteBad(currentPlaybackRoute());
-  startHtml5Playback(playbackStream||playing,token);
+  // HLS.js/DASH.js and local HLS relay take priority, then AVPlay, then HTML5.
+  // Never leave a failed MediaSource attached while trying another decoder.
+  var failedChannel=playbackStream||playing,failedRoute=currentPlaybackRoute();
+  markPlaybackRouteBad(failedRoute);
+  stopPlaybackEngine();
+  if(!playbackActive(token))return;
+  setPlayerStatus('Bộ phát '+failedRoute+' không hỗ trợ nguồn, đang thử AVPlay/HTML5…');
+  if(!startAvplay(failedChannel,token))startHtml5Playback(failedChannel,token);
   return;
  }
  playbackFailed=true;
@@ -2417,14 +2610,15 @@ function cancelVideoReveal(video){
  videoFrameCallback=null;
 }
 function resetHtml5Video(){
- var video=html5Video,engine=hlsInstance;
+ var video=html5Video,engine=hlsInstance,dash=dashInstance;
  // Invalidate callbacks before detaching the old MediaSource or pausing.
- html5Video=null;hlsInstance=null;
+ html5Video=null;hlsInstance=null;dashInstance=null;
  if(video){
   cancelVideoReveal(video);
   video.onplaying=video.ontimeupdate=video.onpause=video.onwaiting=video.onerror=null;
  }
  if(engine){try{engine.destroy();}catch(e){}}
+ if(dash){try{dash.reset();}catch(e){try{dash.destroy();}catch(ignore){}}}
  if(!video)return;
  try{video.pause();video.removeAttribute('src');video.load();}catch(e){}
  // A different media element cannot deliver queued events from the old URL.
@@ -2535,10 +2729,9 @@ function loadHlsLibrary(){
  if(window.Hls)return Promise.resolve(window.Hls);
  if(hlsLibraryPromise)return hlsLibraryPromise;
  hlsLibraryPromise=new Promise(function(resolve,reject){
-  var urls=[
-   'https://trisanghy.github.io/open-iptv-pro/hls.min.js',
-   'https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js'
-  ];
+  // The first URL is bundled into both WGT archives; remote TizenBrew pages
+  // can fall back to the identical Web asset hosted on GitHub Pages.
+  var urls=['hls.min.js','https://trisanghy.github.io/open-iptv-pro/hls.min.js'];
   function next(){
    if(window.Hls){resolve(window.Hls);return;}
    if(!urls.length){reject(Error('Không tải được HLS.js'));return;}
@@ -2557,6 +2750,72 @@ function loadHlsLibrary(){
  }).catch(function(e){hlsLibraryPromise=null;throw e;});
  return hlsLibraryPromise;
 }
+
+/* DASH.js bundle is the same SHA as web/online:dash.all.min.js.
+ * Lazy-load the local WGT file on the first .mpd channel; avoid startup RAM use. */
+function loadDashLibrary(){
+ if(window.dashjs&&window.dashjs.MediaPlayer)return Promise.resolve(window.dashjs);
+ if(dashLibraryPromise)return dashLibraryPromise;
+ dashLibraryPromise=new Promise(function(resolve,reject){
+  var urls=['dash.all.min.js','https://trisanghy.github.io/open-iptv-pro/dash.all.min.js'];
+  function next(){
+   if(window.dashjs&&window.dashjs.MediaPlayer){resolve(window.dashjs);return;}
+   if(!urls.length){reject(Error('Không tải được DASH.js đã đóng gói'));return;}
+   var script=document.createElement('script'),settled=false;
+   var limit=setTimeout(function(){done(false);},7000);
+   function done(ok){
+    if(settled)return;settled=true;clearTimeout(limit);
+    if(ok&&window.dashjs&&window.dashjs.MediaPlayer)resolve(window.dashjs);
+    else{if(script.parentNode)script.parentNode.removeChild(script);next();}
+   }
+   script.async=true;script.src=urls.shift();
+   script.onload=function(){done(true);};script.onerror=function(){done(false);};
+   document.head.appendChild(script);
+  }
+  next();
+ }).catch(function(e){dashLibraryPromise=null;throw e;});
+ return dashLibraryPromise;
+}
+function startDashPlayback(channel,token){
+ if(!playbackActive(token)||dashAttempted)return false;
+ dashAttempted=true;playbackEngine='html5';html5Mode='dashjs';
+ clearPlaybackTimer();
+ var video=prepareHtml5Video(token);
+ function active(){return isActiveHtml5Video(video,token)&&html5Mode==='dashjs';}
+ function fallback(reason){
+  if(!active())return;
+  logPlayback('DASH.js: '+String(reason||'không hỗ trợ').slice(0,95));
+  if(playbackConfirmed&&recoverStalledPlayback(token,reason))return;
+  finishPlaybackError(token,'DASH.js: '+reason);
+ }
+ setPlayerStatus('Đang phát MPEG-DASH bằng DASH.js nội bộ…');
+ playbackTimer=setTimeout(function(){if(active()&&!playbackConfirmed)fallback('quá thời gian chờ 16 giây');},16000);
+ loadDashLibrary().then(function(lib){
+  if(!active())return;
+  if(typeof window.MediaSource==='undefined'){fallback('TV không hỗ trợ MediaSource; thử AVPlay');return;}
+  var factory=lib&&lib.MediaPlayer,instance;
+  try{
+   if(typeof factory!=='function')throw Error('DASH.js không có MediaPlayer');
+   instance=factory().create();
+   if(!instance||typeof instance.initialize!=='function')throw Error('DASH.js không khởi tạo được');
+   dashInstance=instance;
+   // Never introduce DRM bypass, licence keys or unrestricted retries.
+   var events=factory.events||{},errorEvent=events.ERROR||'error';
+   instance.on(errorEvent,function(event){
+    if(!active()||instance!==dashInstance)return;
+    var reason=event&&event.error;
+    if(!reason)return;
+    var code=typeof reason==='object'?reason.code||reason.message||'DASH không đọc được manifest/segment':reason;
+    fallback(String(code).slice(0,90));
+   });
+   instance.initialize(video,channel.url,true);
+  }catch(e){
+   fallback(String(e&&e.message||e));
+  }
+ }).catch(function(e){fallback('Thư viện DASH không khả dụng: '+String(e&&e.message||e).slice(0,80));});
+ return true;
+}
+
 function retryNativeHls(channel,token){
  if(!playbackActive(token)||nativeReplayUsed||playbackEngine!=='html5')return false;
  nativeReplayUsed=true;
@@ -2853,7 +3112,7 @@ function play(c){
  if(typeof stopHomePreview==='function')stopHomePreview();
  byId('browserFallback').hidden=true;
  playbackSerial++;var token=playbackSerial;stopPlaybackEngine();playing=c;
- hlsAttempted=false;nativeAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
+ dashAttempted=false;hlsAttempted=false;nativeAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
  playbackRecoveryAttempts={};playbackRecoveries=0;
  playbackStreamUrls=preferVerifiedSource(c,playbackCandidates(c));playbackStreamIndex=0;
  byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
@@ -3254,7 +3513,7 @@ byId('appsBtn').onclick=exitModule;
 byId('exitModuleBtn').onclick=exitModule;
 byId('browserFallback').onclick=openChannelInSamsungBrowser;
 byId('tizenTubeBtn').onclick=openTizenTube;
-byId('themeBtn').onclick=function(){var themes=['dark','light','amoled'],previous=state.theme;state.theme=themes[(themes.indexOf(state.theme)+1)%3];if(!save()){state.theme=previous;document.body.dataset.theme=previous;return;}document.body.dataset.theme=state.theme;notify('Giao diện: '+state.theme);};
+byId('themeBtn').onclick=nextTvTheme;
 byId('watchBtn').onclick=function(){play(selected);};
 byId('guideBtn').onclick=function(){if(!selected)return;renderSelectedEPG();byId('guideCard').scrollIntoView({block:'nearest'});notify(epgReady?'Lịch phát sóng đang hiển thị.':epgError||'EPG tự tải một lần mỗi ngày.');};
 byId('infoBtn').onclick=function(){if(selected)notify(selected.name+' · '+selected.group+(epgReady?' · Đã cập nhật EPG':''));};
@@ -3288,7 +3547,7 @@ window.addEventListener('keyup',function(e){
 document.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 window.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 document.addEventListener('focusin',function(event){rememberHomeFocus(event.target);},true);
-document.body.dataset.theme=state.theme;draw();updateBottomActions();refreshTizenBrewModules();ensureTizenHlsRelayService();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else restoreHomeFocus();},50);
+applyTvTheme(state.theme);draw();updateBottomActions();refreshTizenBrewModules();ensureTizenHlsRelayService();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else restoreHomeFocus();},50);
 function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);void epgStartup();setInterval(function(){if(selected)renderSelectedEPG();},60000);
 })();
 </script></body></html>

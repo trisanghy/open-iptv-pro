@@ -405,3 +405,14 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$f=Join-Path $env:TE
 - Tìm kiếm dùng lại thuật toán **OpenIPTVChannelSearch** của Web: bỏ dấu tiếng Việt, sửa lỗi gõ/transposition, tìm theo tên kênh, nhóm và chương trình EPG; hiển thị nhãn EPG trên kết quả. Nhóm **✨ Gợi ý** dựa trên yêu thích/lịch sử/EPG hiện tại; hoàn toàn tính tại TV, không truyền hành vi lên server.
 - Test: `node --test tizenbrew/tests/*.test.cjs`. Kiểm tra cú pháp JS, XMLTV/timezone, quota, 1 lần/ngày, tìm kiếm/fuzzy, đề xuất, và các kiểm thử từ bản trước.
 - Tất cả thay đổi mã nguồn chỉ thuộc nhánh `tizenbrew`. Gói **WGT xem thử** được tạo trong Actions riêng và *không phải* file cài Samsung TV đã ký. Độ giống ảnh tham khảo là mục tiêu bố cục/thiết kế; dữ liệu kênh và video thực tế phụ thuộc danh sách người dùng.
+
+
+## v0.1.45 — Giải mã HLS/DASH tích hợp và 5 giao diện TV
+
+- Đã tích hợp cùng **hai thư viện phát từ nhánh Web**: `hls.min.js` (HLS.js 1.6.15) và `dash.all.min.js` (DASH.js 5.3.0). Cả WGT xem thử trình duyệt và WGT Samsung Native chưa ký đều mang hai file thực trong archive. Nạp theo nhu cầu, không nạp cả hai ở màn hình chính.
+- Đối với địa chỉ `.m3u8`, ưu tiên HLS.js; đối với `.mpd`, ưu tiên DASH.js. Khi TV không hỗ trợ MediaSource, nguồn/CORS lỗi, hoặc bộ phát không khởi chạy, tiếp tục thử AVPlay Samsung rồi HTML5/relay và URL dự phòng hiện có. **Ưu tiên đường HLS-relay đã được kiểm chứng** để tránh lại lỗi CORS liên tục.
+- Bộ giải mã giải phóng `Hls.destroy()` và `dash.reset()` khi chuyển kênh, tắt trình phát hoặc đổi sang bộ phát khác. Dùng token phiên phát để loại bỏ callback của luồng cũ; không ghi URL hoặc token phát vào profile bộ phát.
+- Nút **Giao diện** ở thanh công cụ trên cùng: bấm OK để chuyển Tối → Google TV → Apple TV → Minimalist → Glassmorphism → Tối. Giao diện có màu, panel, nút và trạng thái chọn khác nhau; vẫn dùng chung bố cục 3 cột, kênh, remote và trình phát. Không thay đổi dữ liệu IPTV.
+- Lưu lựa chọn vào `openiptv-tizen-ui-theme-v2` (~vài chục byte), tách khỏi danh sách nguồn M3U để hạn chế lỗi quota; khi không lưu được vẫn thay giao diện cho phiên đang mở. Nếu theme cũ là Light/AMOLED, tự chuyển tương ứng sang Minimalist/Tối.
+- Glassmorphism áp dụng blur vừa phải cho các panel chính, không blur nội dung video; trên TV WebKit không hỗ trợ blur sẽ tự dùng nền trong suốt dự phòng.
+- WGT unsigned chỉ để kiểm thử, cần chứng chỉ đúng Samsung TV mới cài native được. HLS/DASH.js không thay thế phần giải mã phần cứng (codec) và không thể vượt qua DRM hoặc kiểm soát truy cập nguồn.

@@ -24,6 +24,7 @@ def build(output: Path) -> Path:
     xml = (ROOT / "tizen-native/config.xml").read_text(encoding="utf-8")
     sdk = ROOT / "supabase-sdk.js"
     hls = ROOT / "hls.min.js"
+    dash = ROOT / "dash.all.min.js"
     icon = ROOT / "assets/icon.png"
 
     assert info.get("tizenbrewEdition") == version
@@ -31,7 +32,7 @@ def build(output: Path) -> Path:
     assert f"TizenBrew v{version}" in tv
     assert 'webapis.avplay' in tv
     assert 'src="$WEBAPIS/webapis/webapis.js"' in tv
-    assert sdk.is_file() and hls.is_file() and icon.is_file()
+    assert sdk.is_file() and hls.is_file() and dash.is_file() and icon.is_file()
     assert '<script>\n(function(){' in tv
 
     # The native WGT has its own file:// application context, which is what
@@ -46,12 +47,8 @@ def build(output: Path) -> Path:
         '<script src="supabase-sdk.js"></script>\n<script>\n(function(){',
         1,
     )
-    tv = tv.replace(
-        "'https://trisanghy.github.io/open-iptv-pro/hls.min.js',",
-        "'hls.min.js',\n   'https://trisanghy.github.io/open-iptv-pro/hls.min.js',",
-        1,
-    )
-    assert "'hls.min.js'" in tv
+    # JS loader already tries these bundled files before the online fallback.
+    assert "var urls=['hls.min.js'" in tv and "var urls=['dash.all.min.js'" in tv
     root = ET.fromstring(xml)
     assert root.tag == f"{{{ROOT_NS}}}widget"
     root.set("version", version)
@@ -67,15 +64,16 @@ def build(output: Path) -> Path:
         archive.writestr("config.xml", xml)
         archive.write(sdk, "supabase-sdk.js")
         archive.write(hls, "hls.min.js")
+        archive.write(dash, "dash.all.min.js")
         archive.write(icon, "icon.png")
         archive.write(ROOT / "tizen-native/README.md", "README.md")
     with ZipFile(output) as archive:
         assert archive.testzip() is None
         names = set(archive.namelist())
-        required = {"index.html", "phone.html", "config.xml", "supabase-sdk.js", "hls.min.js", "icon.png"}
+        required = {"index.html", "phone.html", "config.xml", "supabase-sdk.js", "hls.min.js", "dash.all.min.js", "icon.png"}
         assert required.issubset(names), names
         content = archive.read("index.html").decode("utf-8")
-        assert "webapis.avplay" in content and "hls.min.js" in content
+        assert "webapis.avplay" in content and "hls.min.js" in content and "dash.all.min.js" in content
         m = ET.fromstring(archive.read("config.xml"))
         assert m.attrib.get("version") == version
     return output

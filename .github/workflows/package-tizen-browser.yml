@@ -6,6 +6,8 @@ on:
       - '.github/workflows/package-tizen-browser.yml'
       - 'tizenbrew/**'
       - 'supabase-sdk.js'
+      - 'hls.min.js'
+      - 'dash.all.min.js'
       - 'package.json'
   workflow_dispatch:
 
@@ -48,6 +50,9 @@ jobs:
           tv = Path('tizenbrew/index.html').read_text(encoding='utf-8')
           phone = Path('tizenbrew/phone.html').read_text(encoding='utf-8')
           sdk = Path('supabase-sdk.js').read_text(encoding='utf-8')
+          hls = Path('hls.min.js')
+          dash = Path('dash.all.min.js')
+          assert hls.stat().st_size>100_000 and dash.stat().st_size>100_000
 
           assert 'sourceQR' in tv and 'sourceUrl' in tv, 'TV source dialog missing'
           assert 'manager-request' in tv and 'manager-result' in phone, 'QR management not present'
@@ -70,13 +75,15 @@ jobs:
               z.writestr('index.html', tv)
               z.writestr('phone.html', phone)
               z.writestr('supabase-sdk.js', sdk)
+              z.write(hls, 'hls.min.js')
+              z.write(dash, 'dash.all.min.js')
               z.writestr('config.xml', xml)
               z.write('tizenbrew/README.md', 'README.md')
               z.write('tizenbrew/THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md')
 
           with zipfile.ZipFile(target) as z:
               assert z.testzip() is None
-              assert all(p in z.namelist() for p in ['index.html', 'phone.html', 'config.xml', 'supabase-sdk.js'])
+              assert all(p in z.namelist() for p in ['index.html', 'phone.html', 'config.xml', 'supabase-sdk.js', 'hls.min.js', 'dash.all.min.js'])
               assert 'sourceQR' in z.read('index.html').decode('utf-8')
 
           launcher = '''#!/bin/bash
@@ -92,7 +99,7 @@ jobs:
           archive, folder = sys.argv[1:3]
           with zipfile.ZipFile(archive, 'r') as z:
               if z.testzip(): raise RuntimeError("Gói WGT tải về không hợp lệ")
-              wanted = {"index.html","phone.html","config.xml","supabase-sdk.js","README.md","THIRD_PARTY_NOTICES.md"}
+              wanted = {"index.html","phone.html","config.xml","supabase-sdk.js","hls.min.js","dash.all.min.js","README.md","THIRD_PARTY_NOTICES.md"}
               for f in z.infolist():
                   if f.filename in wanted:
                       z.extract(f, folder)

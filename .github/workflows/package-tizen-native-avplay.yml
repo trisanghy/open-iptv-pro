@@ -9,6 +9,7 @@ on:
       - tizenbrew/phone.html
       - supabase-sdk.js
       - hls.min.js
+      - dash.all.min.js
       - assets/icon.png
       - package.json
       - .github/workflows/package-tizen-native-avplay.yml
@@ -45,12 +46,12 @@ jobs:
           with ZipFile(path) as z:
               assert z.testzip() is None
               names=set(z.namelist())
-              assert {'config.xml','index.html','phone.html','hls.min.js','supabase-sdk.js','icon.png'}.issubset(names)
+              assert {'config.xml','index.html','phone.html','hls.min.js','dash.all.min.js','supabase-sdk.js','icon.png'}.issubset(names)
               xml=ET.fromstring(z.read('config.xml'))
               assert xml.attrib['version']==version
               html=z.read('index.html').decode()
               assert 'webapis.avplay' in html
-              assert 'hls.min.js' in html
+              assert 'hls.min.js' in html and 'dash.all.min.js' in html
               assert '$WEBAPIS/webapis/webapis.js' in html
               assert 'sourceQR' in html
           print('Unsigned Samsung TV WGT source archive passed static validation:',version)

@@ -49,8 +49,8 @@ test('Samsung Tizen loads WebAPI script and AVPlay object on TV',()=>{
  assert.match(html,/<object id="avplayObject" type="application\/avplayer" hidden><\/object>/);
  assert.match(html,/function startAvplay\(channel,token\)/);
 });
-test('AVPlay is preferred for HLS and renders the full TV display',()=>{
- const s=setup(true),c=s.channel('VTV1','https://example.com/live.m3u8');
+test('AVPlay remains the first decoder for progressive MP4 and renders the full TV display',()=>{
+ const s=setup(true),c=s.channel('VTV1','https://example.com/live.mp4');
  s.api.play(c);
  assert.deepEqual(Array.from(s.calls.avOpen),[c.url]);
  assert.equal(s.calls.htmlPlay,0);
@@ -84,7 +84,7 @@ test('Native HTML5 is still used when AVPlay is unavailable',()=>{
  assert.equal(s.calls.htmlPlay,1);
 });
 test('OK toggles Samsung AVPlay playback state rather than the hidden HTML5 video',()=>{
- const s=setup(true),c=s.channel('VTV3','https://example.com/live.m3u8');
+ const s=setup(true),c=s.channel('VTV3','https://example.com/live.mp4');
  s.api.play(c);s.calls.prepared[0].succ();
  s.api.togglePlayback();
  assert.equal(s.calls.avPause,1);
@@ -94,18 +94,18 @@ test('OK toggles Samsung AVPlay playback state rather than the hidden HTML5 vide
 });
 test('Switching channels cancels stale AVPlay callbacks',()=>{
  const s=setup(true);
- s.api.play(s.channel('VTV1','https://example.com/one.m3u8'));
+ s.api.play(s.channel('VTV1','https://example.com/one.mp4'));
  const old=s.calls.prepared[0];
- s.api.play(s.channel('VTV2','https://example.com/two.m3u8'));
+ s.api.play(s.channel('VTV2','https://example.com/two.mp4'));
  old.succ();
  assert.equal(s.calls.avPlay,0);
  s.calls.prepared[1].succ();
  assert.equal(s.calls.avPlay,1);
- assert.deepEqual(Array.from(s.calls.avOpen),['https://example.com/one.m3u8','https://example.com/two.m3u8']);
+ assert.deepEqual(Array.from(s.calls.avOpen),['https://example.com/one.mp4','https://example.com/two.mp4']);
 });
 test('Closing playback stops and closes native AVPlay',()=>{
  const s=setup(true);
- s.api.play(s.channel('VTV1','https://example.com/one.m3u8'));
+ s.api.play(s.channel('VTV1','https://example.com/one.mp4'));
  s.calls.prepared[0].succ();
  s.api.closePlayer();
  assert.equal(s.calls.avStop,1);
@@ -113,30 +113,29 @@ test('Closing playback stops and closes native AVPlay',()=>{
  assert.equal(s.player.hidden,true);
  assert.equal(s.objects.avplayObject.hidden,true);
 });
-test('HLS.js fallback follows a real Samsung native HLS failure',async()=>{
- const s=setup(false),c=s.channel('VTV4','https://example.com/live.m3u8');
- let hlsLoaded='',attachCalls=0;
+test('HLS.js is loaded first for .m3u8 without unnecessary Samsung AVPlay attempts',async()=>{
+ const s=setup(true),c=s.channel('VTV4','https://example.com/live.m3u8');
+ let hlsLoaded='',attachCalls=0,destroys=0;
  class HlsMock{
   constructor(){this.events={};}
   static isSupported(){return true;}
   on(type,fn){this.events[type]=fn;}
   attachMedia(){attachCalls++;}
   loadSource(url){hlsLoaded=url;this.events.manifest();}
-  destroy(){}
+  destroy(){destroys++;}
  }
  HlsMock.Events={MANIFEST_PARSED:'manifest',ERROR:'error'};
  s.env.window.Hls=HlsMock;
  s.api.play(c);
- assert.equal(s.api.mode(),'native','Samsung native video is attempted first');
- assert.equal(s.video.src,c.url);
- s.api.handleHtml5Error(s.api.serial(),'Native HLS playback failed');
- await Promise.resolve();await Promise.resolve();
+ assert.equal(s.api.mode(),'hlsjs','HLS.js is selected before AVPlay/native');
+ assert.equal(s.calls.avOpen.length,0);
+ await Promise.resolve();await Promise.resolve();await Promise.resolve();
  assert.equal(hlsLoaded,c.url);
  assert.equal(attachCalls,1);
- assert.equal(s.calls.htmlPlay,2,'native playback ran first; HLS.js retries after its error');
+ assert.equal(s.calls.htmlPlay,1,'HLS.js plays only after the manifest is parsed');
+ s.api.closePlayer();
+ assert.equal(destroys,1,'decoder is destroyed on close');
 });
-
-
 test('A channel URL with no .m3u8 suffix retries HLS.js after unsupported HTML5 source',async()=>{
  const s=setup(false),c=s.channel('VTV Prime','https://example.com/live?id=iptv');
  let loaded='',attached=0;

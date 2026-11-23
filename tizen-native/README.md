@@ -6,7 +6,7 @@
 
 TizenBrew tải module qua máy chủ HTTP nội bộ, do đó `webapis.avplay` có thể không khả dụng trong trang module. HTML5 và HLS.js không xử lý được mọi luồng IPTV, nhất là manifest bị chặn CORS. Bản Tizen độc lập chạy trong **ngữ cảnh Tizen Web Application**, có thể sử dụng Samsung AVPlay trên TV tương thích.
 
-Bản build đóng gói `index.html` (dùng AVPlay trước), `supabase-sdk.js` và thư viện `hls.min.js` tại máy, cùng màn hình QR. Không chứa bất kỳ nguồn M3U riêng tư hay đăng nhập đã lưu nào.
+Bản build đóng gói `index.html` (ưu tiên HLS.js với `.m3u8`, DASH.js với `.mpd`, rồi AVPlay/HTML5 khi cần), `supabase-sdk.js`, cả hai thư viện `hls.min.js` và `dash.all.min.js` tại máy, cùng màn hình QR và 5 kiểu giao diện. Không chứa bất kỳ nguồn M3U riêng tư hay đăng nhập đã lưu nào.
 
 ## Build source
 
@@ -27,3 +27,10 @@ File tạo ra: `dist-tizen-native/Open-IPTV-Pro-TV-Native-UNSIGNED.wgt` — **ch
 **Quan trọng:** OTA của module TizenBrew không áp dụng cho WGT native. Gói này cần ký lại bằng chứng chỉ đúng TV khi nâng cấp. Không xóa dữ liệu module TizenBrew vì hai ứng dụng lưu trữ riêng.
 
 Nguồn: [Samsung — Playback Using AVPlay](https://developer.samsung.com/smarttv/develop/guides/multimedia/media-playback/using-avplay.html) · [Samsung — Creating Certificates](https://developer.samsung.com/smarttv/develop/getting-started/setting-up-sdk/creating-certificates.html) · [Samsung — CLI](https://developer.samsung.com/smarttv/develop/getting-started/using-sdk/command-line-interface.html)
+
+
+### v0.1.45
+
+- Giao diện remote: Tối, Google TV, Apple TV, Minimalist và Glassmorphism. Nút Giao diện trên thanh công cụ luân phiên và ghi nhớ chế độ.
+- HLS.js và DASH.js lấy từ nhánh Web, đóng gói **thực** trong WGT; không tải từ CDN trước khi phát. AVPlay vẫn là phương án cần thiết trên TV không hỗ trợ codec/MSE hoặc khi manifest báo lỗi.
+- Không tự thêm hoặc cấu hình DRM/giấy phép nguồn, không phát luồng trái phép. Hạn chế cache bộ nhớ: nạp thư viện khi cần và hủy instance sau khi xem.

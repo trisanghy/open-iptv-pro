@@ -16,3 +16,15 @@ subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Player libraries bundled in Tizen WGT archives
+
+- **hls.js 1.6.15** (bundled path: `hls.min.js`) — Apache-2.0.
+  Upstream project and license: https://github.com/video-dev/hls.js and https://github.com/video-dev/hls.js/blob/master/LICENSE
+- **dash.js 5.3.0** (bundled path: `dash.all.min.js`) — BSD-3-Clause.
+  Upstream project and license: https://github.com/Dash-Industry-Forum/dash.js and https://github.com/Dash-Industry-Forum/dash.js/blob/development/LICENSE.md
+
+The exact decoder JS blobs are the identical tracked source assets used by the Web branch.
+Bundling is for playback via MediaSource Extensions on compatible browsers; it does not
+supply protected content, DRM keys, or rights to any media streams. Preserve upstream
+license notices when redistributing the application.

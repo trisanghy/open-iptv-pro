@@ -20,7 +20,7 @@ try {
     $wgt = Join-Path $root 'Open-IPTV-Pro-TizenBrowser.wgt'
     $null = New-Item -ItemType Directory -Path $app -Force
 
-    $required = @('index.html', 'phone.html', 'supabase-sdk.js', 'config.xml')
+    $required = @('index.html', 'phone.html', 'supabase-sdk.js', 'config.xml', 'hls.min.js', 'dash.all.min.js')
     $build = -not (Test-Path -LiteralPath $wgt)
     foreach ($name in $required) {
         if (-not (Test-Path -LiteralPath (Join-Path $app $name))) { $build = $true }
@@ -33,6 +33,8 @@ try {
             @('tizenbrew/index.html', 'index.html'),
             @('tizenbrew/phone.html', 'phone.html'),
             @('supabase-sdk.js', 'supabase-sdk.js'),
+            @('hls.min.js', 'hls.min.js'),
+            @('dash.all.min.js', 'dash.all.min.js'),
             @('tizenbrew/README.md', 'README.md'),
             @('tizenbrew/THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md')
         )
@@ -127,7 +129,7 @@ try {
                     }
                 }
                 # Strict allowlist prevents reading arbitrary files from the user's computer.
-                if (@('index.html','phone.html','supabase-sdk.js','config.xml') -notcontains $targetName) {
+                if (@('index.html','phone.html','supabase-sdk.js','config.xml','hls.min.js','dash.all.min.js') -notcontains $targetName) {
                     $status = '404 Not Found'
                     $body = [Text.Encoding]::UTF8.GetBytes('Not Found')
                     $contentType = 'text/plain; charset=utf-8'
