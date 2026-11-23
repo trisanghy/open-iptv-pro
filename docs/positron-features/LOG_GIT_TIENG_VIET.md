@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.290 — nút xác nhận khôi phục AI luôn nhìn thấy khi mở dự báo
+## P5.1.291 — phân biệt đổi chủ đề AI với thay đổi độ chắc chắn
 
-**Ứng dụng:** 4.23.375 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.376 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Bộ xem trước Naive Bayes bổ sung thống kê riêng những kênh thật sự chuyển giữa hai dự đoán chủ đề đủ chắc chắn, những kênh mới được dự đoán đủ chắc chắn, và những kênh không còn đạt ngưỡng; tránh gộp sai thành tất cả đều “đổi nhãn”. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4e0ac18feec31ed9dcadb86d94b73a1fec5c663b)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.290 — Giữ nút xác nhận khôi phục AI luôn trong tầm nhìn / Electron 4.23.375
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: BLOCKER_FIX — Nút xác nhận khôi phục dữ liệu mô hình AI biến mất khỏi vùng nhìn thấy khi mở dự báo Naive Bayes; chặn thao tác đồng ý có chủ đích và gây nhầm lẫn trạng thái dữ liệu. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/61cc1e2962adc2e5b5ad92d08de3b54665173e0d)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.289 — Dự báo kênh đổi chủ đề Naive Bayes trước khôi phục / Electron 4.23.374
 
