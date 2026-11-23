@@ -1,0 +1,15 @@
+/* Existing AI hub is shown on mobile ONLY after an explicit quick-access tap. */
+#page-tv #webAiQuickBack[hidden]{display:none!important}
+#page-tv .web-ai-quick-back{align-self:flex-start;margin:8px 12px 0;border:1px solid var(--edge,#304559);
+ border-radius:9px;background:var(--surface2,#1b2b3b);color:var(--text,#fff);font-size:12px;font-weight:700;
+ padding:9px 12px;min-height:38px;cursor:pointer}
+#page-tv .channel-panel .web-ai-quick-filter{white-space:nowrap;min-height:35px;font-weight:700}
+#page-tv .channel-panel .web-ai-quick-filter.active{border-color:var(--accent,#b06cde)}
+@media(max-width:960px){
+ html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv #webChannelHub{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;max-width:100%!important}
+ html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv #webChannelHub .web-hub-main{width:100%;min-width:0}
+ html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv .channel-panel{display:none!important}
+ html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv #webChannelIntelligence .web-ai-grid{
+  grid-template-columns:repeat(auto-fill,minmax(94px,1fr));max-height:48dvh}
+}

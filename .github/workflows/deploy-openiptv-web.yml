@@ -223,6 +223,9 @@ jobs:
           test -s _site/tv.html && test -s _site/web-cast-v2.css
           node --test web-online/tests/web-airplay.test.cjs
           node --test web-online/tests/web-airplay-chrome.test.cjs
+          node --check _site/web-ai-quick-access.js
+          node --test web-online/tests/web-ai-quick-access.test.cjs
+          grep -Fq 'web-ai-quick-access.js?v=ai-shortcut-nav-20261123a' _site/index.html
           node --test web-online/tests/web-cast-sender.test.cjs
           node --test web-online/tests/web-cast-v2.test.cjs
           node --test web-online/tests/web-tv-cockpit.test.cjs

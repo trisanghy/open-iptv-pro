@@ -642,6 +642,17 @@ for js_file in ('web-cast-sender.js','web-cast-v2.js'):
     html=re.sub(r'(?<=src=")'+re.escape(js_file)+r'(?:\?v=[^"]+)?',js_file+'?v=airplay-chrome-20261123b',html)
 html=re.sub(r'(?<=href=")web-cast-v2\.css(?:\?v=[^"]+)?','web-cast-v2.css?v=airplay-chrome-20261123b',html)
 
+
+# Lightweight shortcuts reuse the existing Web AI tabs on desktop and mobile.
+for filename in ('web-ai-quick-access.js','web-ai-quick-access.css'):
+    copy2(Path(__file__).resolve().parent.parent/filename,out/filename)
+if 'web-ai-quick-access.js?' in html or 'web-ai-quick-access.css?' in html:
+    sys.exit('AI quick access included twice')
+if html.count('</head>')!=1 or html.count('</body>')!=1:
+    sys.exit('AI quick access insertion anchor changed')
+html=html.replace('</head>','<link rel="stylesheet" href="web-ai-quick-access.css?v=ai-shortcut-nav-20261123a"/></head>',1)
+html=html.replace('</body>','<script src="web-ai-quick-access.js?v=ai-shortcut-nav-20261123a"></script></body>',1)
+
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
