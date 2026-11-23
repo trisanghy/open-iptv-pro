@@ -764,3 +764,40 @@ test('P290 confirmation remains visible when Naive Bayes preview expands',()=>{
   'noAutoplay','positron-p51290-confirm-sticky-before-1920x1080-real.png',
   'positron-p51290-confirm-sticky-after-1920x1080-real.png'])assert.ok(script.includes(token),token);
 });
+
+test('P291 splits Naive Bayes topic swaps from confidence transitions',()=>{
+ const movie=mk('movie-p291','Phim Điện Ảnh'),football=mk('sport-p291','Bóng Đá Trực Tiếp');
+ let before=C.emptyCategoryModel(),after=C.emptyCategoryModel();
+ for(let i=0;i<12;i++){
+  before=C.teachCategory(before,movie,'movie');
+  before=C.teachCategory(before,football,'sport');
+  after=C.teachCategory(after,movie,'news');
+  after=C.teachCategory(after,football,'sport');
+ }
+ const channels=[movie,football],snapshot=JSON.stringify(channels);
+ const afterFile=C.buildLearningBackup({model:C.emptyModel(),categoryModel:after,bandit:{}});
+ const change=C.previewCategoryImpact({categoryModel:before},afterFile,channels);
+ assert.equal(change.changed,1);assert.equal(change.relabeled,1);
+ assert.equal(change.newlyClassified,0);assert.equal(change.becameUncertain,0);
+ assert.equal(change.confidenceTransitions,0);
+ const cold=C.previewCategoryImpact({categoryModel:C.emptyCategoryModel()},afterFile,channels);
+ assert.equal(cold.changed,2);assert.equal(cold.relabeled,0);
+ assert.equal(cold.newlyClassified,2);assert.equal(cold.becameUncertain,0);
+ assert.equal(cold.confidenceTransitions,2);
+ const emptyFile=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const loss=C.previewCategoryImpact({categoryModel:after},emptyFile,channels);
+ assert.equal(loss.relabeled,0);assert.equal(loss.newlyClassified,0);
+ assert.equal(loss.becameUncertain,2);assert.equal(loss.confidenceTransitions,2);
+ for(const state of [change,cold,loss])assert.equal(state.changed,
+  state.relabeled+state.newlyClassified+state.becameUncertain);
+ assert.equal(JSON.stringify(channels),snapshot);
+ assert.ok(!JSON.stringify(cold).includes('.m3u8'),'no URLs in preview');
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("breakdown.id='poAICategoryBreakdown'"));
+ assert.ok(ui.includes('categoryImpact.confidenceTransitions'));
+ assert.ok(css.includes('#poWatchFlowPanel #poAICategoryBreakdown'));
+ for(const x of ['qa291','positron-p51291-confidence-before-1920x1080-real.png',
+  'positron-p51291-confidence-after-1920x1080-real.png'])assert.ok(qa.includes(x),x);
+});

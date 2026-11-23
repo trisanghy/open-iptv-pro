@@ -759,11 +759,17 @@
     const details=d.createElement('details');details.id='poAICategoryImpact';
     details.className='po-ai-category-impact';
     const summary=d.createElement('summary');
-    summary.textContent='Naive Bayes dự báo '+categoryImpact.changed+' kênh đổi nhãn (xem chi tiết)';
+    summary.textContent='Naive Bayes dự báo: '+categoryImpact.relabeled+' đổi chủ đề · '+
+     categoryImpact.confidenceTransitions+' đổi độ chắc chắn (xem chi tiết)';
     const stats=d.createElement('p');
     stats.textContent='Đã thử '+categoryImpact.scanned+' kênh. Phân loại đủ chắc chắn: '+
      categoryImpact.classifiedBefore+' → '+categoryImpact.classifiedAfter+' kênh.';
-    details.append(summary,stats);
+    const breakdown=d.createElement('p');breakdown.id='poAICategoryBreakdown';
+    breakdown.className='po-ai-category-breakdown';
+    breakdown.textContent='Đổi chủ đề khi cả hai mô hình đủ chắc chắn: '+categoryImpact.relabeled+
+     ' · Mới đủ chắc chắn: '+categoryImpact.newlyClassified+
+     ' · Không còn đủ chắc chắn: '+categoryImpact.becameUncertain+'.';
+    details.append(summary,stats,breakdown);
     if(!categoryImpact.differences.length){
      const empty=d.createElement('p');empty.textContent='Chưa thấy nhãn thay đổi trong mẫu kiểm tra.';
      details.append(empty);

@@ -30,9 +30,16 @@
 - Bắt đầu từ HEAD mới nhất trên nhánh Positron; đọc ảnh P289 và QA trước, tìm vấn đề/tính năng mới có ý nghĩa.
 - Mỗi vòng gồm mã sửa thật, test, chụp/mở ảnh Electron, QA, tăng version, commit, Windows/Mac artifacts và báo cáo. Không tăng bộ đếm khi chỉ đổi số version.
 
-## Vòng 04/20 — P5.1.290 / Electron 4.23.375 (CANDIDATE)
+## Vòng 04/20 — P5.1.290 / Electron 4.23.375 (ĐÃ XÁC MINH)
 - Phát hiện qua ảnh Electron P289: mở rộng chi tiết Naive Bayes khiến nút Xác nhận khôi phục AI nằm ngoài vùng nhìn thấy của bảng WatchFlow.
 - Sửa: nút xác nhận theo vùng cuộn bằng sticky, vẫn chỉ hiện sau khi chọn file hợp lệ. Không tự nhập trọng số.
 - QA: ảnh trước/sau cùng trạng thái trên Electron thật, đo hình học nút, sự khác biệt PNG, dữ liệu AI, playlist và kênh phát không đổi.
 - Bằng chứng dự kiến: `positron-p51290-confirm-sticky-before-1920x1080-real.png` / `positron-p51290-confirm-sticky-after-1920x1080-real.png`.
-- Chưa đánh dấu hoàn thành đến khi Actions và ảnh Electron thật được kiểm chứng.
+- Xác minh: GitHub Actions 45125073609 hoàn tất; test 998 pass, 5 skipped, 0 fail; Windows x64, Mac ARM64, Mac x64 và capture success. Đã tải và trực tiếp MỞ hai ảnh Electron P290; QA riêng 8/8 true; nút Xác nhận luôn hiện khi xem chi tiết.
+
+## Vòng 05/20 — P5.1.291 / Electron 4.23.376 (CANDIDATE)
+- Phát hiện từ ảnh P290: dự báo 167 kênh “đổi nhãn” nhưng thực chất phần lớn chuyển từ có nhãn đủ chắc chắn sang “Chưa đủ chắc chắn”; thuật ngữ cũ gộp đổi chủ đề với đổi độ chắc chắn, dễ gây hiểu sai.
+- Tính năng AI mới: đếm riêng số kênh chuyển giữa hai chủ đề đủ chắc chắn, số kênh mới đạt ngưỡng dự báo, và số kênh mất ngưỡng dự báo; tổng thay đổi vẫn giữ tương thích với kết quả trước.
+- Regression: unit đối chứng ba tình huống có nhãn→nhãn, chưa chắc chắn→có nhãn, có nhãn→chưa chắc chắn; Electron chụp trước/sau giao diện, đo tính nhất quán bộ đếm, nội dung và bảo toàn playlist, mô hình, playback.
+- Ảnh dự kiến: `positron-p51291-confidence-before-1920x1080-real.png` / `positron-p51291-confidence-after-1920x1080-real.png`.
+- Chỉ ghi hoàn tất sau khi test/build/ảnh Electron thật thành công và ảnh SAU được mở trực tiếp.

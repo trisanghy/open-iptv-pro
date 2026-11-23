@@ -1,3 +1,12 @@
+## P5.1.291 — AI tách đổi chủ đề khỏi thay đổi độ chắc chắn / Electron 4.23.376
+- Feature priority: NEW — Bộ xem trước Naive Bayes bổ sung thống kê riêng những kênh thật sự chuyển giữa hai dự đoán chủ đề đủ chắc chắn, những kênh mới được dự đoán đủ chắc chắn, và những kênh không còn đạt ngưỡng; tránh gộp sai thành tất cả đều “đổi nhãn”.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → mở phần dự báo Naive Bayes để xem ba nhóm thay đổi.
+- Electron screenshot: positron-p51291-confidence-before-1920x1080-real.png / positron-p51291-confidence-after-1920x1080-real.png.
+- Evidence: Unit test tách và đối chiếu từng loại chuyển trạng thái khi nhập hai mô hình trái chiều, kiểm tra tổng số thay đổi và bảo mật URL; Electron thật so sánh cùng danh sách 180 kênh, xác minh ba bộ đếm khớp tổng, không sửa dữ liệu trước xác nhận và không phát kênh.
+- Privacy: Chỉ tính toán trên máy với thông tin tên/nhóm kênh; không gửi URL M3U/stream, lịch sử xem, dữ liệu người dùng hoặc mô hình lên mạng.
+- Status: CANDIDATE — Chỉ công bố hoàn tất khi CI xanh và mở ảnh Electron thật; phát hành thử nghiệm trên Actions Artifacts, Releases chỉ Stable.
+
 ## P5.1.290 — Giữ nút xác nhận khôi phục AI luôn trong tầm nhìn / Electron 4.23.375
 - Feature priority: BLOCKER_FIX — Nút xác nhận khôi phục dữ liệu mô hình AI biến mất khỏi vùng nhìn thấy khi mở dự báo Naive Bayes; chặn thao tác đồng ý có chủ đích và gây nhầm lẫn trạng thái dữ liệu.
 - Feature class: AI
@@ -9,7 +18,7 @@
 - Sửa CSS sticky với bộ lọc :not([hidden]), không thay đổi luồng khôi phục AI.
 - Regression: kiểm thử Node và Electron screenshot trước/sau thật, xác nhận không tự phát video, không thay playlist hoặc dữ liệu AI khi chỉ xem dự báo.
 - Ảnh: positron-p51290-confirm-sticky-before-1920x1080-real.png / positron-p51290-confirm-sticky-after-1920x1080-real.png.
-- Trạng thái: CANDIDATE; dùng Actions Artifacts, không tạo Release thử nghiệm trên Stable.
+- Trạng thái: ĐÃ KIỂM CHỨNG tại GitHub Actions 45125073609; 998 test pass, 0 fail, 5 skipped; capture và Windows/Mac thành công; QA ảnh 8/8 true và hai PNG Electron thật đã được mở soát. Dùng Actions Artifacts, không tạo Release thử nghiệm trên Stable.
 
 ## P5.1.289 — Dự báo kênh đổi chủ đề Naive Bayes trước khôi phục / Electron 4.23.374
 - Feature priority: NEW — Sau khi chọn JSON sao lưu, AI thử phân loại tối đa 180 kênh theo mô hình Naive Bayes hiện tại và mô hình trong tệp, đếm số kênh có thể đổi nhãn, liệt kê tối đa 4 khác biệt và nêu rõ đây chỉ là dự đoán dựa trên tên/nhóm kênh, không xác nhận từ EPG/luồng. Bảng thu gọn để giữ nút Xác nhận dễ truy cập.

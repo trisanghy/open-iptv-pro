@@ -213,3 +213,9 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
  position:sticky;bottom:8px;z-index:6;
  box-shadow:0 0 0 3px #10282f,0 8px 20px rgba(0,0,0,.5);
 }
+
+/* P291: distinguish actual confident topic swaps from confidence transitions. */
+#poWatchFlowPanel #poAICategoryBreakdown{padding:7px 9px;margin:6px 0 9px;
+ border-radius:7px;background:#1d3c3c;color:#e7fff3;line-height:1.5;font-size:11px;
+ overflow-wrap:anywhere}
+#poWatchFlowPanel #poAICategoryBreakdown[hidden]{display:none!important}

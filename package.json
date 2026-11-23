@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.375",
-  "description": "Positron P5.1.290: nút xác nhận khôi phục AI luôn nhìn thấy khi mở dự báo",
+  "version": "4.23.376",
+  "description": "Positron P5.1.291: phân biệt đổi chủ đề AI với thay đổi độ chắc chắn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
