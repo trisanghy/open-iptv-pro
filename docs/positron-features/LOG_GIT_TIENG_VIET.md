@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.335 — AI chuyển gợi ý tiếp bằng Alt+Shift+K, bỏ qua nút phản hồi và quay vòng (NEW)
+## P5.1.336 — AI thông báo vị trí gợi ý 2/3 khi chọn bằng phím; cuộn tới giữa vùng nhìn (NEW)
 
-**Ứng dụng:** 4.23.420 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.421 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thông báo vị trí trong tập gợi ý AI (ví dụ Gợi ý 2/3) khi điều hướng bằng bàn phím, giúp người dùng biết đang xem mục nào và phát hiện điểm dừng rõ ràng trên remote/desktop. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/3498d1a7e58f3105aa6c2197ce0c9b58b0427c38)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.335 — Electron 4.23.420 — AI chọn gợi ý kế tiếp bằng Alt+Shift+K, tự quay vòng (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Xem liên tiếp các gợi ý AI bằng phím tắt tập trung vào nút Xem của từng thẻ, không phải Tab qua nút phản hồi Hợp gu/Không hợp hoặc công cụ tra cứu. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/551f2cc1ef2c0563ca90bb0d5c8ee44d3f93f03e)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.334 — Electron 4.23.419 — AI đi tới nút Xem đầu bằng bàn phím và trả khoảng trống dưới header (CANDIDATE)
 
