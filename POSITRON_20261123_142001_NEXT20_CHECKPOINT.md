@@ -24,19 +24,29 @@
 
 - Mac ARM64: https://github.com/trisanghy/open-iptv-pro/actions/runs/45198091736/artifacts/14831121482
 
-## 03/20 — P5.1.318 / Electron 4.23.403 — CANDIDATE CHỜ QA ELECTRON / MAC ARM64
+## 03/20 — P5.1.318 / Electron 4.23.403 — ĐÃ CHỨNG MINH
 
 - AI: kết quả kiểm chứng JSON khác trọng số được trình bày đủ 3 thuật toán Logistic, Naive Bayes, UCB ngay trong Quản lý mô hình, thay vì chỉ có thể thấy sâu ở luồng Dạy AI. Không cho phép ghi đè hay lộ token.
 - Commit: `9d33bcdc18ff9958731996a940262015af7a61a4`.
-- Actions run https://github.com/trisanghy/open-iptv-pro/actions/runs/45200800416 : Node 1034 pass/5 skipped/0 fail. Windows x64 và Mac Intel có artifact; capture Electron + Mac ARM64 còn chờ tại checkpoint.
-- Ảnh P318 kỳ vọng: `positron-p51318-ai-manager-diff-before-1920x1080-real.png`, `positron-p51318-ai-manager-diff-after-1920x1080-real.png`; không nhận ảnh đã mở nếu chưa tải/soát.
-- Sau khi P318 thành công mới tính 03/20; nếu có lỗi, sửa trong cùng phiên bản và rerun CI.
+- Actions run https://github.com/trisanghy/open-iptv-pro/actions/runs/45200800416 : Node 1034 pass/5 skipped/0 fail. Toàn workflow 45200800416 completed/success: QA318 10/10, Windows x64, Mac Intel và Mac ARM64 đều build success.
+- Ảnh thật đã tải và MỞ soát 1920x1080:
+  - `positron-p51318-ai-manager-diff-before-1920x1080-real.png`, SHA256 `7934673c62a2eadc1515d7a0de6fd22fd7e82098592fdbe60b6851dce27015f2`.
+  - `positron-p51318-ai-manager-diff-after-1920x1080-real.png`, SHA256 `eabe60e9590940afc92301d50ab8280f8c127661485c14d33a1263befeaab37d`.
+- Screenshot https://github.com/trisanghy/open-iptv-pro/actions/runs/45200800416/artifacts/14832496644 ; Win https://github.com/trisanghy/open-iptv-pro/actions/runs/45200800416/artifacts/14830861912 ; Mac Intel https://github.com/trisanghy/open-iptv-pro/actions/runs/45200800416/artifacts/14832177145 ; Mac ARM https://github.com/trisanghy/open-iptv-pro/actions/runs/45200800416/artifacts/14833250464.
+
+## 04/20 — P5.1.319 / Electron 4.23.404 — CANDIDATE CHỜ ELECTRON QA
+
+- AI: nút đóng/mở "Vì sao AI gợi ý?" trên thẻ kênh được chấm bằng Logistic ML; hiển thị các đặc trưng ảnh hưởng lên điểm logit, không lộ tên group/token. Nếu chưa đủ phản hồi thì không tự nhận đã học.
+- Commit `03956a865cedb6d842c6384876158a23d5112c32`.
+- Actions run https://github.com/trisanghy/open-iptv-pro/actions/runs/45203314016 : Node 1035 pass/5 skipped/0 fail. Các build đang chạy hoặc đã có artifact; chưa nhận đủ cho tới khi CI kết thúc.
+- Ảnh dự kiến `positron-p51319-ai-explain-before-1920x1080-real.png` / `positron-p51319-ai-explain-after-1920x1080-real.png`. Phải lấy và MỞ ảnh thật; CI success thôi không đủ.
+
 
 ## TIẾP TỤC NGAY KHI ĐỦ BẰNG CHỨNG
 
-1. Xác minh HEAD/version, Actions run `45200800416`, tải và trực tiếp mở ảnh P318. Nếu QA/model manager và toàn build đạt thì nhận P5.1.318 là 03/20.
-2. Lấy ảnh P318 làm đầu vào 04/20; chọn lỗi chức năng/UI/AI ưu tiên còn thật, sửa và chứng minh bằng ảnh Electron trước/sau.
-3. Khi HEAD/version còn P5.1.318/4.23.403, bản mới tiếp theo là P5.1.319/4.23.404. Mỗi vòng phải có code/test/Electron before-after thực mở xem riêng/commit riêng, expected_sha + force:false, giữ stable-only Releases.
-4. Chưa thực hiện vòng 04–20. Không báo đủ 20. CI không kiểm chứng live stream, GPU, audio, DVR hay Cast trên thiết bị thật. Không bịa ảnh/installer.
+1. Xác minh HEAD/version, Actions run `45203314016`; tải và trực tiếp mở ảnh P319. Nếu QA giải thích Logistic và toàn build đạt thì nhận P5.1.319 là 04/20.
+2. Lấy ảnh P319 làm đầu vào 05/20, ưu tiên lỗi chức năng/UI/AI còn thật và tính năng mới có giá trị.
+3. Khi HEAD/version còn P5.1.319/4.23.404, bản mới tiếp theo là P5.1.320/4.23.405. Mỗi vòng phải có code/test/Electron before-after thực mở xem riêng/commit riêng, expected_sha + force:false, giữ stable-only Releases.
+4. Chưa thực hiện vòng 05–20. Không báo đủ 20. CI không kiểm chứng live stream, GPU, audio, DVR hay Cast trên thiết bị thật. Không bịa ảnh/installer.
 
-**Trạng thái cập nhật: 02/20 hoàn tất; 01/20 candidate P318; 17 vòng chưa thực hiện.**
+**Trạng thái cập nhật: 03/20 hoàn tất; 01/20 candidate P319; 16 vòng chưa thực hiện.**
