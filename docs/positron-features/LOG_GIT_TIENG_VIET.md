@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.431 · **Trạng thái:** Chưa có bản phát hành
 
-Esc thu gọn hướng dẫn AI mà không đóng WatchFlow hoặc mất vị trí remote
+Feature priority: NEW — Ảnh thật P345 đã mở cho thấy hướng dẫn phím chiếm phần lớn màn hình 720px khi mở; remote cần một phím Esc đóng lớp hướng dẫn mà không thoát toàn bộ WatchFlow và không làm mất focus. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1d98d985370cae1787396531dd2836ee3395a8e7)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)

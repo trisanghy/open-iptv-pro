@@ -7,11 +7,11 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.346</strong> · Esc thu gọn hướng dẫn AI mà không đóng WatchFlow hoặc mất vị trí remote · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.346</strong> · Esc thu gọn hướng dẫn AI mà không đóng WatchFlow hoặc mất vị trí remote · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.431 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Esc thu gọn hướng dẫn AI mà không đóng WatchFlow hoặc mất vị trí remote
+Feature priority: NEW — Ảnh thật P345 đã mở cho thấy hướng dẫn phím chiếm phần lớn màn hình 720px khi mở; remote cần một phím Esc đóng lớp hướng dẫn mà không thoát toàn bộ WatchFlow và không làm mất focus. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

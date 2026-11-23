@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T22:37:57.067020+00:00",
+  "generatedAt": "2026-11-23T22:38:45.381296+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.346",
       "appVersion": "4.23.431",
       "title": "Esc thu gọn hướng dẫn AI mà không đóng WatchFlow hoặc mất vị trí remote",
-      "description": "Esc thu gọn hướng dẫn AI mà không đóng WatchFlow hoặc mất vị trí remote",
-      "kind": "fix",
+      "description": "Feature priority: NEW — Ảnh thật P345 đã mở cho thấy hướng dẫn phím chiếm phần lớn màn hình 720px khi mở; remote cần một phím Esc đóng lớp hướng dẫn mà không thoát toàn bộ WatchFlow và không làm mất focus. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
