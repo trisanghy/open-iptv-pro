@@ -21,7 +21,11 @@ async function run(page){
  fs.mkdirSync(dir,{recursive:true});
  const original=await page.evaluate(()=>({current:window.IPTVState.getCurrent()?.id||'',
   channels:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id)),model:localStorage.getItem('positron-intelligence-preferences-v1')}));
- await page.evaluate(()=>window.IPTVState.setPage('tv'));
+ // P346 QA: focus the TV opener first. F6 intentionally never intercepts input
+ // editors; random search focus after app boot must not be mistaken for a failure.
+ await page.evaluate(()=>{window.IPTVState.setPage('tv');
+  document.getElementById('poWatchFlowToggle')?.focus({preventScroll:true});});
+ await page.waitForFunction(()=>!!document.getElementById('poAIShortcutGuide'),null,{timeout:15000});
  await page.keyboard.press('F6');
  await page.waitForFunction(()=>{
   const p=document.getElementById('poWatchFlowPanel');return p&&!p.hidden&&p.dataset.poAiActive==='true';
