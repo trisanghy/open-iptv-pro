@@ -48,7 +48,8 @@ test('EPG page rendering is deferred and minute polling is deduplicated',()=>{
 test('builder preserves optimizations and the Web cache is refreshed',()=>{
  for(const word of ['Web performance route patch drift','Web performance search patch drift','Web performance EPG lazy patch drift','Web performance EPG filter patch drift','Web performance EPG timer patch drift'])
   assert.ok(builder.includes(word),word);
- assert.ok(html.includes('app.js?v=tv-local-handoff-20261122d'));
+ assert.match(html, /<script src="app\.js\?v=[^"]+"><\/script>/);
+ assert.ok(html.includes('web-channel-search.js?v=search-epg-20261123b'));
  assert.ok(html.includes('features.js?v=web-perf-20261120a'));
  assert.ok(builder.includes('app.js?v=tv-local-handoff-20261122d'));
  assert.ok(builder.includes('features.js?v=web-perf-20261120a'));
