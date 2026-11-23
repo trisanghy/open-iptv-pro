@@ -9,6 +9,7 @@ permissions:
   contents: write
 jobs:
   upload:
+    if: false # Experimental assets stay in Actions
     runs-on: ubuntu-latest
     steps:
       - name: Download screenshot from real Electron X11 capture

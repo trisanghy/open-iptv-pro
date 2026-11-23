@@ -62,6 +62,7 @@ jobs:
             dist/*.exe
           if-no-files-found: error
   release:
+    if: false # Experimental assets stay in Actions
     needs: [tests,build]
     runs-on: ubuntu-latest
     permissions:

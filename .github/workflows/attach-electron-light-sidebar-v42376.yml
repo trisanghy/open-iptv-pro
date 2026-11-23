@@ -9,6 +9,7 @@ permissions:
   contents: write
 jobs:
   attach:
+    if: false # Experimental assets stay in Actions
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
