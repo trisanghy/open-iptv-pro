@@ -335,7 +335,7 @@
  shortcutSummary.setAttribute('aria-label','Mở hoặc đóng hướng dẫn phím WatchFlow AI');
  const shortcutList=d.createElement('ul');
  for(const hint of [
-  'F6 hoặc Alt+Shift+W: mở hoặc đóng WatchFlow AI',
+  'F6 hoặc Alt+Shift+W: mở hoặc đóng WatchFlow AI · Esc: thu gọn hướng dẫn',
   '← → ↑ ↓: chuyển chế độ · Enter/Space: chọn chế độ',
   'Alt+Shift+J: gợi ý đầu · K: tiếp theo · P: trước đó',
   'PageUp/PageDown: lùi hoặc tiến 5 gợi ý khi focus nút Xem',
@@ -344,6 +344,17 @@
   'Chỉ Enter hoặc Space trên nút Xem mới phát kênh'
  ]){const item=d.createElement('li');item.textContent=hint;shortcutList.append(item);}
  shortcutGuide.append(shortcutSummary,shortcutList);
+ // P346: Escape dismisses the nested help FIRST; the WatchFlow panel remains open.
+ // Only when this details element handles the key; other dialogs/editors are safe.
+ shortcutGuide.addEventListener('keydown',event=>{
+  if(event.key!=='Escape'||!shortcutGuide.open||!aiOpen||panel.hidden||
+   event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||event.isComposing)return;
+  event.preventDefault();event.stopPropagation();
+  shortcutGuide.open=false;
+  shortcutSummary.focus({preventScroll:true});
+ });
+ shortcutGuide.setAttribute('aria-keyshortcuts','Escape');
+ shortcutSummary.title+=' · Esc: thu gọn hướng dẫn';
  modeHelp.after(shortcutGuide);
 
  // P322: context-aware accessible header; preserve native wording for non-AI.
@@ -379,6 +390,7 @@
  }
  function showAI(){aiOpen=true;syncAIView();render();}
  function hideAI(){
+  shortcutGuide.open=false; // P346: fresh modal reopens with compact help
   focusProgress.hidden=true;focusProgress.textContent='';
   focusChannel.hidden=true;focusChannel.textContent='';focusChannel.title='';fullInfo.hidden=true;
   aiOpen=false;wideAI=false;wideButton.hidden=true;
