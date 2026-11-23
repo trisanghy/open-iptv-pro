@@ -271,6 +271,9 @@ if not all(x in app_text and x in web_app for x in (play_start,play_end)):
 app_text=(app_text[:app_text.index(play_start)]+web_app[web_app.index(play_start):web_app.index(play_end,web_app.index(play_start))]+app_text[app_text.index(play_end,app_text.index(play_start)):])
 app_file.write_text(app_text,encoding='utf-8')
 copy2(Path(__file__).resolve().parent.parent/'mpegts.min.js',out/'mpegts.min.js')
+(out/'licenses').mkdir(parents=True,exist_ok=True)
+copy2(Path(__file__).resolve().parent.parent/'licenses/mpegts-Apache-2.0.txt',out/'licenses/mpegts-Apache-2.0.txt')
+copy2(Path(__file__).resolve().parent.parent/'THIRD_PARTY_NOTICES.md',out/'THIRD_PARTY_NOTICES.md')
 
 html=(out/'index.html').read_text(encoding='utf-8')
 # Remove redundant Quick Tools capture button only; preserve Snapshot page,

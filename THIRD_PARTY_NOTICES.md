@@ -24,3 +24,9 @@ Open IPTV Pro includes **optional URLs** pointing to EPGShare01 and IPTV-EPG.org
 - `bonjour-service` 1.4.4 (MIT): local network service discovery for Google Cast.
 - `castv2-client` 1.2.0 (MIT): Cast V2 sender and Default Media Receiver control.
 - Their transitive dependencies are installed during `npm install` and retain their own licenses.
+
+
+## MPEG-TS / FLV playback
+
+- `mpegts.js` 1.8.2 is bundled as `mpegts.min.js` (Apache-2.0). The license is in `licenses/mpegts-Apache-2.0.txt`.
+- Transmuxing to Media Source Extensions does not bypass browser codec support, CORS or DRM restrictions.

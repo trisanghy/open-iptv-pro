@@ -708,7 +708,7 @@
   clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);
   failoverTimer=0;stallTimer=0;startupNoteTimer=null;
   if(hls){try{hls.destroy();}catch{}hls=null;}
-  if(dash){try{dash.reset();}catch{}dash=null;}destroyMpegts();
+  if(dash){try{dash.reset();}catch{}dash=null;}if(typeof destroyMpegts==='function')destroyMpegts();
   try{player.pause();player.removeAttribute('src');player.load();}catch{}
   window.OpenIPTVWebCastV2?.syncRemoteControls?.();
  }
@@ -718,11 +718,14 @@
   if(!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.())
    releaseLocalForRemote();
  });
- function stopPlayer(){channelSelectionSerial++;const oldFallback=ffmpegFallbackId;ffmpegFallbackId='';if(oldFallback)window.streamleaf?.stopPlaybackFallback?.(oldFallback).catch(()=>{});window.OpenIPTVCastUI?.stopOnLocalStop?.();if(!native)void window.OpenIPTVWebCastV2?.onLocalStop?.();playGeneration++;playAttemptSerial++;clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);attemptedTransports.clear();nativeHlsTried.clear();window.IPTVProAdvanced?.onStop?.();if(hls){hls.destroy();hls=null;}if(dash){try{dash.reset();}catch{}dash=null;}destroyMpegts();player.pause();player.removeAttribute('src');player.load();current=null;mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));$('#playingTitle').textContent='Chưa chọn kênh';$('#playingSubtitle').textContent='Chọn kênh để phát';$('#playBtn').textContent='▶';$('#emptyPlayer').classList.remove('hidden');$('#playingIcon').textContent='TV';updatePlayerFavorite();updateManualLinkPicker();renderList();window.IPTVExtras?.onChannel?.(null);}
+ function stopPlayer(){channelSelectionSerial++;const oldFallback=ffmpegFallbackId;ffmpegFallbackId='';if(oldFallback)window.streamleaf?.stopPlaybackFallback?.(oldFallback).catch(()=>{});window.OpenIPTVCastUI?.stopOnLocalStop?.();if(!native)void window.OpenIPTVWebCastV2?.onLocalStop?.();playGeneration++;playAttemptSerial++;clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);attemptedTransports.clear();nativeHlsTried.clear();window.IPTVProAdvanced?.onStop?.();if(hls){hls.destroy();hls=null;}if(dash){try{dash.reset();}catch{}dash=null;}if(typeof destroyMpegts==='function')destroyMpegts();player.pause();player.removeAttribute('src');player.load();current=null;mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));$('#playingTitle').textContent='Chưa chọn kênh';$('#playingSubtitle').textContent='Chọn kênh để phát';$('#playBtn').textContent='▶';$('#emptyPlayer').classList.remove('hidden');$('#playingIcon').textContent='TV';updatePlayerFavorite();updateManualLinkPicker();renderList();window.IPTVExtras?.onChannel?.(null);}
 
  function destroyMpegts(){
-  if(mpegtsMetadataListener){player.removeEventListener('loadedmetadata',mpegtsMetadataListener);mpegtsMetadataListener=null;}
-  const engine=mpegtsInstance;mpegtsInstance=null;
+  if(typeof mpegtsMetadataListener!=='undefined'&&mpegtsMetadataListener){
+   player.removeEventListener?.('loadedmetadata',mpegtsMetadataListener);mpegtsMetadataListener=null;
+  }
+  const engine=typeof mpegtsInstance==='undefined'?null:mpegtsInstance;
+  if(typeof mpegtsInstance!=='undefined')mpegtsInstance=null;
   if(!engine)return;
   for(const action of ['pause','unload','detachMediaElement','destroy'])try{engine[action]?.();}catch(e){console.warn('MPEG-TS cleanup:',action,e);}
  }
@@ -763,7 +766,7 @@
   const oldFallback=ffmpegFallbackId;ffmpegFallbackId='';
   if(oldFallback)window.streamleaf?.stopPlaybackFallback?.(oldFallback).catch(()=>{});
   if(hls){try{hls.destroy();}catch{}hls=null;}
-  if(dash){try{dash.reset();}catch{}dash=null;}destroyMpegts();
+  if(dash){try{dash.reset();}catch{}dash=null;}if(typeof destroyMpegts==='function')destroyMpegts();
   clearTimeout(failoverTimer);
   mediaRecoveryCount=0;
   player.pause();player.removeAttribute('src');player.load();
@@ -962,7 +965,7 @@
   // Warn without cancelling a healthy slow source at the old fixed 13-second threshold.
   // Network/decoder errors still fail immediately; a genuine blank startup gets a longer ceiling.
   startupNoteTimer=setTimeout(()=>{if(isCurrent()&&player.readyState<2)textStatus('Đang đợi dữ liệu video từ nguồn • '+(current?.name||'kênh'));},7500);
-  failoverTimer=setTimeout(()=>{if(isCurrent()&&player.readyState<2)recoverPlayback(generation,playMode==='timeshift'?'Bộ đệm chưa tải kịp dữ liệu':'Kết nối quá thời gian',attempt);},playMode==='timeshift'?30000:activeEngine==='native-hls'?6500:transport==='ffmpeg'?19000:transport==='mpegts'?12000:24000);
+  failoverTimer=setTimeout(()=>{if(isCurrent()&&player.readyState<2)recoverPlayback(generation,playMode==='timeshift'?'Bộ đệm chưa tải kịp dữ liệu':'Kết nối quá thời gian',attempt);},playMode==='timeshift'?30000:transport==='mpegts'?12000:activeEngine==='native-hls'?6500:transport==='ffmpeg'?19000:24000);
   $('#playBtn').textContent='Ⅱ';textStatus('Đang kết nối: '+current.name);
  }
  function serverDenied(reason){return /\bHTTP\s+(?:401|403)\b/i.test(String(reason||''));}
@@ -972,7 +975,7 @@
   playAttemptSerial++;
   clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);
   if(hls){try{hls.destroy();}catch{}hls=null;}
-  if(dash){try{dash.reset();}catch{}dash=null;}destroyMpegts();
+  if(dash){try{dash.reset();}catch{}dash=null;}if(typeof destroyMpegts==='function')destroyMpegts();
   const oldFallback=ffmpegFallbackId;ffmpegFallbackId='';
   if(oldFallback)window.streamleaf?.stopPlaybackFallback?.(oldFallback).catch(()=>{});
   player.pause();player.removeAttribute('src');player.load();
@@ -1017,7 +1020,7 @@
   const oldFallback=ffmpegFallbackId;ffmpegFallbackId='';
   if(oldFallback)window.streamleaf?.stopPlaybackFallback?.(oldFallback).catch(()=>{});
   if(hls){try{hls.destroy();}catch{}hls=null;}
-  if(dash){try{dash.reset();}catch{}dash=null;}destroyMpegts();
+  if(dash){try{dash.reset();}catch{}dash=null;}if(typeof destroyMpegts==='function')destroyMpegts();
   // iOS Now Playing can treat a pause/load on an already suspended <video>
   // as a new pause command, even while our separate <audio> plays normally.
   // Only release the video decoder once; subsequent lock-screen Next/Previous

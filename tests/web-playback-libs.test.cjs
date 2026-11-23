@@ -31,3 +31,13 @@ test('unsupported decoder types reject without injecting third-party scripts',as
  const {requests,api}=harness();
  await assert.rejects(api.load('foreign'),/Unsupported/);assert.equal(requests.length,0);
 });
+
+test('MPEG-TS loads from same-origin bundle only when requested',async()=>{
+ const {w,requests,api}=harness();
+ const first=api.load('mpegts'),second=api.load('mpegts');
+ assert.equal(first,second);assert.equal(requests.length,1);
+ assert.equal(requests[0].src,'mpegts.min.js');
+ w.mpegts={createPlayer(){}};
+ requests[0].onload();
+ assert.equal(await first,w.mpegts);
+});
