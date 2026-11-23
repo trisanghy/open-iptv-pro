@@ -66,3 +66,8 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-folder-channel{padding:7px 9px;text-align:left;border:1px solid #37645e;border-radius:7px;background:#1b4541;color:#effffa;cursor:pointer;overflow-wrap:anywhere}
 #poWatchFlowPanel .po-ai-folder-row small{color:#a4c9d0;font-size:11px;overflow-wrap:anywhere}
 #poWatchFlowPanel .po-ai-folder-channel:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}
+
+/* P272 QA regression: 5 AI tabs must use two rows, never push the P271
+   Teach-AI selector outside the WatchFlow viewport at 1920 x 1080. */
+#poWatchFlowPanel .po-ai-modes{grid-template-columns:repeat(3,minmax(0,1fr))}
+#poWatchFlowPanel .po-ai-modes button{padding-inline:5px;overflow-wrap:anywhere}
