@@ -99,3 +99,9 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Trên ảnh Electron thật 720 (đã MỞ) nút Khám phá AI vẫn bật; ArrowDown từ Kênh hợp gu chuyển focus chính xác vào nút đó. Ảnh 1920 before/after đã MỞ, viền focus dịch từ Kênh hợp gu sang Lịch EPG hợp gu.
 - Sửa QA, KHÔNG thay logic sản phẩm: kiểm tra hai trường hợp Explore bật và bị khóa bằng thuộc tính disabled tạm thời trên nút thật trong Electron; restore sau thử, xác nhận playlist/model/no autoplay.
 - P331 còn CANDIDATE tới khi CI mới pass và ảnh 720 trạng thái bị khóa đã mở lại.
+
+
+### P331 — Bổ sung CI xác minh vòng hiện tại, không thay hồi quy đầy đủ
+- Thêm .github/workflows/positron-fast-round.yml cùng scripts/positron-fast-round.cjs: chạy Electron thật trên Xvfb/CDP và đúng scripts/positron-NNN-audit.cjs theo nhãn package.json.
+- Mục đích: lấy ảnh/QA riêng cho vòng hiện tại mà không phải đợi lại toàn bộ 50+20 kiểm tra lịch sử; workflow positron-lab.yml cũ vẫn chạy độc lập, không bỏ kiểm tra nào.
+- Fast QA phải kiểm tra PNG before/after thực tế, JavaScript errors, version thực và báo fail trung thực. Chưa coi P331 đủ quy trình nếu fast CI chưa đạt và ảnh chưa được xem.
