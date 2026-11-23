@@ -1,20 +1,35 @@
 {
-  "generatedAt": "2026-11-23T18:40:31.879278+00:00",
+  "generatedAt": "2026-11-23T18:52:53.085651+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
+      "number": 328,
+      "version": "P5.1.328",
+      "appVersion": "4.23.413",
+      "title": "phím F6 hoặc Alt+Shift+W mở trực tiếp WatchFlow AI",
+      "description": "Feature priority: NEW — thêm lối truy cập AI trực tiếp qua bàn phím mà không phải tìm nút trên toolbar, hỗ trợ thao tác nhanh khi quản lý danh sách kênh. Feature class: AI",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "094c163bee254587f7a47c14ad497e4ca133b4b7",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 327,
       "version": "P5.1.327",
-      "appVersion": "4.23.412",
-      "title": "Cập nhật Positron P5.1.327",
+      "appVersion": "Chưa xác minh",
+      "title": "Electron 4.23.412 — Điều hướng focus khi mở lại WatchFlow AI (CANDIDATE)",
       "description": "Feature priority: NEW — remote/bàn phím quay về AI tab trong bảng thay vì toolbar phía sau. Feature class: AI",
       "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "92c6d5ac6f0d649401c6729a44473982e53c07a7",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
       "image": null
     },
@@ -2011,7 +2026,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
     },
     {
       "number": 193,

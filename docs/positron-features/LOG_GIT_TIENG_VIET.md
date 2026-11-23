@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.327 — Cập nhật Positron P5.1.327
+## P5.1.328 — phím F6 hoặc Alt+Shift+W mở trực tiếp WatchFlow AI
 
-**Ứng dụng:** 4.23.412 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.413 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — thêm lối truy cập AI trực tiếp qua bàn phím mà không phải tìm nút trên toolbar, hỗ trợ thao tác nhanh khi quản lý danh sách kênh. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/094c163bee254587f7a47c14ad497e4ca133b4b7)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.327 — Electron 4.23.412 — Điều hướng focus khi mở lại WatchFlow AI (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — remote/bàn phím quay về AI tab trong bảng thay vì toolbar phía sau. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/92c6d5ac6f0d649401c6729a44473982e53c07a7)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.326 — Electron 4.23.411 — Nhãn AI “sơ bộ” khi mẫu học còn ít (CANDIDATE)
 
