@@ -160,3 +160,12 @@ test('Suggestions are local-only and prioritise favourites and recents',()=>{
  assert.equal(ranked[1].id,'c3');
  assert.match(html,/group==='✨ Gợi ý'/);
 });
+
+test('Favourite sits by channel heading and action row has exactly three direct buttons',()=>{
+ const summary=html.slice(html.indexOf('<div class="channel-summary">'),html.indexOf('<section class="guide-card"'));
+ const actions=html.slice(html.indexOf('<div class="actions">'),html.indexOf('</aside>'));
+ assert.match(summary,/id="favBtn"/);
+ assert.doesNotMatch(actions,/id="favBtn"/);
+ for(const id of ['watchBtn','guideBtn','infoBtn'])assert.match(actions,new RegExp('id="'+id+'"'));
+ assert.match(html,/#app \.actions\{grid-template-columns:1\.5fr 1fr \.8fr\}/);
+});

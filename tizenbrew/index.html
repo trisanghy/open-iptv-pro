@@ -619,6 +619,23 @@ body #app .nav button:focus span.nav-icon,body #app .nav button.active:focus spa
  #app .actions button{min-height:48px;font-size:13px}
 }
 
+
+/* Google TV reference: favourite beside the title, 3 evenly aligned actions. */
+#app .selected-channel-text{flex:1;min-width:0}
+body #app .channel-summary #favBtn{
+ display:grid;place-items:center;flex:none;width:65px;height:65px;min-height:65px;
+ border:1px solid var(--edge);border-radius:50%;background:var(--item);
+ padding:8px;color:var(--fg);
+}
+body #app .channel-summary #favBtn[aria-pressed=true]{color:#72b2ff;border-color:#7ebaff}
+#app .channel-summary #favBtn .fav-label{font-size:0;position:absolute}
+#app .channel-summary #favBtn .ui-icon{width:29px;height:29px}
+#app .actions{grid-template-columns:1.5fr 1fr .8fr}
+@media(max-width:1460px),(max-height:850px){
+ body #app .channel-summary #favBtn{width:47px;height:47px;min-height:47px}
+ #app .channel-summary #favBtn .ui-icon{width:23px;height:23px}
+ #app .toolbar #searchBtn{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
 </style>
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
@@ -633,7 +650,7 @@ body #app .nav button:focus span.nav-icon,body #app .nav button.active:focus spa
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
-    <button id="searchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="7.1"/><path d="m16 16 5.5 5.5"/></svg>Tìm kênh</button>
+    <button id="searchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="7.1"/><path d="m16 16 5.5 5.5"/></svg>Tìm kênh, chương trình...</button>
     <button id="addBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg>Thêm nguồn</button>
     <button id="themeBtn" title="Đổi sáng / tối / AMOLED"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v2m0 14v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M3 12h2m14 0h2M4.22 19.78l1.42-1.42m12.72-12.72 1.42-1.42"/><circle cx="12" cy="12" r="4"/></svg>Cài đặt</button>
   </div>
@@ -668,7 +685,7 @@ body #app .nav button:focus span.nav-icon,body #app .nav button.active:focus spa
 <div class="preview-art" id="previewArt"><b id="previewText">TV</b><img id="previewLogo" alt="" hidden></div>
 <div class="preview-live"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6"/></svg><span>XEM THỬ · TẮT TIẾNG</span></div>
 <div class="preview-state" id="previewStatus" role="status">Chọn kênh để xem thử</div></div>
-    <div class="channel-summary"><div class="selected-logo"><img id="selectedChannelLogo" alt="" hidden><span id="selectedChannelPlaceholder">TV</span></div><div class="selected-channel-text"><h2 id="channelTitle">Chọn kênh</h2><p id="channelGroup" hidden></p></div></div>
+    <div class="channel-summary"><div class="selected-logo"><img id="selectedChannelLogo" alt="" hidden><span id="selectedChannelPlaceholder">TV</span></div><div class="selected-channel-text"><h2 id="channelTitle">Chọn kênh</h2><p id="channelGroup" hidden></p></div><button id="favBtn" title="Yêu thích" aria-label="Yêu thích"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg><span class="fav-label">Thêm yêu thích</span></button></div>
     <section class="guide-card" id="guideCard" aria-label="Lịch phát sóng của kênh đang chọn">
       <div class="guide-row guide-now"><span class="guide-tag">Đang phát</span><div><strong id="guideNowTitle">Chưa có chương trình</strong><small id="guideNowTime">Đang chờ EPG</small></div></div>
       <div class="guide-track"><div id="guideProgress"></div></div>
@@ -676,7 +693,7 @@ body #app .nav button:focus span.nav-icon,body #app .nav button.active:focus spa
     </section>
     <div class="actions">
       <button class="primary" id="watchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4m13-5h4a1 1 0 0 1 1 1v4M3 16v4a1 1 0 0 0 1 1h4m13-5v4a1 1 0 0 1-1 1h-4"/></svg>Xem toàn màn hình</button>
-      <button id="favBtn" title="Yêu thích" aria-label="Yêu thích"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg><span class="fav-label">Thêm yêu thích</span></button><button type="button" id="guideBtn" title="Lịch phát sóng" aria-label="Lịch phát sóng">☷ <span>Lịch phát sóng</span></button><button type="button" id="infoBtn" title="Thông tin kênh" aria-label="Thông tin kênh">ⓘ <span>Thông tin</span></button>
+      <button type="button" id="guideBtn" title="Lịch phát sóng" aria-label="Lịch phát sóng">☷ <span>Lịch phát sóng</span></button><button type="button" id="infoBtn" title="Thông tin kênh" aria-label="Thông tin kênh">ⓘ <span>Thông tin</span></button>
     </div>
   </aside>
 </div>
