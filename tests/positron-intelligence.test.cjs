@@ -769,7 +769,7 @@ test('P291 splits Naive Bayes topic swaps from confidence transitions',()=>{
  const movie=mk('movie-p291','Phim Điện Ảnh'),football=mk('sport-p291','Bóng Đá Trực Tiếp');
  let before=C.emptyCategoryModel(),after=C.emptyCategoryModel();
  for(let i=0;i<12;i++){
-  before=C.teachCategory(before,movie,'movie');
+  before=C.teachCategory(before,movie,'cinema');
   before=C.teachCategory(before,football,'sport');
   after=C.teachCategory(after,movie,'news');
   after=C.teachCategory(after,football,'sport');
