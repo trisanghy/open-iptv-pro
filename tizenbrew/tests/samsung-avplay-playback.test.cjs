@@ -163,8 +163,9 @@ test('When AVPlay and MediaSource are unavailable the TV explains the limitation
  class HlsMock{static isSupported(){return false;}}
  s.env.window.Hls=HlsMock;
  s.api.play(c);
- s.api.handleHtml5Error(s.api.serial(),'Native playback failed');
  await Promise.resolve();await Promise.resolve();
+ assert.equal(s.api.mode(),'native','unsupported HLS.js should fall back to native HTML5');
+ s.api.handleHtml5Error(s.api.serial(),'Native playback failed');
  assert.match(s.status.textContent,/Đang xác minh lỗi phát/);
  const grace=s.calls.timers.filter(t=>t.ms===2400).at(-1);
  assert.ok(grace,'terminal error should have a grace period to allow late Samsung playback');

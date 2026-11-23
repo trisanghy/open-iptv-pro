@@ -64,7 +64,7 @@ function setup(storage=new Map()){
 }
 async function proveRelay(s){
  s.api.play(c);await flush();
- s.api.handleHtml5Error(s.api.current().serial,'native blocked');await flush();
+ assert.equal(s.api.current().mode,'hlsjs','HLS.js must be first for manifest URLs');
  s.instances[0].fail();await flush();
  s.instances[1].ready();await flush();
  const token=s.api.current().serial;
@@ -127,7 +127,7 @@ test('Known-good relay retries twice before falling back to a different decoder'
  assert.equal(s.api.current().mode,'hls-relay','transient second failure stays on proven relay');
  const second=s.instances.at(-1);
  second.fail('manifestLoadError');await flush();
- assert.equal(s.api.current().mode,'native','bounded retries eventually switch decoder');
+ assert.equal(s.api.current().mode,'hlsjs','bounded retries eventually switch from relay to direct decoder');
  const sessions=s.requests.length;
  s.api.handleHtml5Error(s.api.current().serial,'native blocked');await flush();
  assert.equal(s.requests.length,sessions,'bad relay is not retried immediately');
@@ -220,15 +220,16 @@ test('Relay session setup failure switches routes without leaving the TV loading
 
 test('An old HTML5 rejection cannot interrupt A → B → A or reveal an old frame',async()=>{
  const s=setup();s.enableMediaReplacement();
+ const progressive={...c,url:'https://private-cdn.example/stream.mp4'};
  let rejectOld;const playVideo=s.video.play;
  s.video.play=function(){return new Promise((_,reject)=>{rejectOld=reject;});};
- s.api.play(c);
+ s.api.play(progressive);
  const first=s.video,oldPlaying=first.onplaying;
  first.play=playVideo;
  first.paused=false;first.readyState=4;oldPlaying();
  const oldReveal=s.timers.find(t=>t.ms===220);
  s.api.play({id:'other',name:'Other',url:'https://same.example/b.mp4'});
- s.api.play(c);
+ s.api.play(progressive);
  const newVideo=s.video;
  newVideo.paused=false;newVideo.readyState=4;
  assert.notEqual(newVideo,first);

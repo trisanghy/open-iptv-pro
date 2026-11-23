@@ -56,15 +56,11 @@ function proveRoute(s){
  s.api.notePlaybackProgress(token,0);
  s.advance(2000);s.api.notePlaybackProgress(token,2);
 }
-test('Click channel tries native HLS first, then HLS.js and TV-local relay on failure',async()=>{
+test('Click channel tries HLS.js first, then TV-local relay on failure',async()=>{
  const s=harness(),selected={id:'vtv2',name:'VTV2',url:'https://cdn.example.org/live/vtv2.m3u8?token=private'};
  s.api.play(selected);await flush();
  assert.equal(s.api.current().playbackEngine,'html5');
- assert.equal(s.api.current().html5Mode,'native');
- assert.equal(s.video.src,selected.url,'native Samsung video is attempted first');
- assert.equal(s.instances.length,0);
- s.api.handleHtml5Error(s.api.current().playbackSerial,'Native HLS playback failed');await flush();
- assert.equal(s.api.current().html5Mode,'hlsjs');
+ assert.equal(s.api.current().html5Mode,'hlsjs','direct HLS.js must be first');
  assert.equal(s.instances.length,1);
  assert.equal(s.instances[0].url,selected.url);
  assert.equal(s.requests.length,0);
@@ -82,25 +78,24 @@ test('Click channel tries native HLS first, then HLS.js and TV-local relay on fa
  const headers={};s.instances[1].options.xhrSetup({setRequestHeader:(k,v)=>headers[k]=v});
  assert.equal(headers['X-Open-IPTV-Relay'],'1');
  s.instances[1].ready();await flush();
- assert.equal(s.calls.play,2,'video is attempted natively, then after HLS.js manifest is ready');
+ assert.equal(s.calls.play,1,'HLS relay plays when its manifest is ready without extra native video');
 });
 test('Switch channel invalidates stale local relay callbacks and never starts a wrong stream',async()=>{
  const s=harness(),a={id:'a',name:'VTV2',url:'https://cdn.example.org/old.m3u8'},
   b={id:'b',name:'VTV7',url:'https://cdn.example.org/new.m3u8'};
  s.api.play(a);await flush();
- s.api.handleHtml5Error(s.api.current().playbackSerial,'Native HLS playback failed');await flush();
- const old=s.instances[0];old.fail(); // queues session callback
+ const old=s.instances[0];old.fail(); // queues relay session callback
  s.api.play(b);await flush();
  assert.equal(s.api.current().playing.id,'b');
- assert.equal(s.api.current().html5Mode,'native');
- assert.equal(s.video.src,b.url);
+ assert.equal(s.api.current().html5Mode,'hlsjs');
+ assert.equal(s.instances.at(-1).url,b.url);
  assert.equal(old.destroyed,true,'old HLS engine is stopped on channel change');
  assert.equal(s.elements.browserFallback.hidden,true);
 });
 test('When local relay service is absent, app reports failure and does not open Cast automatically',async()=>{
  const s=harness({relayAvailable:false});
  s.api.play({id:'vtv3',name:'VTV3',url:'https://cdn.example.org/live.m3u8'});
- await flush();s.api.handleHtml5Error(s.api.current().playbackSerial,'Native HLS playback failed');await flush();
+ await flush();
  s.instances[0].fail('manifestLoadError',403);await flush();
  assert.equal(s.api.current().html5Mode,'hls-relay');
  // Service startup is asynchronous; simulate the 7 bounded retries.
@@ -109,6 +104,8 @@ test('When local relay service is absent, app reports failure and does not open 
   assert.ok(retry,'local relay retry '+(i+1));
   retry.cancelled=true;retry.fn();await flush();
  }
+ assert.equal(s.api.current().html5Mode,'native','unavailable relay falls back to native');
+ s.api.handleHtml5Error(s.api.current().playbackSerial,'Native unsupported');await flush();
  assert.ok(s.elements.playbackDiag.textContent.includes('HLS nội bộ'));
  const grace=s.timers.find(t=>t.ms===2400&&!t.cancelled);
  assert.ok(grace,'fallback remains controlled within app');
@@ -134,7 +131,6 @@ test('An extensionless HLS endpoint retries TV-local relay after HTML5 and direc
 test('Proven stable relay stream starts directly on subsequent tuning',async()=>{
  const s=harness(),channel={id:'vtv3',name:'VTV3',url:'https://cdn.example.org/live/vtv3.m3u8'};
  s.api.play(channel);await flush();
- s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed');await flush();
  s.instances[0].fail();await flush();s.instances[1].ready();await flush();
  proveRoute(s);
  s.api.play(channel);await flush();
@@ -146,7 +142,6 @@ test('Proven stable relay stream starts directly on subsequent tuning',async()=>
 test('Fast relay error falls back to native then HLS.js without looping to relay',async()=>{
  const s=harness(),channel={id:'vtv5',name:'VTV5',url:'https://cdn.example.org/live/vtv5.m3u8'};
  s.api.play(channel);await flush();
- s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed');await flush();
  s.instances[0].fail();await flush();s.instances[1].ready();await flush();
  proveRoute(s);
  s.api.play(channel);await flush();
@@ -164,8 +159,7 @@ test('Two proven relay streams allow same-host HLS channel fast start',async()=>
  const s=harness(),url=id=>'https://same.example.org/live/'+id+'.m3u8';
  for(const id of ['vtv3','vtv5']){
   s.api.play({id,name:id,url:url(id)});await flush();
-  assert.equal(s.api.current().html5Mode,'native');
-  s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed');await flush();
+  assert.equal(s.api.current().html5Mode,'hlsjs');
   s.instances.at(-1).fail();await flush();s.instances.at(-1).ready();await flush();
   proveRoute(s);
  }

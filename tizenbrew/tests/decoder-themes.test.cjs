@@ -95,7 +95,7 @@ test('DASH loader first tries local bundled JS and shares in-flight promise',asy
    urls.push(script.src);
    Promise.resolve().then(()=>{win.dashjs={MediaPlayer:()=>({create:()=>({initialize(){}})})};script.onload();});
  }},createElement:()=>({onload:null,onerror:null,remove(){}})}};
- const ctx=vm.createContext({window:win,document:win.document,setTimeout:()=>0,clearTimeout:()=>{}});
+ const ctx=vm.createContext({window:win,document:win.document,setTimeout:()=>0,clearTimeout:()=>{},dashLibraryPromise:null});
  vm.runInContext(dashLoading,ctx);
  const first=ctx.loadDashLibrary(),second=ctx.loadDashLibrary();
  assert.strictEqual(first,second);
@@ -114,13 +114,13 @@ test('DASH playback initializes MediaPlayer and releases it on decoder switch',a
  const win={MediaSource:function(){},dashjs:{MediaPlayer:()=>({create:()=>instance})}};
  const ctx=vm.createContext({window:win,playbackEngine:'',html5Mode:'',dashAttempted:false,
   playbackConfirmed:false,dashInstance:null,
-  setPlayerStatus(){},clearPlaybackTimer(){},playbackActive:()=>true,
+  setPlayerStatus(){},clearPlaybackTimer(){},playbackActive:()=>true,isActiveHtml5Video:()=>true,
   prepareHtml5Video:()=>({}),logPlayback(){},loadDashLibrary:async()=>win.dashjs,
-  playbackTimer:0,setTimeout:()=>1,finishPlaybackError:()=>{throw Error('Unexpected failure');},
+  playbackTimer:0,setTimeout:()=>1,clearTimeout:()=>{},finishPlaybackError:()=>{throw Error('Unexpected failure');},
   recoverStalledPlayback:()=>false});
  vm.runInContext(dashStart,ctx);
  assert.equal(ctx.startDashPlayback({url:'https://example.org/a.mpd'},17),true);
- await Promise.resolve();await Promise.resolve();
+ await new Promise(resolve=>setImmediate(resolve));
  assert.equal(initialized,1);
  assert.strictEqual(ctx.dashInstance,instance);
  assert.equal(ctx.html5Mode,'dashjs');

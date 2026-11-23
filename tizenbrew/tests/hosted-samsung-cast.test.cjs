@@ -50,7 +50,7 @@ test('TizenBrew keeps the legacy iframe hidden and opens genuine Cast as fallbac
  assert.doesNotMatch(fn,/startHostedCastPlayback\(/);
 });
 test('Manifest failure no longer launches broken HTTPS iframe automatically',()=>{
- const s=harness(),ch={id:'vtv7',name:'VTV7',url:'https://example.org/vtv7.m3u8'};
+ const s=harness(),ch={id:'vtv7',name:'VTV7',url:'https://example.org/vtv7.mp4'};
  s.api.play(ch);
  s.api.finishPlaybackError(s.api.current().playbackSerial,'manifestLoadError HTTP 403');
  s.trigger(2400);

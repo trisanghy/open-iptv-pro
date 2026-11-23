@@ -33,7 +33,7 @@ function setup(){
  return {api,context,state,els,callbacks,calls,advance,cls};
 }
 test('Same-name channels in independent M3U sources never replace the selected URL',()=>{
- const s=setup(),c={id:'channel1',name:'VTV7',url:'https://cdn1.example.org/one.m3u8?token=selected'};
+ const s=setup(),c={id:'channel1',name:'VTV7',url:'https://cdn1.example.org/one.mp4?token=selected'};
  s.state.sources=[
   {channels:[c,{id:'different',name:'VTV7',url:'https://cdn2.example.org/two.m3u8?token=other'}]},
   {channels:[{id:'third',name:'VTV7',url:'https://cdn3.example.org/three.m3u8'}]}
