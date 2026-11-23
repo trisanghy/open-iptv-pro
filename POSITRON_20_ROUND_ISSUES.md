@@ -92,3 +92,10 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Sửa P331: ArrowLeft/Right (vòng qua các nút đang bật), ArrowUp/Down (đổi hàng, giữ cột nếu được), Home/End, tránh nút disabled, viền focus-visible dễ nhận. Tất cả thao tác chỉ chuyển focus; Enter/Space mới kích hoạt mode.
 - QA thật: Electron desktop 1920 và màn hẹp 720; before/after, kiểm tra nhãn aria-pressed không thay đổi, không phát kênh, mô hình/playlist giữ nguyên, không tràn ngang.
 - Không đánh dấu hoàn tất trước khi CI Node/capture và trực tiếp mở PNG.
+
+
+### P331 — Khắc phục false-negative CI về nút Khám phá AI
+- Actions 45249820668: Node 1047 pass/5 skipped/0 fail, Windows x64 & Intel DMG build success, Electron capture fails duy nhất vì QA tự giả định nút Khám phá AI disabled.
+- Trên ảnh Electron thật 720 (đã MỞ) nút Khám phá AI vẫn bật; ArrowDown từ Kênh hợp gu chuyển focus chính xác vào nút đó. Ảnh 1920 before/after đã MỞ, viền focus dịch từ Kênh hợp gu sang Lịch EPG hợp gu.
+- Sửa QA, KHÔNG thay logic sản phẩm: kiểm tra hai trường hợp Explore bật và bị khóa bằng thuộc tính disabled tạm thời trên nút thật trong Electron; restore sau thử, xác nhận playlist/model/no autoplay.
+- P331 còn CANDIDATE tới khi CI mới pass và ảnh 720 trạng thái bị khóa đã mở lại.

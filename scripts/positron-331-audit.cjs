@@ -38,14 +38,30 @@ async function run(page){
  await page.keyboard.press('ArrowDown');const down=await collect(page);
  await page.keyboard.press('ArrowUp');const up=await collect(page);
  await page.keyboard.press('Home');const home=await collect(page);
+ // P331 QA repair: the AI Explore button is enabled with a learned model.
+ // Exercise both states explicitly rather than assuming it is disabled.
+ const originalExploreDisabled=await page.evaluate(()=>{
+  const button=document.getElementById('poAIExplore');const was=button.disabled;
+  button.disabled=false;return was;
+ });
+ await page.keyboard.press('ArrowDown');const enabledExplore=await collect(page);
+ await page.evaluate(()=>{
+  document.getElementById('poAIExplore').disabled=true;
+  document.getElementById('poAIChannels').focus();
+ });
  await page.keyboard.press('ArrowDown');const skipDisabled=await collect(page);
+ await page.evaluate(previous=>{document.getElementById('poAIExplore').disabled=previous;},originalExploreDisabled);
  await page.keyboard.press('End');const end=await collect(page);
  await page.keyboard.press('ArrowRight');const wrap=await collect(page);
  await page.keyboard.press('ArrowLeft');const wrapBack=await collect(page);
  await page.setViewportSize({width:720,height:900});
- await page.evaluate(()=>document.getElementById('poAIChannels').focus());
+ const narrowExploreDisabled=await page.evaluate(()=>{
+  const button=document.getElementById('poAIExplore');const was=button.disabled;
+  button.disabled=true;document.getElementById('poAIChannels').focus();return was;
+ });
  await page.keyboard.press('ArrowDown');const narrow=await collect(page);
  const n=await page.screenshot({path:path.join(dir,'positron-p51331-mode-focus-after-720x900-real.png'),animations:'disabled'});
+ await page.evaluate(previous=>{document.getElementById('poAIExplore').disabled=previous;},narrowExploreDisabled);
  const finish=await userState(page);
  const sameSelected=x=>JSON.stringify(x.selected)===JSON.stringify(before.selected);
  const qa={
@@ -55,7 +71,8 @@ async function run(page){
   downSameColumn:down.focus==='poAIEPGFolders'&&sameSelected(down),
   upSameColumn:up.focus==='poAIUpcoming'&&sameSelected(up),
   homeFirst:home.focus==='poAIChannels'&&sameSelected(home),
-  skipDisabledExplore:skipDisabled.focus==='poAIEPGFolders'&&sameSelected(skipDisabled),
+  enabledExploreReachable:enabledExplore.focus==='poAIExplore'&&sameSelected(enabledExplore),
+  skipDisabledExplore:skipDisabled.focus==='poAIEPGFolders'&&skipDisabled.disabled.includes('poAIExplore')&&sameSelected(skipDisabled),
   endLast:end.focus==='poAIEPGProgrammes'&&sameSelected(end),
   wrapToFirst:wrap.focus==='poAIChannels'&&sameSelected(wrap),
   wrapToLast:wrapBack.focus==='poAIEPGProgrammes'&&sameSelected(wrapBack),
@@ -64,7 +81,7 @@ async function run(page){
   playlistUnchanged:start.ids===finish.ids,modelUnchanged:start.model===finish.model,
   noAutoplay:start.current===finish.current
  };
- for(const [name,ok] of Object.entries(qa))assert.equal(ok,true,'P331 real Electron AI mode '+name+': '+JSON.stringify({before,right,down,up,home,skipDisabled,end,wrap,wrapBack,narrow,qa}));
+ for(const [name,ok] of Object.entries(qa))assert.equal(ok,true,'P331 real Electron AI mode '+name+': '+JSON.stringify({before,right,down,up,home,enabledExplore,skipDisabled,end,wrap,wrapBack,narrow,qa}));
  assert.ok(!b.equals(a),'P331 keyboard focus before/after must visibly change');
  for(const [png,w,h] of [[b,1920,1080],[a,1920,1080],[n,720,900]]){
   assert.equal(png.readUInt32BE(16),w);assert.equal(png.readUInt32BE(20),h);
@@ -72,9 +89,9 @@ async function run(page){
  fs.writeFileSync('positron-evidence/audit-p51331-ai-mode-focus.json',JSON.stringify({
   version:'P5.1.331',app:'4.23.416',realElectron:true,
   before:{...before,sha256:digest(b)},after:{...right,sha256:digest(a)},
-  down,up,home,skipDisabled,end,wrap,wrapBack,
+  down,up,home,enabledExplore,skipDisabled,end,wrap,wrapBack,
   narrow:{...narrow,sha256:digest(n)},qa,
-  scope:'Native Electron AI mode keyboard focus only; no channel playback/GPU/stream testing'
+  scope:'Native Electron AI mode keyboard focus; QA temporarily disables/enables Explore to verify both states, no channel playback/GPU/stream testing'
  },null,2));
  console.log('P331 real Electron AI mode focus QA',JSON.stringify(qa));
  await page.evaluate(()=>window.PositronWatchFlow.close());
