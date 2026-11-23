@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.419",
-  "description": "Positron P5.1.334: AI chuyển thẳng đến nút Xem đầu bằng Alt+Shift+J và sửa vùng nút dính header (NEW)",
+  "version": "4.23.420",
+  "description": "Positron P5.1.335: AI chuyển gợi ý tiếp bằng Alt+Shift+K, bỏ qua nút phản hồi và quay vòng (NEW)",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -1,3 +1,12 @@
+## P5.1.335 / Electron 4.23.420 — AI chọn gợi ý kế tiếp bằng Alt+Shift+K, tự quay vòng (CANDIDATE)
+- Feature priority: NEW — Xem liên tiếp các gợi ý AI bằng phím tắt tập trung vào nút Xem của từng thẻ, không phải Tab qua nút phản hồi Hợp gu/Không hợp hoặc công cụ tra cứu.
+- Feature class: AI
+- User action: Trên trang TV nhấn F6 vào AI, Alt+Shift+J để đến nút Xem gợi ý đầu; nhấn Alt+Shift+K để sang nút Xem của gợi ý tiếp theo, hết danh sách quay về đầu. Chỉ Enter/Space trên nút Xem mới phát kênh.
+- Electron screenshot: positron-p51335-next-ai-before-1920x1080-real.png / positron-p51335-next-ai-after-1920x1080-real.png / positron-p51335-next-ai-before-720x900-real.png / positron-p51335-next-ai-after-720x900-real.png.
+- Evidence: Bắt đầu từ ảnh sau P334 thấy focus rõ trên nút Xem đầu nhưng phải Tab qua 3 nút phản hồi để đến chương trình sau. Bổ sung phím focus-only Alt+Shift+K, đưa thẻ kế vào viewport, tự quay vòng và guard ô nhập/hộp thoại; không thêm nút gây chật. Electron thật chụp trạng thái focus thứ nhất và thứ hai ở 1920/720; BEFORE là trạng thái dùng shortcut J đã có trong cùng binary, không giả làm bản cũ.
+- Privacy: Không tự play, không gửi nguồn IPTV/EPG, không ghi danh sách/lịch sử xem; không thay mô hình học.
+- Status: CANDIDATE cho tới khi unit/Node/Electron và ảnh được mở soát, build CI đã xác minh; bản thử nghiệm dùng Actions artifacts.
+
 ## P5.1.334 / Electron 4.23.419 — AI đi tới nút Xem đầu bằng bàn phím và trả khoảng trống dưới header (CANDIDATE)
 - Feature priority: NEW — Thêm phím tắt điều hướng trực tiếp tới gợi ý có thể phát trong WatchFlow Intelligence, để không phải Tab qua nhiều công tắc mô hình trước khi chọn nội dung.
 - Feature class: AI

@@ -329,6 +329,27 @@
   target.focus({preventScroll:true});
   target.scrollIntoView({block:'nearest',behavior:'instant'});
  });
+ // P335: jump to the next *watchable* recommendation, skipping feedback
+ // buttons and wrapping at the end; local focus only, no play/learning.
+ list.setAttribute('aria-keyshortcuts','Alt+Shift+K');
+ list.title='Alt+Shift+K: nút Xem của gợi ý kế tiếp (quay vòng)';
+ modeHelp.title='Alt+Shift+J: đến nút Xem đầu · Alt+Shift+K: chuyển gợi ý kế tiếp';
+ d.addEventListener('keydown',event=>{
+  const chord=event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
+   (event.code==='KeyK'||String(event.key).toLowerCase()==='k');
+  if(!chord||event.defaultPrevented||event.repeat||event.isComposing||!aiOpen||panel.hidden)return;
+  if([event.target,d.activeElement].some(el=>el?.isContentEditable||
+   el?.closest?.('input,textarea,select,[contenteditable],[role="textbox"]')))return;
+  if(d.querySelector('.modal-backdrop:not(.hidden):not([hidden])'))return;
+  const actions=[...area.querySelectorAll('.po-ai-card .po-ai-actions button:first-child')]
+   .filter(button=>!button.disabled&&button.getClientRects().length);
+  if(!actions.length)return;
+  const current=actions.indexOf(d.activeElement);
+  const target=actions[(current+1)%actions.length];
+  event.preventDefault();event.stopPropagation();
+  target.focus({preventScroll:true});
+  target.scrollIntoView({block:'nearest',behavior:'instant'});
+ });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
  const learnedSource=(channel,cache=null)=>{

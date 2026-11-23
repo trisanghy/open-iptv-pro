@@ -11877,6 +11877,12 @@ async function runTwenty(page){
  await require('./positron-332-audit.cjs').run(page);
  await require('./positron-333-audit.cjs').run(page);
  await require('./positron-334-audit.cjs').run(page);
+ await require('./positron-335-audit.cjs').run(page);
+ // P335 native Electron next recommendation keyboard screenshots:
+ // positron-p51335-next-ai-before-1920x1080-real.png
+ // positron-p51335-next-ai-after-1920x1080-real.png
+ // positron-p51335-next-ai-before-720x900-real.png
+ // positron-p51335-next-ai-after-720x900-real.png
  // P334 real Electron before-after evidence:
  // positron-p51334-ai-jump-before-1920x1080-real.png
  // positron-p51334-ai-jump-after-1920x1080-real.png
