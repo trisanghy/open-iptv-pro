@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+
+## P5.1.272 — Thư mục EPG đa nhãn tự động / Electron 4.23.357
+- Feature priority: NEW — Thêm thư viện chủ đề EPG ảo tự phân loại toàn bộ danh sách kênh trên thiết bị từ các chương trình XMLTV hiện có; một kênh có thể xuất hiện đồng thời trong Thể thao, Tin tức, Phim, Thiếu nhi hoặc các thư mục khác mà không làm thay đổi M3U gốc.
+- Feature class: BREAKTHROUGH
+- Evidence: Node regression mô phỏng kênh thời sự và bóng đá phải nằm đồng thời hai nhóm, kênh phim hoạt hình nằm Phim và Thiếu nhi; kênh không có XMLTV phải vào Chưa có chủ đề. CI mở chế độ trên Electron 1920x1080 với fixture EPG nội bộ, đo số thư mục, kiểm tra không tự phát, không đổi ID nguồn và hai PNG before/after thật.
+- User action: TV → WatchFlow → ✦ AI hợp gu → Thư mục EPG. Nhấn vào tên thư mục để mở danh sách kênh cùng chủ đề, chọn kênh để phát. Danh sách được tạo từ EPG đã nạp và tự làm mới khi mở lại, kênh thiếu chủ đề vẫn xem được trong Chưa có chủ đề EPG.
+- Privacy: Duyệt dữ liệu XMLTV đã tải trong máy; không quét Internet, không gửi danh sách/URL/hành vi, không tự phát hoặc sửa nguồn. Tính năng nhóm EPG dựa trên luật chủ đề, không nhận là ML; mô hình học Naive Bayes P271 vẫn tách biệt và chỉ học khi người dùng bật quyền.
+- Electron screenshot: positron-p51272-epg-folders-before-1920x1080-real.png / positron-p51272-epg-folders-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE cho tới khi xem ảnh thật, test, Actions và Release bất biến thành công.
+
 ## P5.1.271 — AI tự học phân loại chủ đề / Electron 4.23.356
 - Feature priority: NEW — Bổ sung **Dạy AI phân loại** trên từng kênh khi có quyền học, sử dụng mô hình Multinomial Naive Bayes huấn luyện online từ các nhãn chủ đề do người dùng tự xác nhận. Sau khi có ít nhất hai nhóm đủ ví dụ, AI có thể gợi ý chủ đề cho kênh tương tự chưa khớp quy tắc tên hoặc EPG; kết quả phải vượt ngưỡng tin cậy, và EPG thực luôn được ưu tiên.
 - Feature class: AI

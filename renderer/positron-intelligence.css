@@ -55,3 +55,14 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
  background:#112b32;border:1px solid #31535c;padding:9px 10px;border-radius:8px;color:#b8e5db;font-size:12px}
 #poWatchFlowPanel .po-ai-teacher select{min-width:138px;min-height:32px;max-width:100%;
  color:#edfff9;background:#183e42;border:1px solid #6aa798;border-radius:7px;padding:4px 7px}
+
+/* P5.1.272: virtual XMLTV folders with multi-category channel membership. */
+#poWatchFlowPanel #poAICards[data-mode="folders"]{grid-template-columns:minmax(0,1fr)!important}
+#poWatchFlowPanel .po-ai-folder{border:1px solid #3f6a70;background:#102b34;border-radius:9px;min-width:0}
+#poWatchFlowPanel .po-ai-folder>summary{cursor:pointer;font-size:13px;font-weight:750;color:#d5fff1;padding:11px 12px}
+#poWatchFlowPanel .po-ai-folder[open]>summary{border-bottom:1px solid #38555e}
+#poWatchFlowPanel .po-ai-folder-items{max-height:280px;overflow-y:auto;display:grid;gap:6px;padding:8px}
+#poWatchFlowPanel .po-ai-folder-row{display:grid;gap:2px;min-width:0}
+#poWatchFlowPanel .po-ai-folder-channel{padding:7px 9px;text-align:left;border:1px solid #37645e;border-radius:7px;background:#1b4541;color:#effffa;cursor:pointer;overflow-wrap:anywhere}
+#poWatchFlowPanel .po-ai-folder-row small{color:#a4c9d0;font-size:11px;overflow-wrap:anywhere}
+#poWatchFlowPanel .po-ai-folder-channel:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}

@@ -235,6 +235,28 @@
   return confidence>=min?{key:scores[0].key,confidence,source:'ml'}:null;
  }
 
+
+ // P5.1.272: virtual, multi-label EPG folders. Every matching XMLTV topic
+ // gets the same channel reference; the original playlist is never modified.
+ function epgFolders(channels,guide,api,{clock=Date.now(),limit=5000}={}){
+  const input=Array.isArray(channels)?channels:[];
+  const maximum=Math.max(1,Math.min(10000,Math.trunc(limit)||5000));
+  const buckets=new Map(Object.entries(KINDS).filter(([key])=>key!=='other')
+   .map(([key,label])=>[key,{key,label,items:[]}]));
+  const uncategorized=[];let scanned=0;
+  for(const channel of input.slice(0,maximum)){
+   if(!channel?.id||!channel.name||channel.status==='dead')continue;
+   scanned++;
+   const topic=topicFor(channel,guide,api,clock);
+   const keys=topic.source==='epg'?[...new Set(topic.topics.map(t=>t.key))]:[];
+   if(!keys.length){uncategorized.push({channel,topic});continue;}
+   for(const key of keys)if(buckets.has(key))
+    buckets.get(key).items.push({channel,topic});
+  }
+  const groups=[...buckets.values()].filter(g=>g.items.length);
+  return {groups,uncategorized,scanned,unscanned:Math.max(0,input.length-maximum)};
+ }
+
  // P5.1.270: consent-based contextual bandit. Genre-level UCB bonuses shrink
  // as the user explicitly rates/watches a category; no channel history stored.
  function sanitizedBandit(raw){
@@ -366,5 +388,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,epgFolders,cleanQuery,readWikiSearch});
 });

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.356",
-  "description": "Positron P5.1.271: AI tự học phân loại kênh từ nhãn",
+  "version": "4.23.357",
+  "description": "Positron P5.1.272: Thư mục EPG đa nhãn tự động",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -253,3 +253,37 @@ test('P271 từ chối nhãn không hợp lệ, không phỏng đoán khi thiế
   "core.predictCategory(categoryModel,channel)","categoryModel=core.emptyCategoryModel()"])
   assert.ok(s.includes(key),key);
 });
+
+
+test('P272 tự tạo thư mục EPG đa nhãn, không đổi playlist và không đoán khi thiếu EPG',()=>{
+ const t=now,channels=[
+  mk('news-sport','Kênh tổng hợp A'),mk('kids-film','Kênh tổng hợp B'),mk('none','Kênh chưa rõ')
+ ];
+ const original=JSON.stringify(channels),guide={programmes:[{id:'qa'}]};
+ const find={find:(_guide,ch)=>ch.id==='news-sport'
+  ?[{title:'Bản tin thời sự và trực tiếp bóng đá',start:t-1000,end:t+100000}]
+  :ch.id==='kids-film'
+   ?[{title:'Phim hoạt hình thiếu nhi',start:t-1000,end:t+100000}]:[]};
+ const found=C.epgFolders(channels,guide,find,{clock:t});
+ const index=key=>found.groups.find(g=>g.key===key)?.items.map(r=>r.channel.id)||[];
+ assert.deepEqual(index('news'),['news-sport']);
+ assert.deepEqual(index('sport'),['news-sport']);
+ assert.deepEqual(index('cinema'),['kids-film']);
+ assert.deepEqual(index('kids'),['kids-film']);
+ assert.deepEqual(found.uncategorized.map(x=>x.channel.id),['none']);
+ assert.equal(found.scanned,3);
+ assert.equal(JSON.stringify(channels),original);
+ assert.equal(C.epgFolders(channels,null,find,{clock:t}).groups.length,0);
+});
+test('P272 WatchFlow hiển thị thư mục có thể mở và kênh đa nhóm, không tự phát',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("foldersMode.textContent='Thư mục EPG'"));
+ assert.ok(ui.includes("const catalog=core.epgFolders(collection,guide(),win.IPTVGuide"));
+ assert.ok(ui.includes("folder.dataset.topic=key"));
+ assert.ok(ui.includes("folder.append(rows);list.append(folder)"));
+ assert.ok(css.includes('#poAICards[data-mode="folders"]'));
+ assert.ok(qa.includes('positron-p51272-epg-folders-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51272-epg-folders-after-1920x1080-real.png'));
+});

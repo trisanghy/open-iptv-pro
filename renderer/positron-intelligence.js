@@ -60,11 +60,15 @@
  const exploreMode=d.createElement('button');exploreMode.type='button';exploreMode.id='poAIExplore';
  exploreMode.textContent='Khám phá AI';exploreMode.setAttribute('aria-pressed','false');exploreMode.disabled=!enabled;
  modeBar.append(channelsMode,upcomingMode,planMode,exploreMode);
- let upcomingOpen=false,planOpen=false,exploreOpen=false;
- channelsMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;render();});
- upcomingMode.addEventListener('click',()=>{upcomingOpen=true;planOpen=false;exploreOpen=false;render();});
- planMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=true;exploreOpen=false;render();});
- exploreMode.addEventListener('click',()=>{if(!enabled)return;upcomingOpen=false;planOpen=false;exploreOpen=true;render();});
+ let upcomingOpen=false,planOpen=false,exploreOpen=false,foldersOpen=false;
+ channelsMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=false;render();});
+ upcomingMode.addEventListener('click',()=>{upcomingOpen=true;planOpen=false;exploreOpen=false;foldersOpen=false;render();});
+ planMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=true;exploreOpen=false;foldersOpen=false;render();});
+ exploreMode.addEventListener('click',()=>{if(!enabled)return;upcomingOpen=false;planOpen=false;exploreOpen=true;foldersOpen=false;render();});
+ const foldersMode=d.createElement('button');foldersMode.type='button';foldersMode.id='poAIEPGFolders';
+ foldersMode.textContent='Thư mục EPG';foldersMode.setAttribute('aria-pressed','false');
+ modeBar.append(foldersMode);
+ foldersMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=true;render();});
  const alertRow=d.createElement('label');alertRow.className='po-ai-alerts';
  const alertCheck=d.createElement('input');alertCheck.type='checkbox';alertCheck.id='poAIAlerts';
  alertCheck.checked=alertEnabled;alertCheck.disabled=!enabled;
@@ -125,21 +129,70 @@
   if(!save())state()?.toast?.('Không lưu được sở thích trên thiết bị','warn');
   render();
  }
+
+ function renderEPGFolders(collection){
+  const catalog=core.epgFolders(collection,guide(),win.IPTVGuide,{clock:Date.now()});
+  summary.textContent='Thư mục EPG ảo · '+catalog.groups.length+' chủ đề · '+catalog.scanned+
+   ' kênh được rà soát · '+catalog.uncategorized.length+' chưa đủ chủ đề';
+  const notice=d.createElement('p');notice.className='po-ai-privacy';
+  notice.textContent='Tự phân nhóm từ tên và mô tả chương trình XMLTV đã nạp. Một kênh có thể thuộc nhiều chủ đề; không sửa playlist, không tự tải Internet hay tự phát.';
+  list.append(notice);
+  const addFolder=(key,label,items,open)=>{
+   const folder=d.createElement('details');folder.className='po-ai-folder';folder.dataset.topic=key;
+   folder.open=open;
+   const heading=d.createElement('summary');heading.textContent=label+' · '+items.length+' kênh';
+   folder.append(heading);
+   const rows=d.createElement('div');rows.className='po-ai-folder-items';
+   for(const item of items){
+    const ch=item.channel,entry=d.createElement('button');
+    entry.type='button';entry.className='po-ai-folder-channel';
+    entry.textContent=ch.name;entry.title='Chọn phát kênh '+ch.name;
+    entry.setAttribute('aria-label','Xem kênh '+ch.name+' trong chủ đề '+label);
+    entry.addEventListener('click',()=>{
+     if(!channels().some(c=>String(c.id)===String(ch.id)))return render();
+     win.PositronWatchFlow?.close?.();state()?.setPage?.('tv');
+     Promise.resolve(state()?.playChannel?.(ch.id)).catch(()=>state()?.toast?.('Không thể phát kênh','error'));
+    });
+    const meta=d.createElement('small');
+    meta.textContent=item.topic?.nowTitle?'Đang chiếu: '+item.topic.nowTitle:
+     item.topic?.nextTitle?'Sắp tới: '+item.topic.nextTitle:'Chưa có chương trình phù hợp trong khung giờ';
+    const wrap=d.createElement('div');wrap.className='po-ai-folder-row';wrap.append(entry,meta);rows.append(wrap);
+   }
+   folder.append(rows);list.append(folder);
+  };
+  for(const [index,group] of catalog.groups.entries())
+   addFolder(group.key,group.label,group.items,index===0);
+  if(!catalog.groups.length){
+   const empty=d.createElement('p');empty.className='po-ai-empty';
+   empty.textContent='Chưa có nhóm từ chương trình EPG thực. Nhập XMLTV hợp lệ để tự phân loại, không đoán chủ đề khi thiếu dữ liệu.';
+   list.append(empty);
+  }
+  if(catalog.uncategorized.length)addFolder('other','Chưa có chủ đề EPG',catalog.uncategorized,false);
+  if(catalog.unscanned){
+   const more=d.createElement('p');more.className='po-ai-empty';
+   more.textContent='Còn '+catalog.unscanned+' kênh ngoài giới hạn phân tích trong lượt này.';
+   list.append(more);
+  }
+ }
+
  function render(){
   if(!aiOpen)return;
   const collection=channels();const profile=profileFor(collection);
-  channelsMode.setAttribute('aria-pressed',String(!upcomingOpen));
+  channelsMode.setAttribute('aria-pressed',String(!upcomingOpen&&!planOpen&&!exploreOpen&&!foldersOpen));
   upcomingMode.setAttribute('aria-pressed',String(upcomingOpen));
   planMode.setAttribute('aria-pressed',String(planOpen));
   exploreMode.setAttribute('aria-pressed',String(exploreOpen));exploreMode.disabled=!enabled;
+  foldersMode.setAttribute('aria-pressed',String(foldersOpen));
   summary.textContent=(enabled?'● Đang học':'○ Chưa bật học')+(alertEnabled?' · Nhắc lịch AI bật':'')+' · '+model.observations+
    ' phản hồi · '+categoryModel.examples+' nhãn AI · '+collection.length+' kênh · Web chỉ tra khi nhấn';
+  list.dataset.mode=foldersOpen?'folders':'cards';
   list.replaceChildren();
   if(!collection.length){
    const empty=d.createElement('p');empty.className='po-ai-empty';
    empty.textContent='Chưa có nguồn IPTV. Hãy thêm playlist hợp lệ và EPG để phân loại, sau đó bật học nếu muốn.';
    list.append(empty);return;
   }
+  if(foldersOpen){renderEPGFolders(collection);return;}
   const ranked=exploreOpen
    ?core.exploreWithBandit(collection,guide(),win.IPTVGuide,model,profile,bandit,{limit:8,clock:Date.now()})
    :planOpen
@@ -312,6 +365,7 @@
   plan:()=>core.planForYou(channels(),guide(),win.IPTVGuide,model,webValid()),
   explore:()=>enabled?core.exploreWithBandit(channels(),guide(),win.IPTVGuide,model,profileFor(channels()),bandit):[],
   categoryProfile:()=>({enabled,examples:categoryModel.examples}),
+  epgFolders:()=>core.epgFolders(channels(),guide(),win.IPTVGuide),
   alerts:()=>({enabled:alertEnabled,candidates:alertEnabled?core.startingForYou(channels(),guide(),win.IPTVGuide,model,webValid()):[]}),
   getTopic:metadata});
 })();
