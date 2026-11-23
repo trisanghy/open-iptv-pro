@@ -623,9 +623,9 @@ jobs:
         run: |
           set -Eeuo pipefail
           mkdir -p release-stage
-          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P51304-Source.zip HEAD
-          zip -q -r release-stage/Positron-P51304-50-Real-Screenshots.zip release-stage/p4-50-rounds
-          zip -q -r release-stage/Positron-P51304-20-Real-Screenshots.zip release-stage/p5-20-rounds
+          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P51305-Source.zip HEAD
+          zip -q -r release-stage/Positron-P51305-50-Real-Screenshots.zip release-stage/p4-50-rounds
+          zip -q -r release-stage/Positron-P51305-20-Real-Screenshots.zip release-stage/p5-20-rounds
           node -e 'const fs=require("fs"),p=require("path"),r=require("./release-stage/audit-p5-20-rounds.json");const x=r.desktop16x9Screenshots?.find(s=>s.page==="tv");if(!x)throw Error("Thiếu ảnh 16:9 chính");fs.copyFileSync(p.join("release-stage/p5-20-rounds",x.filename),"release-stage/positron-desktop-1920x1080-16x9-main-real.png")'
           cp release-stage/p4-50-rounds/positron-p4-50-real.png release-stage/positron-p4-final-main-real.png
           cp release-stage/p4-50-rounds/positron-p4-10-real.png release-stage/positron-p4-round-10-real.png
@@ -633,7 +633,7 @@ jobs:
           cp release-stage/p4-50-rounds/positron-p4-30-real.png release-stage/positron-p4-round-30-real.png
           cp release-stage/p4-50-rounds/positron-p4-40-real.png release-stage/positron-p4-round-40-real.png
           for name in \
-            Positron-P51304-20-Real-Screenshots.zip \
+            Positron-P51305-20-Real-Screenshots.zip \
             audit-p5-20-rounds.json \
             Open-IPTV-Pro-4.23.390-mac-arm64.dmg \
             Open-IPTV-Pro-4.23.390-mac-x64.dmg \
@@ -647,8 +647,8 @@ jobs:
             positron-p4-round-20-real.png \
             positron-p4-round-30-real.png \
             positron-p4-round-40-real.png \
-            Positron-P51304-50-Real-Screenshots.zip \
-            OpenIPTVPro-Positron-P51304-Source.zip; do
+            Positron-P51305-50-Real-Screenshots.zip \
+            OpenIPTVPro-Positron-P51305-Source.zip; do
               test -s "release-stage/$name" || { echo "::error::Missing $name"; exit 1; }
           done
           (cd release-stage && sha256sum *.dmg *.exe *.png *.json *.zip > SHA256SUMS.txt)
@@ -666,7 +666,7 @@ jobs:
           else
             if gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-p4-50-rounds.json release-stage/audit-p5-20-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
               --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-              --title 'Open IPTV Pro Positron P5.1.305 — AI phát hiện chuyển chủ đề ngầm' \
+              --title 'Open IPTV Pro Positron P5.1.305 — chẩn đoán độ chắc chắn khi so sánh AI' \
               --notes "Positron $TAG at $GITHUB_SHA. Full change history is included as POSITRON_P5_CHANGELOG.md in the Source ZIP asset. Native Electron screenshots, reports and installer checksums are attached." --prerelease --latest=false 2>/tmp/positron-release-error; then
               echo 'GitHub Release successfully created.'
             elif grep -Eq '(HTTP 403|Resource not accessible by integration)' /tmp/positron-release-error; then
@@ -682,7 +682,7 @@ jobs:
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' >/tmp/positron-assets
           grep -Fxq 'positron-desktop-1920x1080-16x9-main-real.png' /tmp/positron-assets
           grep -Fxq 'positron-p4-final-main-real.png' /tmp/positron-assets
-          grep -Fxq 'Positron-P51304-20-Real-Screenshots.zip' /tmp/positron-assets
+          grep -Fxq 'Positron-P51305-20-Real-Screenshots.zip' /tmp/positron-assets
           grep -Fxq 'Open-IPTV-Pro-4.23.390-mac-arm64.dmg' /tmp/positron-assets
           grep -Fxq 'Open-IPTV-Pro-Setup-4.23.390-x64.exe' /tmp/positron-assets
           echo "PUBLISHED_AND_VERIFIED: $TAG at $GITHUB_SHA" > release-stage/PUBLISH_STATUS.txt
