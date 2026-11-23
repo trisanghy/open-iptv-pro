@@ -17,3 +17,7 @@ Vòng 01 dự kiến P5.1.279:
 - Ảnh thật đã tải và trực tiếp MỞ: positron-p51279-folders-persist-before-1920x1080-real.png, positron-p51279-folders-persist-after-1920x1080-real.png. Danh sách con giữ open sau render; phần Dạy AI ở nhóm chưa phân loại đang hiển thị năm ứng viên.
 - Vòng 01 dự kiến P5.1.280: khắc phục giới hạn Bỏ qua chạy vòng lặp năm ứng viên; thêm hàng đợi không lặp qua nhiều hơn năm kênh, khôi phục bỏ qua trong phiên. Không cập nhật mô hình khi bỏ qua, không đổi M3U và không tự phát.
 - Bằng chứng phải có: Node regression, trước/sau Electron 1920x1080 mới, mở trực tiếp ảnh sau, commit SHA, Actions/Artifacts. Trạng thái CHƯA ĐẠT cho đến khi kiểm chứng đầy đủ.
+
+### CI repair P5.1.280
+- Run 45105567504: 993 tests, 972 pass / 16 fail / 5 skipped. Blocker: 4.23.364 vẫn còn trong title HTML, Windows launcher và workflow build/tag, đồng thời workflow trỏ sai ảnh P280 folders-persist thay vì ảnh P279 và chưa kiểm chứng cặp P280 active-queue.
+- Khắc phục trên cùng nhãn P5.1.280, không tính phiên bản/vòng mới; giữ test nghiêm ngặt, không bỏ assertion. Chỉ tính vòng khi CI và ảnh thật đạt.
