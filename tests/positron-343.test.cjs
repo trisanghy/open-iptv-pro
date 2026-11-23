@@ -19,6 +19,6 @@ test('P343 real Electron before/after supports keyboard Home End with safe sourc
  for(const x of ["version:'P5.1.343'","await page.keyboard.press('End')","await page.keyboard.press('Home')",
   "remote End selects last recommendation","remote Home returns directly to first suggestion",
   "positron-p51343-home-end-ai-","width:720,height:900","width:1920,height:1080",
-  "assert.deepEqual(restored,original,","noOverflow","autoplay:false"])
+  "assert.deepEqual(restored,original,","noOverflow","autoplay:false","editorAfterHome","editorAfterEnd","explanationFocus.stableScroll"])
  assert.ok(qa.includes(x),'P343 QA missing '+x);
 });

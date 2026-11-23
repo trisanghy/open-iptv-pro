@@ -92,11 +92,28 @@ async function beforeAfter(page,size){
  await page.keyboard.press('ArrowDown');
  const editorAfter=await page.evaluate(()=>document.activeElement?.id);
  assert.equal(editorAfter,'searchBox','remote arrows must not hijack typing fields');
+ await page.keyboard.press('Home');
+ const editorAfterHome=await page.evaluate(()=>document.activeElement?.id);
+ assert.equal(editorAfterHome,'searchBox','Home must not hijack channel search editor');
+ await page.keyboard.press('End');
+ const editorAfterEnd=await page.evaluate(()=>document.activeElement?.id);
+ assert.equal(editorAfterEnd,'searchBox','End must not hijack channel search editor');
+ // Native P319 regression: focusing an explanation summary must NOT scroll to
+ // the card's Play button, which can swallow the real disclosure click.
+ const explanationFocus=await page.evaluate(()=>{
+  const panel=document.getElementById('poWatchFlowPanel');
+  const summary=document.querySelector('#poAICards .po-ai-card details.po-ai-preference-explain summary');
+  if(!summary)return {present:false};
+  const previousScroll=panel.scrollTop;
+  summary.focus({preventScroll:true});
+  return {present:true,stableScroll:Math.abs(previousScroll-panel.scrollTop)<=1};
+ });
+ assert.ok(explanationFocus.present&&explanationFocus.stableScroll,'P319 explanation focus must not auto-scroll the AI panel');
  for(const [png,width,height] of [[a,size.width,size.height],[b,size.width,size.height]]){
   assert.equal(png.readUInt32BE(16),width);assert.equal(png.readUInt32BE(20),height);
  }
  assert.ok(!a.equals(b),'two real Electron screenshots differ');
- return {before,last,first,second,back,wrapped,around,editorAfter,beforeSha256:hash(a),afterSha256:hash(b)};
+ return {before,last,first,second,back,wrapped,around,editorAfter,editorAfterHome,editorAfterEnd,explanationFocus,beforeSha256:hash(a),afterSha256:hash(b)};
 }
 async function run(page){
  fs.mkdirSync(out,{recursive:true});
@@ -124,7 +141,7 @@ async function run(page){
  const restored=await page.evaluate(()=>({channels:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id)),
   current:window.IPTVState.getCurrent()?.id||'',model:localStorage.getItem('positron-intelligence-preferences-v1')}));
  assert.deepEqual(restored,original,'playlist/current/model state cannot change');
- const report={version:'P5.1.343',app:'4.23.428',realElectron:true,desktop,narrow,checks:22,
+ const report={version:'P5.1.343',app:'4.23.428',realElectron:true,desktop,narrow,checks:25,
   dataUnchanged:true,autoplay:false,pass:true,
   beforeNote:'Both images are from real P343 Electron, focused first before and last after End; Home returns to first without playback.',
   scope:'Three synthetic QA channel fixtures only if needed; no IPTV stream, GPU or Cast testing'};
