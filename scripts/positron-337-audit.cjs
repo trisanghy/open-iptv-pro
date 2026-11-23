@@ -32,7 +32,9 @@ async function focusIndex(page,i){await page.evaluate(index=>{
 async function beforeAfter(page,size){
  await page.setViewportSize(size);
  await page.keyboard.press('Alt+Shift+J');
- assert.equal((await snapshot(page)).progress,'Gợi ý 1/3','first shortcut primes real counter');
+ const primed=await snapshot(page);
+ assert.ok(primed.count>=3,'must show at least three genuine recommendation controls');
+ assert.equal(primed.progress,'Gợi ý 1/'+primed.count,'first shortcut primes real counter');
  await page.evaluate(()=>{
   window.__p337Block=e=>e.stopImmediatePropagation();
   document.addEventListener('focusin',window.__p337Block,true);
@@ -44,10 +46,12 @@ async function beforeAfter(page,size){
  await focusIndex(page,2);
  const after=await snapshot(page);
  const post=await save(page,'positron-p51337-focus-sync-after-'+size.width+'x'+size.height+'-real.png');
+ assert.equal(before.count,primed.count,'focus movement must not change recommendation list');
  assert.equal(before.focus,1);
- assert.equal(before.progress,'Gợi ý 1/3','before reproduces stale P336 display');
+ assert.equal(before.progress,'Gợi ý 1/'+before.count,'before reproduces stale P336 display');
+ assert.equal(after.count,before.count,'after focus must retain same recommendations');
  assert.equal(after.focus,2);
- assert.equal(after.progress,'Gợi ý 3/3','P337 updates from ordinary focusin');
+ assert.equal(after.progress,'Gợi ý 3/'+after.count,'P337 updates from ordinary focusin');
  assert.equal(after.visible,true,'badge must stay inside sticky header');
  assert.equal(after.aria,'polite');assert.equal(after.role,'status');
  assert.equal(after.mode,true);assert.equal(after.noHorizontalOverflow,true);
@@ -120,7 +124,7 @@ async function run(page){
   lookup.focus();
  });
  const sameCard=await snapshot(page);
- assert.equal(sameCard.progress,'Gợi ý 3/3','secondary action retains parent-card position');
+ assert.equal(sameCard.progress,'Gợi ý 3/'+sameCard.count,'secondary action retains parent-card position');
  await page.evaluate(()=>document.getElementById('poAIChannels').focus());
  const otherControl=await snapshot(page);
  assert.equal(otherControl.progress,'','outside a recommendation must clear stale counter');
