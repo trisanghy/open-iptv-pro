@@ -48,7 +48,8 @@ test('Native installs and removals require user clicks/confirmation; storage sho
  assert.match(src,/await native\.aiStorageStatus\(\)/);
  assert.match(src,/await native\.aiRemoveModel\(id\)/);
  assert.match(src,/await native\.aiInstallModel\(key\)/);
- assert.match(src,/root\.confirm\?\.\('Xóa '/);
+ assert.match(src,/confirm\.addEventListener\('click',async/);
+ assert.match(src,/id="wfSmartDeleteConfirm"/);
  assert.match(src,/storageTotal\.textContent=human\(inventory\?\.totalBytes\|\|0\)/);
  assert.match(src,/modelOperation/);
  assert.doesNotMatch(src,/wfModelRefresh/);
