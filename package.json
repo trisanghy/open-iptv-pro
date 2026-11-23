@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.380",
-  "description": "Positron P5.1.295: cảnh báo suy giảm bao phủ chủ đề AI trước nhập mô hình",
+  "version": "4.23.381",
+  "description": "Positron P5.1.296: sửa kiểm thử AI lồng nhau và hỗ trợ bàn phím",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

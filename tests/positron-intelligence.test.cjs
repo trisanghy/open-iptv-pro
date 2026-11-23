@@ -918,3 +918,15 @@ test('P295 previews top Naive Bayes group risk before restore without exposing U
  for(const x of ['qa295','positron-p51295-group-risk-before-1920x1080-real.png',
   'positron-p51295-group-risk-after-1920x1080-real.png'])assert.ok(qa.includes(x),x);
 });
+
+test('P296 nested Naive Bayes disclosure avoids ambiguous selector and supports Enter',()=>{
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ assert.ok(qa.includes("page.locator('#poAICategoryImpact > summary').click"));
+ assert.ok(!qa.includes("page.locator('#poAICategoryImpact summary').click"));
+ assert.ok(qa.includes("page.locator('#poAICategoryGroupRisks > summary')"));
+ assert.ok(qa.includes("await riskToggle296.press('Enter'"));
+ for(const name of ['qa296','positron-p51296-risk-keyboard-before-1920x1080-real.png',
+  'positron-p51296-risk-keyboard-after-1920x1080-real.png'])assert.ok(qa.includes(name));
+ assert.ok(css.includes('#poWatchFlowPanel #poAICategoryGroupRisks > summary:focus-visible'));
+});

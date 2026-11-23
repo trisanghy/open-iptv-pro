@@ -226,3 +226,8 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
  border:1px solid #b78352;border-radius:9px;background:#423327;
  color:#fff0d8;font-size:11px;line-height:1.55;overflow-wrap:anywhere}
 #poWatchFlowPanel #poAICategoryCoverageRisk[hidden]{display:none!important}
+
+/* P296: nested group risk is visually distinguished from parent disclosure. */
+#poWatchFlowPanel #poAICategoryGroupRisks{margin:10px 0 4px;border-color:#60998c;background:#102f34}
+#poWatchFlowPanel #poAICategoryGroupRisks > summary{min-height:42px;color:#d6fff2}
+#poWatchFlowPanel #poAICategoryGroupRisks > summary:focus-visible{outline:2px solid #b3f0df;outline-offset:2px}

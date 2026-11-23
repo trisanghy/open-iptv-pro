@@ -1,3 +1,10 @@
+## P5.1.296 — Chi tiết nhóm rủi ro AI: selector chính xác và bàn phím / Electron 4.23.381
+- BLOCKER_FIX + ACCESSIBILITY. P295 thêm mục “Nhóm bị ảnh hưởng” nằm trong details Naive Bayes; bộ kiểm thử Electron `#poAICategoryImpact summary` chọn hai summary và bị strict-mode violation dù npm test và Windows/macOS build thành công.
+- Chỉnh `scripts/positron-20-extension.cjs`: dùng `#poAICategoryImpact > summary` cho mục cha, không bỏ mục con. Có thêm QA dùng Enter mở bảng nhóm bằng bàn phím, giữ focus và không thay đổi playlist, mô hình hoặc tự phát stream.
+- Chỉnh `renderer/positron-intelligence.css`: phân biệt rõ bảng nhóm lồng nhau, viền focus dễ thấy.
+- Thêm Node regression, Electron screenshots trước/sau 1920×1080: `positron-p51296-risk-keyboard-before-1920x1080-real.png`, `positron-p51296-risk-keyboard-after-1920x1080-real.png`.
+- Trạng thái: CANDIDATE, phải xác minh CI và MỞ ảnh thật trước khi công bố hoàn thành; chỉ phát hành stable trên Releases, thử nghiệm nằm ở Actions.
+
 ## P5.1.295 — Xem nhóm kênh bị ảnh hưởng khi khôi phục Naive Bayes / Electron 4.23.380
 - Feature priority: NEW — Trong dự báo trước khi nhập mô hình AI, bổ sung bảng xem riêng tối đa năm nhóm kênh chịu nhiều tác động nhất (mất dự đoán đủ chắc chắn, thay nhãn, mới được phân loại), dựa trên tối đa 1.000 kênh đang có. Không còn phải suy luận từ một tỷ lệ tổng hợp.
 - Feature class: AI
