@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 test('P324 five WatchFlow mode targets are 44px and tested in actual Electron',()=>{
  const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8');
  const audit=fs.readFileSync('scripts/positron-324-audit.cjs','utf8');
- const runner=fs.readFileSync('scripts/positron-50-audit.cjs','utf8');
+ const runner=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
  const workflow=fs.readFileSync('.github/workflows/positron-lab.yml','utf8');
  assert.match(css,/P324: Electron 720px P323 shows five mode buttons/);
  assert.match(css,/\.po-flowplus-nav button\{\s*min-height:44px!important/);

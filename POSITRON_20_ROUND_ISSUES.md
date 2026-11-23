@@ -11,3 +11,7 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Ảnh trước 1920 do áp dụng tạm CSS cũ 35px lên Electron mới, không phải binary cũ; ảnh sau 1920 và 720 là CSS mới.
 - CHƯA TÍNH HOÀN THÀNH cho tới khi CI xanh và đã mở ảnh sau.
 - Vòng 02 ưu tiên: xem lỗi EPG notification che khu vực lọc ở 720px, bảo toàn thông báo qua Notification Archive.
+
+## CI repair P324
+- Actions 45230032964: 1033 pass / 7 fail / 5 skip; lỗi version trong HTML, sidebar, Windows scripts và bài test metadata screenshot không tìm thấy vị trí khai báo P324 trong P5 QA script.
+- Repair: đồng bộ 4.23.409, Positron P5.1.324; gọi helper QA P324 trong vòng CDP P5 chính, thêm filename vào báo cáo, giữ các assertion nguyên vẹn. Chưa tính vòng đạt trước CI mới.

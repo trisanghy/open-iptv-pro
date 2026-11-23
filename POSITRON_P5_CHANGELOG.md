@@ -1,6 +1,8 @@
 ## P5.1.324 / Electron 4.23.409 — 5 chế độ WatchFlow đủ vùng bấm 44px (CANDIDATE)
 - Feature priority: NEW — tăng vùng bấm của năm nút Gợi ý, Tiếp, Cùng gu, Mix, Zap từ 35px lên 44px; vẫn trên một hàng.
 - Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu; chuyển giữa Gợi ý, Tiếp, Cùng gu, Mix, Zap bằng chuột, cảm ứng hoặc phím Tab.
+- Electron screenshot: positron-p51324-watchflow-tabs-before-1920x1080-real.png / positron-p51324-watchflow-tabs-after-1920x1080-real.png / positron-p51324-watchflow-tabs-after-720x900-real.png.
 - Evidence: ảnh Electron P323 720px; QA P324 kiểm tra screenshot trước/sau và 720px, focus, overflow, playlist/model/không tự phát.
 - Chỉ đánh dấu hoàn tất khi CI và ảnh thật đã được xác minh. Public Release chỉ dành cho Stable.
 
