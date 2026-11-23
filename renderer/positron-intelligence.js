@@ -72,9 +72,11 @@
  backup.title='Tải các trọng số học AI về máy; không có playlist hoặc URL';
  // P313: verify the actual reselected file, never infer download success from anchor click.
  let lastBackupSnapshot=null,lastVerifyDetails=null;
+ // P317: old AI backups can be checked against currently loaded local ML after restart.
  const verifyBackup=d.createElement('button');verifyBackup.type='button';verifyBackup.id='poAIVerifyBackup';
- verifyBackup.className='po-ai-backup po-ai-verify';verifyBackup.hidden=true;
- verifyBackup.textContent='Kiểm tra tệp JSON vừa tải (chỉ đọc)';
+ verifyBackup.className='po-ai-backup po-ai-verify';verifyBackup.hidden=false;
+ verifyBackup.textContent='Đối chiếu JSON với AI đang dùng (chỉ đọc)';
+ verifyBackup.title='Đối chiếu bản sao cũ với mô hình hiện tại, không nhập hay thay dữ liệu';
  const verifyFile=d.createElement('input');verifyFile.type='file';verifyFile.id='poAIVerifyBackupFile';
  verifyFile.hidden=true;verifyFile.accept='.json,application/json';
  verifyFile.setAttribute('aria-label','Chọn lại tệp JSON vừa tải để kiểm tra trọng số AI');
@@ -789,16 +791,23 @@
  verifyFile.addEventListener('change',async()=>{
   const file=verifyFile.files?.[0];verifyFile.value='';if(!file)return;
   let message;lastVerifyDetails=null;
-  if(!lastBackupSnapshot)message='Không kiểm chứng được: chưa xuất bản sao AI trong phiên này.';
-  else if(file.size>512000)message='Không kiểm chứng được: tệp JSON vượt 500 KB.';
+  if(file.size>512000)message='Không kiểm chứng được: tệp JSON vượt 500 KB.';
   else{
    try{
     const content=JSON.parse(await file.text());
-    const check=core.verifyLearningBackupSnapshot(lastBackupSnapshot.data,content);
+    // P317: if no snapshot was exported this session, compare with the currently
+    // persisted models. Never assume the selected file was successfully downloaded.
+    const currentReference=!lastBackupSnapshot;
+    const reference=currentReference?core.buildLearningBackup({model,categoryModel,bandit}):lastBackupSnapshot.data;
+    const check=core.verifyLearningBackupSnapshot(reference,content);
     if(check.ok)lastVerifyDetails=check;
     message=!check.ok?'Không kiểm chứng được: '+check.reason:
-     check.match?'Đã kiểm tra tệp '+file.name+' ('+file.size+' byte): cấu trúc và trọng số AI khớp bản vừa xuất (không phụ thuộc thứ tự khóa JSON). Không tự khôi phục.':
-     'Tệp sao lưu không khớp bản vừa xuất: '+check.matched+'/3 mô hình khớp. Chưa nhập hay ghi đè dữ liệu.';
+     check.match?(currentReference
+      ?'Đã đối chiếu tệp '+file.name+' ('+file.size+' byte): trọng số khớp mô hình AI đang dùng trên máy. Không tự khôi phục.'
+      :'Đã kiểm tra tệp '+file.name+' ('+file.size+' byte): cấu trúc và trọng số AI khớp bản vừa xuất (không phụ thuộc thứ tự khóa JSON). Không tự khôi phục.'):
+     (currentReference
+      ?'Tệp sao lưu khác mô hình AI đang dùng: '+check.matched+'/3 mô hình khớp. Chưa nhập hay ghi đè dữ liệu.'
+      :'Tệp sao lưu không khớp bản vừa xuất: '+check.matched+'/3 mô hình khớp. Chưa nhập hay ghi đè dữ liệu.');
    }catch{message='Không kiểm chứng được: không đọc được JSON hợp lệ.';}
   }
   modelStatus.textContent=message;activeStatusMessage=message;

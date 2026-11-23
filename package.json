@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.401",
-  "description": "Positron P5.1.316: kiểm tra số trường trọng số AI khác bản sao",
+  "version": "4.23.402",
+  "description": "Positron P5.1.317: kiểm chứng JSON với mô hình AI sau khi khởi động lại",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -1416,3 +1416,25 @@ test('P316 AI backup reports per-model changed fields independent of JSON key or
  for(const key of ['qa316','positron-p51316-ai-delta-before-1920x1080-real.png','positron-p51316-ai-delta-after-1920x1080-real.png'])
   assert.ok(fs.readFileSync('scripts/positron-20-extension.cjs','utf8').includes(key),key);
 });
+
+test('P317 old AI JSON can be compared read-only against current local weights without current-session export',()=>{
+ const current={model:{version:1,observations:2,weights:{news:0.5}},
+  categoryModel:C.emptyCategoryModel(),bandit:{news:4}};
+ const previous=C.buildLearningBackup(current),before=JSON.stringify(current);
+ const same=C.verifyLearningBackupSnapshot(C.buildLearningBackup(current),previous);
+ assert.equal(same.ok,true);assert.equal(same.match,true);
+ const old=JSON.parse(JSON.stringify(previous));old.models.explore.news=3;
+ const changed=C.verifyLearningBackupSnapshot(C.buildLearningBackup(current),old);
+ assert.equal(changed.ok,true);assert.equal(changed.match,false);assert.equal(changed.matched,2);
+ assert.equal(changed.details.find(row=>row.id==='ucb').changedFields,1);
+ assert.equal(JSON.stringify(current),before);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ for(const part of ['verifyBackup.hidden=false','const currentReference=!lastBackupSnapshot',
+  'core.buildLearningBackup({model,categoryModel,bandit})',
+  'mô hình AI đang dùng trên máy','Chưa nhập hay ghi đè dữ liệu'])
+  assert.ok(ui.includes(part),part);
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const part of ['qa317','positron-p51317-ai-restart-before-1920x1080-real.png',
+  'positron-p51317-ai-restart-after-1920x1080-real.png'])
+  assert.ok(qa.includes(part),part);
+});

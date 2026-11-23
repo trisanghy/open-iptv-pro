@@ -1,3 +1,11 @@
+## P5.1.317 / Electron 4.23.402 — Đối chiếu bản sao AI cũ sau khi khởi động lại (CANDIDATE)
+- Feature priority: NEW — Có thể chọn bản sao JSON cũ để đối chiếu với Logistic, Naive Bayes và UCB đang lưu ở máy dù phiên làm việc này chưa xuất lại mô hình. Trước đây nút bị ẩn và xác minh trả lỗi nếu chưa xuất bản sao trong phiên.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Đối chiếu JSON với AI đang dùng; chọn tệp đã tải từ phiên trước. Ứng dụng so sánh tại máy, phân biệt nhãn "mô hình đang dùng" với "bản vừa xuất"; không nhập JSON hay thay dữ liệu.
+- Electron screenshot: positron-p51317-ai-restart-before-1920x1080-real.png / positron-p51317-ai-restart-after-1920x1080-real.png (chỉ có khi QA đã chạy).
+- Evidence: Node regression bảo toàn 3 mô hình và phép so sánh tệp cũ; QA317 tải lại renderer Electron thật, mở bảng quản lý, chọn file JSON cũ, chụp 1920×1080 và kiểm tra localStorage, playlist, current player, không tự khôi phục.
+- Giới hạn: Đối chiếu mô hình hiện tại không chứng nhận tệp tải xuống có chữ ký số; không kiểm live stream/GPU/Cast trên thiết bị thật.
+
 ## P5.1.316 / Electron 4.23.401 — Đếm trường dữ liệu học AI thay đổi (CANDIDATE)
 - Feature priority: NEW — Đếm số giá trị học khác nhau riêng từng mô hình Logistic, Naive Bayes, UCB, kể cả khi bộ đếm mẫu học không đổi; không tính lại thứ tự khóa JSON.
 - Feature class: AI
