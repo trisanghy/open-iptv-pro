@@ -1546,3 +1546,19 @@ test('P323 AI recommendation controls have 44px pointer and keyboard targets',()
   'positron-p51323-ai-targets-after-1920x1080-real.png',
   'positron-p51323-ai-targets-after-720x900-real.png'])assert.ok(qa.includes(x),x);
 });
+
+
+test('P337 AI recommendation counter follows native focusin, not just J/K shortcuts',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-337-audit.cjs','utf8');
+ assert.ok(ui.includes("d.addEventListener('focusin',event=>{"));
+ assert.ok(ui.includes("event.target?.closest?.('#poAICards .po-ai-card')"));
+ assert.ok(ui.includes("updateFocusProgress(play||null)"));
+ assert.ok(ui.includes("focusProgress.textContent!==next"));
+ assert.ok(qa.includes('secondary action retains parent-card position'));
+ assert.ok(qa.includes('outside a recommendation must clear stale counter'));
+ for(const name of ['positron-p51337-focus-sync-before-720x900-real.png',
+  'positron-p51337-focus-sync-after-720x900-real.png']){
+   assert.ok(qa.includes(name.replace('720x900','') )||qa.includes("'+size.width+'x'+size.height+"),'dynamic screenshot path');
+ }
+});

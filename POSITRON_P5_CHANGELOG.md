@@ -1,3 +1,13 @@
+## P5.1.337 / Electron 4.23.422 — AI đồng bộ vị trí gợi ý với Tab, chuột và remote (CANDIDATE)
+- Feature priority: NEW — bộ đếm “Gợi ý 2/3” của P336 chỉ cập nhật khi nhấn J/K; di chuyển focus thông thường sang thẻ khác khiến nhãn trong sticky header bị sai.
+- Feature class: AI
+- User action: Trong WatchFlow Intelligence, dùng Tab, chuột hoặc remote để chọn Xem / Hợp gu / Không hợp / Tra cứu web; số thứ tự luôn theo thẻ đang focus. Đi ra ngoài một thẻ sẽ ẩn nhãn cũ, quay về sẽ khôi phục nhãn chính xác.
+- Root cause: P336 gọi updateFocusProgress riêng trong hai phím tắt, chưa theo dõi DOM focusin. P337 đồng bộ focusin ở document, xác định thẻ cha và tránh lặp thông báo aria-live không đổi.
+- Electron screenshots: positron-p51337-focus-sync-before-1920x1080-real.png / positron-p51337-focus-sync-after-1920x1080-real.png / positron-p51337-focus-sync-before-720x900-real.png / positron-p51337-focus-sync-after-720x900-real.png.
+- Evidence: Bài audit P337 chặn tạm sự kiện focusin để tái hiện nhãn cũ trên cùng binary P337 trong BEFORE (không giả nhận binary P336), rồi bỏ chặn chụp AFTER trên Electron CDP thực, đo focus/counter/aria/overflow và xác nhận không đổi nguồn, current channel hoặc AI model.
+- Privacy: chỉ dùng DOM và focus trên máy, không kích hoạt phát video hoặc thay trọng số AI.
+- Status: CANDIDATE cho tới khi Node tests, native screenshot được mở soát và CI build đạt; GitHub Release công khai chỉ dành cho Stable.
+
 ## P5.1.336 / Electron 4.23.421 — AI thông báo vị trí gợi ý bằng chữ và screen reader; cuộn vào giữa khi chuyển (CANDIDATE)
 - Feature priority: NEW — Thông báo vị trí trong tập gợi ý AI (ví dụ Gợi ý 2/3) khi điều hướng bằng bàn phím, giúp người dùng biết đang xem mục nào và phát hiện điểm dừng rõ ràng trên remote/desktop.
 - Feature class: AI

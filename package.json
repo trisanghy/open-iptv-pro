@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.421",
-  "description": "Positron P5.1.336: AI thông báo vị trí gợi ý 2/3 khi chọn bằng phím; cuộn tới giữa vùng nhìn (NEW)",
+  "version": "4.23.422",
+  "description": "Positron P5.1.337: AI đồng bộ vị trí gợi ý theo Tab, chuột và remote (NEW)",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

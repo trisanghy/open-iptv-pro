@@ -242,9 +242,21 @@
    .filter(button=>!button.disabled&&button.getClientRects().length);
   const index=cards.indexOf(target);
   if(index<0){focusProgress.hidden=true;focusProgress.textContent='';return;}
-  focusProgress.hidden=false;
-  focusProgress.textContent='Gợi ý '+(index+1)+'/'+cards.length;
+  const next='Gợi ý '+(index+1)+'/'+cards.length;
+  // Avoid repeating an aria-live announcement when focus stays on this card.
+  if(focusProgress.hidden||focusProgress.textContent!==next){
+   focusProgress.hidden=false;focusProgress.textContent=next;
+  }
  };
+ // P337: keep the recommendation index synchronized with standard Tab, click,
+ // remote focus and the existing J/K shortcuts. A focused feedback / lookup
+ // action belongs to its parent card; focus elsewhere clears stale status.
+ d.addEventListener('focusin',event=>{
+  if(!aiOpen||panel.hidden)return;
+  const card=event.target?.closest?.('#poAICards .po-ai-card');
+  const play=card?.querySelector('.po-ai-actions button:first-child');
+  updateFocusProgress(play||null);
+ });
  modeBar.setAttribute('aria-describedby',modeHelp.id);
  const alertRow=d.createElement('label');alertRow.className='po-ai-alerts';
  const alertCheck=d.createElement('input');alertCheck.type='checkbox';alertCheck.id='poAIAlerts';
