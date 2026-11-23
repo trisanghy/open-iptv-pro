@@ -45,6 +45,7 @@ on:
       - 'tests/positron-watchflow.test.cjs'
       - 'scripts/positron-50-audit.cjs'
       - 'scripts/positron-20-extension.cjs'
+      - 'scripts/positron-*-audit.cjs'
       - 'POSITRON_P4_CHANGELOG.md'
       - 'POSITRON_P5_CHANGELOG.md'
       - '.github/workflows/positron-lab.yml'
