@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.331 — điều hướng 6 chế độ AI bằng mũi tên/Home/End không tự chọn chế độ hoặc phát kênh
+## P5.1.332 — khung WatchFlow AI dễ đọc khi chưa có nguồn, nút 44px và gợi ý phím điều hướng
 
-**Ứng dụng:** 4.23.416 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.417 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — bổ sung chế độ hiển thị WatchFlow Intelligence dễ đọc khi chưa có playlist trên desktop; trước đó bảng AI chỉ rộng khoảng 265px khiến sáu nút chế độ quấn chữ, khó chọn bằng remote. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ef6f85214fb893cb1a0cfb6362e52642fc625a83)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.331 — Electron 4.23.416 — Điều khiển sáu chế độ AI bằng remote/mũi tên (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — bổ sung điều hướng phím mũi tên lên, xuống, trái, phải, Home và End cho sáu chế độ WatchFlow Intelligence trên lưới hai hàng; không còn phải bấm Tab nhiều lần khi sử dụng remote/bàn phím. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b4f708e9d54f9c2a9068234d1efd636a5edf5d16)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.330 — Electron 4.23.415 — Phím tắt AI an toàn theo ngữ cảnh (CANDIDATE)
 
