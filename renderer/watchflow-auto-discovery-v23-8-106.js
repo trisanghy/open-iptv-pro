@@ -91,11 +91,25 @@
   }catch{return {};}
  }
  function saveChannelCache(storage,entries){
-  try{
-   // Keep only local channel/topic/programme metadata, not playback URLs or credentials.
-   storage?.setItem(CHANNEL_CACHE,JSON.stringify({version:CHANNEL_CACHE_VERSION,entries}));
-   return true;
-  }catch{return false;}
+  if(typeof storage?.setItem!=='function')return false;
+  // WebView localStorage can be quota-limited. Keep channel labels at all costs,
+  // shedding only past/extra programme cache when the EPG list is very large.
+  const limits=[[160,40],[80,20],[40,10],[16,5],[0,0]];
+  for(const [maxTopics,maxProgrammes] of limits){
+   const compact={};
+   for(const [id,entry] of Object.entries(entries)){
+    const snapshot=entry?.snapshot||{};
+    compact[id]={...entry,
+     programmeTopics:maxTopics?(entry.programmeTopics||[]).slice(-maxTopics):[],
+     snapshot:{...snapshot,programmes:maxProgrammes?
+      (snapshot.programmes||[]).slice(0,maxProgrammes):[]}};
+   }
+   try{
+    storage.setItem(CHANNEL_CACHE,JSON.stringify({version:CHANNEL_CACHE_VERSION,entries:compact}));
+    return true;
+   }catch{}
+  }
+  return false;
  }
  function channelSignature(channel){
   let hash=2166136261;
@@ -275,8 +289,9 @@
      }});
     if(token!==generation||result.cancelled)return;
     backgroundAnalysis.set(win,mergeSavedNative(win,enrich(result.analysis,list,win.localStorage,engine)));
-    saveChannelCache(win.localStorage,result.entries);
-    Object.assign(status,{running:false,processed:result.processed,total:result.total,
+    const persisted=saveChannelCache(win.localStorage,result.entries);
+    Object.assign(status,{running:false,error:persisted?'':'Không thể lưu phân loại: bộ nhớ ứng dụng đã đầy.',
+     processed:result.processed,total:result.total,
      newChannels:result.newChannels,newProgrammes:result.newProgrammes,updatedAt:Date.now()});
     notify({local:true,complete:true,manual:force,newChannels:result.newChannels,newProgrammes:result.newProgrammes,...status});
     if(result.newChannels>0)void runInternet();

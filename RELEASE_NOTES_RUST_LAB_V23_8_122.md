@@ -1,0 +1,8 @@
+# Rust Lab v23.8.122 — WatchFlow stable channel cache, incremental EPG and quota safeguards (PRE-RELEASE)
+
+- Carries the v23.8.121 changes: fix open topic/programme folders collapsing on AI updates; persistent channel classification without automatic re-inference on restart; Qwen3 cache keys independent of EPG; only new channel metadata triggers channel AI; fresh EPG titles/descriptions are classified incrementally; explicit manual **↻ Quét lại** action remains available.
+- Improves persistence for a large IPTV library (including 560+ channels): if EPG cache exceeds local storage quota, the cache writer progressively trims **optional** programme history, preserving channel identities and learned labels. If even channel-only storage cannot be saved, the UI displays a real error rather than claiming the result was stored.
+- Regression tests cover 560-channel storage quota fallback, persistent channel labels, Qwen3 native inference only once per channel, no Qwen rerun on EPG-only update, one new-channel inference, manual full Qwen scan, and previous EPG/folder tests.
+- Migration from v23.8.120: the first run builds the new local cache. Previously stored Qwen3 labels are migrated whenever the old EPG-dependent key can still be matched; afterwards Qwen3 is not re-invoked for unchanged channels.
+- Rust Lab only: `experiment/rust-tauri-v2`. The GitHub owner has configured experimental Windows and macOS binaries as **Actions Artifacts**, with GitHub Releases reserved for Stable. Never modify main, Latest, Positron, Electron or Tizen.
+- Windows x64 EXE / macOS Universal DMG must be verified as successfully built before linking to binaries.
