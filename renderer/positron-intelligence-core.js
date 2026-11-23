@@ -445,7 +445,7 @@
 
  // P295: read-only risk by channel group from local Naive Bayes predictions.
  // No stream URL, viewing history, EPG fetch or playlist changes.
- function previewCategoryGroupRisks(current,loaded,channelRows,{limit=5,maxChannels=1000,sortBy='count'}={}){
+ function previewCategoryGroupRisks(current,loaded,channelRows,{limit=5,maxChannels=1000,sortBy='count',minGroupSize=1}={}){
   const imported=loaded?.ok===true?loaded:parseLearningBackup(loaded);
   if(!imported?.ok)return {ok:false,reason:imported?.reason||'Không đọc được dữ liệu AI.'};
   const present=sanitizedCategoryModel(current?.categoryModel),future=sanitizedCategoryModel(imported.categoryModel);
@@ -474,8 +474,13 @@
   rows.sort((a,b)=>sortBy==='rate'
    ?b.lossRate-a.lossRate||b.lost-a.lost||b.relabeled-a.relabeled||a.label.localeCompare(b.label,'vi')
    :b.lost-a.lost||b.relabeled-a.relabeled||b.count-a.count||a.label.localeCompare(b.label,'vi'));
+  // P298: a one-channel group can show "100% risk" without enough observations.
+  // Explicitly filter small groups during comparison, never mutate user channels.
+  const minimum=Math.max(1,Math.min(100,Math.trunc(Number(minGroupSize))||1));
+  const eligible=rows.filter(row=>row.count>=minimum);
   return {ok:true,scanned:entries.length,totalGroups:rows.length,lostTotal,
-   sortBy:sortBy==='rate'?'rate':'count',groups:rows.slice(0,size),
+   eligibleGroups:eligible.length,excludedSmallGroups:rows.length-eligible.length,
+   minGroupSize:minimum,sortBy:sortBy==='rate'?'rate':'count',groups:eligible.slice(0,size),
    caution:'Rủi ro chỉ dự báo từ nhãn, tên và nhóm kênh trên máy; không phải thống kê chất lượng phát hoặc độ chính xác AI.'};
  }
 

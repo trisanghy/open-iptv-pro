@@ -956,3 +956,28 @@ test('P297 compares relative local Naive Bayes classification losses across grou
  for(const term of ['qa297','positron-p51297-group-rate-before-1920x1080-real.png',
  'positron-p51297-group-rate-after-1920x1080-real.png'])assert.ok(qa.includes(term));
 });
+
+test('P298 flags and filters small AI group samples without mutating model',()=>{
+ const film={id:'f',name:'Phim hành động',group:'Phim',url:'https://private.invalid/secret.m3u8'};
+ const sport={id:'s',name:'Bóng đá thể thao',group:'Thể thao',url:'https://private.invalid/secret.m3u8'};
+ let model=C.emptyCategoryModel();
+ for(let i=0;i<12;i++){model=C.teachCategory(model,film,'cinema');model=C.teachCategory(model,sport,'sport');}
+ const channels=[...Array.from({length:12},(_,i)=>({...film,id:'film'+i})),
+ ...Array.from({length:8},(_,i)=>({...sport,id:'sport'+i})),
+ ...Array.from({length:5},(_,i)=>({id:'news'+i,name:'Bản tin',group:'Tin tức'}))];
+ const json=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const oldChannels=JSON.stringify(channels),oldModel=JSON.stringify(model);
+ const full=C.previewCategoryGroupRisks({categoryModel:model},json,channels,{limit:5,sortBy:'rate'});
+ const filtered=C.previewCategoryGroupRisks({categoryModel:model},json,channels,{limit:5,sortBy:'rate',minGroupSize:6});
+ assert.equal(full.totalGroups,3);assert.equal(full.groups.length,3);
+ assert.equal(filtered.groups.length,2);assert.equal(filtered.excludedSmallGroups,1);
+ assert.equal(filtered.eligibleGroups,2);assert.equal(filtered.minGroupSize,6);
+ assert.ok(filtered.groups.every(g=>g.count>=6));
+ assert.equal(JSON.stringify(channels),oldChannels);assert.equal(JSON.stringify(model),oldModel);
+ assert.ok(!JSON.stringify(filtered).includes('https://'));
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8'),qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const x of ["riskSmall.id='poAICategorySampleFilter'","riskSmall.addEventListener('click'",
+ "minGroupSize:hideSmall?5:1"])assert.ok(ui.includes(x),x);
+ for(const x of ['qa298','positron-p51298-small-samples-before-1920x1080-real.png',
+ 'positron-p51298-small-samples-after-1920x1080-real.png'])assert.ok(qa.includes(x),x);
+});

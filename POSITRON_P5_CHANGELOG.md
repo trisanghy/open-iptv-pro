@@ -1,3 +1,12 @@
+## P5.1.298 — AI loại nhóm mẫu quá nhỏ khi so sánh rủi ro / Electron 4.23.383
+- Feature priority: NEW — Cho phép ẩn nhóm chỉ có dưới 5 kênh trong thống kê rủi ro phân loại Naive Bayes để tránh xem tỷ lệ 100% trên 1 kênh tương đương với 100% trên hàng trăm kênh, vẫn có thể hiện lại toàn bộ ngay bằng nút.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → Naive Bayes → Nhóm bị ảnh hưởng → bấm “Ẩn nhóm dưới 5 kênh”.
+- Electron screenshot: positron-p51298-small-samples-before-1920x1080-real.png / positron-p51298-small-samples-after-1920x1080-real.png.
+- Evidence: Phân tích Naive Bayes cục bộ trả số nhóm đủ mẫu và số nhóm bị lọc theo ngưỡng, bổ sung kiểm thử Node đối chiếu cả hai tập; Electron thật ghi ảnh trước/sau sau khi nhấn nút, đo số hàng, thông báo mẫu nhỏ, vị trí và xác nhận playlist/trọng số/luồng phát không đổi.
+- Privacy: Chỉ dùng tên nhóm và tên kênh trong bộ nhớ; không gửi stream URL, M3U, lịch sử xem, trọng số Naive Bayes hoặc dữ liệu EPG ra mạng; ngưỡng 5 chỉ nhằm tránh nhóm mẫu quá nhỏ chứ không chứng minh độ chính xác thống kê.
+- Status: CANDIDATE — chờ CI và mở ảnh Electron thật; không tạo Release thử nghiệm, chỉ lưu Actions Artifacts.
+
 ## P5.1.297 — AI so sánh tỷ lệ kênh mất dự đoán theo nhóm / Electron 4.23.382
 - Feature priority: NEW — AI tính tỷ lệ kênh có thể mất dự đoán đủ chắc chắn riêng trong từng nhóm và cho phép đổi thứ tự ưu tiên từ số lượng sang tỷ lệ; tránh xem nhóm đông luôn là nhóm chịu rủi ro tương đối lớn nhất.
 - Feature class: AI

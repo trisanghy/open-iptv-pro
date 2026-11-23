@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.382",
-  "description": "Positron P5.1.297: AI so sánh tỷ lệ rủi ro phân loại giữa các nhóm kênh",
+  "version": "4.23.383",
+  "description": "Positron P5.1.298: AI lọc nhóm kênh có mẫu nhỏ khi đánh giá rủi ro",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

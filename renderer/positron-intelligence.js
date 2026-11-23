@@ -822,13 +822,15 @@
      // Sorting is read-only and never applies/retrains the imported model.
      const riskSort=d.createElement('button');riskSort.type='button';
      riskSort.id='poAICategoryRiskSort';riskSort.className='po-ai-risk-sort';
+     const riskSmall=d.createElement('button');riskSmall.type='button';
+     riskSmall.id='poAICategorySampleFilter';riskSmall.className='po-ai-risk-sort';
+     const sampleNote=d.createElement('small');sampleNote.id='poAICategorySampleNote';
      const riskRows=d.createElement('div');riskRows.id='poAICategoryRiskRows';
-     riskDetails.append(riskSort,riskRows);
-     let rateMode=false;
+     riskDetails.append(riskSort,riskSmall,sampleNote,riskRows);
+     let rateMode=false,hideSmall=false;
      const renderRiskRows=()=>{
-      const ranked=rateMode
-       ?core.previewCategoryGroupRisks({categoryModel},parsed,channels(),{limit:5,maxChannels:1000,sortBy:'rate'})
-       :groupsRisk;
+      const ranked=core.previewCategoryGroupRisks({categoryModel},parsed,channels(),{
+       limit:5,maxChannels:1000,sortBy:rateMode?'rate':'count',minGroupSize:hideSmall?5:1});
       riskRows.replaceChildren();
       for(const group of ranked.groups){
        const line=d.createElement('p');line.className='po-ai-category-diff';
@@ -840,8 +842,14 @@
       riskSort.textContent=rateMode?'Đang ưu tiên tỷ lệ % · Xem theo số kênh':
        'Theo số kênh · Xem theo tỷ lệ %';
       riskSort.setAttribute('aria-pressed',String(rateMode));
+      riskSmall.setAttribute('aria-pressed',String(hideSmall));
+      riskSmall.textContent=hideSmall?'Đang ẩn nhóm <5 kênh · Hiện tất cả':'Ẩn nhóm dưới 5 kênh';
+      sampleNote.textContent=hideSmall
+       ?'Đã ẩn '+ranked.excludedSmallGroups+' nhóm có dưới 5 kênh trong thư viện kiểm tra. Nhóm nhỏ không đủ đại diện để so sánh tỷ lệ.'
+       :'Có thể ẩn nhóm dưới 5 kênh để tránh so sánh tỷ lệ 100% từ chỉ một vài kênh.';
      };
      riskSort.addEventListener('click',()=>{rateMode=!rateMode;renderRiskRows();});
+     riskSmall.addEventListener('click',()=>{hideSmall=!hideSmall;renderRiskRows();});
      renderRiskRows();
      const riskNote=d.createElement('small');riskNote.textContent=groupsRisk.caution;
      riskDetails.append(riskNote);details.append(riskDetails);
