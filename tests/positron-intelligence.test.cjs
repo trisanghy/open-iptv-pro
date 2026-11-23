@@ -1128,8 +1128,8 @@ test('P304 local Naive Bayes topic migration exposes confident label swaps witho
  assert.equal(same.changed,0);
  const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
  const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
- assert.ok(ui.includes('if(topicShiftPanel)importPreview.append(topicShiftPanel);'),
-  'P304 migration detail must stay outside the original P289 category detail to prevent viewport regression');
+ assert.ok(ui.includes('if(topicShiftPanel)importPreview.append(topicShiftPanel);\n    importPreview.append(details);'),
+  'P304 migration summary must precede the long P289 impact details');
  assert.ok(!ui.includes('details.append(shifts)'), 'do not nest two long restore previews');
  for(const marker of ["shifts.id='poAICategoryTopicShifts'","relabelAlert.id='poAICategoryShiftRisk'",
   "relabelAlert.setAttribute('role','alert')"])assert.ok(ui.includes(marker),marker);

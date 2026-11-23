@@ -937,8 +937,12 @@
      }
     }
     const note=d.createElement('small');note.textContent=categoryImpact.caution;
-    details.append(note);importPreview.append(details);
+    // Show the new P304 disclosure BEFORE the long existing P289 group details.
+    // This keeps the interactive summary reachable without forcing the user
+    // to scroll past hundreds of rows before checking topic migrations.
+    details.append(note);
     if(topicShiftPanel)importPreview.append(topicShiftPanel);
+    importPreview.append(details);
     if(topicShifts.ok&&topicShifts.significant){
      const relabelAlert=d.createElement('p');relabelAlert.id='poAICategoryShiftRisk';
      relabelAlert.className='po-ai-coverage-risk';

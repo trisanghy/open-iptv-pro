@@ -10805,6 +10805,18 @@ async function runTwenty(page){
   ids:JSON.stringify(window.IPTVState.getChannels().map(ch=>ch.id)),
   current:window.IPTVState.getCurrent()?.id||''
  }));
+ const preflight304=await page.evaluate(()=>{
+  const el=document.querySelector('#poAICategoryTopicShifts > summary'),
+   anc=el?(()=>{const items=[];for(let n=el;n&&items.length<12;n=n.parentElement)
+    items.push({name:n.tagName,id:n.id||'',hidden:!!n.hidden,
+     display:getComputedStyle(n).display,visibility:getComputedStyle(n).visibility,
+     open:n.tagName==='DETAILS'?n.open:null});return items;})():[];
+  const r=el?.getBoundingClientRect();
+  return {found:!!el,text:el?.textContent||'',rect:r?{x:r.x,y:r.y,width:r.width,height:r.height}:null,
+   ancestry:anc};
+ });
+ console.log('P304 topic shifts Electron preflight:',JSON.stringify(preflight304));
+ assert.equal(preflight304.found,true,'P304 topic migration disclosure must exist in rendered Electron UI');
  const shifts304=page.locator('#poAICategoryTopicShifts > summary');
  await shifts304.scrollIntoViewIfNeeded({timeout:8000});
  const before304=await page.screenshot({path:path.join(out,'positron-p51304-topic-shifts-before-1920x1080-real.png'),animations:'disabled'});
