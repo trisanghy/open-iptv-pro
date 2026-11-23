@@ -457,7 +457,7 @@ test('lock-screen next channel cannot pause Now Playing by suspending an already
  const sandbox={video,lockScreen};
  const harness=vm.runInNewContext('(function(){'+
   'let playGeneration=0,playAttemptSerial=0,failoverTimer=null,stallTimer=null,startupNoteTimer=null,ffmpegFallbackId="",hls=null,dash=null;'+
-  'const player=video;const window={streamleaf:null};const clearTimeout=()=>{};'+body+
+  'const player=video;const window={streamleaf:null};const clearTimeout=()=>{};const destroyMpegts=()=>{};'+body+
   ';return {run:suspendVideoForBackground,counts:()=>[playGeneration,playAttemptSerial]};})()',sandbox);
  harness.run(); // Initial explicit background-audio activation releases video once.
  assert.equal(video.pauseCalls,1);
