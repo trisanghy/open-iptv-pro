@@ -1854,12 +1854,11 @@ Bỏ đoạn hướng dẫn lặp ở trạng thái trống, vẫn giữ nguyên
 
 ## P5.1.63 — Hướng dẫn nhập nguồn rõ ràng trong WatchFlow trống
 
-**Ứng dụng:** 4.23.147 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.147 · **Trạng thái:** Chưa có bản phát hành
 
 Khi chưa có nguồn kênh, hiện cách thêm IPTV thay vì các bộ lọc thể loại không thể dùng.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/9d4bb04a21a502ead140bc9c167f4648a1b60520)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.147-p5.1.63)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.62 — Đồng bộ màu thanh phụ đề CC trong giao diện Horizon
 

@@ -2724,15 +2724,15 @@ Bỏ đoạn hướng dẫn lặp ở trạng thái trống, vẫn giữ nguyên
 </details>
 
 <details>
-<summary><strong>P5.1.63</strong> · Hướng dẫn nhập nguồn rõ ràng trong WatchFlow trống · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.63</strong> · Hướng dẫn nhập nguồn rõ ràng trong WatchFlow trống · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.147 · **Trạng thái:** ĐÃ PHÁT HÀNH
+**Ứng dụng:** 4.23.147 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Khi chưa có nguồn kênh, hiện cách thêm IPTV thay vì các bộ lọc thể loại không thể dùng.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.147-p5.1.63) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/9d4bb04a21a502ead140bc9c167f4648a1b60520) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/Open-IPTV-Pro-Setup-4.23.147-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/Positron-P5163-20-Real-Screenshots.zip)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 

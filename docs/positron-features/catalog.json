@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T00:15:04.126735+00:00",
+  "generatedAt": "2026-11-23T00:20:19.930704+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -14402,73 +14402,12 @@
       "title": "Hướng dẫn nhập nguồn rõ ràng trong WatchFlow trống",
       "description": "Khi chưa có nguồn kênh, hiện cách thêm IPTV thay vì các bộ lọc thể loại không thể dùng.",
       "kind": "fix",
-      "status": "release",
-      "published": "2026-11-21T10:51:06Z",
-      "tag": "positron/v4.23.147-p5.1.63",
-      "commit": "9d4bb04a21a502ead140bc9c167f4648a1b60520",
-      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.147-p5.1.63",
-      "assets": [
-        {
-          "name": "audit-p4-50-rounds.json",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/audit-p4-50-rounds.json"
-        },
-        {
-          "name": "audit-p5-20-rounds.json",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/audit-p5-20-rounds.json"
-        },
-        {
-          "name": "Open-IPTV-Pro-4.23.147-mac-arm64.dmg",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/Open-IPTV-Pro-4.23.147-mac-arm64.dmg"
-        },
-        {
-          "name": "Open-IPTV-Pro-4.23.147-mac-x64.dmg",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/Open-IPTV-Pro-4.23.147-mac-x64.dmg"
-        },
-        {
-          "name": "Open-IPTV-Pro-4.23.147-x64.exe",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/Open-IPTV-Pro-4.23.147-x64.exe"
-        },
-        {
-          "name": "Open-IPTV-Pro-Setup-4.23.147-x64.exe",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/Open-IPTV-Pro-Setup-4.23.147-x64.exe"
-        },
-        {
-          "name": "OpenIPTVPro-Positron-P5163-Source.zip",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/OpenIPTVPro-Positron-P5163-Source.zip"
-        },
-        {
-          "name": "positron-p4-final-main-real.png",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/positron-p4-final-main-real.png"
-        },
-        {
-          "name": "positron-p4-round-10-real.png",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/positron-p4-round-10-real.png"
-        },
-        {
-          "name": "positron-p4-round-20-real.png",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/positron-p4-round-20-real.png"
-        },
-        {
-          "name": "positron-p4-round-30-real.png",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/positron-p4-round-30-real.png"
-        },
-        {
-          "name": "positron-p4-round-40-real.png",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/positron-p4-round-40-real.png"
-        },
-        {
-          "name": "Positron-P5163-20-Real-Screenshots.zip",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/Positron-P5163-20-Real-Screenshots.zip"
-        },
-        {
-          "name": "Positron-P5163-50-Real-Screenshots.zip",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/Positron-P5163-50-Real-Screenshots.zip"
-        },
-        {
-          "name": "SHA256SUMS.txt",
-          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.147-p5.1.63/SHA256SUMS.txt"
-        }
-      ],
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
+      "assets": [],
       "image": null
     },
     {
