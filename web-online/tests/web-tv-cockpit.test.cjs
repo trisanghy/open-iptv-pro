@@ -44,5 +44,5 @@ test('pairing expands TV screen without a second visible controller, responsive 
  assert.match(css,/position:absolute;top:/);
  assert.match(css,/#iptvCastPanel \.cx-pair-hero \.cx-close\{/);
  assert.match(index,/web-tv-cockpit\.css\?v=cast-close-and-disconnect-20261122c/);
- assert.match(index,/web-cast-v2\.js\?v=cast-close-and-disconnect-20261122c/);
+ assert.match(index,/web-cast-v2\.js\?v=mobile-cast-three-tabs-20261123a/);
 });
