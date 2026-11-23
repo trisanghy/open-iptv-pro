@@ -54,7 +54,12 @@ function setup(storage=new Map()){
   save:()=>true,notify(){},draw(){}
  };
  const api=vm.runInNewContext(source+'\n({play,playbackReady,notePlaybackProgress,playbackWatchdog,finishPlaybackError,handleHtml5Error,savedPlaybackRoute,current:()=>({engine:playbackEngine,mode:html5Mode,serial:playbackSerial,recoveries:playbackRecoveries,stable:playbackStableAt,playing})});',env);
- return {api,env,video,player,elements,events,timers,requests,instances,storage,
+ return {api,env,get video(){return elements.video;},player,elements,events,timers,requests,instances,storage,
+  enableMediaReplacement(){
+   const parent={replaceChild(next,old){old.parentNode=null;elements.video=next;}};
+   video.parentNode=parent;
+   video.cloneNode=()=>({...video,parentNode:parent,paused:true,readyState:0,src:'',error:null});
+  },
   advance(ms){clock+=ms;},clock:()=>clock,classes:classNames};
 }
 async function proveRelay(s){
@@ -130,7 +135,7 @@ test('Known-good relay retries twice before falling back to a different decoder'
 test('Picker autoplay and preview do not change source URLs or leak credentials to diagnostics',()=>{
  assert.match(html,/pickerPlayTimer=setTimeout\(commitPickerPlay,200\)/);
  assert.match(html,/if\(playbackConfirmed\)\{\s*if\(recoverStalledPlayback/);
- assert.match(html,/video\)\.ontimeupdate|byId\('video'\)\.ontimeupdate/);
+ assert.match(html,/video\.ontimeupdate=function/);
  assert.match(html,/playbackProgressSeconds>=5\.5/);
  assert.match(html,/function savedPlaybackRoute\(channel\)/);
 });
@@ -211,4 +216,88 @@ test('Relay session setup failure switches routes without leaving the TV loading
  await flush();
  assert.equal(s.api.current().mode,'native');
  assert.match(s.elements.playbackDiag.textContent,/HTTP 400/);
+});
+
+test('An old HTML5 rejection cannot interrupt A → B → A or reveal an old frame',async()=>{
+ const s=setup();s.enableMediaReplacement();
+ let rejectOld;const playVideo=s.video.play;
+ s.video.play=function(){return new Promise((_,reject)=>{rejectOld=reject;});};
+ s.api.play(c);
+ const first=s.video,oldPlaying=first.onplaying;
+ first.play=playVideo;
+ first.paused=false;first.readyState=4;oldPlaying();
+ const oldReveal=s.timers.find(t=>t.ms===220);
+ s.api.play({id:'other',name:'Other',url:'https://same.example/b.mp4'});
+ s.api.play(c);
+ const newVideo=s.video;
+ newVideo.paused=false;newVideo.readyState=4;
+ assert.notEqual(newVideo,first);
+ assert.equal(oldReveal.cancelled,true);
+ oldPlaying();oldReveal.fn();rejectOld(Error('The previous source failed'));
+ await flush();
+ assert.equal(s.api.current().mode,'native');
+ assert.equal(s.classes.has('is-tuning-video'),true);
+ assert.equal(s.classes.has('is-playing'),false);
+ newVideo.onplaying();
+ s.timers.find(t=>t.ms===220&&!t.cancelled).fn();
+ assert.equal(s.classes.has('is-tuning-video'),false);
+ assert.equal(s.classes.has('is-playing'),true);
+});
+
+test('Reopening a channel prioritizes its verified backup, and a removed backup is ignored',()=>{
+ const s=setup();
+ const channel={...c,url:'https://cdn.example/main.mp4',backupUrls:['https://cdn.example/backup.mp4']};
+ s.api.play(channel);
+ s.api.finishPlaybackError(s.api.current().serial,'main failed');
+ s.timers.find(t=>t.ms===2400&&!t.cancelled).fn();
+ const backup=channel.backupUrls[0],token=s.api.current().serial;
+ assert.equal(s.video.src,backup);
+ s.api.playbackReady(token);s.api.notePlaybackProgress(token,0);
+ s.advance(1700);s.api.notePlaybackProgress(token,1.6);
+ const fresh=setup(s.storage);
+ fresh.api.play(channel);
+ assert.equal(fresh.video.src,backup);
+ fresh.api.finishPlaybackError(fresh.api.current().serial,'backup failed');
+ fresh.timers.find(t=>t.ms===2400&&!t.cancelled).fn();
+ assert.equal(fresh.video.src,channel.url);
+ fresh.api.play({...channel,backupUrls:[]});
+ assert.equal(fresh.video.src,channel.url);
+});
+
+test('Advancing decoded frames verify a route when the Tizen media clock is frozen',()=>{
+ const s=setup();s.api.play(c);
+ const token=s.api.current().serial;
+ s.api.playbackReady(token);
+ for(const frames of [2,35,70]){
+  s.video.webkitDecodedFrameCount=frames;
+  s.advance(1500);s.api.playbackWatchdog(token);
+ }
+ assert.equal(s.api.savedPlaybackRoute(c),'native');
+});
+
+test('When frame callbacks exist the first frame stays covered and the next frame reveals video',()=>{
+ const s=setup(),callbacks=new Map();let nextId=0;
+ s.video.videoWidth=1920;
+ s.video.requestVideoFrameCallback=fn=>{callbacks.set(++nextId,fn);return nextId;};
+ s.video.cancelVideoFrameCallback=id=>callbacks.delete(id);
+ s.api.play(c);s.video.onplaying();
+ callbacks.get(1)();
+ assert.equal(s.classes.has('is-tuning-video'),true);
+ callbacks.get(2)();
+ assert.equal(s.classes.has('is-tuning-video'),false);
+ assert.equal(s.classes.has('is-playing'),true);
+ assert.equal(s.timers.find(t=>t.ms===450).cancelled,true);
+});
+
+test('A relay session waiting to retry stops requesting the previous channel after a switch',async()=>{
+ const storage=new Map();await proveRelay(setup(storage));
+ const s=setup(storage);const requests=[];
+ s.env.fetch=address=>{requests.push(address);return Promise.reject(Error('relay starting'));};
+ s.api.play(c);await flush();
+ const retry=s.timers.find(t=>t.ms===650&&!t.cancelled);
+ assert.ok(retry);
+ s.api.play({id:'other',name:'Other',url:'https://different.example/b.mp4'});
+ retry.fn();await flush();
+ assert.equal(requests.length,1);
+ assert.equal(s.api.current().playing.id,'other');
 });

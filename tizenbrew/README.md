@@ -1,4 +1,10 @@
-# Open IPTV Pro TV · TizenBrew v0.1.43 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.44 (OTA)
+
+## v0.1.44 — Mở lại kênh nhanh và giảm chớp hình
+
+- Ghi nhớ bộ phát và nguồn đã chạy theo từng kênh. Nếu kênh phát được bằng URL dự phòng đã gắn sẵn, lần mở tiếp theo ưu tiên URL đó bằng một phiên phát mới.
+- Tách lượt phát cũ khi đổi kênh hoặc đổi bộ giải mã. Màn hình chuyển tiếp che các khung hình lúc khởi tạo và tự bỏ khi hình mới đã sẵn sàng.
+- Giữ bộ đệm khi HLS gặp gián đoạn ngắn. Khi bộ phát đã lưu không mở được, ứng dụng thử lại các bộ phát và nguồn dự phòng của đúng kênh.
 
 ## v0.1.43 — Ổn định phát HLS sau khi kênh đã lên hình
 

@@ -267,6 +267,7 @@ body[data-theme=light] #app .primary{color:#fff}
 #player.is-playing .playerfoot,#player.is-playing .playerhead{opacity:0}
 .playerstatus[hidden]{display:none!important}
 #video:focus-visible{outline:none}
+#player.is-tuning-video::after{content:'';position:absolute;inset:0;background:#000;z-index:1;pointer-events:none}
 #avplayObject{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 #castPlayerFrame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;pointer-events:none}
 #castPlayerFrame[hidden]{display:none!important}
@@ -506,7 +507,7 @@ body #player .playerdiag{
 <div id="app">
 <header class="top">
   <div class="brand"><div class="brandicon" aria-hidden="true"><svg class="brand-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="15" rx="3"/><path d="M8 22h8M12 19v3m-2-13 5 3-5 3z"/></svg></div>
-    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.43</p></div>
+    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.44</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
@@ -1371,7 +1372,8 @@ function updateBottomActions(){byId('exitModuleBtn').title='Thoát về TizenBre
 /* Samsung playback engines: AVPlay is preferred for IPTV. HTML5 and HLS.js
  * are fallbacks, not the only engine. Never send playlist URLs to a proxy. */
 var playbackSerial=0,playbackEngine='',avplayInstance=null,hlsInstance=null,playbackTimer=0,hlsLibraryPromise=null;
-var html5Mode='',hlsAttempted=false,playbackEvidence=[],playbackFailed=false;
+var html5Video=null,videoRevealTimer=0,videoFrameCallback=null;
+var html5Mode='',hlsAttempted=false,nativeAttempted=false,playbackEvidence=[],playbackFailed=false;
 var playbackConfirmed=false,playbackGraceTimer=0,playbackStreamUrls=[],playbackStreamIndex=0,playbackStream=null,nativeReplayUsed=false;
 var hlsRelayAttempted=false,hlsRelayUrl='',hlsRelayServer='http://127.0.0.1:17870';
 // RAM-only hints: never persist or expose source URLs or playlist credentials.
@@ -1393,12 +1395,26 @@ function playbackRouteFingerprint(address){
  return (h>>>0).toString(36)+'-'+text.length.toString(36);
 }
 function currentPlaybackRoute(){return playbackEngine==='avplay'?'avplay':html5Mode==='hls-relay'?'relay':html5Mode==='hlsjs'?'hlsjs':'native';}
-function savedPlaybackRoute(channel){
- var key=playbackRouteFingerprint(channel&&channel.url),p=routeProfiles[key];
- if(!p||['relay','hlsjs','native','avplay'].indexOf(p.route)<0)return '';
+function usablePlaybackProfile(p){
+ if(!p||['relay','hlsjs','native','avplay'].indexOf(p.route)<0)return false;
  var now=Date.now();
- if(!p.at||now-p.at>10*24*3600*1000||p.blockedUntil&&now<p.blockedUntil)return '';
- return p.route;
+ return !!p.at&&now-p.at<=10*24*3600*1000&&!(p.blockedUntil&&now<p.blockedUntil);
+}
+function playbackProfileKey(channel){
+ return 'channel:'+playbackRouteFingerprint(String(channel.id||'')+'\n'+String(channel.url||''));
+}
+function savedPlaybackRoute(channel){
+ var source=playbackRouteFingerprint(channel&&channel.url);
+ var profile=channel&&routeProfiles[playbackProfileKey(playing&&playing.id===channel.id?playing:channel)];
+ if(!profile||profile.source!==source)profile=routeProfiles[source];
+ return usablePlaybackProfile(profile)?profile.route:'';
+}
+function preferVerifiedSource(channel,urls){
+ var profile=routeProfiles[playbackProfileKey(channel)];
+ if(!usablePlaybackProfile(profile))return urls;
+ var index=urls.findIndex(function(address){return playbackRouteFingerprint(address)===profile.source;});
+ if(index>0)urls.unshift(urls.splice(index,1)[0]);
+ return urls;
 }
 function savePlaybackProfiles(){
  try{
@@ -1411,17 +1427,22 @@ function savePlaybackProfiles(){
 function markVerifiedPlaybackRoute(){
  var source=playbackStream&&playbackStream.url;if(!source||!playbackEngine)return;
  var key=playbackRouteFingerprint(source),route=currentPlaybackRoute();
- routeProfiles[key]={route:route,at:Date.now(),blockedUntil:0};
+ var profile={source:key,route:route,at:Date.now(),blockedUntil:0};
+ if(playing)routeProfiles[playbackProfileKey(playing)]=profile;
+ // Existing installations may have a verified profile keyed by URL only.
+ delete routeProfiles[key];
  savePlaybackProfiles();
  learnPlaybackRoute();
 }
 function markPlaybackRouteBad(route){
  var source=playbackStream&&playbackStream.url;if(!source)return;
- var key=playbackRouteFingerprint(source),profile=routeProfiles[key];
- if(profile&&profile.route===route){
-  profile.blockedUntil=Date.now()+45*1000;
-  savePlaybackProfiles();
- }
+ var key=playbackRouteFingerprint(source),changed=false;
+ [routeProfiles[key],playing&&routeProfiles[playbackProfileKey(playing)]].forEach(function(profile){
+  if(profile&&(!profile.source||profile.source===key)&&profile.route===route){
+   profile.blockedUntil=Date.now()+45*1000;changed=true;
+  }
+ });
+ if(changed)savePlaybackProfiles();
  if(route==='relay'){
   delete provenRelayUrls[source];
   var host=playbackSafeHost(source),hint=host&&provenRelayHosts[host];
@@ -1431,6 +1452,7 @@ function markPlaybackRouteBad(route){
 }
 var playbackWatchdogTimer=0,playbackLastProgressAt=0,playbackLastMediaTime=null;
 var playbackProgressSeconds=0,playbackStableAt=0,playbackRecoveryAttempts={},playbackRecoveries=0;
+var playbackStartedAt=0,playbackFrameProgress=0,playbackRouteVerified=false;
 var playbackClockReliable=false,playbackWaitingSince=0,playbackLastDecodedFrames=null;
 var playbackHlsSoftRecoveries=0,playbackHlsRecoveryTimer=0;
 function clearPlaybackWatchdog(){
@@ -1439,9 +1461,16 @@ function clearPlaybackWatchdog(){
 function resetPlaybackProgress(){
  clearPlaybackWatchdog();playbackLastProgressAt=0;playbackLastMediaTime=null;
  playbackProgressSeconds=0;playbackStableAt=0;playbackClockReliable=false;
+ playbackStartedAt=0;playbackFrameProgress=0;playbackRouteVerified=false;
  playbackWaitingSince=0;playbackLastDecodedFrames=null;
  if(playbackHlsRecoveryTimer)clearTimeout(playbackHlsRecoveryTimer);
  playbackHlsSoftRecoveries=0;playbackHlsRecoveryTimer=0;
+}
+function verifyPlaybackProgress(now){
+ if(!playbackRouteVerified&&now-playbackStartedAt>=1500&&
+    (playbackProgressSeconds>=1.25||playbackFrameProgress>=2)){
+  playbackRouteVerified=true;markVerifiedPlaybackRoute();
+ }
 }
 function notePlaybackProgress(token,mediaTime){
  if(!playbackActive(token)||!playbackConfirmed||!isFinite(mediaTime)||mediaTime<0)return;
@@ -1453,10 +1482,8 @@ function notePlaybackProgress(token,mediaTime){
   playbackClockReliable=true;
   playbackProgressSeconds+=moved>0?Math.min(moved,2):0.5;
   playbackLastMediaTime=time;playbackLastProgressAt=now;playbackWaitingSince=0;
-  if(playbackProgressSeconds>=5.5&&!playbackStableAt){
-   playbackStableAt=now;
-   markVerifiedPlaybackRoute();
-  }
+  verifyPlaybackProgress(now);
+  if(playbackProgressSeconds>=5.5&&!playbackStableAt)playbackStableAt=now;
   // Do not reset failure counts after just 5.5s: intermittent 403 streams
   // would otherwise restart the same failed player forever.
   if(playbackStableAt&&now-playbackStableAt>=60000&&playbackRecoveries){
@@ -1523,6 +1550,7 @@ function playbackWatchdog(token){
   if(frames!==null){
    if(playbackLastDecodedFrames!==null&&frames>playbackLastDecodedFrames){
     playbackLastProgressAt=now;playbackWaitingSince=0;playbackClockReliable=true;
+    if(!v.paused){playbackFrameProgress++;verifyPlaybackProgress(now);}
    }
    playbackLastDecodedFrames=frames;
   }
@@ -1551,6 +1579,7 @@ function playbackWatchdog(token){
 }
 function startPlaybackWatchdog(token){
  resetPlaybackProgress();playbackLastProgressAt=Date.now();
+ playbackStartedAt=playbackLastProgressAt;
  playbackWatchdogTimer=setTimeout(function(){playbackWatchdog(token);},1500);
 }
 function launchPlaybackRoute(channel,token,route){
@@ -1558,7 +1587,6 @@ function launchPlaybackRoute(channel,token,route){
  if(route==='avplay')return startAvplay(channel,token);
  if(route==='native'){startHtml5Playback(channel,token);return true;}
  playbackEngine='html5';html5Mode='native';
- byId('video').hidden=false;byId('avplayObject').hidden=true;
  if(route==='relay'){
   fastRelayActive=true;
   var started=startRelayHlsPlayback(channel,token);
@@ -1591,7 +1619,7 @@ function recoverStalledPlayback(token,reason){
  logPlayback('Khôi phục luồng '+(playbackRecoveries)+' · '+String(reason||'').slice(0,85));
  playbackSerial++;var nextToken=playbackSerial,channel=playbackStream||playing;
  stopPlaybackEngine();
- playbackConfirmed=false;playbackFailed=false;hlsAttempted=false;
+ playbackConfirmed=false;playbackFailed=false;hlsAttempted=false;nativeAttempted=false;
  hlsRelayAttempted=false;fastRelayActive=false;fastRelayRecovered=false;nativeReplayUsed=false;
  byId('player').classList.remove('is-playing');
  setPlayerStatus('Đang khôi phục hình ảnh bằng '+next+'…');
@@ -1710,7 +1738,6 @@ function startPlaybackStream(channel,token){
  var hint=!nativeAvplay()&&relayFastStartHint(channel);
  if(hint){
   playbackEngine='html5';html5Mode='native';
-  byId('video').hidden=false;byId('avplayObject').hidden=true;
   fastRelayActive=true;
   logPlayback('Mở nhanh qua HLS TV nội bộ ('+hint+')');
   if(startRelayHlsPlayback(channel,token))return;
@@ -1729,7 +1756,7 @@ function tryNextChannelSource(token){
  var nextToken=playbackSerial,original=playing,urlValue=playbackStreamUrls[playbackStreamIndex];
  stopPlaybackEngine();
  if(!original||byId('player').hidden)return false;
- playbackFailed=false;playbackConfirmed=false;hlsAttempted=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
+ playbackFailed=false;playbackConfirmed=false;hlsAttempted=false;nativeAttempted=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
  playbackRecoveryAttempts={};playbackRecoveries=0;
  playbackEvidence=[];
  byId('playbackDiag').hidden=true;byId('playbackDiag').textContent='';
@@ -1814,6 +1841,11 @@ function finishPlaybackError(token,message){
  }
  if(playbackRecoveries>0&&recoverStalledPlayback(token,message))return;
  if(recoverFastRelay(token,message))return;
+ if(!nativeAttempted&&playbackEngine==='html5'&&html5Mode!=='native'){
+  markPlaybackRouteBad(currentPlaybackRoute());
+  startHtml5Playback(playbackStream||playing,token);
+  return;
+ }
  playbackFailed=true;
  var video=byId('video');
  var code=video&&video.error&&video.error.code||0;
@@ -1825,6 +1857,7 @@ function finishPlaybackError(token,message){
  playbackGraceTimer=setTimeout(function(){
   playbackGraceTimer=0;
   if(!playbackActive(token)||playbackConfirmed)return;
+  if(playbackEngine==='html5'||playbackEngine==='avplay')markPlaybackRouteBad(currentPlaybackRoute());
   // Do not auto-open the experimental hosted HTTPS iframe. It is not
   // the 6-digit paired Cast receiver and is known to repeat manifestLoadError.
   if(tryNextChannelSource(token))return;
@@ -1847,25 +1880,101 @@ function stopPlaybackEngine(){
   }
  }
  hostedCastSession='';hostedCastSent=false;hostedCastPlaying=false;
- if(hlsInstance){try{hlsInstance.destroy();}catch(e){}hlsInstance=null;}
+ resetHtml5Video();
  html5Mode='';
  if(avplayInstance){
   var av=avplayInstance;avplayInstance=null;
   try{var st=av.getState&&av.getState();if(st&&st!=='NONE'&&st!=='IDLE')av.stop();}catch(e){}
   try{av.close();}catch(e){}
  }
- var video=byId('video');
+ byId('player').classList.remove('is-tuning-video');
+ byId('avplayObject').hidden=true;
+}
+function isActiveHtml5Video(video,token){
+ return playbackActive(token)&&playbackEngine==='html5'&&html5Video===video;
+}
+function cancelVideoReveal(video){
+ if(videoRevealTimer)clearTimeout(videoRevealTimer);
+ videoRevealTimer=0;
+ if(videoFrameCallback!==null&&typeof video.cancelVideoFrameCallback==='function')
+  video.cancelVideoFrameCallback(videoFrameCallback);
+ videoFrameCallback=null;
+}
+function resetHtml5Video(){
+ var video=html5Video,engine=hlsInstance;
+ // Invalidate callbacks before detaching the old MediaSource or pausing.
+ html5Video=null;hlsInstance=null;
+ if(video){
+  cancelVideoReveal(video);
+  video.onplaying=video.ontimeupdate=video.onpause=video.onwaiting=video.onerror=null;
+ }
+ if(engine){try{engine.destroy();}catch(e){}}
+ if(!video)return;
  try{video.pause();video.removeAttribute('src');video.load();}catch(e){}
- video.hidden=false;byId('avplayObject').hidden=true;
+ // A different media element cannot deliver queued events from the old URL.
+ if(video.parentNode){
+  if(document.activeElement===video)byId('player').focus();
+  video.parentNode.replaceChild(video.cloneNode(false),video);
+ }
+}
+function revealHtml5Video(video,token){
+ if(playbackConfirmed){playbackReady(token);return;}
+ if(videoRevealTimer)return;
+ function reveal(){
+  if(!isActiveHtml5Video(video,token))return;
+  cancelVideoReveal(video);
+  if(!video.paused&&!video.seeking&&video.readyState>=2)playbackReady(token);
+ }
+ // Older Samsung WebViews have no frame callback. Give their decoder a
+ // short settling window, also covering audio-only streams on newer TVs.
+ var canObserveFrames=typeof video.requestVideoFrameCallback==='function'&&video.videoWidth>0;
+ videoRevealTimer=setTimeout(reveal,canObserveFrames?450:220);
+ if(canObserveFrames){
+  videoFrameCallback=video.requestVideoFrameCallback(function(){
+   if(!isActiveHtml5Video(video,token))return;
+   videoFrameCallback=video.requestVideoFrameCallback(reveal);
+  });
+ }
+}
+function prepareHtml5Video(token){
+ byId('player').classList.add('is-tuning-video');
+ resetHtml5Video();
+ var video=byId('video');
+ html5Video=video;video.hidden=false;
+ byId('avplayObject').hidden=true;
+ video.onplaying=function(){
+  if(!isActiveHtml5Video(video,token)||video.paused||video.readyState<2)return;
+  playbackWaitingSince=0;revealHtml5Video(video,token);
+ };
+ video.ontimeupdate=function(){
+  if(!isActiveHtml5Video(video,token)||video.paused||video.readyState<2)return;
+  revealHtml5Video(video,token);notePlaybackProgress(token,Number(video.currentTime));
+ };
+ video.onpause=function(){
+  if(!isActiveHtml5Video(video,token)||!video.paused)return;
+  if(!playbackConfirmed)cancelVideoReveal(video);
+ };
+ video.onwaiting=function(){
+  if(!isActiveHtml5Video(video,token))return;
+  if(!playbackConfirmed)cancelVideoReveal(video);
+  if(!playbackWaitingSince)playbackWaitingSince=Date.now();
+ };
+ video.onerror=function(){
+  if(isActiveHtml5Video(video,token)&&video.error)
+   handleHtml5Error(token,'HTML5 không giải mã được nguồn (codec/HTTPS).');
+ };
+ return video;
 }
 function playbackReady(token){
  if(!playbackActive(token))return;
+ if(playbackConfirmed&&!playbackFailed&&byId('player').classList.contains('is-playing')&&byId('playerStatus').hidden)return;
  var browserButton=byId('browserFallback');
  if(document.activeElement===browserButton&&byId('player').focus)byId('player').focus();
  browserButton.hidden=true;
  var firstFrame=!playbackConfirmed;
  playbackConfirmed=true;playbackFailed=false;
  clearPlaybackTimer();clearPlaybackGrace();
+ byId('player').classList.remove('is-tuning-video');
  byId('player').classList.add('is-playing');setPlayerStatus('');
  byId('playbackDiag').hidden=true;
  if(firstFrame)startPlaybackWatchdog(token);
@@ -1886,18 +1995,21 @@ function playbackFailure(token,message){
 function fallbackFromAvplay(channel,token,message){
  if(!playbackActive(token)||playbackEngine!=='avplay')return;
  logPlayback('AVPlay: '+String(message||'lỗi luồng').slice(0,90));
+ if(playbackConfirmed){finishPlaybackError(token,message);return;}
+ markPlaybackRouteBad('avplay');
  stopPlaybackEngine();
  if(!playbackActive(token))return;
  setPlayerStatus('AVPlay không mở được ('+String(message||'lỗi luồng').slice(0,85)+'). Đang thử bộ phát dự phòng…');
  startHtml5Playback(channel,token);
 }
 function nativeHtml5Play(video,token){
- if(!playbackActive(token)||playbackEngine!=='html5')return;
+ if(!isActiveHtml5Video(video,token))return;
  try{
   var result=video.play();
   if(result&&typeof result.catch==='function')result.catch(function(err){
-   if(!playbackActive(token)||playbackEngine!=='html5')return;
+   if(!isActiveHtml5Video(video,token))return;
    var name=String(err&&err.name||'');
+   if(name==='AbortError')return; // Pause and source changes can cancel play().
    if(name==='NotAllowedError')setPlayerStatus('Nhấn OK để bắt đầu phát kênh.');
    else handleHtml5Error(token,'HTML5: '+String(err&&err.message||name||'không hỗ trợ').slice(0,100));
   });
@@ -1932,16 +2044,14 @@ function loadHlsLibrary(){
 function retryNativeHls(channel,token){
  if(!playbackActive(token)||nativeReplayUsed||playbackEngine!=='html5')return false;
  nativeReplayUsed=true;
- var video=byId('video');
- if(hlsInstance){try{hlsInstance.destroy();}catch(e){}hlsInstance=null;}
+ nativeAttempted=true;
  html5Mode='native';
  clearPlaybackTimer();
+ var video=prepareHtml5Video(token);
  logPlayback('Đang thử lại HLS trực tiếp của TV');
  setPlayerStatus('Đang thử bộ phát HLS gốc của Samsung lần cuối…');
  try{
-  video.pause();video.removeAttribute('src');video.load();
   video.src=channel.url;
-  if(typeof video.load==='function')video.load();
   playbackTimer=setTimeout(function(){
    if(playbackActive(token)&&!playbackConfirmed)finishPlaybackError(token,'HLS gốc quá thời gian chờ.');
   },14000);
@@ -1982,7 +2092,8 @@ function ensureTizenHlsRelayService(){
   ws.onerror=function(){clearTimeout(timeout);};
  }catch(e){}
 }
-function requestLocalHlsSession(channel,attempt){
+function requestLocalHlsSession(channel,attempt,active){
+ if(active&&!active())return Promise.reject(Error('Lượt phát đã kết thúc.'));
  return fetch(hlsRelayServer+'/session',{
   method:'POST',mode:'cors',cache:'no-store',
   headers:{'Content-Type':'application/json','X-Open-IPTV-Relay':'1'},
@@ -1993,7 +2104,7 @@ function requestLocalHlsSession(channel,attempt){
  }).catch(function(error){
   if(error&&error.permanent||attempt>=7)throw error;
   return new Promise(function(resolve){setTimeout(resolve,650);})
-   .then(function(){return requestLocalHlsSession(channel,attempt+1);});
+   .then(function(){return requestLocalHlsSession(channel,attempt+1,active);});
  });
 }
 function diagText(value,max){
@@ -2033,62 +2144,57 @@ function startRelayHlsPlayback(channel,token){
  // fallback is gated by an actual HLS.js manifest error, not URL suffix.
  hlsRelayAttempted=true;
  html5Mode='hls-relay';
- if(hlsInstance){try{hlsInstance.destroy();}catch(e){}hlsInstance=null;}
- var video=byId('video');
- try{video.pause();video.removeAttribute('src');video.load();}catch(e){}
  clearPlaybackTimer();
+ var video=prepareHtml5Video(token);
+ var expired=false;
+ function active(){return !expired&&isActiveHtml5Video(video,token)&&html5Mode==='hls-relay';}
  setPlayerStatus('Đang thử bộ phát HLS ngay trong TizenBrew bằng dịch vụ TV nội bộ…');
  logPlayback('Đang kết nối bộ chuyển tiếp HLS trên TV (127.0.0.1)');
  ensureTizenHlsRelayService();
- var expired=false,limit=0;
- limit=setTimeout(function(){
+ playbackTimer=setTimeout(function(){
+  if(!active())return;
   expired=true;
-  if(playbackActive(token)&&html5Mode==='hls-relay'){
-   logPlayback('Dịch vụ HLS TV chưa sẵn sàng');
-   finishPlaybackError(token,'Bộ phát HLS nội bộ chưa khởi động. Đóng và mở lại TizenBrew một lần.');
-  }
+  logPlayback('Dịch vụ HLS TV chưa sẵn sàng');
+  finishPlaybackError(token,'Bộ phát HLS nội bộ chưa khởi động. Đóng và mở lại TizenBrew một lần.');
  },fastRelayActive?7500:15000);
- requestLocalHlsSession(channel,0).then(function(result){
-  if(expired)return;clearTimeout(limit);
-  if(!playbackActive(token)||playbackEngine!=='html5'||html5Mode!=='hls-relay')return;
+ Promise.all([requestLocalHlsSession(channel,0,active),loadHlsLibrary()]).then(function(data){
+  if(!active())return;
+  clearPlaybackTimer();
+  var result=data[0],Hls=data[1];
   var local=String(result&&result.url||'');
   if(!/^http:\/\/127\.0\.0\.1:17870\/r\/[0-9a-f]{40}\/0$/.test(local))throw Error('Dịch vụ HLS trả đường dẫn không hợp lệ');
   hlsRelayUrl=local;
-  return loadHlsLibrary().then(function(Hls){
-   if(!playbackActive(token)||playbackEngine!=='html5'||html5Mode!=='hls-relay')return;
-   if(!Hls||!Hls.isSupported||!Hls.isSupported())throw Error('TV thiếu MediaSource cho HLS.js');
-   var engine=new Hls({
-    enableWorker:false,lowLatencyMode:false,maxBufferLength:15,
-    xhrSetup:function(xhr){
-     // A non-simple request header also prevents foreign browser pages
-     // from using the TV-local service without its CORS preflight.
-     try{xhr.setRequestHeader('X-Open-IPTV-Relay','1');}catch(e){}
-    }
-   });
-   hlsInstance=engine;
-   engine.on(Hls.Events.MANIFEST_PARSED,function(){
-    if(playbackActive(token)&&html5Mode==='hls-relay')nativeHtml5Play(video,token);
-   });
-   engine.on(Hls.Events.ERROR,function(_evt,data){
-    if(!playbackActive(token)||engine!==hlsInstance||html5Mode!=='hls-relay'||!data||!data.fatal)return;
-    var cause=describeHlsError(data);
-    if(tryRecoverHlsInPlace(engine,data,token))return;
-    logPlayback('HLS TV nội bộ: '+cause);
-    loadRelayDiagnostics(token);
-    if(playbackConfirmed&&recoverStalledPlayback(token,'HLS nội bộ: '+cause))return;
-    finishPlaybackError(token,'HLS nội bộ: '+cause);
-   });
-   engine.attachMedia(video);
-   engine.loadSource(local);
-   playbackTimer=setTimeout(function(){
-    if(playbackActive(token)&&html5Mode==='hls-relay'&&!playbackConfirmed)
-     finishPlaybackError(token,'Bộ phát HLS nội bộ quá thời gian chờ.');
-   },fastRelayActive?14000:30000);
+  if(!Hls||!Hls.isSupported||!Hls.isSupported())throw Error('TV thiếu MediaSource cho HLS.js');
+  var engine=new Hls({
+   enableWorker:false,lowLatencyMode:false,maxBufferLength:15,
+   xhrSetup:function(xhr){
+    // A non-simple request header also prevents foreign browser pages
+    // from using the TV-local service without its CORS preflight.
+    try{xhr.setRequestHeader('X-Open-IPTV-Relay','1');}catch(e){}
+   }
   });
+  hlsInstance=engine;
+  engine.on(Hls.Events.MANIFEST_PARSED,function(){
+   if(active()&&engine===hlsInstance)nativeHtml5Play(video,token);
+  });
+  engine.on(Hls.Events.ERROR,function(_evt,data){
+   if(!active()||engine!==hlsInstance||!data||!data.fatal)return;
+   var cause=describeHlsError(data);
+   if(tryRecoverHlsInPlace(engine,data,token))return;
+   logPlayback('HLS TV nội bộ: '+cause);
+   loadRelayDiagnostics(token);
+   if(playbackConfirmed&&recoverStalledPlayback(token,'HLS nội bộ: '+cause))return;
+   finishPlaybackError(token,'HLS nội bộ: '+cause);
+  });
+  engine.attachMedia(video);
+  engine.loadSource(local);
+  playbackTimer=setTimeout(function(){
+   if(active()&&!playbackConfirmed)
+    finishPlaybackError(token,'Bộ phát HLS nội bộ quá thời gian chờ.');
+  },fastRelayActive?14000:30000);
  }).catch(function(error){
-  if(expired)return;
-  clearTimeout(limit);
-  if(!playbackActive(token)||html5Mode!=='hls-relay')return;
+  if(!active())return;
+  clearPlaybackTimer();
   var reason=String(error&&error.message||error||'không khả dụng').slice(0,100);
   logPlayback('HLS nội bộ: '+reason);
   finishPlaybackError(token,'Bộ chuyển tiếp HLS trên TV chưa khả dụng. Thoát mở lại TizenBrew; '+reason);
@@ -2100,10 +2206,16 @@ function startHlsPlayback(channel,token,why){
  hlsAttempted=true;html5Mode='hlsjs';
  logPlayback('Đang thử HLS.js'+(why?' sau lỗi HTML5':''));
  setPlayerStatus('Đang thử HLS.js cho kênh này…');
- var video=byId('video');
- try{video.pause();video.removeAttribute('src');video.load();}catch(e){}
+ clearPlaybackTimer();
+ var video=prepareHtml5Video(token);
+ function active(){return isActiveHtml5Video(video,token)&&html5Mode==='hlsjs';}
+ playbackTimer=setTimeout(function(){
+  if(!active()||playbackConfirmed)return;
+  if(startRelayHlsPlayback(channel,token))return;
+  finishPlaybackError(token,'HLS.js quá thời gian chờ.');
+ },14000);
  loadHlsLibrary().then(function(Hls){
-  if(!playbackActive(token)||playbackEngine!=='html5'||html5Mode!=='hlsjs')return;
+  if(!active())return;
   var supported=false;
   try{supported=!!Hls&&!!Hls.isSupported&&Hls.isSupported();}catch(e){}
   if(!supported){
@@ -2112,15 +2224,16 @@ function startHlsPlayback(channel,token,why){
    return;
   }
   try{
-   hlsInstance=new Hls({enableWorker:false,lowLatencyMode:false,maxBufferLength:15});
-   hlsInstance.on(Hls.Events.MANIFEST_PARSED,function(){
-    if(playbackActive(token)&&html5Mode==='hlsjs')nativeHtml5Play(video,token);
+   var engine=new Hls({enableWorker:false,lowLatencyMode:false,maxBufferLength:15});
+   hlsInstance=engine;
+   engine.on(Hls.Events.MANIFEST_PARSED,function(){
+    if(active()&&engine===hlsInstance)nativeHtml5Play(video,token);
    });
-   hlsInstance.on(Hls.Events.ERROR,function(event,data){
-    if(!playbackActive(token)||html5Mode!=='hlsjs'||!data||!data.fatal)return;
+   engine.on(Hls.Events.ERROR,function(event,data){
+    if(!active()||engine!==hlsInstance||!data||!data.fatal)return;
     var cause=describeHlsError(data);
     logPlayback('HLS.js '+cause);
-    if(tryRecoverHlsInPlace(hlsInstance,data,token))return;
+    if(tryRecoverHlsInPlace(engine,data,token))return;
     var videoElement=byId('video');
     if(playbackConfirmed){
      if(recoverStalledPlayback(token,'HLS.js: '+cause))return;
@@ -2128,6 +2241,7 @@ function startHlsPlayback(channel,token,why){
     // A 403 can be a genuine access denial; manifestLoadError with code 0
     // can also mean CORS. Retry exactly the selected URL on the TV's local
     // Node service, never silently choose another same-name channel.
+    if(!playbackConfirmed)markPlaybackRouteBad('hlsjs');
     if(/manifestLoadError|manifestLoadTimeout|levelLoadError|levelLoadTimeout/i.test(String(data.details||''))&&
        startRelayHlsPlayback(channel,token))return;
     if(/manifestLoadError|manifestLoadTimeout/i.test(String(data.details||''))&&!nativeReplayUsed){
@@ -2137,14 +2251,14 @@ function startHlsPlayback(channel,token,why){
     }
     finishPlaybackError(token,'HLS.js '+cause);
    });
-   hlsInstance.attachMedia(video);
-   hlsInstance.loadSource(channel.url);
+   engine.attachMedia(video);
+   engine.loadSource(channel.url);
   }catch(e){
    logPlayback('HLS.js '+String(e&&e.message||e).slice(0,85));
    finishPlaybackError(token,'Không khởi động được HLS.js.');
   }
  }).catch(function(e){
-  if(!playbackActive(token)||html5Mode!=='hlsjs')return;
+  if(!active())return;
   logPlayback('Không tải được HLS.js: '+String(e&&e.message||e).slice(0,75));
   finishPlaybackError(token,'Bộ phát HLS.js không tải được.');
  });
@@ -2154,6 +2268,7 @@ function handleHtml5Error(token,reason){
  if(!playbackActive(token)||playbackFailed||playbackEngine!=='html5')return;
  if(playbackConfirmed&&recoverStalledPlayback(token,reason))return;
  if(html5Mode==='native'&&!hlsAttempted&&!dashAddress(playbackStream&&playbackStream.url)){
+  if(!playbackConfirmed)markPlaybackRouteBad('native');
   logPlayback(String(reason||'HTML5 không hỗ trợ').slice(0,100));
   if(startHlsPlayback(playbackStream||playing,token,true))return;
  }
@@ -2161,13 +2276,14 @@ function handleHtml5Error(token,reason){
 }
 function startHtml5Playback(channel,token){
  if(!playbackActive(token))return;
- playbackEngine='html5';html5Mode='native';
- var video=byId('video');video.hidden=false;byId('avplayObject').hidden=true;
+ playbackEngine='html5';html5Mode='native';nativeAttempted=true;
+ clearPlaybackTimer();
+ var video=prepareHtml5Video(token);
  // Fetch HLS.js during native probing to avoid another network wait on failure.
  if(hlsAddress(channel.url)&&!window.Hls)loadHlsLibrary().catch(function(){});
  setPlayerStatus('Đang thử HTML5'+(hlsAddress(channel.url)?'/HLS.js':'')+'…');
  playbackTimer=setTimeout(function(){
-  if(playbackActive(token)&&playbackEngine==='html5'&&video.paused)
+  if(isActiveHtml5Video(video,token)&&!playbackConfirmed)
    handleHtml5Error(token,'HTML5 quá thời gian chờ.');
  },22000);
  var nativeHls=false;
@@ -2193,8 +2309,8 @@ function startAvplay(channel,token){
   api.setDisplayRect(0,0,1920,1080);
   try{api.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');}catch(e){}
   api.setListener({
-   onbufferingstart:function(){if(playbackActive(token)&&playbackEngine==='avplay')setPlayerStatus('AVPlay đang đệm luồng…');},
-   onbufferingcomplete:function(){if(playbackActive(token)&&playbackEngine==='avplay')setPlayerStatus('AVPlay đã đệm, đang phát hình…');},
+   onbufferingstart:function(){if(playbackActive(token)&&playbackEngine==='avplay'&&!playbackConfirmed)setPlayerStatus('AVPlay đang đệm luồng…');},
+   onbufferingcomplete:function(){if(playbackActive(token)&&playbackEngine==='avplay'&&!playbackConfirmed)setPlayerStatus('AVPlay đã đệm, đang phát hình…');},
    oncurrentplaytime:function(ms){
     if(playbackActive(token)&&playbackEngine==='avplay'){
      playbackReady(token);notePlaybackProgress(token,Number(ms)/1000);
@@ -2221,16 +2337,17 @@ function play(c){
  if(typeof stopHomePreview==='function')stopHomePreview();
  byId('browserFallback').hidden=true;
  playbackSerial++;var token=playbackSerial;stopPlaybackEngine();playing=c;
- hlsAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
+ hlsAttempted=false;nativeAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
  playbackRecoveryAttempts={};playbackRecoveries=0;
- playbackStreamUrls=playbackCandidates(c);playbackStreamIndex=0;
+ playbackStreamUrls=preferVerifiedSource(c,playbackCandidates(c));playbackStreamIndex=0;
  byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
  logPlayback('AVPlay: '+(nativeAvplay()?'có API':'không có API'));
- state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();
  byId('player').hidden=false;byId('player').classList.remove('is-playing');
  updateBottomActions();byId('playingName').textContent=c.name;
  setPlayerStatus('Đang mở '+c.name+'…');
- startPlaybackStream(c,token);
+ var address=playbackStreamUrls[0];
+ startPlaybackStream(address&&address!==c.url?Object.assign({},c,{url:address}):c,token);
+ state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();
 }
 function togglePlayback(){
  if(!playing)return;
@@ -2249,7 +2366,9 @@ function togglePlayback(){
   return;
  }
  if(playbackEngine==='html5'){
-  var video=byId('video');if(video.paused)nativeHtml5Play(video,playbackSerial);else video.pause();
+  var video=byId('video');
+  if(video.paused)nativeHtml5Play(video,playbackSerial);
+  else{video.pause();byId('player').classList.remove('is-playing');}
   return;
  }
  play(playing);
@@ -2623,26 +2742,6 @@ byId('more').onclick=function(){
  focusHomeButton(byId('channels').children[firstNew]);
 };byId('sampleBtn').onclick=function(){if(!state.sources.some(function(s){return s.name==='Thử nghiệm';})){state.sources.push({name:'Thử nghiệm',channels:parse('#EXTM3U\n#EXTINF:-1,Mux Test HLS\nhttps://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8','Thử nghiệm')});if(!save()){state.sources.pop();draw();return;}}draw();notify('Đã thêm luồng thử nghiệm HLS.');};
 byId('previewLogo').onerror=function(){this.hidden=true;byId('previewText').hidden=false;};
-byId('video').onplaying=function(){
- if(playbackEngine==='html5'&&!this.paused&&this.readyState>=2){
-  playbackWaitingSince=0;playbackReady(playbackSerial);
- }
-};
-byId('video').ontimeupdate=function(){
- if(playbackEngine==='html5'&&!this.paused&&this.readyState>=2){
-  playbackReady(playbackSerial);notePlaybackProgress(playbackSerial,Number(this.currentTime));
- }
-};
-byId('video').onpause=function(){if(playbackEngine==='html5')byId('player').classList.remove('is-playing');};
-byId('video').onwaiting=function(){
- if(playbackEngine==='html5'){
-  if(!playbackWaitingSince)playbackWaitingSince=Date.now();
-  byId('player').classList.remove('is-playing');
- }
-};
-byId('video').onerror=function(){
- if(playbackEngine==='html5')handleHtml5Error(playbackSerial,'HTML5 không giải mã được nguồn (codec/HTTPS).');
-};
 var backDownHandled=false,backDownReset=0;
 window.addEventListener('keydown',function(e){
  if(isRemoteBack(e)){

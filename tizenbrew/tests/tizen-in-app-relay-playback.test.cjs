@@ -9,6 +9,7 @@ const local='http://127.0.0.1:17870/r/'+'a'.repeat(40)+'/0';
 function harness({relayAvailable=true}={}){
  const requests=[],instances=[],events=[],notes=[],timers=[],calls={play:0};
  const status={hidden:true,textContent:''},diag={hidden:true,textContent:''};
+ let clock=1000000;
  const player={hidden:true,classList:{add(){},remove(){}}};
  const video={paused:true,readyState:0,hidden:false,src:'',error:null,
   canPlayType:()=>'',load(){},pause(){this.paused=true;},
@@ -33,7 +34,7 @@ function harness({relayAvailable=true}={}){
  Hls.Events={MANIFEST_PARSED:'manifest',ERROR:'error'};
  const state={recent:[],favorites:{},sources:[]};
  const env={
-  state,window:{Hls,addEventListener(){}},URL,
+  state,window:{Hls,addEventListener(){}},URL,Date:{now:()=>clock},
   byId:id=>elements[id],
   document:{head:{appendChild(){}},createElement(){return{}}},
   save:()=>true,draw:()=>{},notify:x=>notes.push(x),
@@ -46,13 +47,14 @@ function harness({relayAvailable=true}={}){
   }
  };
  const api=vm.runInNewContext(code+'\n({play,playbackReady,notePlaybackProgress,handleHtml5Error,current:()=>({playbackEngine,html5Mode,playing,playbackConfirmed,hlsRelayAttempted,hlsRelayUrl,playbackSerial})});',env);
- return {api,instances,requests,elements,notes,video,env,timers,calls,state};
+ return {api,instances,requests,elements,notes,video,env,timers,calls,state,advance(ms){clock+=ms;}};
 }
 async function flush(){await new Promise(resolve=>setImmediate(resolve));}
 function proveRoute(s){
  const token=s.api.current().playbackSerial;
  s.api.playbackReady(token);
- for(const sec of [0,2,4,6,8])s.api.notePlaybackProgress(token,sec);
+ s.api.notePlaybackProgress(token,0);
+ s.advance(2000);s.api.notePlaybackProgress(token,2);
 }
 test('Click channel tries native HLS first, then HLS.js and TV-local relay on failure',async()=>{
  const s=harness(),selected={id:'vtv2',name:'VTV2',url:'https://cdn.example.org/live/vtv2.m3u8?token=private'};

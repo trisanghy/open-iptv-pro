@@ -69,22 +69,31 @@ test('TizenTube does not open plain YouTube if the module is not installed',()=>
  assert.equal(msgs.length,1);assert.deepEqual(nav,[]);assert.match(notifications[0],/Chưa tìm thấy TizenTube/);
 });
 test('Player clears status on real playback and does not keep old autoplay warning',()=>{
- const code=block("byId('video').onplaying=function()", "window.addEventListener('keydown',");
+ const code=block('function isActiveHtml5Video(', 'function playbackFailure(');
  const status={textContent:'Không tự phát được',hidden:false};
- const cls={present:false,add(x){if(x==='is-playing')this.present=true;},remove(x){if(x==='is-playing')this.present=false;}};
+ const classes=new Set();
+ const cls={add:x=>classes.add(x),remove:x=>classes.delete(x),contains:x=>classes.has(x)};
  const video={paused:false,readyState:4};
- const byId=id=>({video,player:{classList:cls},playerStatus:status})[id];
+ const elements={video,player:{classList:cls},playerStatus:status,playbackDiag:{},browserFallback:{},avplayObject:{}};
+ const byId=id=>elements[id];
  const setPlayerStatus=msg=>{status.textContent=msg||'';status.hidden=!msg;};
- vm.runInNewContext(code,{byId,setPlayerStatus,playbackEngine:'html5',playbackSerial:7,notePlaybackProgress(){},playbackReady:()=>{cls.add('is-playing');setPlayerStatus('');}});
- video.onplaying();assert.equal(status.hidden,true);assert.equal(cls.present,true);
+ const timers=[];
+ vm.runInNewContext(code+'\nprepareHtml5Video(7);',{byId,setPlayerStatus,playbackEngine:'html5',
+  playbackActive:token=>token===7,playbackConfirmed:false,playbackFailed:false,playbackWaitingSince:0,videoRevealTimer:0,
+  videoFrameCallback:null,html5Video:null,hlsInstance:null,document:{},clearPlaybackTimer(){},
+  clearPlaybackGrace(){},startPlaybackWatchdog(){},notePlaybackProgress(){},clearTimeout(){},
+  setTimeout(fn){timers.push(fn);return timers.length;}});
+ video.onplaying();assert.equal(status.hidden,false);assert.equal(cls.contains('is-tuning-video'),true);
+ timers.shift()();assert.equal(status.hidden,true);assert.equal(cls.contains('is-playing'),true);
  status.textContent='Lỗi cũ';status.hidden=false;video.ontimeupdate();
  assert.equal(status.hidden,true);
- video.onpause();assert.equal(cls.present,false);
+ video.onwaiting();assert.equal(cls.contains('is-playing'),true);
+ video.paused=true;video.onpause();assert.equal(cls.contains('is-playing'),true);
 });
 test('Main script remains syntactically valid and playback events are wired',()=>{
  const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)];
  scripts.forEach(s=>assert.doesNotThrow(()=>new vm.Script(s[1])));
- assert.match(html,/onplaying=function\(\)\{\s*if\(playbackEngine==='html5'&&!this.paused&&this.readyState>=2\)/);
+ assert.match(html,/video\.onplaying=function\(\)\{\s*if\(!isActiveHtml5Video\(video,token\)/);
  assert.match(html,/ontimeupdate=function\(\)/);
  assert.match(html,/function startAvplay\(channel,token\)/);assert.match(html,/api\.prepareAsync\(/);assert.match(html,/fallbackFromAvplay\(/);
 });
