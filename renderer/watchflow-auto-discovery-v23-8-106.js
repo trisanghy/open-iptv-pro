@@ -224,7 +224,7 @@
   return channels.length+':'+(hash>>>0);
  }
  const nativeOverrides=new WeakMap();
- function setNativeTopics(win,channel,values,{silent=false}={}){
+ function setNativeTopics(win,channel,values,{silent=false,source='Qwen3 offline'}={}){
   const id=String(channel?.id||'');if(!id)return false;
   const labels=topicCatalog?.distinct(values)||[];
   if(!labels.length)return false;
@@ -242,7 +242,7 @@
   const merged=topicCatalog?.mergeLabels(prior.labels||[prior.label],store.get(id))||store.get(id);
   const label=prior.label&&prior.label!=='Chưa phân loại'?prior.label:topicCatalog?.primary(merged)||merged[0];
   backgroundAnalysis.set(win,new Map(base).set(id,{...prior,label,labels:merged,
-   from:prior.label&&prior.label!=='Chưa phân loại'?prior.from||'Tên/nhóm':'Qwen3 offline'}));
+   from:prior.label&&prior.label!=='Chưa phân loại'?prior.from||'Tên/nhóm':source}));
   if(!silent)win?.document?.dispatchEvent?.(new win.CustomEvent('openiptv:watchflow-auto-update',
    {detail:{native:true,complete:true,channel:id}}));
   return true;
@@ -256,6 +256,24 @@
    map.set(id,{...prior,labels,label:prior.label==='Chưa phân loại'?(topicCatalog?.primary(labels)||labels[0]):prior.label});
   }
   return map;
+ }
+ function setSmartProgrammeLabels(win,channelId,programmeKey,newLabels,{silent=true}={}){
+  const existing=backgroundAnalysis.get(win)||new Map();
+  const id=String(channelId),record=existing.get(id);
+  if(!record?.programmes?.length||!programmeKey)return false;
+  const labels=topicCatalog?.distinct(newLabels)||[];
+  if(!labels.length)return false;
+  let found=false;
+  const programmes=record.programmes.map(p=>{
+   if(p.key!==programmeKey)return p;
+   found=true;
+   return {...p,labels:topicCatalog?.mergeLabels(p.labels,labels)||[...new Set([...(p.labels||[]),...labels])],
+    from:'Smart ONNX offline'};
+  });
+  if(!found)return false;
+  backgroundAnalysis.set(win,new Map(existing).set(id,{...record,programmes}));
+  if(!silent)win.document.dispatchEvent(new win.CustomEvent('openiptv:watchflow-auto-update',{detail:{smart:true,complete:true}}));
+  return true;
  }
  const statusByWindow=new WeakMap();
  function start(win,engine){
@@ -376,5 +394,5 @@
   // Internet checks no longer poll constantly: startup, new channels or a manual scan only.
   return true;
  }
- return Object.freeze({setNativeTopics,CHANNEL_CACHE,readChannelCache,saveChannelCache,loadPersistentCache,persistChannelCache,channelSignature,cachedSnapshot,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,scanLocal,fingerprint,start});
+ return Object.freeze({setNativeTopics,setSmartProgrammeLabels,CHANNEL_CACHE,readChannelCache,saveChannelCache,loadPersistentCache,persistChannelCache,channelSignature,cachedSnapshot,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,scanLocal,fingerprint,start});
 });

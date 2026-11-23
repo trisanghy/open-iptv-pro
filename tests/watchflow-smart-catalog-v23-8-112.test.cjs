@@ -12,14 +12,15 @@ test('Standard includes real under-20MB Bayes; 18MB fastText is not installed',(
 });
 test('Smart has five described candidates and strict under-200MiB activation policy',()=>{
  assert.equal(catalog.MAX_SMART_MB,200);
- assert.deepEqual(catalog.SMART.map(m=>m.id),['tinybert-4l-int8','mobilebert-int8','multilingual-e5-small-int8','multilingual-minilm-int8','phobert-base-int8']);
+ assert.deepEqual(catalog.SMART.map(m=>m.id),['multilingual-e5-small-int8','multilingual-minilm-int8','tinybert-4l-int8','mobilebert-int8','phobert-base-int8']);
  for(const m of catalog.SMART){assert.ok(m.advantage.length>=40);assert.ok(m.note);assert.match(m.size,/MB/);assert.equal(catalog.canActivate(m.id,false,160*1024*1024,true),false);}
- assert.equal(catalog.canActivate('tinybert-4l-int8',true,199*1024*1024,true),true);
- assert.equal(catalog.canActivate('tinybert-4l-int8',true,200*1024*1024,true),false);
+ assert.equal(catalog.canActivate('multilingual-e5-small-int8',true,199*1024*1024,true),true);
+ assert.equal(catalog.canActivate('tinybert-4l-int8',true,30*1024*1024,true),false,'Unverified models cannot claim activation');
+ assert.equal(catalog.canActivate('multilingual-e5-small-int8',true,200*1024*1024,true),false);
  assert.equal(catalog.canActivate('invalid',true,30*1024*1024,true),false);
 });
 test('User can save Smart preference, not activate an unverified model',()=>{
- const s=storage();assert.equal(catalog.read(s),'tinybert-4l-int8');
+ const s=storage();assert.equal(catalog.read(s),'multilingual-e5-small-int8');
  assert.equal(catalog.save(s,'multilingual-e5-small-int8'),true);
  assert.equal(catalog.read(s),'multilingual-e5-small-int8');
  assert.equal(catalog.save(s,'invalid'),false);
@@ -32,5 +33,6 @@ test('Smart UI is wired before preview; Intelligence installer remains separate'
  assert.match(ui,/modelArea\.hidden=mode!=='intelligence'/);
  assert.match(ui,/chưa kích hoạt mô hình Smart/);
  assert.match(ui,/native\.aiInstallModel\(key\)/);
- assert.doesNotMatch(ui,/installSmartModel|downloadSmartModel/);
+ assert.match(ui,/await smartRuntime.install\(root,id,update\)/);
+ assert.match(ui,/await smartRuntime.remove\(root,id\)/);
 });

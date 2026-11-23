@@ -40,7 +40,8 @@
   '<div class="wf-local-banner"><div class="wf-scan-row"><span id="wfLocalScanStatus" role="status" aria-live="polite">Đang khôi phục kết quả kênh đã lưu…</span><button id="wfScanAgain" type="button" aria-label="Quét lại toàn bộ kênh và chương trình EPG">↻ Quét lại</button></div><progress id="wfLocalScanProgress" max="100" value="0" aria-label="Tiến độ phân loại"></progress></div>'+
   '<details id="wfSettings" class="wf-settings"><summary>⚙ Mô hình AI & dung lượng <small>Chọn · Tải · Xóa</small></summary><div class="wf-settings-body">'+
   '<h3>Chế độ AI</h3><div class="wf-modes" role="radiogroup" aria-label="Chế độ AI"><button type="button" data-wf-mode="standard" role="radio"><b>Tiêu chuẩn</b><small>Dưới 20 MB · Naive Bayes đang chạy</small></button><button type="button" data-wf-mode="smart" role="radio"><b>Thông minh</b><small>Dưới 200 MB · tự chọn mô hình</small></button><button type="button" data-wf-mode="intelligence" role="radio"><b>Intelligence</b><small>Qwen3 · mô hình đã cài</small></button></div><p id="wfModeHint" class="wf-hint"></p>'+
-  '<div id="wfSmartModels" class="wf-model-picker" hidden><label for="wfSmartModelSelect">Mô hình Smart dưới 200 MB</label><div class="wf-model-row"><select id="wfSmartModelSelect" aria-label="Chọn mô hình Smart"></select></div><p id="wfSmartModelBenefit" class="wf-model-benefit"></p><small id="wfSmartModelStatus" role="status"></small><details class="wf-smart-details"><summary>Xem ưu điểm từng mô hình</summary><div id="wfSmartModelList" class="wf-smart-list"></div></details></div>'+
+  '<div id="wfStandardModels" class="wf-model-picker"><strong>Bộ mô hình Tiêu chuẩn dưới 20 MB</strong><div class="wf-standard-list"><div><b>✓ Naive Bayes (đang dùng)</b><small>Đã tích hợp trong ứng dụng · không cần tải trọng số · hoạt động offline</small></div><button id="wfStandardInstalled" type="button" disabled>✓ Đã có sẵn</button></div><div class="wf-standard-list"><div><b>fastText Quantized ~18 MB</b><small>Chưa có trọng số tiếng Việt được xác minh; không thể tải bản chưa hoạt động.</small></div><button type="button" disabled>Chưa khả dụng</button></div></div>'+
+  '<div id="wfSmartModels" class="wf-model-picker" hidden><label for="wfSmartModelSelect">Mô hình Smart dưới 200 MB</label><div class="wf-model-row"><select id="wfSmartModelSelect" aria-label="Chọn mô hình Smart"></select><button id="wfSmartInstall" type="button" disabled>↓ Tải mô hình</button><button id="wfSmartRemove" type="button" hidden> Xóa mô hình</button></div><small id="wfSmartProgress" role="status">Chọn một mô hình Smart có trọng số đã xác minh.</small><p id="wfSmartModelBenefit" class="wf-model-benefit"></p><small id="wfSmartModelStatus" role="status"></small><details class="wf-smart-details"><summary>Xem ưu điểm từng mô hình</summary><div id="wfSmartModelList" class="wf-smart-list"></div></details></div>'+
   '<div id="wfIntelligenceModels" class="wf-model-picker" hidden><label for="wfModelSelect">Chọn mô hình AI để tải / sử dụng</label><div class="wf-model-row"><select id="wfModelSelect" aria-label="Chọn mô hình AI đã có hoặc tải mới"><option value="auto">Tự chọn Qwen3 đã cài</option></select><button id="wfModelInstall" type="button" disabled>↓ Tải mô hình đã chọn</button></div><small id="wfModelStatus" role="status">Đang kiểm tra mô hình cục bộ…</small><small>Hy-MT2 chuyên dịch; Qwen3 dùng để phân loại trong Intelligence.</small></div>'+
   '<section class="wf-storage"><div class="wf-storage-head"><strong>Quản lý dung lượng AI</strong><b id="wfStorageTotal">Đang kiểm tra…</b></div><div id="wfStorageList" class="wf-storage-list"></div><small id="wfStorageStatus" role="status">Chỉ hiển thị dữ liệu AI thực tế đã lưu trên máy.</small></section>'+
   '<details class="wf-privacy"><summary>Tùy chọn nâng cao</summary><div class="wf-auto-banner"><label><input type="checkbox" id="wfAutoEnabled"/> Tra cứu thêm tên kênh công khai trên Internet</label><span id="wfAutoStatus" role="status"></span><small>Tra cứu Wikidata theo tên kênh, không gửi URL phát hay M3U.</small></div><div id="wfPrivacyControls"></div></details>'+
@@ -56,9 +57,11 @@
   const smartSelect=$('wfSmartModelSelect'),smartList=$('wfSmartModelList');
   if(modelCatalog&&smartSelect){
    for(const item of modelCatalog.SMART){
-    const option=el('option','',item.label+' · '+item.size);option.value=item.id;smartSelect.append(option);
+    const option=el('option','',(item.downloadable?'↓ ':'• ')+item.label+' · '+item.size);
+    option.value=item.id;smartSelect.append(option);
     const card=el('article','wf-smart-card');card.dataset.modelId=item.id;
-    card.append(el('strong','',item.label+' · '+item.size),el('p','',item.advantage),el('small','',item.note));smartList.append(card);
+    card.append(el('strong','',(item.downloadable?'Có thể tải: ':'Chưa khả dụng: ')+item.label+' · '+item.size),
+     el('p','',item.advantage),el('small','',item.note));smartList.append(card);
    }
    smartSelect.value=smartChoice;
    smartSelect.addEventListener('change',()=>{
@@ -105,12 +108,16 @@
    for(const x of panel.querySelectorAll('[data-wf-mode]')){const active=x.dataset.wfMode===mode;x.classList.toggle('wf-active',active);x.setAttribute('aria-checked',String(active));}
    for(const x of panel.querySelectorAll('[data-wf-tab]')){const active=x.dataset.wfTab===tab;x.classList.toggle('wf-active',active);x.setAttribute('aria-selected',String(active));}
    $('wfModeHint').textContent=mode==='standard'?'Standard · Naive Bayes nhẹ, tự phân loại toàn bộ kênh và EPG offline.':mode==='smart'?'Smart · Chọn mô hình dưới 200 MB. Khi chưa có bộ chạy, Standard vẫn quét tự động.':'Intelligence · Tự phân loại EPG bằng bộ nhẹ; Qwen3 native có thể phân tích sâu khi đã cài.';
+   const standardArea=$('wfStandardModels');if(standardArea)standardArea.hidden=mode!=='standard';
    const smartArea=$('wfSmartModels');if(smartArea)smartArea.hidden=mode!=='smart';
+   if(mode==='smart')void refreshSmartUI();
    if(mode==='smart'&&modelCatalog){
     const selected=modelCatalog.getSmart(smartChoice);
     smartSelect.value=selected?.id||modelCatalog.SMART[0].id;
     $('wfSmartModelBenefit').textContent=selected?.advantage||'';
-    $('wfSmartModelStatus').textContent='Đã lưu cấu hình: '+(selected?.label||'')+'. Chưa có trọng số/bộ chạy được xác minh — chưa kích hoạt mô hình Smart. Kích thước chỉ là ước tính; bắt buộc dưới 200 MB (gồm tokenizer).';
+    $('wfSmartModelStatus').textContent=selected?.downloadable?
+     'ONNX INT8 có nguồn xác minh · '+selected.size+' · chạy trên thiết bị sau khi tải. Không tự tải model.':
+     'Đã lưu cấu hình: '+(selected?.label||'')+'. Chưa có trọng số/bộ chạy được xác minh — chưa kích hoạt mô hình Smart.';
     for(const card of smartList.children)card.classList.toggle('wf-smart-selected',card.dataset.modelId===smartChoice);
    }
    const modelArea=$('wfIntelligenceModels');if(modelArea)modelArea.hidden=mode!=='intelligence';
@@ -294,6 +301,59 @@
   function close(){panel.hidden=true;button.setAttribute('aria-expanded','false');}
   button.addEventListener('click',()=>{panel.hidden=!panel.hidden;button.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)render();});
   $('wfClose').addEventListener('click',()=>{close();button.focus();});
+  // Smart ONNX download and delete are real local CacheStorage + WASM operations.
+  // Nothing is downloaded when the user merely opens a menu or chooses a model.
+  const smartRuntime=root.OpenIPTVWatchFlowSmart;
+  const smartInstall=$('wfSmartInstall'),smartRemove=$('wfSmartRemove'),smartProgress=$('wfSmartProgress');
+  let smartBusy=false;
+  async function refreshSmartUI(){
+   const id=smartSelect.value,model=modelCatalog?.getSmart(id),ready=!!model?.downloadable;
+   smartInstall.disabled=smartBusy||!ready||!smartRuntime?.install;
+   smartInstall.textContent=ready?'↓ Tải '+(model.label||'mô hình'):'Chưa có bản chạy';
+   smartRemove.hidden=true;
+   if(!ready)return;
+   try{
+    const installed=await smartRuntime?.installed(root,id);
+    if(smartSelect.value!==id)return;
+    smartInstall.disabled=smartBusy||installed;
+    smartInstall.textContent=installed?'✓ Đã cài và kiểm tra':'↓ Tải '+model.label;
+    smartRemove.hidden=!installed;
+    smartRemove.disabled=smartBusy;
+    if(installed&&!smartBusy)smartProgress.textContent='Mô hình đã lưu trên thiết bị · '+model.size+'. Phân tích kênh mới tự động khi chọn Thông minh.';
+   }catch(error){smartProgress.textContent='Chưa xác minh được mô hình: '+String(error?.message||error).slice(0,130);}
+  }
+  smartSelect.addEventListener('change',()=>{void refreshSmartUI();});
+  smartInstall.addEventListener('click',async()=>{
+   if(smartBusy)return;
+   const id=smartSelect.value,model=modelCatalog?.getSmart(id);
+   if(!model?.downloadable||!smartRuntime?.install)return;
+   if(root.confirm?.('Tải '+model.label+' (~'+model.size+') từ Hugging Face? Mô hình sẽ lưu trên máy và chạy offline sau khi tải.')!==true)return;
+   smartBusy=true;smartInstall.disabled=true;smartRemove.disabled=true;
+   const update=event=>{
+    const percentage=Number(event?.progress);
+    smartProgress.textContent=event?.status==='progress'&&Number.isFinite(percentage)?
+     'Đang tải '+model.label+' · '+percentage.toFixed(0)+'%':
+     'Đang chuẩn bị ONNX '+model.label+' · '+String(event?.status||'tải trọng số');
+   };
+   try{
+    smartProgress.textContent='Đang tải và kiểm tra ONNX · '+model.label;
+    await smartRuntime.install(root,id,update);
+    smartProgress.textContent='✓ Đã tải và chạy thử thành công · '+model.label;
+    doc.dispatchEvent(new Event('openiptv:watchflow-smart-installed'));
+   }catch(error){
+    smartProgress.textContent='Tải/kiểm tra thất bại: '+String(error?.message||error).slice(0,180);
+   }finally{smartBusy=false;await refreshSmartUI();}
+  });
+  smartRemove.addEventListener('click',async()=>{
+   if(smartBusy||smartRemove.hidden)return;
+   const id=smartSelect.value,model=modelCatalog?.getSmart(id);
+   if(!model?.downloadable||!smartRuntime?.remove)return;
+   if(root.confirm?.('Xóa '+model.label+' khỏi bộ nhớ Smart? Khi dùng lại sẽ cần tải lại ~'+model.size+'.')!==true)return;
+   smartBusy=true;smartRemove.disabled=true;smartInstall.disabled=true;
+   try{await smartRuntime.remove(root,id);smartProgress.textContent='Đã xóa trọng số '+model.label+'; không xóa lịch sử kênh và EPG.';}
+   catch(error){smartProgress.textContent='Không thể xóa: '+String(error?.message||error).slice(0,160);}
+   finally{smartBusy=false;await refreshSmartUI();}
+  });
   // Reuse native MLX model inventory; installing a model requires the user's click.
   const native=root.streamleaf, modelIds=['qwen06','qwen17','qwen4','qwen8','hymt18','hymt18q8','hymt7','hymt7q8'];
   const selectionKey='watchflow:intelligence-model-v1';

@@ -191,3 +191,20 @@ html[data-theme=amoled] #page-tv .watchflow-demo #wfClose{
  color:#f5e8ff!important;-webkit-text-fill-color:#f5e8ff!important;
  background:#342442!important;border-color:#745a87!important
 }
+
+/* v23.8.126 — Clearly usable Standard and downloadable Smart ONNX model catalog. */
+#page-tv .wf-standard-list{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 12px;margin-top:7px;border:1px solid #d9cce9;border-radius:9px}
+#page-tv .wf-standard-list div{display:grid;gap:3px;min-width:0}
+#page-tv .wf-standard-list b{font-size:12px}
+#page-tv .wf-standard-list small{color:#8b809a;font-size:10px}
+#page-tv .wf-standard-list button{flex-shrink:0;background:#ece1f8;color:#6f418e;border:1px solid #bca9d4;padding:7px 10px;border-radius:7px;font-weight:750;font-size:10px}
+#page-tv .wf-standard-list button:disabled{opacity:.85;cursor:default}
+#page-tv #wfSmartInstall{background:#6f36ae!important;color:white!important;border-color:#945fc7!important;min-width:128px}
+#page-tv #wfSmartRemove{background:#fff2f4!important;color:#ae3652!important;border:1px solid #e6a4ba!important}
+#page-tv .wf-model-row{flex-wrap:wrap;gap:7px}
+#page-tv #wfSmartModelSelect{min-width:220px;flex:1 1 270px}
+#page-tv #wfSmartProgress{display:block;margin-top:7px;font-size:11px;color:#5e9d89}
+#page-tv #wfSmartRemove[hidden]{display:none!important}
+html[data-theme=dark] #page-tv .wf-standard-list,html[data-theme=amoled] #page-tv .wf-standard-list{border-color:#65516f}
+html[data-theme=dark] #page-tv .wf-standard-list button,html[data-theme=amoled] #page-tv .wf-standard-list button{background:#3d2b51;color:#d7bbea}
+@media(max-width:680px){#page-tv .wf-standard-list{flex-wrap:wrap}#page-tv .wf-standard-list button{margin-left:auto}}
