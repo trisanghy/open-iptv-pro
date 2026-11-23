@@ -60,3 +60,29 @@ test('No changes to release safety or WebAssembly CSP fix',()=>{
  assert.match(y,/prerelease: true/);assert.match(y,/make_latest: false/);
  assert.match(html,/wasm-unsafe-eval/);assert.doesNotMatch(html,/'unsafe-eval'/);
 });
+
+test('A report with 560 channels produces real names, source evidence and sorted output without URLs',()=>{
+ const all=Array.from({length:560},(_,i)=>({
+  id:'ch-'+(i+1),name:'Kênh '+String(i+1).padStart(4,'0'),group:i%2?'Tin tức':'Thể thao',
+  url:'https://private.example/'+(i+1)+'.m3u8'
+ }));
+ const map=new Map(all.map((ch,i)=>[String(ch.id),{
+  label:i%2?'Tin tức':'Thể thao',epgCount:2,programme:'Bản tin',
+  topics:[{label:i%2?'Tin tức':'Thể thao',score:3}]
+ }]));
+ const rows=audit.buildRows({channels:all,analysis:map,storage:store({}),auto,engine,topics});
+ assert.equal(rows.length,560);
+ assert.equal(audit.totals(rows).epg,560);
+ assert.equal(audit.totals(rows).searched,0,'No Wikidata records means not yet searched');
+ assert.equal(audit.sortRows([...rows],'name').length,560);
+ assert.doesNotMatch(JSON.stringify(rows),/private\.example|\.m3u8/);
+});
+test('Report must open as modal with immediate cached-channel results before EPG scanning',()=>{
+ const src=fs.readFileSync('renderer/watchflow-audit-v23-8-138.js','utf8');
+ assert.match(src,/panel=text\('dialog','wf-audit-panel wf-audit-modal'\)/);
+ assert.match(src,/panel\.showModal\(\)/);
+ assert.match(src,/function showReport\(\)/);
+ assert.ok(src.indexOf('showReport();')<src.indexOf('await auto.scanLocal('));
+ assert.ok(src.indexOf('rows=buildRows(args);limit=50;render();')<src.indexOf('await auto.scanLocal('));
+ assert.match(src,/panel\.addEventListener\('close'/);
+});

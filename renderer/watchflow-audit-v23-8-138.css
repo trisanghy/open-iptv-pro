@@ -29,3 +29,13 @@ html[data-theme=dark] #page-tv .wf-audit-table td,html[data-theme=amoled] #page-
 html[data-theme=dark] #page-tv .wf-audit-status,html[data-theme=dark] #page-tv .wf-audit-summary,html[data-theme=dark] #page-tv .wf-audit-head small,html[data-theme=amoled] #page-tv .wf-audit-status,html[data-theme=amoled] #page-tv .wf-audit-summary,html[data-theme=amoled] #page-tv .wf-audit-head small{color:#dec7ed}
 html[data-theme=dark] #page-tv .wf-audit-table td small,html[data-theme=amoled] #page-tv .wf-audit-table td small{color:#c5b3d3}
 @media(max-width:720px){#page-tv .wf-audit-panel{padding:10px}#page-tv .wf-audit-head{flex-wrap:wrap}#page-tv .wf-audit-controls>*{flex:1 1 100%}}
+
+/* Keep the report in the top layer, above the entire AI model manager.
+   It remains visible even when 560+ channel scans take multiple ticks. */
+#page-tv .wf-audit-modal{position:fixed;inset:0;box-sizing:border-box;
+ width:min(95vw,1480px);max-width:1480px;max-height:88vh;min-height:300px;
+ margin:auto;overflow-y:auto;overscroll-behavior:contain;z-index:99999;
+ box-shadow:0 25px 95px rgba(0,0,0,.45)}
+#page-tv .wf-audit-modal::backdrop{background:rgba(7,5,18,.75)}
+#page-tv .wf-audit-modal .wf-audit-table-wrap{max-height:55vh}
+@media(max-width:720px){#page-tv .wf-audit-modal{width:98vw;max-height:94vh;min-height:260px;padding:10px}}

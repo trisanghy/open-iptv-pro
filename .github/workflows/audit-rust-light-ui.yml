@@ -19,6 +19,9 @@ on:
       - renderer/watchflow-audit-v23-8-138.js
       - renderer/watchflow-audit-v23-8-138.css
       - tests/watchflow-source-audit-v23-8-138.test.cjs
+      - renderer/watchflow-audit-v23-8-138.js
+      - renderer/watchflow-audit-v23-8-138.css
+      - tests/watchflow-source-audit-v23-8-138.test.cjs
       - tests/watchflow-source-audit-browser-v23-8-138.cjs
       - tests/watchflow-all-models-v23-8-136.test.cjs
       - tests/watchflow-all-models-browser-v23-8-136.cjs
@@ -96,8 +99,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rust-lab-watchflow-three-source-audit-v23-8-138
-          path: rust-watchflow-audit-v23-8-138.png
+          name: rust-lab-watchflow-three-source-audit-v23-8-139
+          path: |
+            rust-watchflow-audit-v23-8-138.png
+            rust-watchflow-audit-560-v23-8-139.png
           if-no-files-found: warn
           retention-days: 14
       - name: Capture all Rust Lab feature pages and expanded panels

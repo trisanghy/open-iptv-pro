@@ -110,9 +110,30 @@
    more.textContent='Xem thêm · '+Math.min(limit,shown.length)+'/'+shown.length+' kênh';
    if(!shown.length)results.append(text('tr','wf-audit-empty','Không có kênh phù hợp bộ lọc.'));
   }
-  async function run(){
-   if(running)return;running=true;button.disabled=true;button.textContent='Đang kiểm tra…';
+  function showReport(){
+   // An inline report can be pushed outside the viewport under a very long
+   // model manager. Native <dialog> puts the result into the top layer so the
+   // click must show something immediately on desktop and mobile.
    panel.hidden=false;
+   try{
+    if(typeof panel.showModal==='function'&&!panel.open)panel.showModal();
+    else if(!panel.open)panel.setAttribute('open','');
+   }catch{
+    if(!panel.open)panel.setAttribute('open','');
+    panel.scrollIntoView?.({block:'start',behavior:'instant'});
+   }
+   button.setAttribute('aria-expanded','true');
+  }
+  function hideReport(){
+   if(typeof panel.close==='function'&&panel.open)panel.close();
+   else panel.removeAttribute('open');
+   panel.hidden=true;button.setAttribute('aria-expanded','false');
+  }
+  async function run(){
+   // Always present the report before expensive per-channel EPG inference.
+   showReport();
+   if(running){status.textContent='Đang kiểm tra dữ liệu, bảng kết quả sẽ tiếp tục cập nhật…';return;}
+   running=true;button.disabled=true;button.textContent='Đang kiểm tra…';
    status.textContent='Đang đọc kênh và EPG hiện tại…';
    try{
     const channels=(win.IPTVState?.getChannels?.()||[]).filter(x=>x?.id);
@@ -121,6 +142,13 @@
     const auto=api.auto,engine=api.engine,topics=api.topics;
     if(!engine?.analyzeChannel||!auto?.scanLocal)throw Error('Thiếu bộ phân loại WatchFlow trong phiên bản này');
     let analysis=auto.getBackgroundAnalysis?.(win)||new Map();
+    const disabled=auto.enabled?.(win.localStorage)===false;
+    const present=win.IPTVState?.getCurrent?.();
+    const args={channels,analysis,storage:win.localStorage,auto,engine,topics,internetDisabled:disabled,currentId:present?.id};
+    // Show all existing real channels immediately using the last known cache.
+    // A 560-channel EPG rescan never blocks the first visible result.
+    rows=buildRows(args);limit=50;render();
+    status.textContent='Đã hiển thị '+rows.length+' kênh hiện có · đang cập nhật EPG theo từng đợt…';
     // Audit freshly reads every channel and its EPG. It NEVER rewrites playlist data.
     const local=await auto.scanLocal({channels,guide,guideLib:win.IPTVGuide,engine,batchSize:50,force:true,
      yieldNow:()=>new Promise(resolve=>win.setTimeout(resolve,0)),
@@ -128,10 +156,8 @@
     if(!local.cancelled){
      analysis=new Map([...analysis,...local.analysis]);
     }
-    const disabled=auto.enabled?.(win.localStorage)===false;
-    const present=win.IPTVState?.getCurrent?.();
-    const args={channels,analysis,storage:win.localStorage,auto,engine,topics,internetDisabled:disabled,currentId:present?.id};
-    rows=buildRows(args);limit=50;render();
+    args.analysis=analysis;
+    rows=buildRows(args);render();
     if(disabled){
      status.textContent='Đã kiểm tra tên kênh + EPG. Internet đang tắt trong cài đặt WatchFlow; không gửi yêu cầu ra ngoài.';
      return;
@@ -164,11 +190,15 @@
    button=text('button','wf-audit-button','✓ Kiểm tra phân loại');
    button.id='wfAuditRun';button.type='button';button.setAttribute('aria-controls','wfAuditPanel');
    scan.insertAdjacentElement('beforebegin',button);
-   panel=text('section','wf-audit-panel');panel.id='wfAuditPanel';panel.hidden=true;
+   button.setAttribute('aria-expanded','false');
+   panel=text('dialog','wf-audit-panel wf-audit-modal');panel.id='wfAuditPanel';panel.hidden=true;
+   panel.setAttribute('aria-label','Bảng phân loại kênh, EPG và tìm kiếm Internet');
    const head=text('div','wf-audit-head'),left=text('div','');
    left.append(text('strong','','Kiểm tra 3 nguồn · danh sách kênh hiện tại'),
     text('small','','Tên/nhóm kênh · chương trình EPG · thông tin công khai trên Wikidata.'));
-   const close=text('button','wf-audit-close','Đóng');close.type='button';close.addEventListener('click',()=>{panel.hidden=true;});
+   const close=text('button','wf-audit-close','Đóng');close.type='button';close.addEventListener('click',hideReport);
+   panel.addEventListener('close',()=>{panel.hidden=true;button.setAttribute('aria-expanded','false');});
+   panel.addEventListener('cancel',()=>{panel.hidden=true;button.setAttribute('aria-expanded','false');});
    head.append(left,close);panel.append(head);
    status=text('p','wf-audit-status','Chưa chạy kiểm tra.');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
    summary=text('p','wf-audit-summary','');panel.append(status,summary);
@@ -186,7 +216,9 @@
    thead.append(tr);results=text('tbody','');table.append(thead,results);scroll.append(table);panel.append(scroll);
    more=text('button','wf-audit-more','Xem thêm');more.type='button';more.hidden=true;
    more.addEventListener('click',()=>{limit+=50;render();});panel.append(more);
-   wf.querySelector('.wf-local-banner')?.insertAdjacentElement('afterend',panel);
+   const anchor=wf.querySelector('.wf-local-banner');
+   if(anchor)anchor.insertAdjacentElement('afterend',panel);
+   else wf.append(panel);
    button.addEventListener('click',()=>{void run();});
    return true;
   }

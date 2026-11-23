@@ -1,3 +1,11 @@
+## Rust Lab v23.8.139 — Sửa nút “Kiểm tra phân loại” không hiện báo cáo với playlist lớn (PRERELEASE)
+
+- Sửa UX báo cáo bị khuất/không thấy bên dưới phần quản lý hàng loạt mô hình: mở một dialog lớn ở top layer ngay khi bấm, có nút Đóng và Esc, nền tối để phân biệt báo cáo với trang.
+- Đọc trực tiếp toàn bộ playlist hiện có (560+ kênh), hiển thị tối đa 50 dòng đầu và tổng số kênh ngay lập tức từ cache đang có TRƯỚC khi bắt đầu quét EPG và tra cứu Wikidata; bảng tiếp tục cập nhật khi dữ liệu nguồn đổi.
+- Giữ 5 cột nguồn bằng chứng: kênh, tên/nhóm, EPG, Internet và kết quả cuối; tìm kiếm, sắp xếp, phân trang, không sửa playlist. Internet tuân thủ quota và không gán nhãn giả cho kênh chưa kiểm tra.
+- Sửa thiếu sót kiểm thử v23.8.138: bổ sung browser test thật giả lập 560 kênh có EPG, kiểm tra dialog nhìn thấy trên viewport, có 50 dòng, lọc được kênh 0560. Chụp ảnh UI báo cáo có kênh tại CI (dữ liệu fixture ghi rõ).
+- Không đổi nhánh main/Electron, không cập nhật Stable/Latest; tạo prerelease và tag bất biến theo quy tắc.
+
 ## Rust Lab v23.8.138 — Nút kiểm tra kết quả phân loại kênh, EPG và Internet (PRERELEASE)
 
 - Thêm nút “✓ Kiểm tra phân loại” ngay cạnh Quét lại trong WatchFlow. Bấm nút sẽ đọc danh sách kênh thật đang tải và EPG thực tế, hiển thị bảng kết quả với 5 cột: kênh, tên/nhóm, EPG, Internet/Wikidata và kết quả phân loại cuối.
