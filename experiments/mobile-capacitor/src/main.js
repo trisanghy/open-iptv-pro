@@ -11,7 +11,8 @@ import {installEPGAuto} from './mobile-epg-autosync.mjs';
 import {matchGuideChannel,resumeChannel} from './mobile-epg-auto.mjs';
 import {swipeChannelDelta,nextChannelIndex,safeHistory,recentChannelMatches} from './mobile-ux.mjs';
 import {createAutoPiPController} from './mobile-auto-pip.mjs';
-import {chooseCast,togglePiP,isMuted} from './mobile-media-controls.mjs';
+import {togglePiP,isMuted} from './mobile-media-controls.mjs';
+import {installMobileCastV2} from './mobile-cast-v2.mjs';
 import {playerSvg} from './mobile-player-icons.mjs';
 import {createMobileBackgroundAudio} from './mobile-background-audio.mjs';
 import {MOBILE_VERSION,MAX_BATCH,batchWindow,appendEvidence,rightsDialog,installMobileParity} from './mobile-rustlab-parity.mjs';
@@ -135,7 +136,8 @@ function renderCurrentEPG(channel){
 }
 function syncMediaControls(){
  const toggle=$('#playCurrent');
- const playing=backgroundAudio?.active?!backgroundAudio.paused:mediaPlaying&&!mediaPaused;
+ const pairState=window.OpenIPTVWebCastV2?.getStatus?.();
+ const playing=pairState?.pair?(pairState.remoteState==='playing'||pairState.remoteState==='loading'):(backgroundAudio?.active?!backgroundAudio.paused:mediaPlaying&&!mediaPaused);
  if(toggle){toggle.innerHTML=playerSvg(playing?'pause':'play');toggle.setAttribute('aria-label',playing?'Tạm dừng':'Phát');}
  const v=$('#webVideo'),silent=backgroundAudio?.active?backgroundAudio.muted:isMuted(v);
  const mute=$('#muteCurrent');
@@ -313,7 +315,19 @@ async function play(c,requestedURL,{startup=false}={}){
  const urls=[...new Set([preferred,...configured.map(x=>x.url)].filter(x=>allowed.has(x)))];
  if(!urls.length)throw Error('Kênh chưa có URL phát hợp lệ');
  renderNowPlaying();$('#fallbackSource').value=c.url;save();
- const v=$('#webVideo');let last;
+ const v=$('#webVideo');
+ // Paired TV owns playback: remote channel selection without competing HLS.
+ const paired=!!window.OpenIPTVWebCastV2?.getStatus?.().pair;
+ window.OpenIPTVWebCastV2?.onChannelChanged?.(c,urls[0]);
+ if(paired){
+  playerHls?.destroy();playerHls=null;
+  v.pause();v.removeAttribute('src');v.load();showInline(false);
+  mediaPlaying=true;mediaPaused=false;startupPlaybackDone=true;
+  syncMediaControls();syncAutoPiP();
+  status('Đang chuyển '+c.name+' lên TV đã ghép đôi; chờ TV xác nhận.','ok');
+  return;
+ }
+ let last;
  for(const url of urls){
   try{
    playerHls?.destroy();playerHls=null;
@@ -383,6 +397,7 @@ async function playFullscreen(){
 async function pauseResumeCurrent(){
  const c=state.channels.find(x=>x.url===state.selected);if(!c)throw Error('Chưa chọn kênh');
  if(backgroundAudio?.active)return backgroundAudio.togglePlayback();
+ if(window.OpenIPTVWebCastV2?.getStatus?.().pair)return window.OpenIPTVWebCastV2.toggleRemotePlayback();
  if(!mediaPlaying)return play(c);
  const v=$('#webVideo');
  if(v.paused){await v.play();mediaPaused=false;}else{v.pause();mediaPaused=true;}
@@ -401,6 +416,7 @@ async function muteUnmute(){
  if(!mediaMuted)status('Đã bật âm thanh. Nếu vẫn im lặng, kiểm tra âm lượng iPhone hoặc codec âm thanh của nguồn IPTV.','ok');
 }
 async function stop(){
+ void window.OpenIPTVWebCastV2?.onLocalStop?.();
  if(backgroundAudio?.active)backgroundAudio.deactivate(false);
  if(nativeFullscreenActive){await VideoPlayer.stopAllPlayers().catch(()=>{});nativeFullscreenActive=false;}
  playerHls?.destroy();playerHls=null;
@@ -526,19 +542,19 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
    if(androidPiP){androidPiP.enter().catch(e=>status('PiP Android: '+(e?.message||e),'error'));return;}
    togglePiP(v,document).catch(e=>status('PiP: '+(e?.message||e),'error'));
  };
- $('#castCurrent').onclick=()=>{
-   const v=$('#webVideo');
-   const ios=Capacitor.getPlatform()==='ios'||/iPhone|iPad|iPod/.test(navigator.userAgent);
-   chooseCast(v,{
-     isIOS:ios,
-     isAndroidNative:Capacitor.getPlatform()==='android',
-     openAndroidNativeCast:async()=>{
-       status('Đang mở trình phát native. Chọn biểu tượng Chromecast trong trình phát.','ok');
-       await playFullscreen();
-     },
-     onUnavailable:msg=>status(msg,'error')
-   }).catch(e=>status('Cast / AirPlay: '+(e?.message||e),'error'));
- };$('#addURL').onclick=()=>addURL().catch(e=>status(e.message,'error'));
+ const outputPlatform=Capacitor.getPlatform()==='ios'||/iPhone|iPad|iPod/.test(navigator.userAgent)?'ios':Capacitor.getPlatform();
+ const mobileCast=installMobileCastV2({
+  platform:outputPlatform,native,getVideo:()=>$('#webVideo'),
+  getChannel:()=>state.channels.find(x=>x.url===state.selected),
+  getSource:()=>{
+   const ch=state.channels.find(x=>x.url===state.selected);if(!ch)return '';
+   const allowed=streamOptions(ch,state.fallbacks);
+   const preferred=$('#manualStreamSelect')?.value||state.manualStreams[ch.url]||ch.url;
+   return allowed.some(x=>x.url===preferred)?preferred:ch.url;
+  },
+  launchAndroidCast:()=>playFullscreen(),notify:status
+ });
+ $('#castCurrent').onclick=()=>{try{mobileCast.open();}catch(e){status('Cast / AirPlay: '+(e?.message||e),'error');}};$('#addURL').onclick=()=>addURL().catch(e=>status(e.message,'error'));
  $('#file').onchange=e=>addFile(e.target.files?.[0]).catch(err=>status(err.message,'error'));
  $('#refresh').onclick=()=>refreshSources().catch(e=>status(e.message,'error'));
  $('#checkBtn').onclick=()=>checkAll().catch(e=>status(e.message,'error'));
@@ -556,6 +572,18 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  video.addEventListener('pause',()=>{if(mediaPlaying){mediaPaused=true;syncMediaControls();syncAutoPiP();}});
  video.addEventListener('ended',()=>{mediaPlaying=false;mediaPaused=false;syncMediaControls();syncAutoPiP();});
  video.addEventListener('volumechange',()=>{if(!backgroundAudio?.active)mediaMuted=isMuted(video);syncMediaControls();});
+ document.addEventListener('openiptv:remote-player-attached',event=>{
+  if(event.detail?.method!=='pair')return;
+  playerHls?.destroy();playerHls=null;
+  video.pause();video.removeAttribute('src');video.load();showInline(false);
+  mediaPlaying=true;mediaPaused=false;syncMediaControls();syncAutoPiP();
+ });
+ document.addEventListener('openiptv:remote-playback-state',event=>{
+  if(event.detail?.method!=='pair')return;
+  if(!event.detail.connected){mediaPlaying=false;mediaPaused=false;}
+  else{mediaPlaying=event.detail.state==='playing'||event.detail.state==='loading';mediaPaused=event.detail.state==='paused';}
+  syncMediaControls();syncAutoPiP();
+ });
 
  render();}
 

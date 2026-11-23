@@ -1,3 +1,10 @@
+## Bản v4.23.17-mobile.36 — Web Cast V2 (3 tab)
+
+- Đồng bộ giao diện Cast 3 tab **Ghép đôi TV / Google Cast / AirPlay** từ nhánh Web Online, dùng chung mã 6 số, mã hóa và bố cục điều khiển TV.
+- Android: tab Google Cast mở trình phát native để chọn Chromecast; không báo đã kết nối nếu trình phát native chưa cung cấp trạng thái. iOS: AirPlay dùng bộ chọn thật của WebKit khi khả dụng.
+- Nút Cast trong trình phát Mobile luôn mở cửa sổ 3 tab trước; Android không tự mở Cast ngay khi chạm nút ngoài trình phát.
+- Mã phiên bản và workflow build: 4.23.17-mobile.36. Bản beta ở GitHub Actions (APK debug và IPA chưa ký), không đưa lên Releases stable.
+
 ## Bản v4.23.17-mobile.35 — Đồng bộ Supabase
 
 Mở **Công cụ → Tài khoản & đồng bộ Supabase** để đăng nhập bằng email, nhập OTP hoặc xác nhận liên kết email. Lần đầu chọn **Lấy dữ liệu đám mây** hoặc **Gửi dữ liệu thiết bị**. Sau khi ghép, app kiểm tra phiên bản dữ liệu mỗi 60 giây và chỉ cập nhật khi có thay đổi. Không đồng bộ ảnh chụp, video, thumbnail và cache EPG. Bản khôi phục được giữ trên thiết bị trước khi thay dữ liệu.
