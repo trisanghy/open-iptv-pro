@@ -1,3 +1,7 @@
+## Rust Lab v23.8.134 — Chọn AI trực tiếp, không cần mở cài đặt (PRERELEASE)
+
+Đưa ba nút Tiêu chuẩn / Smart / Intelligence và mô tả ra phần đầu WatchFlow; khi chọn Smart/Intelligence tự kiểm tra, tải nếu cần và chạy. Các cấu hình mô hình, tải/xóa thủ công được giữ trong phần Nâng cao cho người có kinh nghiệm. Giữ nguyên trình phát và các kiểm thử hồi quy.
+
 ## Rust Lab v23.8.133 — Sửa bốn bài test lỗi nhãn Smart cũ (PRERELEASE)
 
 Cập nhật bốn kiểm thử hồi quy từ chữ “tự chọn mô hình” sang “Smart · tự chuẩn bị”, phù hợp giao diện một lần chọn chế độ là ứng dụng tự tải AI. Giữ nguyên mô hình, logic cài đặt, playlist, trình phát và chính sách prerelease bất biến. Khắc phục lỗi build Windows của v23.8.132 do test cũ.

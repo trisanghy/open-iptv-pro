@@ -237,3 +237,8 @@ html[data-theme=dark] #page-tv #wfStandardStatus,html[data-theme=amoled] #page-t
 html[data-theme="dark"] #page-tv .wf-easy-status{background:#292237;color:#ddc7ff;border-color:#564771}
 html[data-theme="dark"] #page-tv .wf-easy-status[data-state="ready"]{background:#203a32;color:#a7e3c4}
 html[data-theme="dark"] #page-tv .wf-easy-status[data-state="error"]{background:#442b25;color:#ffc8a7}
+
+/* Most viewers should never need to open AI model settings to switch modes. */
+#page-tv .watchflow-demo > .wf-modes{margin:12px 0 7px;grid-template-columns:repeat(3,minmax(0,1fr))}
+#page-tv .watchflow-demo > #wfModeHint{margin:4px 0 10px;font-size:11px;color:#777b97}
+@media(max-width:670px){#page-tv .watchflow-demo > .wf-modes{grid-template-columns:1fr}}

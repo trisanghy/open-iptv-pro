@@ -50,6 +50,18 @@
   '<div id="wfContents" class="wf-contents" role="tabpanel" aria-live="polite"></div>'+
   '<footer class="wf-foot"><span id="wfOrigin">Tự động phân loại dữ liệu trên thiết bị.</span></footer>';
   row.insertAdjacentElement('afterend',panel);
+  // The three primary modes belong in the main panel, not an advanced settings
+  // drawer. Existing radio events, model configuration, and inference are reused.
+  const mainModes=panel.querySelector('.wf-modes'),mainHint=panel.querySelector('#wfModeHint');
+  const heading=panel.querySelector('.wf-settings-body > h3');
+  if(heading?.textContent==='Chế độ AI')heading.remove();
+  if(mainModes){
+   const top=panel.querySelector('.wf-head');
+   top?.insertAdjacentElement('afterend',mainModes);
+   mainModes.insertAdjacentElement('afterend',mainHint);
+   mainModes.setAttribute('aria-label','Chọn AI: Tiêu chuẩn, Smart, Intelligence');
+  }
+
   const $=id=>doc.getElementById(id);
   const el=(name,cls='',text)=>{const x=doc.createElement(name);x.className=cls;if(text!==undefined)x.textContent=String(text);return x;};
   const modelCatalog=root.OpenIPTVWatchFlowModelCatalog,topicCatalog=root.OpenIPTVWatchFlowTopics,recommender=root.OpenIPTVWatchFlowRecommendations;
