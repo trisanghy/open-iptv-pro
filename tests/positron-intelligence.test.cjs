@@ -1324,7 +1324,7 @@ test('P312 quota recovery adds native AI backup action and an accessible warning
  const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
  const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
  const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
- for(const token of ["status.classList.toggle('po-ai-save-error',failedSave)",
+ for(const token of ["status.classList.toggle('po-ai-save-error',failedSave||activeStatusMessage.startsWith('Không kiểm chứng được')",
    "failedSave?'alert':'status'","rescue.id='poAIActiveBackupRecovery'",
    "backup.click();","rescue.addEventListener('click'","modelStatus.textContent.includes('Đã yêu cầu')"])
   assert.ok(ui.includes(token),token);
