@@ -1,4 +1,4 @@
-name: Positron P5.1.324 · 70 Electron screenshots + 44px WatchFlow modes QA · Mac/Windows experiments
+name: Positron P5.1.325 · 70 Electron screenshots + keyboard WatchFlow modes QA · Mac/Windows experiments
 on:
   push:
     branches: [Positron]
@@ -91,6 +91,7 @@ jobs:
           node --check scripts/positron-capture.cjs
           node --check scripts/positron-50-audit.cjs
           node --check scripts/positron-324-audit.cjs
+          node --check scripts/positron-325-audit.cjs
           npm test
 
   capture:
@@ -141,6 +142,10 @@ jobs:
           test -s positron-evidence/p5-20-rounds/positron-p51324-watchflow-tabs-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51324-watchflow-tabs-after-720x900-real.png
           test -s positron-evidence/audit-p51324-watchflow-tabs.json
+          test -s positron-evidence/p5-20-rounds/positron-p51325-keyboard-modes-before-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51325-keyboard-modes-after-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51325-keyboard-modes-after-720x900-real.png
+          test -s positron-evidence/audit-p51325-keyboard-modes.json
           test -s positron-evidence/p5-20-rounds/positron-p51225-tv-controls-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51225-tv-controls-after-1920x1080-real.png
           test -s positron-evidence/audit-p51225-tv-viewport.json
@@ -602,7 +607,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: positron-p51324-real-desktop-screenshots
+          name: positron-p51325-real-desktop-screenshots
           path: positron-evidence/
           retention-days: 30
           if-no-files-found: warn
@@ -631,17 +636,17 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          test "$(node -p 'require("./package.json").version')" = "4.23.409"
+          test "$(node -p 'require("./package.json").version')" = "4.23.410"
           npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
           if [[ "${{ matrix.platform }}" == mac ]]; then
-            test -s "dist/Open-IPTV-Pro-4.23.409-mac-${{ matrix.arch }}.dmg"
+            test -s "dist/Open-IPTV-Pro-4.23.410-mac-${{ matrix.arch }}.dmg"
           else
-            test -s "dist/Open-IPTV-Pro-4.23.409-x64.exe"
-            test -s "dist/Open-IPTV-Pro-Setup-4.23.409-x64.exe"
+            test -s "dist/Open-IPTV-Pro-4.23.410-x64.exe"
+            test -s "dist/Open-IPTV-Pro-Setup-4.23.410-x64.exe"
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: positron-p51324-${{ matrix.label }}
+          name: positron-p51325-${{ matrix.label }}
           path: |
             dist/*.dmg
             dist/*.exe
@@ -657,7 +662,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          pattern: positron-p51324-*
+          pattern: positron-p51325-*
           path: release-stage
           merge-multiple: true
       - name: Assemble source and verifiable 50-round P4 evidence
@@ -665,9 +670,9 @@ jobs:
         run: |
           set -Eeuo pipefail
           mkdir -p release-stage
-          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P51324-Source.zip HEAD
-          zip -q -r release-stage/Positron-P51324-50-Real-Screenshots.zip release-stage/p4-50-rounds
-          zip -q -r release-stage/Positron-P51324-20-Real-Screenshots.zip release-stage/p5-20-rounds
+          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P51325-Source.zip HEAD
+          zip -q -r release-stage/Positron-P51325-50-Real-Screenshots.zip release-stage/p4-50-rounds
+          zip -q -r release-stage/Positron-P51325-20-Real-Screenshots.zip release-stage/p5-20-rounds
           node -e 'const fs=require("fs"),p=require("path"),r=require("./release-stage/audit-p5-20-rounds.json");const x=r.desktop16x9Screenshots?.find(s=>s.page==="tv");if(!x)throw Error("Thiếu ảnh 16:9 chính");fs.copyFileSync(p.join("release-stage/p5-20-rounds",x.filename),"release-stage/positron-desktop-1920x1080-16x9-main-real.png")'
           cp release-stage/p4-50-rounds/positron-p4-50-real.png release-stage/positron-p4-final-main-real.png
           cp release-stage/p4-50-rounds/positron-p4-10-real.png release-stage/positron-p4-round-10-real.png
@@ -675,12 +680,12 @@ jobs:
           cp release-stage/p4-50-rounds/positron-p4-30-real.png release-stage/positron-p4-round-30-real.png
           cp release-stage/p4-50-rounds/positron-p4-40-real.png release-stage/positron-p4-round-40-real.png
           for name in \
-            Positron-P51324-20-Real-Screenshots.zip \
+            Positron-P51325-20-Real-Screenshots.zip \
             audit-p5-20-rounds.json \
-            Open-IPTV-Pro-4.23.409-mac-arm64.dmg \
-            Open-IPTV-Pro-4.23.409-mac-x64.dmg \
-            Open-IPTV-Pro-Setup-4.23.409-x64.exe \
-            Open-IPTV-Pro-4.23.409-x64.exe \
+            Open-IPTV-Pro-4.23.410-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.410-mac-x64.dmg \
+            Open-IPTV-Pro-Setup-4.23.410-x64.exe \
+            Open-IPTV-Pro-4.23.410-x64.exe \
             positron-p4-final-main-real.png \
             positron-desktop-1920x1080-16x9-main-real.png \
             audit-p4-50-rounds.json \
@@ -689,8 +694,8 @@ jobs:
             positron-p4-round-20-real.png \
             positron-p4-round-30-real.png \
             positron-p4-round-40-real.png \
-            Positron-P51324-50-Real-Screenshots.zip \
-            OpenIPTVPro-Positron-P51324-Source.zip; do
+            Positron-P51325-50-Real-Screenshots.zip \
+            OpenIPTVPro-Positron-P51325-Source.zip; do
               test -s "release-stage/$name" || { echo "::error::Missing $name"; exit 1; }
           done
           (cd release-stage && sha256sum *.dmg *.exe *.png *.json *.zip > SHA256SUMS.txt)
@@ -700,7 +705,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
-          TAG=positron/v4.23.409-p5.1.324
+          TAG=positron/v4.23.410-p5.1.325
           echo 'GitHub Release publication has not been verified.' > release-stage/PUBLISH_STATUS.txt
           if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha' >/tmp/tag-sha 2>/dev/null; then
             test "$(cat /tmp/tag-sha)" = "$GITHUB_SHA" || { echo '::error::Immutable tag points to a different commit'; exit 1; }
@@ -708,12 +713,12 @@ jobs:
           else
             if gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-p4-50-rounds.json release-stage/audit-p5-20-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
               --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-              --title 'Open IPTV Pro Positron P5.1.324 — WatchFlow 44px' \
+              --title 'Open IPTV Pro Positron P5.1.325 — điều hướng chế độ WatchFlow bằng phím' \
               --notes "Positron $TAG at $GITHUB_SHA. Full change history is included as POSITRON_P5_CHANGELOG.md in the Source ZIP asset. Native Electron screenshots, reports and installer checksums are attached." --prerelease --latest=false 2>/tmp/positron-release-error; then
               echo 'GitHub Release successfully created.'
             elif grep -Eq '(HTTP 403|Resource not accessible by integration)' /tmp/positron-release-error; then
               echo '::warning::GitHub token cannot publish Release (HTTP 403). Installers and QA evidence remain available in the Actions fallback artifact. Repository Actions token permissions require owner review.'
-              echo 'RELEASE_BLOCKED_403: Not published; download verified builds from Actions artifact positron-p51324-release-fallback. Check repository workflow token permission.' > release-stage/PUBLISH_STATUS.txt
+              echo 'RELEASE_BLOCKED_403: Not published; download verified builds from Actions artifact positron-p51325-release-fallback. Check repository workflow token permission.' > release-stage/PUBLISH_STATUS.txt
               cat /tmp/positron-release-error >&2
               exit 1
             else
@@ -724,16 +729,16 @@ jobs:
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' >/tmp/positron-assets
           grep -Fxq 'positron-desktop-1920x1080-16x9-main-real.png' /tmp/positron-assets
           grep -Fxq 'positron-p4-final-main-real.png' /tmp/positron-assets
-          grep -Fxq 'Positron-P51324-20-Real-Screenshots.zip' /tmp/positron-assets
-          grep -Fxq 'Open-IPTV-Pro-4.23.409-mac-arm64.dmg' /tmp/positron-assets
-          grep -Fxq 'Open-IPTV-Pro-Setup-4.23.409-x64.exe' /tmp/positron-assets
+          grep -Fxq 'Positron-P51325-20-Real-Screenshots.zip' /tmp/positron-assets
+          grep -Fxq 'Open-IPTV-Pro-4.23.410-mac-arm64.dmg' /tmp/positron-assets
+          grep -Fxq 'Open-IPTV-Pro-Setup-4.23.410-x64.exe' /tmp/positron-assets
           echo "PUBLISHED_AND_VERIFIED: $TAG at $GITHUB_SHA" > release-stage/PUBLISH_STATUS.txt
           echo "Verified experimental release $TAG from $GITHUB_SHA"
       - name: Preserve installers and release evidence as Actions artifact
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: positron-p51324-release-fallback
+          name: positron-p51325-release-fallback
           path: |
             release-stage/*.exe
             release-stage/*.dmg

@@ -1,3 +1,12 @@
+## P5.1.325 / Electron 4.23.410 — WatchFlow chuyển tiêu điểm bằng phím mũi tên mà không tự phát (CANDIDATE)
+- Feature priority: NEW — năm chế độ WatchFlow và mục AI có điều hướng ArrowLeft/ArrowRight/Home/End bằng bàn phím hoặc remote; chỉ chuyển tiêu điểm, không tự chạy Smart Zap và không phát kênh.
+- Feature class: AI
+- User action: Mở TV → WatchFlow, dùng mũi tên trái/phải để chuyển tiêu điểm trong năm chế độ, Home/End để về đầu/cuối; nhấn Enter/Space mới chọn thao tác.
+- Electron screenshot: positron-p51325-keyboard-modes-before-1920x1080-real.png / positron-p51325-keyboard-modes-after-1920x1080-real.png / positron-p51325-keyboard-modes-after-720x900-real.png.
+- Evidence: Ảnh P324 Electron thực tế cho thấy năm nút điều hướng đã đủ 44px nhưng trước đó mã nguồn chưa có ArrowLeft/ArrowRight/Home/End. QA325 sẽ xác thực chuyển focus, vòng lại đầu/cuối, trạng thái mode không đổi, không tự phát và không chỉnh playlist/model; chụp screenshot Electron 1920 và 720.
+- Privacy: không gửi dữ liệu xem, URL stream, M3U hay mô hình AI ra mạng. Mũi tên không tự kích hoạt Smart Zap.
+- CANDIDATE: phải đợi test/ảnh Electron thật được mở soát mới tính hoàn thành. Public release vẫn chỉ Stable.
+
 ## P5.1.324 / Electron 4.23.409 — 5 chế độ WatchFlow đủ vùng bấm 44px (CANDIDATE)
 - Feature priority: NEW — tăng vùng bấm của năm nút Gợi ý, Tiếp, Cùng gu, Mix, Zap từ 35px lên 44px; vẫn trên một hàng.
 - Feature class: AI

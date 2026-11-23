@@ -44,6 +44,22 @@
   buttons[key]=b;toolbar.append(b);
  }
  modes.before(toolbar);
+ // P325: focus-only keyboard navigation for WatchFlow. Arrows must never
+ // invoke Smart Zap, switch mode, update preferences or start playback.
+ toolbar.setAttribute('aria-keyshortcuts','ArrowLeft ArrowRight Home End');
+ toolbar.addEventListener('keydown',event=>{
+  const button=event.target?.closest?.('button[data-flowplus-mode]');
+  if(!button||button.parentElement!==toolbar||event.altKey||event.ctrlKey||event.metaKey)return;
+  if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+  const eligible=[...toolbar.querySelectorAll('button[data-flowplus-mode]')]
+   .filter(el=>!el.disabled&&el.getClientRects().length);
+  const index=eligible.indexOf(button);
+  if(index<0)return;
+  const nextIndex=event.key==='Home'?0:event.key==='End'?eligible.length-1:
+   (index+(event.key==='ArrowRight'?1:-1)+eligible.length)%eligible.length;
+  event.preventDefault();event.stopPropagation();
+  eligible[nextIndex].focus({preventScroll:true});
+ });
  const content=d.createElement('section');content.id='poFlowPlusResults';content.className='po-flowplus-results';
  content.hidden=true;content.setAttribute('aria-live','polite');note.after(content);
  const status=d.createElement('small');status.className='po-flowplus-privacy';
