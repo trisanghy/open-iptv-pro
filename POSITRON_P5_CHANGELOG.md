@@ -7,6 +7,7 @@
 - Electron screenshot: positron-p51345-shortcut-guide-before-720x900-real.png / positron-p51345-shortcut-guide-after-720x900-real.png.
 - Privacy: Danh sách phím là dữ liệu tĩnh trong ứng dụng, không gửi playlist, nguồn IPTV, URL hay mẫu học AI lên mạng.
 - Status: CANDIDATE tới khi Node, native Electron, mở/soát PNG và CI Mac/Win đạt; GitHub Release Stable-only.
+- CI regression: P344 feature must remain active through P345+; changed historical assertion from fixed P5.1.344 label to minimum supported P number and retained all original PageUp/PageDown behavior checks. Native P345 fast Electron run 45280194638 succeeded and actual 720/1920 PNG were opened.
 
 ## P5.1.344 / Electron 4.23.429 — PageUp/PageDown duyệt gợi ý AI (CANDIDATE)
 - Feature priority: NEW — Người dùng TV/remote có danh sách 8 gợi ý AI phải bấm mũi tên từng lần hoặc Home/End; nay PageUp/PageDown di chuyển nhanh năm thẻ mà vẫn giữ nút Xem trong tầm nhìn.
