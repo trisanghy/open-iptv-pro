@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.334 — AI chuyển thẳng đến nút Xem đầu bằng Alt+Shift+J và sửa vùng nút dính header (NEW)
+## P5.1.335 — AI chuyển gợi ý tiếp bằng Alt+Shift+K, bỏ qua nút phản hồi và quay vòng (NEW)
 
-**Ứng dụng:** 4.23.419 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.420 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Xem liên tiếp các gợi ý AI bằng phím tắt tập trung vào nút Xem của từng thẻ, không phải Tab qua nút phản hồi Hợp gu/Không hợp hoặc công cụ tra cứu. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/551f2cc1ef2c0563ca90bb0d5c8ee44d3f93f03e)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.334 — Electron 4.23.419 — AI đi tới nút Xem đầu bằng bàn phím và trả khoảng trống dưới header (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Thêm phím tắt điều hướng trực tiếp tới gợi ý có thể phát trong WatchFlow Intelligence, để không phải Tab qua nhiều công tắc mô hình trước khi chọn nội dung. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/272c19dd585419679a3fe66eadcba64ee122cfd5)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.333 — Electron 4.23.418 — Sửa trùng thanh điều hướng che nút Xem AI (CANDIDATE)
 
