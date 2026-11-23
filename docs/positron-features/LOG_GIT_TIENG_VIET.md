@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.346 — Esc thu gọn hướng dẫn AI mà không đóng WatchFlow hoặc mất vị trí remote
+## P5.1.347 — chọn chế độ AI tự thu gọn hướng dẫn phím; sửa thứ tự focus bài kiểm thử P345
 
-**Ứng dụng:** 4.23.431 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.432 · **Trạng thái:** Chưa có bản phát hành
+
+chọn chế độ AI tự thu gọn hướng dẫn phím; sửa thứ tự focus bài kiểm thử P345
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/259afb79d21f9a7d2d625ce41e082f2a5ccbdcf8)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.346 — Electron 4.23.431 — Esc thu gọn hướng dẫn trước khi thoát WatchFlow (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Ảnh thật P345 đã mở cho thấy hướng dẫn phím chiếm phần lớn màn hình 720px khi mở; remote cần một phím Esc đóng lớp hướng dẫn mà không thoát toàn bộ WatchFlow và không làm mất focus. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1d98d985370cae1787396531dd2836ee3395a8e7)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.345 — Electron 4.23.430 — Phím điều khiển AI mở gọn bằng remote (CANDIDATE)
 
