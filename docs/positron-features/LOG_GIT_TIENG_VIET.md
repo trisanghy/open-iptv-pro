@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.408 · **Trạng thái:** Chưa có bản phát hành
 
-Increase action hit areas to 44px with larger labels, visible keyboard focus and wrapping at narrow viewport. Node regression and real Electron CDP before/after 1920×1080 plus 720×900 geometry and state invariants.
+Feature priority: NEW — AI hợp gu có thao tác vùng chạm 44px dễ dùng trên máy tính và cửa sổ hẹp, hỗ trợ điều hướng bàn phím rõ nét ngay trong đề xuất kênh. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/142da0430604f1acdcf0ba57ee504a72a43e9ed3)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)

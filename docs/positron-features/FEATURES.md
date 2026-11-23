@@ -7,11 +7,11 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.323</strong> · nút gợi ý AI cao 44px, dễ bấm chuột và bàn phím · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.323</strong> · nút gợi ý AI cao 44px, dễ bấm chuột và bàn phím · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.408 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Increase action hit areas to 44px with larger labels, visible keyboard focus and wrapping at narrow viewport. Node regression and real Electron CDP before/after 1920×1080 plus 720×900 geometry and state invariants.
+Feature priority: NEW — AI hợp gu có thao tác vùng chạm 44px dễ dùng trên máy tính và cửa sổ hẹp, hỗ trợ điều hướng bàn phím rõ nét ngay trong đề xuất kênh. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

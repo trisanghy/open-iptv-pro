@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T16:51:02.096516+00:00",
+  "generatedAt": "2026-11-23T16:53:48.044756+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.323",
       "appVersion": "4.23.408",
       "title": "nút gợi ý AI cao 44px, dễ bấm chuột và bàn phím",
-      "description": "Increase action hit areas to 44px with larger labels, visible keyboard focus and wrapping at narrow viewport. Node regression and real Electron CDP before/after 1920×1080 plus 720×900 geometry and state invariants.",
-      "kind": "fix",
+      "description": "Feature priority: NEW — AI hợp gu có thao tác vùng chạm 44px dễ dùng trên máy tính và cửa sổ hẹp, hỗ trợ điều hướng bàn phím rõ nét ngay trong đề xuất kênh. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
