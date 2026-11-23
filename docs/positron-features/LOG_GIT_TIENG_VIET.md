@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.306 — AI tìm kênh mất độ chắc chắn trước khi khôi phục
+## P5.1.307 — hiển thị các kênh AI chưa đủ chắc chắn ở cả hai mô hình
 
-**Ứng dụng:** 4.23.391 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.392 · **Trạng thái:** Chưa có bản phát hành
+
+hiển thị các kênh AI chưa đủ chắc chắn ở cả hai mô hình
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0d2dbb9176f2843bf5ef21f9265fa7588d5759d2)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.306 — AI chỉ ra nhóm kênh mất độ chắc chắn khi khôi phục / Electron 4.23.391
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Phân tích 4 nhóm bằng chứng Naive Bayes (cũ chắc/mới không, mới chắc/cũ không, cả hai không chắc, cả hai chắc), cho xem các tên kênh bị giảm độ chắc chắn trước khi nhập sao lưu, và không kết luận không đổi chủ đề khi thiếu mẫu giao. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/04bc30ace3094cfc0638c464a12dc7dc1f6a1f2a)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.305 — AI chẩn đoán độ chắc chắn khi so sánh khôi phục / Electron 4.23.390
 
