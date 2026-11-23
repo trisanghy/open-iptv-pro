@@ -11882,6 +11882,12 @@ async function runTwenty(page){
  await require('./positron-337-audit.cjs').run(page);
  await require('./positron-338-audit.cjs').run(page);
  await require('./positron-339-audit.cjs').run(page);
+ await require('./positron-340-audit.cjs').run(page);
+ // P340 actual Electron full-channel name disclosure before/after:
+ // positron-p51340-full-channel-before-1920x1080-real.png
+ // positron-p51340-full-channel-after-1920x1080-real.png
+ // positron-p51340-full-channel-before-720x900-real.png
+ // positron-p51340-full-channel-after-720x900-real.png
  // P339 native Electron focused channel in sticky AI header:
  // positron-p51339-channel-context-before-1920x1080-real.png
  // positron-p51339-channel-context-after-1920x1080-real.png

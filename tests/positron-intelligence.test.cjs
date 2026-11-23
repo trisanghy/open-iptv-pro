@@ -1635,3 +1635,40 @@ test('P339 strips ranking prefix from sticky channel identity and preserves hist
  assert.ok(old.includes("split(/[ ]+/)"));
  assert.ok(!old.includes("shortcut==='Alt+Shift+K'"));
 });
+
+
+test('P340 native keyboard opens full selected channel name and topic without playback',()=>{
+ const js=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-340-audit.cjs','utf8');
+ const ext=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const workflow=fs.readFileSync('.github/workflows/positron-lab.yml','utf8');
+ for(const needle of [
+  "fullInfo.id='poAIFullChannelInfo'",
+  "fullInfo.setAttribute('aria-live','polite')",
+  "focusChannel.textContent.trim()",
+  "event.code==='KeyI'",
+  "fullInfo.hidden=false",
+  "fullInfo.hidden=true",
+  "fullInfoName.textContent=name",
+  "fullInfoTopic.textContent=card?.querySelector('.po-ai-card-header small')"
+ ])assert.ok(js.includes(needle),'missing P340 behavior '+needle);
+ for(const needle of [
+  '.po-ai-full-channel-info[hidden]',
+  'overflow-wrap:anywhere',
+  'max-width:calc(100% - 16px)'
+ ])assert.ok(css.includes(needle),'missing P340 responsive style '+needle);
+ for(const phrase of [
+  "'Alt+Shift+I reveals the native full-channel strip'",
+  "'full information updates with current card'",
+  "'editors do not trigger detail shortcut'",
+  "assert.deepEqual(restored,original"
+ ])assert.ok(qa.includes(phrase),'missing P340 real Electron test '+phrase);
+ assert.ok(ext.includes("require('./positron-340-audit.cjs').run(page)"));
+ for(const filename of [
+  'positron-p51340-full-channel-before-1920x1080-real.png',
+  'positron-p51340-full-channel-after-1920x1080-real.png',
+  'positron-p51340-full-channel-before-720x900-real.png',
+  'positron-p51340-full-channel-after-720x900-real.png'
+ ])assert.ok(ext.includes(filename)&&workflow.includes(filename),filename);
+});

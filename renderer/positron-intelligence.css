@@ -461,3 +461,26 @@ html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-en
   max-width:77px;
  }
 }
+
+
+/* P5.1.340: optional full selected-channel context for keyboard/remote;
+   the P339 short chip stays compact until Alt+Shift+I is used. */
+#poWatchFlowPanel .po-ai-full-channel-info[hidden]{display:none!important}
+#poWatchFlowPanel .po-ai-full-channel-info{
+ position:sticky!important;top:55px;z-index:80;
+ display:flex!important;flex-direction:column;gap:3px;
+ margin:0 8px 7px;padding:9px 12px;box-sizing:border-box;
+ max-width:calc(100% - 16px);min-width:0;
+ border:1px solid #448a8b;border-radius:9px;
+ background:#113338;color:#e5fff4;
+ box-shadow:0 6px 18px #0008;
+}
+#poWatchFlowPanel .po-ai-full-channel-info strong{
+ display:block;white-space:normal;overflow-wrap:anywhere;
+ font-size:13px!important;line-height:1.35!important;
+ font-weight:800;color:#e5fff4;
+}
+#poWatchFlowPanel .po-ai-full-channel-info small{
+ color:#a5dfd4;font-size:11px!important;line-height:1.25!important;
+ white-space:normal;overflow-wrap:anywhere;
+}

@@ -242,6 +242,17 @@
  focusChannel.className='po-ai-focused-channel';
  focusChannel.hidden=true;
  focusChannel.setAttribute('aria-hidden','true');
+ // P340: keyboard/remote users can reveal the FULL selected channel and its
+ // recommendation topic without relying on the truncated hover-only chip.
+ const fullInfo=d.createElement('div');
+ fullInfo.id='poAIFullChannelInfo';
+ fullInfo.className='po-ai-full-channel-info';
+ fullInfo.hidden=true;
+ fullInfo.setAttribute('role','status');
+ fullInfo.setAttribute('aria-live','polite');
+ const fullInfoName=d.createElement('strong'),fullInfoTopic=d.createElement('small');
+ fullInfo.append(fullInfoName,fullInfoTopic);
+ panel.querySelector('.po-watchflow-head')?.after(fullInfo);
  // The badge is attached to the sticky title by syncWatchHeader,
  // so the counter remains visible as the recommendation list scrolls.
  const updateFocusProgress=(target)=>{
@@ -249,7 +260,7 @@
    .filter(button=>!button.disabled&&button.getClientRects().length);
   const index=cards.indexOf(target);
   if(index<0){focusProgress.hidden=true;focusProgress.textContent='';
-  focusChannel.hidden=true;focusChannel.textContent='';focusChannel.title='';return;}
+  focusChannel.hidden=true;focusChannel.textContent='';focusChannel.title='';fullInfo.hidden=true;return;}
   const next='Gợi ý '+(index+1)+'/'+cards.length;
   // Avoid repeating an aria-live announcement when focus stays on this card.
   if(focusProgress.hidden||focusProgress.textContent!==next){
@@ -262,6 +273,10 @@
   focusChannel.hidden=!name;
   focusChannel.textContent=name;
   focusChannel.title=name?'Kênh đang chọn: '+name:'';
+  if(!fullInfo.hidden){
+   fullInfoName.textContent=name;
+   fullInfoTopic.textContent=card?.querySelector('.po-ai-card-header small')?.textContent?.trim()||'';
+  }
  };
  // P337: keep the recommendation index synchronized with standard Tab, click,
  // remote focus and the existing J/K shortcuts. A focused feedback / lookup
@@ -320,7 +335,7 @@
  function showAI(){aiOpen=true;syncAIView();render();}
  function hideAI(){
   focusProgress.hidden=true;focusProgress.textContent='';
-  focusChannel.hidden=true;focusChannel.textContent='';focusChannel.title='';
+  focusChannel.hidden=true;focusChannel.textContent='';focusChannel.title='';fullInfo.hidden=true;
   aiOpen=false;wideAI=false;wideButton.hidden=true;
   wideButton.setAttribute('aria-pressed','false');wideButton.textContent='Đọc rộng';
   delete panel.dataset.poAiActive;delete panel.dataset.poAiTraining;
@@ -425,6 +440,27 @@
   target.focus({preventScroll:true});
   target.scrollIntoView({block:'center',behavior:'instant'});
   updateFocusProgress(target);
+ });
+ // P340: reveal/hide complete recommendation identity via keyboard or remote.
+ // The information bar is local and never calls playback or preference learning.
+ list.setAttribute('aria-keyshortcuts','Alt+Shift+J Alt+Shift+K Alt+Shift+P Alt+Shift+I');
+ modeHelp.title+=' · Alt+Shift+I: tên đầy đủ của gợi ý đang chọn';
+ d.addEventListener('keydown',event=>{
+  const showInfo=event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
+   (event.code==='KeyI'||String(event.key).toLowerCase()==='i');
+  if(!showInfo||event.defaultPrevented||event.repeat||event.isComposing||!aiOpen||panel.hidden)return;
+  if([event.target,d.activeElement].some(el=>el?.isContentEditable||
+   el?.closest?.('input,textarea,select,[contenteditable],[role="textbox"]')))return;
+  if(d.querySelector('.modal-backdrop:not(.hidden):not([hidden])'))return;
+  const name=focusChannel.textContent.trim();
+  if(!name)return;
+  event.preventDefault();event.stopPropagation();
+  if(fullInfo.hidden){
+   const card=d.activeElement?.closest?.('#poAICards .po-ai-card');
+   fullInfoName.textContent=name;
+   fullInfoTopic.textContent=card?.querySelector('.po-ai-card-header small')?.textContent?.trim()||'';
+   fullInfo.hidden=false;
+  }else fullInfo.hidden=true;
  });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
@@ -830,7 +866,7 @@
  function render(){
   if(!aiOpen)return;
   focusProgress.hidden=true;focusProgress.textContent='';
-  focusChannel.hidden=true;focusChannel.textContent='';focusChannel.title='';
+  focusChannel.hidden=true;focusChannel.textContent='';focusChannel.title='';fullInfo.hidden=true;
   if(!foldersOpen)delete panel.dataset.poAiTraining;
   renderModelManager();
   const collection=channels();const profile=profileFor(collection);

@@ -29,3 +29,13 @@
 
 - P338 full capture 45266137724: historical P335 audit failed on exact aria-keyshortcuts equality after P338 legitimately added P. P339 corrective patch treats the shortcut attribute as a whitespace-separated token list, still requires K and preserves the new P. Not counted as independent feature.
 - P339 initial fast QA 45267409859: found actual chip title "1. QA P339 Giải trí" while expected "QA P339 Giải trí". Cause: escaped regex in generated source matched literal \\d instead of digits. Corrected by numeric character class and preserved full hover tooltip. Must re-run native screenshots.
+
+## Vòng 03/20 — P5.1.339 / 4.23.424
+- Feature: current AI recommendation channel in sticky header. Initial failed QA because numeric prefix "1." was retained; corrected code. Full screenshot geometry test also measured inline text box instead of actual sticky header; corrected without hiding overflow. P338 historical shortcut K token check fixed to accept newly added P.
+- Native fast Electron run 45268221504 PASS, 18 checks, before/after screenshots 1920×1080 and 720×900 were truly OPENED; model, channel, playlist unchanged and no autoplay.
+- Full CI 45268221218: Node, capture, Windows x64, mac ARM64 and x64 all PASS; release skipped per repository AGENTS.md Stable-only.
+- Residual new UX need from actual P339 narrow screenshot: short channel name is ellipsized to 77px; remote/keyboard cannot hover chip tooltip to read the FULL name.
+
+## Vòng 04/20 — P5.1.340 / 4.23.425 (CANDIDATE)
+- New AI shortcut Alt+Shift+I toggles full focused channel/topic info, follows P/K navigation, blocks while typing, preserves playlist/current playback and AI model; native CDP before/after screenshots at 1920×1080 and 720×900 needed.
+- Pending test/CI/visual review and installer evidence. Do not count until proven.

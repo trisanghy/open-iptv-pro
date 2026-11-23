@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.424",
-  "description": "Positron P5.1.339: AI hiển thị tên kênh đang chọn trên tiêu đề cố định (NEW)",
+  "version": "4.23.425",
+  "description": "Positron P5.1.340: AI xem tên kênh đầy đủ bằng Alt+Shift+I (NEW)",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

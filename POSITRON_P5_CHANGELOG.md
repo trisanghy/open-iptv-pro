@@ -1,3 +1,13 @@
+## P5.1.340 / Electron 4.23.425 — AI mở tên kênh đầy đủ bằng bàn phím (CANDIDATE)
+- Feature priority: NEW — Ở giao diện WatchFlow AI 720px, chip tên kênh P339 cố ý rút gọn để tránh chiếm chỗ; nhưng remote và bàn phím không có hover để biết tên đầy đủ. Bổ sung phím xem thông tin kênh và chủ đề khi cần, luôn theo gợi ý đang focus.
+- Feature class: AI
+- User action: Mở WatchFlow AI bằng F6, nhấn Alt+Shift+J để chọn gợi ý, Alt+Shift+I để mở thanh thông tin gồm tên kênh đầy đủ và phân loại; nhấn Alt+Shift+P/K để đổi thẻ trong lúc giữ thanh thông tin, nhấn lại Alt+Shift+I để đóng. Không phát video nếu chưa bấm Enter.
+- Root cause: Chip P339 chỉ có max-width 77px trên 720px và tooltip không thể xem bằng remote. P340 thêm thanh thông tin tùy chọn, tiêu đề đủ độ dài, cập nhật khi focus thay đổi, bảo vệ khi đang gõ input; không thay thứ tự AI hay dữ liệu cá nhân.
+- Electron screenshot: positron-p51340-full-channel-before-1920x1080-real.png / positron-p51340-full-channel-after-1920x1080-real.png / positron-p51340-full-channel-before-720x900-real.png / positron-p51340-full-channel-after-720x900-real.png.
+- Evidence: Dùng ảnh P339 Electron thật đã MỞ ở 1920/720 làm baseline; P340 native CDP QA sẽ kiểm tra phím I mở/đóng, đầy đủ tên và chủ đề của thẻ đang focus, thay thẻ bằng P đồng bộ, không che nút Xem, không tràn ngang ở cả hai viewport, bảo vệ ô tìm kiếm, không autoplay, giữ playlist/current channel và model; BEFORE/AFTER là cùng ứng dụng Electron P340 với thanh mới ẩn/hiện.
+- Privacy: Tất cả tên và chủ đề lấy từ thẻ đang hiển thị, xử lý hoàn toàn cục bộ; không gửi URL M3U, EPG, lịch sử, trọng số mô hình hay phát stream.
+- Status: CANDIDATE đến khi đủ Node test, ảnh Electron thật đã mở, full CI Windows/macOS. Không tạo GitHub Release thử nghiệm theo chính sách Stable-only của AGENTS.md.
+
 ## P5.1.339 / Electron 4.23.424 — AI luôn hiện tên kênh đang chọn khi cuộn (CANDIDATE)
 - Feature priority: NEW — Khi điều hướng các gợi ý bằng Tab/J/K/P trên cửa sổ hẹp, card được cuộn vào vùng nhìn và tiêu đề tên kênh phía trên thẻ có thể bị thanh sticky che; người dùng chỉ thấy nút Xem mà không biết chính xác kênh nào. Thêm ngữ cảnh tên kênh đang focus vào tiêu đề cố định, không cần phát video.
 - Feature class: AI
