@@ -287,3 +287,36 @@ test('P272 WatchFlow hiển thị thư mục có thể mở và kênh đa nhóm,
  assert.ok(qa.includes('positron-p51272-epg-folders-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51272-epg-folders-after-1920x1080-real.png'));
 });
+
+
+test('P273 phân nhóm chương trình XMLTV 24h đa nhãn theo giờ thật, không bịa dữ liệu',()=>{
+ const t=now,channels=[mk('a','QA A'),mk('b','QA B'),mk('c','QA C')],orig=JSON.stringify(channels);
+ const guide={programmes:[{id:'qa'}]};
+ const resolver={find:(_g,ch)=>ch.id==='a'?[
+  {title:'Bản tin thời sự và trực tiếp bóng đá',start:t+3600000,end:t+7200000},
+  {title:'Bản tin thời sự và trực tiếp bóng đá',start:t+3600000,end:t+7200000},
+  {title:'Hôm qua',start:t-7200000,end:t-3600000},
+  {title:'Ngoài 24h',start:t+26*3600000,end:t+27*3600000}
+ ]:ch.id==='b'?[{title:'Khoa học tài liệu giáo dục',start:t+60000,end:t+3600000}]
+  :[{title:'Chương trình số 123',start:t+120000,end:t+3600000}]};
+ const result=C.programmeFolders(channels,guide,resolver,{clock:t});
+ const pick=k=>result.groups.find(g=>g.key===k)?.items.map(v=>v.channel.id)||[];
+ assert.deepEqual(pick('news'),['a']);
+ assert.deepEqual(pick('sport'),['a']);
+ assert.deepEqual(pick('documentary'),['b']);
+ assert.deepEqual(pick('education'),['b']);
+ assert.equal(result.total,3);
+ assert.equal(result.uncategorized.length,1);
+ assert.deepEqual(C.programmeFolders(channels,null,resolver,{clock:t}).groups,[]);
+ assert.equal(JSON.stringify(channels),orig);
+});
+test('P273 giao diện chương trình EPG có giờ nguồn thực, nhiều thư mục và chỉ phát khi click',()=>{
+ const s=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ["poAIEPGProgrammes","core.programmeFolders(collection,guide(),win.IPTVGuide",
+  "folder.dataset.programmeTopic=key","toLocaleString('vi-VN'",
+  "programmeFolders:()=>core.programmeFolders(channels(),guide(),win.IPTVGuide)"])
+  assert.ok(s.includes(token),token);
+ assert.ok(qa.includes('positron-p51273-epg-programmes-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51273-epg-programmes-after-1920x1080-real.png'));
+});

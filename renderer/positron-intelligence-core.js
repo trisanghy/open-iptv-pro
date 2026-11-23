@@ -257,6 +257,51 @@
   return {groups,uncategorized,scanned,unscanned:Math.max(0,input.length-maximum)};
  }
 
+
+ // P5.1.273: complete, time-bounded programme topics from imported XMLTV.
+ // Programmes may appear in multiple virtual topics; this is rule-based,
+ // never fabricated from channel names or network lookups.
+ function programmeFolders(channels,guide,api,{clock=Date.now(),hours=24,limit=5000,maxItems=1600}={}){
+  const result={groups:[],uncategorized:[],scanned:0,total:0,truncated:false};
+  if(!guide||typeof api?.find!=='function'||!Number.isFinite(clock))return result;
+  const maxChannels=Math.max(1,Math.min(15000,Math.trunc(limit)||5000));
+  const maxRecords=Math.max(1,Math.min(10000,Math.trunc(maxItems)||1600));
+  const horizon=clock+Math.max(1,Math.min(168,Number(hours)||24))*3600000;
+  const buckets=new Map(Object.entries(KINDS).filter(([key])=>key!=='other')
+   .map(([key,label])=>[key,{key,label,items:[]}]));
+  const seen=new Set();
+  for(const channel of (Array.isArray(channels)?channels:[]).slice(0,maxChannels)){
+   if(!channel?.id||!channel.name||channel.status==='dead')continue;
+   result.scanned++;
+   let entries=[];try{entries=api.find(guide,channel)||[];}catch{continue;}
+   if(!Array.isArray(entries))continue;
+   let count=0;
+   for(const row of entries){
+    if(!Number.isFinite(row?.start)||!Number.isFinite(row?.end)||row.end<=row.start
+      ||row.end<=clock||row.start>horizon)continue;
+    if(++count>80)break;
+    const title=String(row.title||'').trim().replace(/\s+/g,' ').slice(0,140);
+    if(!title)continue;
+    const signature=String(channel.id)+'|'+row.start+'|'+normalize(title);
+    if(seen.has(signature))continue;
+    seen.add(signature);
+    const kinds=Object.keys(subject(title+' '+String(row.description||'').slice(0,220)));
+    const entry={channel,programme:{title,start:row.start,end:row.end},kinds};
+    if(!kinds.length)result.uncategorized.push(entry);
+    else for(const kind of kinds)if(buckets.has(kind))buckets.get(kind).items.push(entry);
+    result.total++;
+    if(result.total>=maxRecords){result.truncated=true;break;}
+   }
+   if(result.truncated)break;
+  }
+  const sort=(a,b)=>a.programme.start-b.programme.start||
+   String(a.channel.name).localeCompare(String(b.channel.name),'vi');
+  result.groups=[...buckets.values()].filter(g=>g.items.length);
+  for(const group of result.groups)group.items.sort(sort);
+  result.uncategorized.sort(sort);
+  return result;
+ }
+
  // P5.1.270: consent-based contextual bandit. Genre-level UCB bonuses shrink
  // as the user explicitly rates/watches a category; no channel history stored.
  function sanitizedBandit(raw){
@@ -388,5 +433,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,epgFolders,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,epgFolders,programmeFolders,cleanQuery,readWikiSearch});
 });

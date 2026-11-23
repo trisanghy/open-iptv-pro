@@ -1,6 +1,16 @@
 # Positron P5 Changelog
 
 
+
+## P5.1.273 — Thư mục chương trình EPG 24h đa chủ đề / Electron 4.23.358
+- Feature priority: NEW — Thêm màn hình **Chương trình EPG** cho phép khám phá lịch phát thật theo chủ đề, không chỉ gom kênh. Một chương trình thời sự kết hợp bóng đá có thể xuất hiện đồng thời trong Tin tức và Thể thao, xem tên/giờ/kênh và chủ động chọn xem kênh; chỉ dùng XMLTV đã tải.
+- Feature class: BREAKTHROUGH
+- Evidence: Regression với 3 kênh và XMLTV có chương trình thời sự + bóng đá, khoa học + giáo dục, chương trình không khớp chủ đề và chương trình hết hạn: đầu vào đa nhãn phải nằm trong đúng thư mục, loại trùng/timestamp sai, playlist bất biến. Electron thật chuyển từ Thư mục EPG sang Chương trình EPG, kiểm tra tám chủ đề và lịch hẹn, trước/sau PNG gốc 1920x1080, không autoplay, không tràn.
+- User action: TV → WatchFlow → ✦ AI hợp gu → Chương trình EPG. Mở thư mục chương trình theo chủ đề để xem lịch 24 giờ tới từ XMLTV và bấm ▶ Xem kênh khi muốn phát; nếu không có EPG thì hiển thị thông báo rõ ràng.
+- Privacy: Không tự tải web/stream, không gửi tên kênh, M3U, lịch xem hay nhãn lên Internet; phân loại chương trình bằng quy tắc nhận dạng văn bản, không mạo nhận ML, không sửa playlist.
+- Electron screenshot: positron-p51273-epg-programmes-before-1920x1080-real.png / positron-p51273-epg-programmes-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE tới khi đủ Node regression, QA PNG thật đã mở soát, 6/6 CI, Release cùng bộ cài được xác minh.
+
 ## P5.1.272 — Thư mục EPG đa nhãn tự động / Electron 4.23.357
 - Feature priority: NEW — Thêm thư viện chủ đề EPG ảo tự phân loại toàn bộ danh sách kênh trên thiết bị từ các chương trình XMLTV hiện có; một kênh có thể xuất hiện đồng thời trong Thể thao, Tin tức, Phim, Thiếu nhi hoặc các thư mục khác mà không làm thay đổi M3U gốc.
 - Feature class: BREAKTHROUGH

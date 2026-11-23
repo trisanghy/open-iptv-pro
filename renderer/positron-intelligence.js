@@ -60,15 +60,19 @@
  const exploreMode=d.createElement('button');exploreMode.type='button';exploreMode.id='poAIExplore';
  exploreMode.textContent='Khám phá AI';exploreMode.setAttribute('aria-pressed','false');exploreMode.disabled=!enabled;
  modeBar.append(channelsMode,upcomingMode,planMode,exploreMode);
- let upcomingOpen=false,planOpen=false,exploreOpen=false,foldersOpen=false;
- channelsMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=false;render();});
- upcomingMode.addEventListener('click',()=>{upcomingOpen=true;planOpen=false;exploreOpen=false;foldersOpen=false;render();});
- planMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=true;exploreOpen=false;foldersOpen=false;render();});
- exploreMode.addEventListener('click',()=>{if(!enabled)return;upcomingOpen=false;planOpen=false;exploreOpen=true;foldersOpen=false;render();});
+ let upcomingOpen=false,planOpen=false,exploreOpen=false,foldersOpen=false,programmesOpen=false;
+ channelsMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=false;programmesOpen=false;render();});
+ upcomingMode.addEventListener('click',()=>{upcomingOpen=true;planOpen=false;exploreOpen=false;foldersOpen=false;programmesOpen=false;render();});
+ planMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=true;exploreOpen=false;foldersOpen=false;programmesOpen=false;render();});
+ exploreMode.addEventListener('click',()=>{if(!enabled)return;upcomingOpen=false;planOpen=false;exploreOpen=true;foldersOpen=false;programmesOpen=false;render();});
  const foldersMode=d.createElement('button');foldersMode.type='button';foldersMode.id='poAIEPGFolders';
  foldersMode.textContent='Thư mục EPG';foldersMode.setAttribute('aria-pressed','false');
  modeBar.append(foldersMode);
- foldersMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=true;render();});
+ foldersMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=true;programmesOpen=false;render();});
+ const programmesMode=d.createElement('button');programmesMode.type='button';programmesMode.id='poAIEPGProgrammes';
+ programmesMode.textContent='Chương trình EPG';programmesMode.setAttribute('aria-pressed','false');
+ modeBar.append(programmesMode);
+ programmesMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=false;programmesOpen=true;render();});
  const alertRow=d.createElement('label');alertRow.className='po-ai-alerts';
  const alertCheck=d.createElement('input');alertCheck.type='checkbox';alertCheck.id='poAIAlerts';
  alertCheck.checked=alertEnabled;alertCheck.disabled=!enabled;
@@ -130,6 +134,52 @@
   render();
  }
 
+
+ function renderEPGProgrammes(collection){
+  const catalog=core.programmeFolders(collection,guide(),win.IPTVGuide,{clock:Date.now(),hours:24});
+  summary.textContent='Chương trình EPG 24h · '+catalog.total+' chương trình · '+
+   catalog.groups.length+' chủ đề · '+catalog.scanned+' kênh đã kiểm tra';
+  const note=d.createElement('p');note.className='po-ai-privacy';
+  note.textContent='Tên và giờ phát thực tế từ XMLTV đã nạp. Một chương trình có thể ở nhiều chủ đề; không tải thêm dữ liệu Internet.';
+  list.append(note);
+  const add=(key,label,items,open)=>{
+   const folder=d.createElement('details');folder.className='po-ai-folder po-ai-programme-folder';
+   folder.dataset.programmeTopic=key;folder.open=open;
+   const heading=d.createElement('summary');heading.textContent=label+' · '+items.length+' chương trình';
+   folder.append(heading);
+   const rows=d.createElement('div');rows.className='po-ai-folder-items';
+   for(const item of items){
+    const row=d.createElement('div');row.className='po-ai-folder-row';
+    const when=new Date(item.programme.start).toLocaleString('vi-VN',
+     {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const title=d.createElement('strong');title.textContent=when+' · '+item.programme.title;
+    const channel=d.createElement('small');channel.textContent=item.channel.name;
+    const play=d.createElement('button');play.type='button';play.className='po-ai-folder-channel';
+    play.textContent='▶ Xem kênh';
+    play.setAttribute('aria-label','Xem '+item.channel.name+' có chương trình '+item.programme.title);
+    play.addEventListener('click',()=>{
+     if(!channels().some(c=>String(c.id)===String(item.channel.id)))return render();
+     win.PositronWatchFlow?.close?.();state()?.setPage?.('tv');
+     Promise.resolve(state()?.playChannel?.(item.channel.id)).catch(()=>state()?.toast?.('Không thể phát kênh','error'));
+    });
+    row.append(title,channel,play);rows.append(row);
+   }
+   folder.append(rows);list.append(folder);
+  };
+  for(const [i,group] of catalog.groups.entries())add(group.key,group.label,group.items,i===0);
+  if(catalog.uncategorized.length)add('other','Chương trình chưa rõ chủ đề',catalog.uncategorized,false);
+  if(!catalog.total){
+   const empty=d.createElement('p');empty.className='po-ai-empty';
+   empty.textContent='Chưa có chương trình XMLTV hợp lệ trong 24 giờ tới; hãy nhập EPG để khám phá theo chủ đề.';
+   list.append(empty);
+  }
+  if(catalog.truncated){
+   const warning=d.createElement('p');warning.className='po-ai-privacy';
+   warning.textContent='Đã đạt giới hạn chương trình để giữ ứng dụng phản hồi; không tải thêm nguồn hay tự phát.';
+   list.append(warning);
+  }
+ }
+
  function renderEPGFolders(collection){
   const catalog=core.epgFolders(collection,guide(),win.IPTVGuide,{clock:Date.now()});
   summary.textContent='Thư mục EPG ảo · '+catalog.groups.length+' chủ đề · '+catalog.scanned+
@@ -178,14 +228,15 @@
  function render(){
   if(!aiOpen)return;
   const collection=channels();const profile=profileFor(collection);
-  channelsMode.setAttribute('aria-pressed',String(!upcomingOpen&&!planOpen&&!exploreOpen&&!foldersOpen));
+  channelsMode.setAttribute('aria-pressed',String(!upcomingOpen&&!planOpen&&!exploreOpen&&!foldersOpen&&!programmesOpen));
   upcomingMode.setAttribute('aria-pressed',String(upcomingOpen));
   planMode.setAttribute('aria-pressed',String(planOpen));
   exploreMode.setAttribute('aria-pressed',String(exploreOpen));exploreMode.disabled=!enabled;
   foldersMode.setAttribute('aria-pressed',String(foldersOpen));
+  programmesMode.setAttribute('aria-pressed',String(programmesOpen));
   summary.textContent=(enabled?'● Đang học':'○ Chưa bật học')+(alertEnabled?' · Nhắc lịch AI bật':'')+' · '+model.observations+
    ' phản hồi · '+categoryModel.examples+' nhãn AI · '+collection.length+' kênh · Web chỉ tra khi nhấn';
-  list.dataset.mode=foldersOpen?'folders':'cards';
+  list.dataset.mode=(foldersOpen||programmesOpen)?'folders':'cards';
   list.replaceChildren();
   if(!collection.length){
    const empty=d.createElement('p');empty.className='po-ai-empty';
@@ -193,6 +244,7 @@
    list.append(empty);return;
   }
   if(foldersOpen){renderEPGFolders(collection);return;}
+  if(programmesOpen){renderEPGProgrammes(collection);return;}
   const ranked=exploreOpen
    ?core.exploreWithBandit(collection,guide(),win.IPTVGuide,model,profile,bandit,{limit:8,clock:Date.now()})
    :planOpen
@@ -366,6 +418,7 @@
   explore:()=>enabled?core.exploreWithBandit(channels(),guide(),win.IPTVGuide,model,profileFor(channels()),bandit):[],
   categoryProfile:()=>({enabled,examples:categoryModel.examples}),
   epgFolders:()=>core.epgFolders(channels(),guide(),win.IPTVGuide),
+  programmeFolders:()=>core.programmeFolders(channels(),guide(),win.IPTVGuide),
   alerts:()=>({enabled:alertEnabled,candidates:alertEnabled?core.startingForYou(channels(),guide(),win.IPTVGuide,model,webValid()):[]}),
   getTopic:metadata});
 })();

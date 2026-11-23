@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.357",
-  "description": "Positron P5.1.272: Thư mục EPG đa nhãn tự động",
+  "version": "4.23.358",
+  "description": "Positron P5.1.273: Thư mục chương trình EPG đa chủ đề",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
