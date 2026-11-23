@@ -8,7 +8,7 @@ test('P345 native AI shortcut guide is optional, remote-accessible and does not 
   "PageUp/PageDown: lùi hoặc tiến 5 gợi ý","Chỉ Enter hoặc Space trên nút Xem"])
   assert.ok(js.includes(x),'missing P345 keyboard help '+x);
  assert.ok(css.includes('#poAIShortcutGuide')&&css.includes('min-height:44px'));
- assert.ok(JSON.parse(read('package.json')).description.includes('Positron P5.1.345'));
+ assert.ok(Number.parseInt(JSON.parse(read('package.json')).description.split('Positron P5.1.')[1],10)>=345);
 });
 test('P345 native Electron tests real Enter before-after and preserves P344 paging',()=>{
  const qa=read('scripts/positron-345-audit.cjs'),ext=read('scripts/positron-20-extension.cjs');
