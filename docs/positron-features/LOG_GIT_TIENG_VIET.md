@@ -2222,7 +2222,6 @@ Hiển thị nhóm trong một hàng cuộn ngang thay vì xuống nhiều dòng
 
 Nếu một thông báo cùng nội dung và mức độ vẫn đang mở, không tạo bản trùng. Thông báo khác hoặc mức cảnh báo khác vẫn xuất hiện.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1b2c5d4d55f3d60a9ff64f45529aa181d3a9454e)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.108 — Thông báo không đè lên thanh biểu tượng
