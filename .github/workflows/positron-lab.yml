@@ -254,6 +254,7 @@ jobs:
           test -s positron-evidence/audit-p51352-explore-prerequisite.json
           test -s positron-evidence/p5-20-rounds/positron-p51352-explore-prerequisite-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51352-explore-prerequisite-after-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51352-explore-prerequisite-before-720x900-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51352-explore-prerequisite-after-720x900-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51351-source-state-isolation-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51351-source-state-isolation-after-1920x1080-real.png

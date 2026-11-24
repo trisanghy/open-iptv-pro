@@ -1,6 +1,10 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const dir='positron-evidence/p5-20-rounds',stem='positron-p51352-explore-prerequisite-';
+const dir='positron-evidence/p5-20-rounds';
+const screenshots=Object.freeze({
+ '1920x1080':Object.freeze({before:'positron-p51352-explore-prerequisite-before-1920x1080-real.png',after:'positron-p51352-explore-prerequisite-after-1920x1080-real.png'}),
+ '720x900':Object.freeze({before:'positron-p51352-explore-prerequisite-before-720x900-real.png',after:'positron-p51352-explore-prerequisite-after-720x900-real.png'})
+});
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const state=page=>page.evaluate(()=>({model:localStorage.getItem('positron-intelligence-preferences-v1'),ids:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id)),current:window.IPTVState.getCurrent()?.id||'',consent:document.getElementById('poAIMLConsent').checked}));
 const snap=page=>page.evaluate(()=>{const b=document.getElementById('poAIExplore'),p=document.getElementById('poWatchFlowPanel'),r=b.getBoundingClientRect(),frame=p.getBoundingClientRect();return {disabled:b.disabled,label:b.getAttribute('aria-label'),title:b.title,sub:getComputedStyle(b,'::after').content,width:r.width,height:r.height,inside:r.left>=frame.left&&r.right<=frame.right,overflow:p.scrollWidth>p.clientWidth+3||document.documentElement.scrollWidth>innerWidth+3};});
@@ -16,9 +20,9 @@ async function run(page){
   for(const [width,height] of [[1920,1080],[720,900]]){
    await page.setViewportSize({width,height});
    const old=await page.addStyleTag({content:'#poWatchFlowPanel #poAIExplore:disabled{opacity:.48!important;color:#ccece5!important}#poWatchFlowPanel #poAIExplore:disabled::after{content:none!important}'});
-   const before=await page.screenshot({path:path.join(dir,stem+'before-'+width+'x'+height+'-real.png'),animations:'disabled'});
+   const before=await page.screenshot({path:path.join(dir,screenshots[width+'x'+height].before),animations:'disabled'});
    await old.evaluate(el=>el.remove());
-   const visible=await snap(page),after=await page.screenshot({path:path.join(dir,stem+'after-'+width+'x'+height+'-real.png'),animations:'disabled'});
+   const visible=await snap(page),after=await page.screenshot({path:path.join(dir,screenshots[width+'x'+height].after),animations:'disabled'});
    assert.ok(visible.disabled&&visible.sub.includes('Cần bật học')&&visible.label.includes('cần bật học')&&visible.title.includes('bật học sở thích'));
    assert.ok(visible.width>70&&visible.height>=44&&visible.inside&&!visible.overflow);
    assert.ok(!before.equals(after));

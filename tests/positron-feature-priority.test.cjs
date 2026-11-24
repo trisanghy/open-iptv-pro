@@ -87,8 +87,18 @@ test('Hai PNG Electron thật riêng cho phiên bản mới phải được khai
  const n=Number(m[2]);
  if(n<136)return; // Nhãn lịch sử trước khi áp dụng cổng này.
  const prefix='positron-'+m[1].toLowerCase().replaceAll('.','')+'-';
- const qa=read('scripts/positron-20-extension.cjs');
+ const legacy=read('scripts/positron-20-extension.cjs');
  const workflow=read('.github/workflows/positron-lab.yml');
+ // From P352 the independent native audit declares its own actual output files.
+ // The full regression runner must invoke that audit, not just list filenames.
+ let qa=legacy;
+ if(n>=352){
+  const file='positron-'+n+'-audit.cjs';
+  qa=read('scripts/'+file);
+  const runner=read('scripts/positron-50-audit.cjs');
+  assert.ok(runner.includes("await require('./"+file+"').run(page)"),'full Electron QA must execute current independent audit');
+  assert.ok(qa.includes('await page.screenshot({path:path.join(dir,'),'current audit must capture real Electron PNG');
+ }
  const names=[...qa.matchAll(/positron-p51\d+[-a-zA-Z0-9]+\.png/g)]
   .map(x=>x[0]).filter(x=>x.startsWith(prefix));
  const before=names.filter(x=>x.includes('-before-'));
@@ -97,7 +107,9 @@ test('Hai PNG Electron thật riêng cho phiên bản mới phải được khai
  assert.ok(after.length>=1,'phiên bản '+n+' thiếu ảnh Electron SAU trong QA');
  assert.ok(after.some(x=>workflow.includes(x)),'workflow không xác minh PNG SAU');
  assert.ok(before.some(x=>workflow.includes(x)),'workflow không xác minh PNG TRƯỚC');
- assert.ok(qa.includes('await page.screenshot({path:path.join(out,'),
+ if(n>=352){
+  for(const name of [...before,...after])assert.ok(workflow.includes('test -s positron-evidence/p5-20-rounds/'+name),'workflow must verify actual PNG '+name);
+ }else assert.ok(qa.includes('await page.screenshot({path:path.join(out,'),
   'Ảnh mới phải ghi bởi Playwright/Electron thực, không phải mockup');
 });
 
