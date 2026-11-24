@@ -1,4 +1,12 @@
-# Open IPTV Pro TV · TizenBrew v0.1.44 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.50 (OTA)
+
+## v0.1.50 — Giai đoạn 1–2: lưu lõi phát tốt và chống đứng hình
+
+- Ưu tiên bộ phát đã được xác minh theo từng kênh (HLS.js, HLS relay, DASH.js, MPEG-TS, HTML5, AVPlay), không thử lại bộ phát khác chỉ vì đuôi URL. Profile bị chặn/tạm lỗi tiếp tục theo cơ chế dự phòng.
+- Nhận thêm tín hiệu HTML5 `stalled`; AVPlay theo dõi `onbufferingstart/onbufferingcomplete` để xử lý đệm quá 22 giây ngay cả khi đồng hồ media không tin cậy.
+- Giữ giới hạn khôi phục, chỉ lưu fingerprint thay URL/token; không tự chuyển nhầm kênh cùng tên.
+- Không đổi giao diện màn hình xe hay CarPlay; các giai đoạn duyệt video web, Cast receiver, preview tiết kiệm tài nguyên tiếp tục ở các bản sau.
+- Thêm 4 ca kiểm thử hồi quy; cần chạy CI và kiểm thử trên TV Samsung thật.
 
 ## v0.1.44 — Mở lại kênh nhanh và giảm chớp hình
 

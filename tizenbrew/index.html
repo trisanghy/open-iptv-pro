@@ -801,7 +801,7 @@ body[data-theme=glass] .dialog{
 <rect width="1024" height="1024" rx="220" fill="#ffffff"/>
 <path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
 </svg></div>
-    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.49</p></div>
+    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.50</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
@@ -2357,8 +2357,13 @@ function playbackWatchdog(token){
     shouldRecover=true;reason='Không nhận được hình trong 25 giây';
    }
   }
- }else if(playbackEngine==='avplay'&&playbackClockReliable&&now-playbackLastProgressAt>30000){
-  shouldRecover=true;reason='AVPlay không tiến hình trong 30 giây';
+ }else if(playbackEngine==='avplay'){
+  // AVPlay's media clock can freeze on older Samsung firmware.
+  if(playbackWaitingSince&&now-playbackWaitingSince>22000&&now-playbackLastProgressAt>22000){
+   shouldRecover=true;reason='AVPlay đệm quá 22 giây không lên hình';
+  }else if(playbackClockReliable&&now-playbackLastProgressAt>30000){
+   shouldRecover=true;reason='AVPlay không tiến hình trong 30 giây';
+  }
  }
  if(shouldRecover){
   if(recoverStalledPlayback(token,reason))return;
@@ -2377,7 +2382,7 @@ function startPlaybackWatchdog(token){
  * Only one instance is attached at a time, with a token for stale callbacks.
  * The framework does not bypass DRM, CORS or unavailable hardware codecs. */
 var TV_PLAYBACK_CORE={
- version:'0.1.47',
+ version:'0.1.50',
  libraries:{hlsjs:'1.6.15',dashjs:'5.3.0',mpegts:'1.8.2',native:'TV browser',avplay:'Samsung firmware'},
  preferredRoute:function(address){return dashAddress(address)?'dashjs':hlsAddress(address)?'hlsjs':mpegtsAddress(address)?'mpegts':'';},
  engines:{
@@ -2546,20 +2551,15 @@ function startPlaybackStream(channel,token){
   if(pathname&&!/\.[a-z0-9]{2,5}$/i.test(pathname))preferred='hlsjs';
  }
  var verified=savedPlaybackRoute(channel);
- // A verified HLS-relay route still runs HLS.js and avoids repeatedly
- // probing a known CORS-blocked URL (important on older Samsung TVs).
- if(preferred==='hlsjs'&&verified==='relay'&&launchPlaybackRoute(channel,token,'relay')){
-  logPlayback('Ưu tiên HLS.js qua dịch vụ cục bộ đã được kiểm chứng');
+ // Respect a genuinely proven decoder even when the URL looks like HLS/DASH.
+ // Unavailable engines and temporarily blocked profiles fall through safely.
+ if(verified&&launchPlaybackRoute(channel,token,verified)){
+  logPlayback('Mở nhanh bằng bộ phát đã kiểm chứng: '+verified);
   return;
  }
- // Prefer the bundled HLS/DASH decoder over AVPlay and native HTML5 for
- // manifest streams. Unsupported MSE immediately falls back to AVPlay.
+ // On unseen or failed sources, probe the bundled format decoder as before.
  if(preferred&&launchPlaybackRoute(channel,token,preferred)){
   logPlayback('Ưu tiên '+preferred+' (thư viện đã đóng gói trong WGT)');
-  return;
- }
- if(verified&&launchPlaybackRoute(channel,token,verified)){
-  logPlayback('Dùng bộ phát '+verified+' đã xác nhận ổn định');
   return;
  }
  var hint=!nativeAvplay()&&relayFastStartHint(channel);
@@ -2740,7 +2740,7 @@ function resetHtml5Video(){
  html5Video=null;hlsInstance=null;dashInstance=null;mpegtsInstance=null;
  if(video){
   cancelVideoReveal(video);
-  video.onplaying=video.ontimeupdate=video.onpause=video.onwaiting=video.onerror=null;
+  video.onplaying=video.ontimeupdate=video.onpause=video.onwaiting=video.onstalled=video.onerror=null;
  }
  if(engine){try{engine.destroy();}catch(e){}}
  if(dash){try{dash.reset();}catch(e){try{dash.destroy();}catch(ignore){}}}
@@ -2792,6 +2792,11 @@ function prepareHtml5Video(token){
   if(!playbackConfirmed)cancelVideoReveal(video);
  };
  video.onwaiting=function(){
+  if(!isActiveHtml5Video(video,token))return;
+  if(!playbackConfirmed)cancelVideoReveal(video);
+  if(!playbackWaitingSince)playbackWaitingSince=Date.now();
+ };
+ video.onstalled=function(){
   if(!isActiveHtml5Video(video,token))return;
   if(!playbackConfirmed)cancelVideoReveal(video);
   if(!playbackWaitingSince)playbackWaitingSince=Date.now();
@@ -3370,8 +3375,16 @@ function startAvplay(channel,token){
   api.setDisplayRect(0,0,1920,1080);
   try{api.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');}catch(e){}
   api.setListener({
-   onbufferingstart:function(){if(playbackActive(token)&&playbackEngine==='avplay'&&!playbackConfirmed)setPlayerStatus('AVPlay đang đệm luồng…');},
-   onbufferingcomplete:function(){if(playbackActive(token)&&playbackEngine==='avplay'&&!playbackConfirmed)setPlayerStatus('AVPlay đã đệm, đang phát hình…');},
+   onbufferingstart:function(){
+    if(!playbackActive(token)||playbackEngine!=='avplay')return;
+    if(!playbackWaitingSince)playbackWaitingSince=Date.now();
+    if(!playbackConfirmed)setPlayerStatus('AVPlay đang đệm luồng…');
+   },
+   onbufferingcomplete:function(){
+    if(!playbackActive(token)||playbackEngine!=='avplay')return;
+    playbackWaitingSince=0;
+    if(!playbackConfirmed)setPlayerStatus('AVPlay đã đệm, đang phát hình…');
+   },
    oncurrentplaytime:function(ms){
     if(playbackActive(token)&&playbackEngine==='avplay'){
      playbackReady(token);notePlaybackProgress(token,Number(ms)/1000);

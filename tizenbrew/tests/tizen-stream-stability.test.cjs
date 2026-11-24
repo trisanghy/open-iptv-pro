@@ -303,3 +303,48 @@ test('A relay session waiting to retry stops requesting the previous channel aft
  assert.equal(requests.length,1);
  assert.equal(s.api.current().playing.id,'other');
 });
+
+test('Reopen verified HLS using native rather than probing HLS.js again',()=>{
+ const s0=setup(),ch={...c,url:'https://cdn.example/verified.m3u8'};
+ const token=s0.api.play(ch);
+ s0.api.playbackReady(s0.api.current().serial);
+ s0.api.notePlaybackProgress(s0.api.current().serial,0);
+ s0.advance(1800);
+ s0.api.notePlaybackProgress(s0.api.current().serial,1.8);
+ // The initial route was HLS.js; explicitly seed a valid native profile.
+ const fp=v=>{let h=2166136261;for(let i=0;i<v.length;i++){h^=v.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(36)+'-'+v.length.toString(36);};
+ const key='channel:'+fp(ch.id+'\n'+ch.url);
+ const storage=new Map([['openiptv-tizen-playback-path-v3',JSON.stringify({[key]:{source:fp(ch.url),route:'native',at:1000000,blockedUntil:0}})]]);
+ const s=setup(storage);s.api.play(ch);
+ assert.equal(s.api.current().mode,'native');
+ assert.equal(s.video.src,ch.url);
+ assert.equal(s.instances.length,0);
+});
+test('Blocked verified route is ignored until its cooldown ends',()=>{
+ const ch={...c,url:'https://cdn.example/cooldown.m3u8'};
+ const fp=v=>{let h=2166136261;for(let i=0;i<v.length;i++){h^=v.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(36)+'-'+v.length.toString(36);};
+ const key='channel:'+fp(ch.id+'\n'+ch.url);
+ const storage=new Map([['openiptv-tizen-playback-path-v3',JSON.stringify({[key]:{source:fp(ch.url),route:'native',at:1000000,blockedUntil:1030000}})]]);
+ const s=setup(storage);s.api.play(ch);
+ assert.equal(s.api.current().mode,'hlsjs');
+});
+test('HTML5 stalled without waiting triggers delayed but bounded recovery',()=>{
+ const s=setup();s.api.play(c);const token=s.api.current().serial;
+ s.api.playbackReady(token);s.video.paused=false;s.video.readyState=4;
+ assert.equal(typeof s.video.onstalled,'function');
+ s.video.onstalled();s.advance(10000);s.api.playbackWatchdog(token);
+ assert.equal(s.api.current().recoveries,0);
+ s.advance(12000);s.api.playbackWatchdog(token);
+ assert.equal(s.api.current().recoveries,1);
+});
+test('AVPlay buffering timeout works without a reliable media clock',()=>{
+ const s=setup(),ch={...c,url:'https://cdn.example/movie.mp4'};let listener;
+ const avplay={open(){},setDisplayRect(){},setDisplayMethod(){},setListener(value){listener=value;},
+  prepareAsync(ok){ok();},play(){},getState(){return 'PLAYING';},stop(){},close(){}};
+ s.env.webapis={avplay};s.api.play(ch);assert.equal(s.api.current().engine,'avplay');
+ const token=s.api.current().serial;s.api.playbackReady(token);
+ listener.onbufferingstart();s.advance(10000);s.api.playbackWatchdog(token);
+ assert.equal(s.api.current().recoveries,0);
+ s.advance(14000);s.api.playbackWatchdog(token);
+ assert.equal(s.api.current().recoveries,1);
+});
