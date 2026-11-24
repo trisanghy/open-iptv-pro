@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-24T23:52:35.289589+00:00",
+  "generatedAt": "2026-11-24T23:58:20.479585+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -23,11 +23,42 @@
       "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45513376089",
       "imageCommit": "5235ab6fe76b959be804f901174beb47bf16d282",
       "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45513376089/artifacts/14976323180",
-      "builds": [],
+      "builds": [
+        {
+          "id": 14975947520,
+          "name": "positron-p51355-mac-arm64",
+          "platform": "mac-arm64",
+          "url": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45513375909/artifacts/14975947520",
+          "runUrl": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45513375909",
+          "expiresAt": "2027-02-22T23:51:01Z",
+          "createdAt": "2026-11-24T23:53:16Z",
+          "commit": "5235ab6fe76b959be804f901174beb47bf16d282"
+        },
+        {
+          "id": 14976917178,
+          "name": "positron-p51355-mac-x64",
+          "platform": "mac-x64",
+          "url": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45513375909/artifacts/14976917178",
+          "runUrl": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45513375909",
+          "expiresAt": "2027-02-22T23:51:01Z",
+          "createdAt": "2026-11-24T23:54:52Z",
+          "commit": "5235ab6fe76b959be804f901174beb47bf16d282"
+        },
+        {
+          "id": 14977251794,
+          "name": "positron-p51355-win-x64",
+          "platform": "win-x64",
+          "url": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45513375909/artifacts/14977251794",
+          "runUrl": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45513375909",
+          "expiresAt": "2027-02-22T23:51:01Z",
+          "createdAt": "2026-11-24T23:54:32Z",
+          "commit": "5235ab6fe76b959be804f901174beb47bf16d282"
+        }
+      ],
       "ci": {
         "url": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45513375909",
-        "status": "in_progress",
-        "conclusion": null,
+        "status": "completed",
+        "conclusion": "success",
         "commit": "5235ab6fe76b959be804f901174beb47bf16d282"
       }
     },
@@ -225,9 +256,9 @@
       "imageBefore": "screenshots/positron-p51351-source-state-isolation-before-1920x1080-real.png",
       "imageSource": "actions",
       "imageKind": "fast",
-      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45449522870",
-      "imageCommit": "140aad6bafe651f1c75f9655505c2eaf529f1330",
-      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45449522870/artifacts/14948635855",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45297014268",
+      "imageCommit": "15c2f0856a42444894e64324c8af41608e092f3c",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45297014268/artifacts/14875899940",
       "builds": [
         {
           "id": 14947211813,
@@ -9095,7 +9126,7 @@
       "commit": "ff29ada0c777398a4fc8dcba36db4cd9c99dd474",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png",
+      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14747500489,
