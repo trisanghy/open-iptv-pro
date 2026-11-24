@@ -2231,7 +2231,6 @@ Bổ sung thao tác xử lý dấu trang Xem sau không còn nguồn hợp lệ,
 
 Phát hiện dấu trang đã lưu nhưng nguồn không còn sẵn có; thông báo rõ tình trạng mà không tự xóa dữ liệu đã lưu.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0e6a64d5d4dbcda6e4131a3375b414e63cb54a52)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.103 — Không tự loại dấu trang Xem sau khi đủ 80 mục
