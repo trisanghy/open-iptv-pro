@@ -3,9 +3,9 @@
 set -euo pipefail
 SOURCE=trisanghy/open-iptv-pro
 DEST=trisanghy/open-iptv-pro-tizen
-RUN=45300343037
-ARTIFACT=Open-IPTV-Pro-TV-Native-UNSIGNED
-SOURCE_SHA=a1b3b121ba4078548485fa43ec7f71c4b43217e4
+RUN=45302957982
+ARTIFACT=Tizen-Installer-UNSIGNED
+SOURCE_SHA=b1015190ebdb66bd78e684cd615041a5ac9140e2
 MODE="${1:-prepare}"
 WORK="$HOME/Downloads/Open-IPTV-Pro-Tizen-$RUN"
 die(){ printf '%s\n' "$*" >&2; exit 1; }
