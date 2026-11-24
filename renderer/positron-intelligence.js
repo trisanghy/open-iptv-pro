@@ -238,7 +238,9 @@
  // P332: reveal the P331 remote keys and their safe focus-only semantics.
  const modeHelp=d.createElement('p');modeHelp.className='po-ai-keyboard-help';
  modeHelp.id='poAIKeyboardHelp';
- modeHelp.textContent='← →: chế độ · Enter/Space: chọn · Alt+Shift+J: tới nút Xem đầu';
+ const modeHintWithChannels='← →: chế độ · Enter/Space: chọn · Alt+Shift+J: tới nút Xem đầu';
+ const modeHintWithoutChannels='← → ↑ ↓: chế độ · Enter/Space: chọn';
+ modeHelp.textContent=modeHintWithChannels;
  // P336: show + announce which recommendation was reached by keyboard.
  const focusProgress=d.createElement('span');
  focusProgress.id='poAIFocusProgress';
@@ -1045,6 +1047,9 @@
   if(!foldersOpen)delete panel.dataset.poAiTraining;
   renderModelManager();
   const collection=channels();const profile=profileFor(collection);
+  // P355: do not advertise recommendation shortcuts when no source is available.
+  modeHelp.textContent=collection.length?modeHintWithChannels:modeHintWithoutChannels;
+  modeHelp.title=collection.length?'Phím điều hướng gợi ý: J tới đầu · K tiếp theo · P lùi lại (Alt+Shift) · Alt+Shift+I: tên đầy đủ của gợi ý đang chọn':'Dùng bốn phím mũi tên để chuyển chế độ; Enter hoặc Space để chọn. Thêm nguồn IPTV để có gợi ý.';
   channelsMode.setAttribute('aria-pressed',String(!upcomingOpen&&!planOpen&&!exploreOpen&&!foldersOpen&&!programmesOpen));
   upcomingMode.setAttribute('aria-pressed',String(upcomingOpen));
   planMode.setAttribute('aria-pressed',String(planOpen));

@@ -1,3 +1,10 @@
+## P5.1.355 / Electron 4.23.440 — Phím điều hướng AI theo nguồn (CANDIDATE)
+- Feature priority: NEW — hướng dẫn remote tự thích ứng với trạng thái không có nguồn, hiển thị bốn phím chuyển chế độ và không quảng cáo lối tắt tới gợi ý chưa tồn tại.
+- Feature class: AI
+- User action: Mở WatchFlow AI khi chưa có nguồn IPTV để xem hướng dẫn chuyển chế độ; khi có kênh, hướng dẫn gợi ý trở lại mà không cần khởi động lại.
+- Electron screenshot: positron-p51355-context-keys-after-1920x1080-real.png
+- Evidence: Đã mở PNG thật P354 tại HEAD b904d184: hướng dẫn Alt+Shift+J hiện dù 0 kênh, bị ngắt dòng. Audit P355 kiểm tra trạng thái trống 1920×1080 và 720×900, ảnh trước tái hiện chữ cũ trên Electron, ảnh sau dùng renderer mới; giữ nguồn và quyền học nguyên vẹn. Chưa có kết quả P355, CANDIDATE, không tuyên bố phát hành.
+
 ## P5.1.354 / Electron 4.23.439 — Hướng dẫn thiết lập AI theo trạng thái (CANDIDATE)
 - Feature priority: NEW — hướng dẫn thiết lập cá nhân hóa theo quyền học hiện tại, giúp người dùng chưa có playlist hiểu bước tiếp theo và vẫn dùng IPTV nếu từ chối học.
 - Feature class: AI

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.439",
-  "description": "Positron P5.1.354: Hướng dẫn thiết lập AI theo trạng thái",
+  "version": "4.23.440",
+  "description": "Positron P5.1.355: Phím điều hướng AI theo nguồn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
