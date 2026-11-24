@@ -86,7 +86,7 @@ test('Playback recognises extensionless HLS and avoids repeated relay when offli
  assert.match(js,/relayDownUntil<=Date\.now\(\)&&preferredDecoderAttempts\.relay/);
  assert.match(js,/relayDownUntil>Date\.now\(\)\|\|preferredDecoderAttempts\.relay/);
  assert.match(js,/if\(isServiceDown\)preferredDecoderAttempts\.relay=PREFERRED_HLS_RELAY_MAX/);
- assert.match(ui,/Samsung Tizen Edition · TizenBrew v0\.1\.51/);
+ assert.match(ui,/Samsung Tizen Edition · TizenBrew v0\.1\.52/);
 });
 
 test('Invalid health JSON rejects rather than hanging',async()=>{
@@ -116,4 +116,16 @@ test('Terminal errors expand diagnostics; OK retries the relay',()=>{
  assert.match(ui,/is-playback-error \.playerdiag\{[^}]*bottom:15vh/);
  assert.match(ui,/classList\.add\('is-playback-error'\)/);
  assert.match(ui,/relayHealthState='thử lại theo yêu cầu OK'/);
+});
+
+test('Two failed health probes start the same relay using an immutable source identity',async()=>{
+ const s=instance({fetch:()=>Promise.reject(Error('Failed to fetch'))});
+ await assert.rejects(s.context.ensureRelayReady(()=>true),/Dịch vụ HLS/);
+ assert.equal(s.messages.length,2);
+ s.messages[1].onopen();
+ assert.equal(s.messages[1].lastMessage.type,6);
+ assert.match(s.messages[1].lastMessage.payload.fullName,/^gh\/trisanghy\/open-iptv-pro@[a-f0-9]{40}$/);
+ assert.equal(s.messages[1].lastMessage.payload.serviceFile,'tizenbrew/hls-relay-v1.js');
+ s.messages[1].onmessage({data:JSON.stringify({type:7,payload:[{name:s.messages[1].lastMessage.payload.fullName,hasCrashed:true,error:{message:'test failure'}}]})});
+ assert.match(s.context.relayRegistryState,/CRASH test failure/);
 });

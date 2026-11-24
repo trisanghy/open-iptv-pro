@@ -1,4 +1,10 @@
-# Open IPTV Pro TV · TizenBrew v0.1.51 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.52 (OTA)
+
+## v0.1.52 — Khởi động relay dự phòng theo commit bất biến
+
+- TizenBrew lưu service theo fullName; sau hai lần health thất bại, thử một lần khởi động chính dịch vụ của nhánh tizenbrew từ commit đã xác định, không dựa vào cache hoặc registry của tên nhánh.
+- Đọc GetServiceStatuses (event 7) và hiển thị trạng thái đăng ký/crash của đúng service. Health vẫn là điều kiện xác nhận dịch vụ thật sự hoạt động. Không mở thêm cổng, không đổi nguồn IPTV, không nới quyền relay.
+- Chưa xác minh trên TV thật; nếu registry không nhận hoặc health vẫn lỗi cần xem ảnh chẩn đoán mới.
 
 ## v0.1.51 — Bảng lỗi toàn màn hình và sửa kiểm tra relay
 

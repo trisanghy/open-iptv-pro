@@ -812,7 +812,7 @@ body #player.is-playback-error #channelPicker{z-index:12}
 <rect width="1024" height="1024" rx="220" fill="#ffffff"/>
 <path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
 </svg></div>
-    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.51</p></div>
+    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.52</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
@@ -2394,7 +2394,7 @@ function startPlaybackWatchdog(token){
  * Only one instance is attached at a time, with a token for stale callbacks.
  * The framework does not bypass DRM, CORS or unavailable hardware codecs. */
 var TV_PLAYBACK_CORE={
- version:'0.1.51',
+ version:'0.1.52',
  libraries:{hlsjs:'1.6.15',dashjs:'5.3.0',mpegts:'1.8.2',native:'TV browser',avplay:'Samsung firmware'},
  preferredRoute:function(address){return dashAddress(address)?'dashjs':hlsAddress(address)?'hlsjs':mpegtsAddress(address)?'mpegts':'';},
  engines:{
@@ -2852,6 +2852,7 @@ function playbackFailure(token,message){
  if(typeof location!=='undefined'){
   logPlayback('TizenBrew '+TV_PLAYBACK_CORE.version+' · '+(tizenModuleContext()?'đúng môi trường module':'ngoài môi trường module')+' · '+String(location.protocol||'')+'//'+String(location.hostname||'')+':'+String(location.port||''));
   logPlayback('Relay StartService: '+relayStartState+' · Health: '+relayHealthState);
+  logPlayback('TizenBrew registry: '+relayRegistryState+' · thử commit cố định: '+(relayPinnedTried?'có':'chưa'));
   logPlayback('Relay '+(relayDownUntil>Date.now()?'tạm ngừng '+Math.ceil((relayDownUntil-Date.now())/1000)+' giây':relayReadyUntil>Date.now()?'đã xác nhận online':'chưa xác nhận')+' · '+(relayDownReason||'không có lỗi health đã ghi'));
   logPlayback('Bộ phát cuối: '+currentPlaybackRoute()+' · HLS '+preferredDecoderAttempts.hlsjs+' · relay '+preferredDecoderAttempts.relay+' · DASH '+preferredDecoderAttempts.dashjs+' · phục hồi '+playbackRecoveries);
  }
@@ -3064,6 +3065,10 @@ function retryNativeHls(channel,token){
 var hlsRelayServiceLastLaunch=0;
 var relayReadyUntil=0,relayDownUntil=0,relayDownReason='',relayProbePromise=null;
 var relayStartState='chưa gọi',relayHealthState='chưa kiểm tra';
+// Known immutable source on our own tizenbrew branch. Different service
+// registry key lets TizenBrew recover from a stale branch-name VM.
+var relayPinnedName='gh/trisanghy/open-iptv-pro@d53667ee24af8a247f04bad60827aa491c93be81';
+var relayPinnedTried=false,relayRegistryState='chưa nhận phản hồi';
 function tizenModuleContext(){
  if(typeof location==='undefined')return true;
  return /^(127\.0\.0\.1|localhost)$/.test(String(location.hostname||'')) &&
@@ -3079,31 +3084,46 @@ function serviceFullName(){
 function relayOfflineError(message){
  var err=Error(message);err.relayOffline=true;return err;
 }
-function ensureTizenHlsRelayService(){
+function ensureTizenHlsRelayService(usePinned){
  if(!tizenModuleContext()){relayStartState='không phải TizenBrew localhost:8081';return false;}
  // TizenBrew's websocket supports StartService (event 6). Starting our own
  // explicitly named module service avoids waiting for stale CDN metadata to
  // be refreshed after the app HTML OTA has already advanced.
- if(Date.now()-hlsRelayServiceLastLaunch<12000)return;
+ if(!usePinned&&Date.now()-hlsRelayServiceLastLaunch<12000)return;
  hlsRelayServiceLastLaunch=Date.now();
  relayStartState='đang mở WebSocket localhost:8081';
+ var serviceName=usePinned?relayPinnedName:serviceFullName();
  var socket=null;
  try{
   socket=new WebSocket('ws://127.0.0.1:8081');
   var ws=socket;
   var timeout=setTimeout(function(){if(relayStartState==='đang mở WebSocket localhost:8081')relayStartState='WebSocket hết thời gian chờ';try{ws.close();}catch(e){}},2600);
+  ws.onmessage=function(event){
+   try{
+    var packet=JSON.parse(event.data);
+    if(packet.type!==7||!Array.isArray(packet.payload))return;
+    var matches=packet.payload.filter(function(row){return row&&row.name===serviceName;});
+    if(!matches.length){relayRegistryState=(usePinned?'commit':'nhánh')+': chưa có trong registry';return;}
+    var row=matches[0],err=row.error,detail='';
+    if(err&&typeof err==='object')detail=String(err.message||err.code||err.name||'không có chi tiết');
+    else if(err)detail=String(err);
+    relayRegistryState=(usePinned?'commit':'nhánh')+': '+(row.hasCrashed?'CRASH '+detail.slice(0,120):'đã đăng ký, chưa chứng minh cổng hoạt động');
+   }catch(e){}
+  };
   ws.onopen=function(){
    try{
     ws.send(JSON.stringify({
      type:6,
      payload:{
-      fullName:serviceFullName(),
+      fullName:serviceName,
       serviceFile:'tizenbrew/hls-relay-v1.js'
      }
     }));
-    relayStartState='đã gửi StartService (chưa xác nhận chạy)';
+    relayStartState='đã gửi StartService '+(usePinned?'commit cố định':'nhánh')+' (chưa xác nhận chạy)';
    }catch(e){relayStartState='gửi StartService thất bại';}
-   setTimeout(function(){clearTimeout(timeout);try{ws.close();}catch(e){}},1300);
+   function readStatus(){try{ws.send(JSON.stringify({type:7,payload:null}));}catch(e){}}
+   setTimeout(readStatus,600);setTimeout(readStatus,1600);
+   setTimeout(function(){clearTimeout(timeout);try{ws.close();}catch(e){}},2400);
   };
   ws.onerror=function(){clearTimeout(timeout);relayStartState='WebSocket kết nối lỗi';};
   return true;
@@ -3153,6 +3173,9 @@ function ensureRelayReady(active){
   }).catch(function(err){
    count++;
    relayHealthState='lỗi '+count+'/6 · '+String(err&&err.message||'không kết nối').replace(/https?:\/\/\S+/gi,'[URL]').slice(0,100);
+   if(count===2&&!relayPinnedTried&&serviceFullName()!==relayPinnedName){
+    relayPinnedTried=true;ensureTizenHlsRelayService(true);
+   }
    if(count<6)return new Promise(function(resolve){setTimeout(resolve,600);}).then(poll);
    relayReadyUntil=0;relayDownUntil=Date.now()+45000;
    relayDownReason='Dịch vụ HLS trên TV (127.0.0.1:17870) chưa khởi động hoặc bị chặn. '+relayHealthState;
@@ -3456,7 +3479,7 @@ function togglePlayback(){
  if(!playing)return;
  if(playbackFailed){
   if(relayDownUntil>Date.now()&&!relayProbePromise){
-   relayDownUntil=0;relayReadyUntil=0;hlsRelayServiceLastLaunch=0;
+   relayDownUntil=0;relayReadyUntil=0;hlsRelayServiceLastLaunch=0;relayPinnedTried=false;
    relayHealthState='thử lại theo yêu cầu OK';ensureTizenHlsRelayService();
   }
   play(playing);return;
