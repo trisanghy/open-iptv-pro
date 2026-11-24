@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.352 — Giải thích điều kiện Khám phá AI ngay trên nút
+## P5.1.353 — Đồng bộ trạng thái quyền học AI
+
+**Ứng dụng:** 4.23.438 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: BLOCKER_FIX — audit CI P352 chứng minh trạng thái quyền riêng tư bị báo sai cho trình đọc màn hình và tooltip khi người dùng đã đồng ý học; sửa đồng bộ và bổ sung kiểm thử chuyển trạng thái thật, tránh báo cáo quyền học sai. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/238d371edffd7bd70c6080d81ed0462dff6991e6)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.352 — Giải thích điều kiện Khám phá AI ngay trên nút (CANDIDATE)
 
 **Ứng dụng:** 4.23.437 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: BLOCKER_FIX — sửa cổng CI phát hành bị chặn vì khai báo ưu tiên và liên kết bằng chứng Electron trước/sau sai; giữ nguyên cải tiến giải thích điều kiện Khám phá AI của P352, không tự bật học hay thay dữ liệu. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ba151aa53ce01dd62a47308dab559007455e5254)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/61e61fad21592e75b23a122635df5b50ad23fb2d)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.351 — Cô lập nguồn kênh QA, sửa lỗi CI phát hành (ĐANG XÁC MINH)
 
