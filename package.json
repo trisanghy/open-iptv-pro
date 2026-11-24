@@ -2,7 +2,7 @@
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
   "version": "0.1.52",
-  "description": "Open IPTV Pro TV Samsung: 5 giao diện, HLS/DASH/MPEG-TS tích hợp WGT, AVPlay dự phòng, EPG, quản lý IPTV qua QR.",
+  "description": "Bản thử nghiệm Hybrid TV, độc lập với TizenBrew ổn định; AVPlay chỉ trên WGT native tương thích.",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
@@ -116,7 +116,7 @@
     ]
   },
   "packageType": "app",
-  "appName": "Open IPTV Pro TV",
+  "appName": "Open IPTV Pro TV Hybrid Lab",
   "appPath": "tizenbrew/bootstrap.html",
   "keys": [
     "ChannelUp",

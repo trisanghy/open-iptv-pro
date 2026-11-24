@@ -14,7 +14,7 @@ button{padding:15px 22px;font:inherit;border:2px solid #54baf5;border-radius:12p
 </head>
 <body>
 <main>
-<h1>Open IPTV Pro TV</h1>
+<h1>Open IPTV Pro TV · Hybrid Lab</h1>
 <p>Đang tải mã ứng dụng mới nhất từ GitHub. Danh sách kênh trên TV sẽ không bị xóa.</p>
 <div id="status" role="status">Đang xác minh phiên bản…</div>
 <p id="details"></p>
@@ -23,7 +23,7 @@ button{padding:15px 22px;font:inherit;border:2px solid #54baf5;border-radius:12p
 <script>
 (function(){
 'use strict';
-var project='trisanghy/open-iptv-pro',branch='tizenbrew',retries=0;
+var project='trisanghy/open-iptv-pro',branch='tizen-hybrid-experiment',retries=0;
 var status=document.getElementById('status'),details=document.getElementById('details'),retry=document.getElementById('retry');
 function report(title,extra){status.textContent=title;details.textContent=extra||'';}
 function get(url,kind,ms){

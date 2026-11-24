@@ -53,7 +53,7 @@ test('Every launch discovers the latest tizenbrew commit and loads immutable jsD
  const run=start('ok');
  await settle();
  assert.equal(run.requests.length,2);
- assert.match(run.requests[0],/api\.github\.com\/repos\/trisanghy\/open-iptv-pro\/commits\/tizenbrew/);
+ assert.match(run.requests[0],/api\.github\.com\/repos\/trisanghy\/open-iptv-pro\/commits\/tizen-hybrid-experiment/);
  assert.ok(run.requests[1].includes('@'+run.sha+'/tizenbrew/index.html'));
  assert.deepEqual(run.events.slice(0,1),['open']);
  assert.equal(run.events[1],'write');
@@ -71,6 +71,6 @@ test('GitHub API failure falls back to raw branch with cache-busting query',asyn
  const run=start('api-fail');
  await settle();
  assert.equal(run.requests.length,2);
- assert.match(run.requests[1],/raw\.githubusercontent\.com\/trisanghy\/open-iptv-pro\/tizenbrew\/tizenbrew\/index.html\?fresh=/);
+ assert.match(run.requests[1],/raw\.githubusercontent\.com\/trisanghy\/open-iptv-pro\/tizen-hybrid-experiment\/tizenbrew\/index.html\?fresh=/);
  assert.equal(run.events[3],'close');
 });

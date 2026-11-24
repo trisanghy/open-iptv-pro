@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns="http://www.w3.org/ns/widgets"
         xmlns:tizen="http://tizen.org/ns/widgets"
-        id="https://trisanghy.github.io/open-iptv-pro/native-tv"
+        id="https://trisanghy.github.io/open-iptv-pro/hybrid-lab"
         version="0.1.27"
         viewmodes="maximized">
-    <name>Open IPTV Pro TV Native</name>
+    <name>Open IPTV Pro TV Hybrid Lab</name>
     <content src="index.html"/>
     <icon src="icon.png"/>
     <access origin="*" subdomains="true"/>
-    <tizen:application id="OIPTVPROTV.OpenIPTVPro" package="OIPTVPROTV" required_version="3.0"/>
+    <tizen:application id="OIPTVLAB01.OpenIPTVLab" package="OIPTVLAB01" required_version="3.0"/>
     <tizen:profile name="tv-samsung"/>
     <tizen:privilege name="http://tizen.org/privilege/internet"/>
     <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>

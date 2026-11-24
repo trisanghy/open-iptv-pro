@@ -1,6 +1,6 @@
 # Open IPTV Pro TV Native — AVPlay cho Samsung
 
-Đây là **ứng dụng Tizen Web độc lập**, dùng cùng giao diện và mã quản lý kênh trên nhánh `tizenbrew`. Không phải module trong TizenBrew và không tự động thay thế module hiện có.
+Đây là **ứng dụng Tizen Web độc lập**, dùng cùng giao diện và mã quản lý kênh trên nhánh `tizen-hybrid-experiment`. Không phải module trong TizenBrew và không tự động thay thế module hiện có.
 
 ## Vì sao cần bản native
 
@@ -39,5 +39,11 @@ Nguồn: [Samsung — Playback Using AVPlay](https://developer.samsung.com/smart
 
 - Build riêng: chỉ chuyển đổi bản HTML đóng gói, không sửa module `tizenbrew/index.html`, bootstrap, relay hoặc manifest module GitHub. Không mở trang web từ xa trong ngữ cảnh có quyền hệ thống; giao diện web là mã cục bộ đáng tin cậy, dữ liệu online dùng cơ chế hiện có.
 - AVPlay ưu tiên cho kênh chưa có bộ phát đã kiểm chứng; nếu lỗi trước khi phát, chuyển bộ phát theo loại nguồn rồi HTML5, không lặp AVPlay trong cùng chuỗi khởi tạo. Đăng ký phím CH+/−, media và phím màu theo khả năng TV. Không khởi động relay TizenBrew khi mở bản native.
-- Module TizenBrew: `trisanghy/open-iptv-pro@tizenbrew` (không có AVPlay hệ thống). WGT độc lập: tải artifact GitHub Actions, ký bằng chứng chỉ phù hợp TV rồi cài qua Tizen Studio hoặc TizenBrew Installer tương thích. Mục Thêm Môđun GitHub không cài WGT native.
+- Module Hybrid Lab: `trisanghy/open-iptv-pro@tizen-hybrid-experiment` (không có AVPlay hệ thống). WGT độc lập: tải artifact GitHub Actions, ký bằng chứng chỉ phù hợp TV rồi cài qua Tizen Studio hoặc TizenBrew Installer tương thích. Mục Thêm Môđun GitHub không cài WGT native.
 - Chưa thử phần cứng; bản WGT vẫn chưa ký. Giao diện native đóng gói cục bộ, chưa hỗ trợ tự cập nhật mã giao diện từ xa.
+
+## Cô lập thử nghiệm
+
+- Link ổn định: `trisanghy/open-iptv-pro@tizenbrew` (không thay đổi).
+- Link module thử nghiệm: `trisanghy/open-iptv-pro@tizen-hybrid-experiment`. OTA chỉ đọc nhánh thử nghiệm; danh sách kênh, lịch sử, theme và hồ sơ phát dùng khóa riêng. Module HTTP vẫn không có quyền AVPlay native.
+- Native WGT có package ID riêng `OIPTVLAB01`; cài song song nếu ký đúng TV. Không thể cài WGT native từ menu thêm module GitHub.

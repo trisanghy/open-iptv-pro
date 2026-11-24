@@ -812,7 +812,7 @@ body #player.is-playback-error #channelPicker{z-index:12}
 <rect width="1024" height="1024" rx="220" fill="#ffffff"/>
 <path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
 </svg></div>
-    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.52</p></div>
+    <div><strong>Open IPTV Pro</strong><p>Hybrid Lab · TizenBrew v0.1.52</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
@@ -1046,7 +1046,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 (function(){
 'use strict';
 var byId=function(id){return document.getElementById(id);};
-var storageKey='openiptv-tizenbrew-tv-v1';
+var storageKey='openiptv-tizenbrew-tv-v1-hybrid-lab';
 var state={sources:[],favorites:{},recent:[],theme:'google'},section='all',group='Tất cả',search='',selected=null,playing=null,showLimit=160,items=[];
 try{var old=JSON.parse(localStorage.getItem(storageKey)||'{}');if(old&&typeof old==='object'){state.sources=Array.isArray(old.sources)?old.sources:[];state.favorites=old.favorites||{};state.recent=Array.isArray(old.recent)?old.recent:[];state.theme=['dark','google','apple','minimalist','glass'].indexOf(old.theme)>=0?old.theme:old.theme==='amoled'?'dark':old.theme==='light'?'minimalist':'google';}}catch(e){}
 function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));return true;}catch(e){notify('Không đủ bộ nhớ để lưu danh sách.');return false;}}
@@ -1057,7 +1057,7 @@ function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));retur
  * a simple UI change when the TV's localStorage quota is almost full. */
 var TV_THEME_ORDER=['dark','google','apple','minimalist','glass'];
 var TV_THEME_NAMES={dark:'Tối',google:'Google TV',apple:'Apple TV',minimalist:'Minimalist',glass:'Glassmorphism'};
-var TV_THEME_KEY='openiptv-tizen-ui-theme-v2';
+var TV_THEME_KEY='openiptv-tizen-ui-theme-v2-hybrid-lab';
 try{
  var savedTheme=localStorage.getItem(TV_THEME_KEY);
  if(TV_THEME_ORDER.indexOf(savedTheme)>=0)state.theme=savedTheme;
@@ -1544,8 +1544,8 @@ return out;}
 var EPG_DEFAULT='https://epg.io.vn/epg.xml.gz';
 var EPG_PLAIN='https://epg.io.vn/epg.xml';
 var EPG_BACKUP='https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz';
-var EPG_DB='openiptv-tizen-epg-bounded-v1';
-var EPG_DAY_KEY='openiptv-tizen-epg-day-v1';
+var EPG_DB='openiptv-tizen-epg-bounded-v1-hybrid-lab';
+var EPG_DAY_KEY='openiptv-tizen-epg-day-v1-hybrid-lab';
 var epgGuide={names:{},aliasesById:{},programmes:[]},epgRowsById={};
 var epgReady=false,epgLoading=false,epgAttemptInSession=false,epgDay='',epgError='';
 function epgNorm(v){var s=String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d');
@@ -1718,8 +1718,8 @@ async function epgStartup(){
 
 function elem(tag,cls,text){var x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x;}
 function all(){var seen={},out=[];state.sources.forEach(function(source){orderedManagerEntries(source).forEach(function(entry){var c=entry.channel;if(c.id&&!c.hidden&&!seen[c.id]){seen[c.id]=true;out.push(c);}});});return out;}
-var focusStorageKey='open-iptv-tizen-focus-v1';
-var pickerFocusStorageKey='open-iptv-tizen-picker-v1';
+var focusStorageKey='open-iptv-tizen-focus-v1-hybrid-lab';
+var pickerFocusStorageKey='open-iptv-tizen-picker-v1-hybrid-lab';
 var lastHomeFocus='nav:all',lastPickerPosition={group:'Tất cả',id:''};
 try{
  var rememberedFocus=localStorage.getItem(focusStorageKey);
@@ -2183,7 +2183,7 @@ var provenRelayUrls={},provenRelayHosts={},provenDirectUrls={};
 var fastRelayActive=false,fastRelayRecovered=false;
 
 // Verified route profiles, not raw stream URLs or credentials, survive restarts.
-var routeMemoryKey='openiptv-tizen-playback-path-v3',routeProfiles={};
+var routeMemoryKey='openiptv-tizen-playback-path-v3-hybrid-lab',routeProfiles={};
 try{
  var storedRoutes=typeof localStorage!=='undefined'&&localStorage.getItem(routeMemoryKey);
  if(storedRoutes){

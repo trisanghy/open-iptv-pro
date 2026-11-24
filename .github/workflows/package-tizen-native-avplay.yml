@@ -2,7 +2,7 @@ name: Package Samsung TV native AVPlay source (unsigned)
 
 on:
   push:
-    branches: [tizenbrew]
+    branches: [tizen-hybrid-experiment]
     paths:
       - tizen-native/**
       - tizenbrew/index.html
