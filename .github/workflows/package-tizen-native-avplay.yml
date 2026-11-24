@@ -1,4 +1,4 @@
-name: Build Tizen Web Lab (unsigned)
+name: Verify Tizen Web Lab HTTPS receiver
 on:
   push:
     branches: [tizen-hybrid-experiment]
@@ -6,14 +6,8 @@ on:
 permissions:
   contents: read
 jobs:
-  web-lab:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: node --test tizen-web/remote.test.cjs
-      - run: python3 tizen-native/build.py
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Open-IPTV-Pro-TV-Web-Lab-UNSIGNED
-          path: dist-tizen-native/*.wgt
-          if-no-files-found: error
