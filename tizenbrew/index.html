@@ -3799,7 +3799,7 @@ if(active===byId('saveSource')&&k==='ArrowUp'){e.preventDefault();e.stopPropagat
 if(isText&&(k==='ArrowLeft'||k==='ArrowRight'))return;
 if(k.indexOf('Arrow')===0){e.preventDefault();e.stopPropagation();move(k);}return;}
 if(!byId('player').hidden){
- if(byId('player').classList.contains('is-playback-error')&&byId('channelPicker').hidden&&
+ if(byId('player').classList&&byId('player').classList.contains('is-playback-error')&&byId('channelPicker').hidden&&
     (k==='ArrowLeft'||k==='ArrowRight')){
   e.preventDefault();var report=byId('playbackDiag');
   report.scrollTop=Math.max(0,(report.scrollTop||0)+(k==='ArrowRight'?1:-1)*Math.max(100,(report.clientHeight||400)-55));return;
