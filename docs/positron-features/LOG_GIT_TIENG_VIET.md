@@ -2231,7 +2231,6 @@ Các nút tab thư viện kênh và chế độ xem dùng biểu tượng SVG th
 
 Sửa khoảng cách ở hộp WatchFlow khi chưa có nguồn để không xuất hiện thanh cuộn ngang không cần thiết.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/19746909a874bdcc659f6948319cee86f0eec1da)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.105 — Dọn dấu trang mất nguồn bằng hai bước xác nhận
