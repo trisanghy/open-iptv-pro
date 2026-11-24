@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-24T00:26:14.501849+00:00",
+  "generatedAt": "2026-11-24T00:27:57.767833+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -19,16 +19,17 @@
       "image": "screenshots/positron-p51351-source-state-isolation-after-1920x1080-real.png",
       "imageBefore": "screenshots/positron-p51351-source-state-isolation-before-1920x1080-real.png",
       "imageSource": "actions",
-      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45293323822",
-      "imageCommit": "c7ce8c20280ecf33448bcdd95a3e2ac17d1a77d3",
-      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45293323822/artifacts/14876280047",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45297014268",
+      "imageCommit": "15c2f0856a42444894e64324c8af41608e092f3c",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45297014268/artifacts/14875899940",
       "builds": [],
       "ci": {
         "url": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45297023130",
-        "status": "in_progress",
-        "conclusion": null,
+        "status": "completed",
+        "conclusion": "failure",
         "commit": "28fad96828b8061f25bff77d86f8d169bed77ed0"
-      }
+      },
+      "imageKind": "fast"
     },
     {
       "number": 350,
@@ -391,7 +392,7 @@
       "commit": "8491fd93382f315f44dc78d0520e9cfea75cd8f6",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51344-page-navigation-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14870080723,
@@ -429,7 +430,13 @@
         "status": "completed",
         "conclusion": "failure",
         "commit": "8491fd93382f315f44dc78d0520e9cfea75cd8f6"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51344-page-navigation-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45279088256",
+      "imageCommit": "e8fa52d3f4c4dceef70ee284833b9190973eb78b",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45279088256/artifacts/14868668231"
     },
     {
       "number": 343,
@@ -524,7 +531,7 @@
       "commit": "9aeb3f124a8153576efa57d471c22f5d94054b53",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51341-remote-ai-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14866015886,
@@ -562,7 +569,13 @@
         "status": "completed",
         "conclusion": "failure",
         "commit": "9aeb3f124a8153576efa57d471c22f5d94054b53"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51341-remote-ai-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45271051956",
+      "imageCommit": "56f3ed4a9efc5546fd54743047f39951892b6d79",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45271051956/artifacts/14864169015"
     },
     {
       "number": 340,
@@ -804,7 +817,7 @@
       "commit": "854c274c7796d8e35ac772c3afb57591c4dbebb3",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51336-focus-position-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14860418310,
@@ -842,7 +855,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "854c274c7796d8e35ac772c3afb57591c4dbebb3"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51336-focus-position-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45261281535",
+      "imageCommit": "854c274c7796d8e35ac772c3afb57591c4dbebb3",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45261281535/artifacts/14860362983"
     },
     {
       "number": 335,
@@ -857,7 +876,7 @@
       "commit": "81aab782c5098ad1ce54d3dd074aa7b97a71838d",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51335-next-ai-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14857759754,
@@ -895,7 +914,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "81aab782c5098ad1ce54d3dd074aa7b97a71838d"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51335-next-ai-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45259743992",
+      "imageCommit": "81aab782c5098ad1ce54d3dd074aa7b97a71838d",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45259743992/artifacts/14860355923"
     },
     {
       "number": 334,
@@ -1038,7 +1063,7 @@
       "commit": "dd8b8fe3b7bb0115bce287235c3797e5aaf506e6",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51331-mode-focus-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14855214163,
@@ -1076,7 +1101,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "dd8b8fe3b7bb0115bce287235c3797e5aaf506e6"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51331-mode-focus-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45251524334",
+      "imageCommit": "dd8b8fe3b7bb0115bce287235c3797e5aaf506e6",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45251524334/artifacts/14855807766"
     },
     {
       "number": 330,
@@ -1230,7 +1261,7 @@
       "commit": "b23effd09311698475cb78225da04944812901c4",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51327-ai-focus-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14853080265,
@@ -1268,7 +1299,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "b23effd09311698475cb78225da04944812901c4"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51327-ai-focus-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45240853457",
+      "imageCommit": "b23effd09311698475cb78225da04944812901c4",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45240853457/artifacts/14852091202"
     },
     {
       "number": 326,
@@ -1283,7 +1320,7 @@
       "commit": "b716cf4039cb9787a0e18201df6b142d5771c610",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51326-ai-sample-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14849247904,
@@ -1321,7 +1358,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "b716cf4039cb9787a0e18201df6b142d5771c610"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51326-ai-sample-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45236620519",
+      "imageCommit": "b716cf4039cb9787a0e18201df6b142d5771c610",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45236620519/artifacts/14848624172"
     },
     {
       "number": 325,
@@ -1336,7 +1379,7 @@
       "commit": "4e5008e885b7495ca205411ad0ed02cee7a6d6bc",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51325-keyboard-modes-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14848686619,
@@ -1374,7 +1417,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "4e5008e885b7495ca205411ad0ed02cee7a6d6bc"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51325-keyboard-modes-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45234509867",
+      "imageCommit": "4e5008e885b7495ca205411ad0ed02cee7a6d6bc",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45234509867/artifacts/14849585829"
     },
     {
       "number": 324,
@@ -1389,7 +1438,7 @@
       "commit": "cb28492137a419d7f464e80dd7aa546d8b0027c1",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51324-watchflow-tabs-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14847347482,
@@ -1427,7 +1476,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "cb28492137a419d7f464e80dd7aa546d8b0027c1"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51324-watchflow-tabs-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45230817039",
+      "imageCommit": "cb28492137a419d7f464e80dd7aa546d8b0027c1",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45230817039/artifacts/14847601479"
     },
     {
       "number": 323,
@@ -1442,7 +1497,7 @@
       "commit": "ee26f07e7d09f2b55c83fe44481c8251bcaa7aec",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51323-ai-targets-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14841978312,
@@ -1480,7 +1535,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "ee26f07e7d09f2b55c83fe44481c8251bcaa7aec"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51323-ai-targets-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45223486028",
+      "imageCommit": "ee26f07e7d09f2b55c83fe44481c8251bcaa7aec",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45223486028/artifacts/14841828720"
     },
     {
       "number": 322,
@@ -1495,7 +1556,7 @@
       "commit": "834fc39e9fde32e056d3ef252a286644b8c186c2",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51322-ai-title-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14840651593,
@@ -1533,7 +1594,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "834fc39e9fde32e056d3ef252a286644b8c186c2"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51322-ai-title-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45215506864",
+      "imageCommit": "834fc39e9fde32e056d3ef252a286644b8c186c2",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45215506864/artifacts/14837674301"
     },
     {
       "number": 321,
@@ -1548,7 +1615,7 @@
       "commit": "4141cb0beede9a4fa4773970b12d07ff43652b2c",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51321-ai-return-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14836944340,
@@ -1586,7 +1653,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "4141cb0beede9a4fa4773970b12d07ff43652b2c"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51321-ai-return-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45213107222",
+      "imageCommit": "4141cb0beede9a4fa4773970b12d07ff43652b2c",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45213107222/artifacts/14835914716"
     },
     {
       "number": 320,
@@ -1601,7 +1674,7 @@
       "commit": "39c421d32aad5abeff77718734c11e7f99d5976a",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51320-ai-actions-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14835366389,
@@ -1639,7 +1712,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "39c421d32aad5abeff77718734c11e7f99d5976a"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51320-ai-actions-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45205998261",
+      "imageCommit": "39c421d32aad5abeff77718734c11e7f99d5976a",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45205998261/artifacts/14833832765"
     },
     {
       "number": 319,
@@ -1654,7 +1733,7 @@
       "commit": "03956a865cedb6d842c6384876158a23d5112c32",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51319-ai-explain-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14831959447,
@@ -1692,7 +1771,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "03956a865cedb6d842c6384876158a23d5112c32"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51319-ai-explain-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45203314016",
+      "imageCommit": "03956a865cedb6d842c6384876158a23d5112c32",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45203314016/artifacts/14832513751"
     },
     {
       "number": 318,
@@ -1707,7 +1792,7 @@
       "commit": "9d33bcdc18ff9958731996a940262015af7a61a4",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51318-ai-manager-diff-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14833250464,
@@ -1745,7 +1830,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "9d33bcdc18ff9958731996a940262015af7a61a4"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51318-ai-manager-diff-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45200800416",
+      "imageCommit": "9d33bcdc18ff9958731996a940262015af7a61a4",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45200800416/artifacts/14832496644"
     },
     {
       "number": 317,
@@ -1760,7 +1851,7 @@
       "commit": "eeec05980f44e61705899200170db442dbd90fc6",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51317-ai-restart-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14831121482,
@@ -1798,7 +1889,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "eeec05980f44e61705899200170db442dbd90fc6"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51317-ai-restart-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45198091736",
+      "imageCommit": "eeec05980f44e61705899200170db442dbd90fc6",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45198091736/artifacts/14831040497"
     },
     {
       "number": 316,
@@ -1813,7 +1910,7 @@
       "commit": "6c4e835fd0a169e8b629d41f44b47cfa63fdd304",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51316-ai-delta-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14827661682,
@@ -1851,7 +1948,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "6c4e835fd0a169e8b629d41f44b47cfa63fdd304"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51316-ai-delta-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45196269544",
+      "imageCommit": "6c4e835fd0a169e8b629d41f44b47cfa63fdd304",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45196269544/artifacts/14828477232"
     },
     {
       "number": 315,
@@ -1866,7 +1969,7 @@
       "commit": "86b7954ec4ae9279579dd6eaa9f6e4eed70be109",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51315-ai-key-order-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14826049955,
@@ -1904,7 +2007,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "86b7954ec4ae9279579dd6eaa9f6e4eed70be109"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51315-ai-key-order-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45192777758",
+      "imageCommit": "86b7954ec4ae9279579dd6eaa9f6e4eed70be109",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45192777758/artifacts/14826543363"
     },
     {
       "number": 314,
@@ -1919,7 +2028,7 @@
       "commit": "8802294395ad6c797949d61cae2cedc0e038e8ba",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51314-ai-model-diff-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14826852047,
@@ -1957,7 +2066,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "8802294395ad6c797949d61cae2cedc0e038e8ba"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51314-ai-model-diff-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45190345582",
+      "imageCommit": "8802294395ad6c797949d61cae2cedc0e038e8ba",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45190345582/artifacts/14826252046"
     },
     {
       "number": 313,
@@ -1972,7 +2087,7 @@
       "commit": "226ca7f70a2a7eb11254cabebd63feabfe4db36c",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51313-ai-backup-verify-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14824652376,
@@ -2010,7 +2125,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "226ca7f70a2a7eb11254cabebd63feabfe4db36c"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51313-ai-backup-verify-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45188159339",
+      "imageCommit": "226ca7f70a2a7eb11254cabebd63feabfe4db36c",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45188159339/artifacts/14824827771"
     },
     {
       "number": 312,
@@ -2025,7 +2146,7 @@
       "commit": "c94c1c9d179d4d9dbf10cc008b51c92685d8775a",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51312-ai-recovery-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14821773672,
@@ -2063,7 +2184,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "c94c1c9d179d4d9dbf10cc008b51c92685d8775a"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51312-ai-recovery-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45183357907",
+      "imageCommit": "c94c1c9d179d4d9dbf10cc008b51c92685d8775a",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45183357907/artifacts/14821993814"
     },
     {
       "number": 311,
@@ -2078,7 +2205,7 @@
       "commit": "486e493caa4871e75ee2cf623e28db383c1b4770",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51311-storage-fail-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14821647369,
@@ -2116,7 +2243,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "486e493caa4871e75ee2cf623e28db383c1b4770"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51311-storage-fail-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45181291993",
+      "imageCommit": "486e493caa4871e75ee2cf623e28db383c1b4770",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45181291993/artifacts/14822051859"
     },
     {
       "number": 310,
@@ -2131,7 +2264,7 @@
       "commit": "b1be29fbb66a02013c90307ba2b2aa02d49459b0",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51310-wide-reading-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14820019244,
@@ -2169,7 +2302,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "b1be29fbb66a02013c90307ba2b2aa02d49459b0"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51310-wide-reading-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45179155802",
+      "imageCommit": "b1be29fbb66a02013c90307ba2b2aa02d49459b0",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45179155802/artifacts/14820842437"
     },
     {
       "number": 309,
@@ -2184,7 +2323,7 @@
       "commit": "b632b1e7fb2e5b4bf59dab5c233ac7f68d04da70",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51309-return-review-after-1920x1080-real.png",
       "builds": [
         {
           "id": 14820305769,
@@ -2222,7 +2361,13 @@
         "status": "completed",
         "conclusion": "success",
         "commit": "b632b1e7fb2e5b4bf59dab5c233ac7f68d04da70"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51309-return-review-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "full",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45175939667",
+      "imageCommit": "b632b1e7fb2e5b4bf59dab5c233ac7f68d04da70",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45175939667/artifacts/14818886728"
     },
     {
       "number": 308,
