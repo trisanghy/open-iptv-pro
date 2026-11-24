@@ -16,3 +16,6 @@ Applies to ALL branches and ALL future commits, generated workflows, agents, CI,
 - Do not force-push. Respect branch isolation; changes for a particular product/branch must not unexpectedly modify other product branches.
 
 This policy must survive version bumps, generated workflows, bulk upgrade loops, CI refactoring, automated commits and future AI-assisted changes.
+
+## Positron changelog evidence sync
+- Preserve `refresh-changelog` in both `.github/workflows/positron-lab.yml` (after test, capture and build) and `.github/workflows/positron-fast-round.yml` (after fast Electron QA), including when generating workflows for subsequent versions. Keep `.github/workflows/positron-catalog-refresh.yml` and exact-version Actions artifact evidence. Mark installer success independently from overall QA. Do not publish experimental Releases or alter the Web Online Pages source for catalog synchronization.
