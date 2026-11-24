@@ -11,6 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: node --test tizen-web/remote.test.cjs
+      - name: Bundle MPEG-TS browser decoder
+        run: |
+          curl -fLsS --retry 3 --max-time 60 https://cdn.jsdelivr.net/npm/mpegts.js@1.8.2/dist/mpegts.min.js -o mpegts.min.js
+          test "$(wc -c < mpegts.min.js)" -gt 200000
       - run: python3 tizen-native/build.py
       - uses: actions/upload-artifact@v4
         with:

@@ -1,11 +1,10 @@
 {
   "name": "open-iptv-pro-tv-web-lab",
-  "version": "0.1.53",
-  "description": "Web Online toàn màn hình, trình phát web nguyên bản, điều hướng remote. Không AVPlay, không relay.",
-  "packageType": "mods",
+  "version": "0.1.54",
+  "description": "Giao diện WGT cho TV, điều khiển remote, trình phát Web trực tiếp không AVPlay/relay.",
+  "packageType": "app",
   "appName": "Open IPTV Pro TV Web Lab",
-  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/",
-  "main": "tizen-web/remote.js",
+  "appPath": "tizenbrew/bootstrap.html",
   "keys": [
     "ChannelUp",
     "ChannelDown",
@@ -17,5 +16,5 @@
     "ColorF1Green"
   ],
   "license": "MIT",
-  "tizenbrewEdition": "0.1.53"
+  "tizenbrewEdition": "0.1.54"
 }

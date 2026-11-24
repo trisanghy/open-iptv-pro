@@ -1,29 +1,24 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const manifest=JSON.parse(fs.readFileSync('package.json','utf8'));
-const src=fs.readFileSync('tizen-web/remote.js','utf8');
-test('Direct website module, no service or alternative player',()=>{
- assert.equal(manifest.packageType,'mods');
- assert.equal(manifest.websiteURL,'https://trisanghy.github.io/open-iptv-pro/');
- assert.equal(manifest.serviceFile,undefined);
- assert.equal(manifest.main,'tizen-web/remote.js');
- for(const f of ['tizenbrew/bootstrap.html','tizenbrew/index.html'])assert.match(fs.readFileSync(f,'utf8'),/location\.replace\("https:\/\/trisanghy\.github\.io\/open-iptv-pro\/"\)/);
- assert.doesNotMatch(src,/webapis|AVPlay|XMLHttpRequest|fetch\(|new Hls|127\.0\.0\.1|localStorage/);
+const html=fs.readFileSync('tizenbrew/index.html','utf8');
+const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
+test('WGT TV UI, web-only manifest and isolated storage',()=>{
+ assert.equal(pkg.packageType,'app');assert.equal(pkg.appPath,'tizenbrew/bootstrap.html');assert.equal(pkg.serviceFile,undefined);
+ assert.match(html,/TV Web Lab · v0\.1\.54/);assert.match(html,/id="channelPicker"/);assert.match(html,/function keyHandler\(e\)/);
+ assert.match(html,/openiptv-tizenbrew-tv-v1-hybrid-lab/);
+ assert.doesNotMatch(html,/\$WEBAPIS\/webapis\/webapis\.js|location\.replace\("https:\/\/trisanghy\.github\.io/);
+ assert.match(fs.readFileSync('tizenbrew/bootstrap.html','utf8'),/branch='tizen-hybrid-experiment'/);
 });
-function mock(origin='https://trisanghy.github.io'){
- let clicks=[],handler,active=null;
- const node=(id,x,y)=>({id,tagName:'BUTTON',tabIndex:0,disabled:false,closest:()=>null,getAttribute:()=>null,getBoundingClientRect:()=>({left:x,top:y,width:50,height:50}),focus(){active=this;},scrollIntoView(){},click(){clicks.push(id);}});
- const a=node('nextBtn',0,0),b=node('prevBtn',100,0),c=node('playBtn',0,100);
- const doc={body:{},head:{appendChild(){}},readyState:'complete',get activeElement(){return active;},querySelectorAll:s=>s==='dialog[open],[role="dialog"][aria-modal="true"]'?[]:[a,b,c],getElementById:id=>[a,b,c].find(x=>x.id===id),addEventListener:(k,f)=>{handler=f;},createElement:()=>({})};
- active=doc.body;
- const window={};vm.runInNewContext(src,{location:{origin,pathname:'/open-iptv-pro/'},window,document:doc,getComputedStyle:()=>({display:'block',visibility:'visible',opacity:'1'})});
- return {clicks,doc,a,b,c,handler};
-}
-test('Remote navigation and channel keys use the original website buttons',()=>{
- const m=mock();assert.equal(m.doc.activeElement,m.a);
- function send(key,keyCode){let stopped=false;m.handler({key,keyCode,preventDefault(){stopped=true;},stopImmediatePropagation(){}});return stopped;}
- assert.equal(send('ArrowRight',39),true);assert.equal(m.doc.activeElement,m.b);
- assert.equal(send('ChannelUp',427),true);assert.deepEqual(m.clicks,['nextBtn']);
- assert.equal(send('MediaPlayPause',10252),true);assert.deepEqual(m.clicks,['nextBtn','playBtn']);
+test('Web routes only: relay and AVPlay cannot start even if API exists',()=>{
+ const extract=(a,b)=>html.slice(html.indexOf(a),html.indexOf(b,html.indexOf(a)+a.length));
+ const env={webapis:{avplay:{open(){throw Error('must not call');}}},playbackActive:()=>true,TV_PLAYBACK_CORE:{engines:{native:{start:()=>true},relay:{start:()=>{throw Error('must not call');}},avplay:{start:()=>{throw Error('must not call');}}}}};
+ vm.createContext(env);
+ vm.runInContext(extract('function nativeAvplay(){','function hlsAddress(')+extract('function startRelayHlsPlayback(','function startHlsPlayback(')+extract('function launchPlaybackRoute(','function recoverStalledPlayback(')+extract('function startAvplay(','function play(c)'),env);
+ assert.equal(env.nativeAvplay(),null);assert.equal(env.startRelayHlsPlayback({},1),false);assert.equal(env.startAvplay({},1),false);
+ assert.equal(env.launchPlaybackRoute({},1,'relay'),false);assert.equal(env.launchPlaybackRoute({},1,'avplay'),false);assert.equal(env.launchPlaybackRoute({},1,'native'),true);
 });
-test('Never inject into another origin',()=>{assert.equal(mock('https://example.org').handler,undefined);});
+test('Remote code remains valid; preview uses original URL, not a relay session',()=>{
+ for(const m of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))if(m[1].trim())new vm.Script(m[1]);
+ const start=html.indexOf('function startWebHlsPreview('),end=html.indexOf('function startMpegtsPreview(',start);
+ const preview=html.slice(start,end);assert.match(preview,/url:channel\.url/);assert.doesNotMatch(preview,/requestLocalHlsSession|X-Open-IPTV-Relay/);
+});
