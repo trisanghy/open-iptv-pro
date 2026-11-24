@@ -808,6 +808,12 @@ body #player.is-playback-error #channelPicker{z-index:12}
 body.web-tv-cinema #player.is-playing .playerhead,body.web-tv-cinema #player.is-playing .playerfoot,body.web-tv-cinema #player.is-playing .playerdiag,body.web-tv-cinema #player.is-playing #playerStatus{display:none!important}
 body.web-tv-cinema #player.is-playing #video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:black}
 #video:fullscreen,#video:-webkit-full-screen{width:100%;height:100%;object-fit:contain;background:#000}
+/* v0.1.59: there is only a video surface, no WGT loading/error interface. */
+#webLabLegacyHooks,#webLabLegacyHooks *{display:none!important}
+body #player:not([hidden]){position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;max-width:none!important;max-height:none!important;background:#000!important;z-index:2147483647!important;overflow:hidden}
+body #player #video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;background:#000!important;visibility:visible!important}
+body #player::after{display:none!important}
+body #player[hidden]{display:none!important}
 </style>
 <!-- Web-only: no Samsung AVPlay API -->
 </head><body data-theme="dark">
@@ -884,7 +890,10 @@ body.web-tv-cinema #player.is-playing #video{position:absolute;inset:0;width:100
 <p id="sourceQRStatus" role="status">Đang tạo mã QR…</p><p id="sourcePhoneLink"></p>
 <button type="button" id="refreshSourceQR">↻ Tạo mã QR mới</button></section></div></div>
 <div id="searchDialog" hidden><label for="searchInput">Tìm kênh / chương trình EPG</label><input id="searchInput" placeholder="VTV, tin tuc, thoi su, phim..." autocomplete="off"><p class="search-dialog-hint">Tìm không dấu, tự sửa lỗi chính tả và tìm theo tên chương trình đã tải từ EPG.</p><div id="searchSuggestions" class="search-suggestions" role="status">Kênh gợi ý sẽ xuất hiện tại đây.</div><div class="buttons"><button id="cancelSearch">Hủy</button><button id="clearSearch" type="button">Xóa tìm kiếm</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
-<div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><iframe id="castPlayerFrame" hidden tabindex="-1" title="Bộ phát Cast HTTPS" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerdiag" id="playbackDiag" hidden></div><button id="browserFallback" type="button" hidden>Mở Cast chuẩn · ghép mã 6 số</button><div class="playerfoot">↑ ↓ Chuyển ngay và hiện danh sách　·　← → Chọn thư mục / cuộn lỗi　·　CH ± Chuyển nhanh　·　OK Phát/Tạm dừng　·　Đỏ: Trình duyệt　·　Back Danh sách</div>
+<div id="player" hidden tabindex="-1" aria-label="Video toàn màn hình"><video id="video" tabindex="0" playsinline preload="none"></video>
+<!-- Hidden compatibility hooks for the imported WGT channel UI; not a player interface. -->
+<div id="webLabLegacyHooks" hidden aria-hidden="true">
+<object id="avplayObject" hidden></object><span id="playingName"></span><span id="playerStatus" hidden></span><span id="playbackDiag" hidden></span><button id="browserFallback" type="button" hidden></button>
 <div id="channelPicker" hidden tabindex="-1" role="dialog" aria-label="Chọn kênh">
   <div class="picker-panel">
     <div class="picker-heading">Chọn kênh TV</div>
@@ -893,9 +902,10 @@ body.web-tv-cinema #player.is-playing #video{position:absolute;inset:0;width:100
     <div class="picker-list" id="pickerList"></div>
     <div class="picker-help" aria-label="Phím điều khiển TV"><span><b>↑ ↓</b> Phát kênh ngay</span><span><b>← →</b> Đổi thư mục</span><span><b>OK/Back Đóng danh sách</b></span></div>
   </div>
+</div>
 </div></div>
 <div id="toast" hidden></div>
 <!-- QRCode.js © davidshimjs, MIT license. Embedded to work on older Tizen browsers. -->
 
 
-<script src="tv-web-lab.js?v=058"></script></body></html>
+<script src="tv-web-lab.js?v=059"></script></body></html>

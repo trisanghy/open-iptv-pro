@@ -1,7 +1,7 @@
 {
   "name": "open-iptv-pro-tv-web-lab",
-  "version": "0.1.58",
-  "description": "Trang GitHub Pages riêng, giao diện WGT, phát video fullscreen kiểu TV receiver.",
+  "version": "0.1.59",
+  "description": "Giao diện WGT danh sách kênh; chọn kênh mở video fullscreen thuần web, không bảng trình phát.",
   "packageType": "mods",
   "appName": "Open IPTV Pro TV Web Lab",
   "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tv-web-lab.html",
@@ -17,5 +17,5 @@
     "ColorF1Green"
   ],
   "license": "MIT",
-  "tizenbrewEdition": "0.1.58"
+  "tizenbrewEdition": "0.1.59"
 }

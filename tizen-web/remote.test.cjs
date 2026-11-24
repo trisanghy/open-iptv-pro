@@ -3,7 +3,7 @@ const {test}=require('node:test'),a=require('node:assert/strict'),fs=require('no
 const p=JSON.parse(fs.readFileSync('package.json','utf8')),h=fs.readFileSync('tv-web-lab.html','utf8'),s=fs.readFileSync('tv-web-lab.js','utf8');
 test('Standalone HTTPS page, WGT UI and no pairing/relay module',()=>{
  a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-lab.html');a.equal(p.packageType,'mods');a.equal(p.serviceFile,undefined);
- a.match(h,/id="channelPicker"/);a.match(h,/src="tv-web-lab.js\?v=058"/);a.match(s,/function keyHandler\(e\)/);a.match(s,/function play\(c\)/);new vm.Script(s);
+ a.match(h,/id="channelPicker"/);a.match(h,/src="tv-web-lab.js\?v=059"/);a.match(s,/function keyHandler\(e\)/);a.match(s,/function play\(c\)/);new vm.Script(s);
  a.doesNotMatch(s,/(?:http|ws):\/\/127\.0\.0\.1/);
  let redirected='';vm.runInNewContext(s,{location:{origin:'http://127.0.0.1:8081',pathname:'/module/old',replace:u=>redirected=u}});a.equal(redirected,p.websiteURL);
  for(const f of ['tizenbrew/index.html','tizenbrew/bootstrap.html'])a.ok(fs.readFileSync(f,'utf8').includes(p.websiteURL));
@@ -27,4 +27,21 @@ test('Legacy v0.1.54 OTA validator accepts both navigation-only entry points',()
   a.equal(dest,p.websiteURL);a.equal(calls,1);
   a.doesNotMatch(html,/<video|<iframe|fetch\(|new Hls|127\.0\.0\.1/);
  }
+});
+
+test('Video-only surface immediately enters fullscreen from play(), without old error UI',()=>{
+ a.match(h,/#webLabLegacyHooks,#webLabLegacyHooks \*\{display:none!important\}/);
+ a.doesNotMatch(h,/id="castPlayerFrame"|class="playerhead"|class="playerfoot"|class="playerdiag"/);
+ const i=s.indexOf('function enterWebCinema('),j=s.indexOf('function leaveWebCinema(',i);
+ let calls=0;const cls=new Set(),screen={hidden:false,requestFullscreen(){calls++;return Promise.resolve();}};
+ const env={byId:()=>screen,document:{body:{classList:{add:x=>cls.add(x)}}},webFullscreenAttempted:false,playbackConfirmed:false};
+ vm.runInNewContext(s.slice(i,j),env);env.enterWebCinema({});env.enterWebCinema({});a.equal(calls,1);a.ok(cls.has('web-tv-cinema'));
+ const start=s.indexOf('function play(c)'),end=s.indexOf('function togglePlayback(',start);
+ a.match(s.slice(start,end),/enterWebCinema\(byId\('video'\)\)[\s\S]*?startPlaybackStream/);
+});
+test('Playback failures return to list and notify, not full-screen red panel',()=>{
+ let calls=[];const i=s.indexOf('function playbackFailure('),j=s.indexOf('function fallbackFromAvplay(',i);
+ const env={URL,playbackActive:()=>true,playing:{name:'Test channel'},playbackEvidence:[],console:{warn(){}},closePlayer:()=>calls.push('close'),notify:t=>calls.push(t)};
+ vm.runInNewContext(s.slice(i,j),env);env.playbackFailure(1,'https://example.org/path?token=secret');
+ a.deepEqual(calls,['close','Không phát được Test channel. Kiểm tra nguồn hoặc thử kênh khác.']);
 });
