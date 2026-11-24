@@ -33,3 +33,7 @@ Nếu ảnh hay test mới cho thấy lỗi quan trọng hơn, ưu tiên sửa l
 5. Báo tiếng Việt; checkpoint sau mỗi vòng. Không bịa file build, ảnh, số vòng hay test trên thiết bị thực. Bảo toàn M3U, Favorites, EPG, Timeshift, DVR, AI phụ đề/TTS, Cast/PiP, các cài đặt.
 
 Các báo cáo chi tiết: `POSITRON_20_ROUND_ISSUES.md` mục “Đợt mới 22/11/2026”; `POSITRON_P5_CHANGELOG.md` mục P5.1.168–P5.1.170. Chưa có kết quả cho vòng 04–20 và không có việc nền sau khi phiên chat kết thúc.
+
+
+## 25/11/2026 — repair P5.1.355 baseline (0/20 new rounds)
+Input HEAD `b3ec558b271163c9b3e8a692e9f7f9615163eaab`, package 4.23.440. Fast QA 45506738373 succeeded; opened actual P355 screenshot `docs/positron-features/screenshots/positron-p51355-context-keys-after-1920x1080-real.png`. Full CI 45506738335 failed 5 version-sync assertions (1076 pass, 5 skip), build and capture skipped. Align index title/sidebar, Positron badge and both Windows launcher scripts with package version. No test assertions weakened. Keep 4.23.440/P5.1.355 while recovering unpublished baseline; no new completed round claimed. Verify new CI, inspect actual Electron screenshots, verify release/installer assets; only then choose next P5.1.356 after checking current HEAD. Never overwrite tags or touch another branch.
