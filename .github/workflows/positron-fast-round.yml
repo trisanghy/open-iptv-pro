@@ -51,3 +51,11 @@ jobs:
           path: positron-evidence/
           retention-days: 30
           if-no-files-found: warn
+
+  refresh-changelog:
+    needs: [fast-electron-round]
+    if: always() && github.ref_name == 'Positron'
+    permissions:
+      contents: write
+      actions: read
+    uses: ./.github/workflows/positron-catalog-refresh.yml
