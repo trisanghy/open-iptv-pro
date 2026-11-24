@@ -1,4 +1,3 @@
-# TV Web Lab v0.1.54
-Khôi phục giao diện WGT/TV từ bản Tizen ổn định v0.1.52, giữ nguyên remote và trình chọn kênh toàn màn hình. Dùng trình phát trình duyệt HTML5/HLS.js/DASH.js/MPEG-TS trực tiếp, không AVPlay/relay. Đây là giao diện TV port sang web, không mở Web Online desktop và không dùng nguyên app.js của Web Online. CORS, codec và HTTPS phụ thuộc trình duyệt/nguồn; nguồn từng cần relay có thể không chạy. Module và storage tách khỏi bản chính.
-
-Link cài: trisanghy/open-iptv-pro@tizen-hybrid-experiment. Xóa và thêm lại riêng module thử nghiệm nếu launcher vẫn cache packageType mods. WGT chưa ký; thử trên TV thật chưa thực hiện. Nhánh chính tizenbrew không thay đổi.
+# Web Lab v0.1.55
+Mở trực tiếp https://trisanghy.github.io/open-iptv-pro/tv.html ở cấp trang HTTPS, không iframe, không localhost, không AVPlay/relay. Trang có lịch sử 50 kênh và remote tích hợp; cần ghép đôi lần đầu nếu chưa có kênh. UI WGT cũ giữ trong commit 6cc976a1f0953016e1292af1c623f05a3fd501f9, chưa kết hợp vào trang HTTPS. Không sửa tizenbrew hoặc web/online. WGT chưa ký, chưa thử TV thật.
+Cài: trisanghy/open-iptv-pro@tizen-hybrid-experiment. Xóa/thêm lại riêng module Lab nếu metadata cũ.
