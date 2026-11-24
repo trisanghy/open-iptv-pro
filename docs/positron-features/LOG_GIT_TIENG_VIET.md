@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.354 — Hướng dẫn thiết lập AI theo trạng thái
+## P5.1.355 — Phím điều hướng AI theo nguồn
+
+**Ứng dụng:** 4.23.440 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — hướng dẫn remote tự thích ứng với trạng thái không có nguồn, hiển thị bốn phím chuyển chế độ và không quảng cáo lối tắt tới gợi ý chưa tồn tại. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a2be3185954a5f873bebf25117af9e7d4fdda186)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.354 — Hướng dẫn thiết lập AI theo trạng thái (CANDIDATE)
 
 **Ứng dụng:** 4.23.439 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — hướng dẫn thiết lập cá nhân hóa theo quyền học hiện tại, giúp người dùng chưa có playlist hiểu bước tiếp theo và vẫn dùng IPTV nếu từ chối học. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/cfca624e1262cd30189740e2a94282c62063f30a)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/848d6008e68b79edb11bd41b74c80d9bd30d9a2e)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.353 — Đồng bộ trạng thái quyền học của Khám phá AI (CANDIDATE)
 
@@ -2222,7 +2231,6 @@ Nếu một thông báo cùng nội dung và mức độ vẫn đang mở, khôn
 
 Giới hạn vị trí thông báo trong cửa sổ hẹp để không che thanh điều hướng có biểu tượng bên trái.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a19d24c9858fba65cabc17c0ef478a861e44b0f1)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.107 — Thay biểu tượng chữ bằng SVG thống nhất
