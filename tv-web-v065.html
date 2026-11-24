@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Open IPTV Pro TV Web</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}body{--bg:#08101f;--panel:#101d32;--item:#192943;--fg:#f4f8ff;--muted:#a7b7cc;--edge:#2a415c;--blue:#078cf5;--focus:#59c8ff;background:var(--bg);color:var(--fg);font:22px Arial,"SamsungOne",sans-serif}
+body[data-theme=amoled]{--bg:#000;--panel:#080808;--item:#181818;--edge:#343434}
+body[data-theme=light]{--bg:#f0f4fa;--panel:#fff;--item:#e5eef8;--fg:#15263b;--muted:#526781;--edge:#c8d4e2}
+button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2px solid transparent;border-radius:14px;background:var(--item);color:var(--fg);padding:15px;font-weight:600}button:focus-visible,input:focus,textarea:focus{outline:4px solid var(--focus);outline-offset:2px;box-shadow:0 0 0 6px #168df844;background:var(--blue);color:white}[hidden]{display:none!important}
+/* Home is laid out for a 16:9 TV and directional navigation. */
+#app{
+ --home-inset:3vw;--home-gap:18px;--home-target:68px;--accent:#50ead5;
+ --focus-bg:#a1ffef;--focus-ink:#062724;--active-bg:#163e4b;
+ height:100%;display:flex;flex-direction:column;padding:0 var(--home-inset);
+ background:radial-gradient(ellipse at 100% 0%,#112a38 0%,transparent 55%),var(--bg);
+}
+body[data-theme=light] #app{--focus-bg:#07594e;--focus-ink:#fff;--accent:#07594e;--active-bg:#dcf4ef;background:var(--bg)}
+body[data-theme=amoled] #app{background:#000;--active-bg:#123333}
+.top{
+ display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+ min-height:112px;padding:16px 0;
+}
+.brand,.toolbar,.footer{display:flex;align-items:center}
+.brand{gap:15px}
+.brandicon{
+ display:grid;place-items:center;width:62px;height:62px;border-radius:18px;
+ background:var(--accent);color:var(--bg);font-size:25px;
+}
+body[data-theme=light] .brandicon{color:#fff}
+.brand strong{display:block;font-size:32px;line-height:1.12}
+.brand p{margin:5px 0 0;color:var(--muted);font-size:17px}
+.toolbar{gap:12px}
+.clock{color:var(--muted);font-size:24px;margin-right:10px;font-variant-numeric:tabular-nums}
+#app button{
+ min-height:var(--home-target);padding:10px 18px;border:1px solid var(--edge);
+ border-radius:13px;font-size:23px;line-height:1.18;
+}
+#app button:focus{
+ position:relative;z-index:1;background:var(--focus-bg);color:var(--focus-ink);
+ border-color:var(--focus-bg);outline:3px solid var(--focus-bg);outline-offset:3px;box-shadow:none;
+}
+#app button:focus .num,#app button:focus small,#app button:focus .placeholder,#app button:focus .heart{color:inherit}
+#app button:focus .num{background:transparent}
+#app button:disabled{opacity:.45;cursor:default}
+.main{
+ display:grid;grid-template-columns:minmax(186px,16fr) minmax(0,49fr) minmax(0,35fr);
+ gap:var(--home-gap);flex:1;min-height:0;
+}
+.nav,.listpane,.details{min-width:0;min-height:0;border:1px solid var(--edge);border-radius:21px;background:var(--panel)}
+.nav{display:flex;flex-direction:column;gap:8px;padding:15px;overflow:auto;scrollbar-width:none;align-self:start;max-height:100%}
+.nav button{text-align:left;flex-shrink:0;white-space:nowrap}
+.nav button span{display:inline-block;width:1.45em;color:var(--accent)}
+#app .nav button:focus span{color:inherit}
+#app button.active{background:var(--active-bg);color:var(--fg);border-color:var(--accent)}
+#app button.active:focus{background:var(--focus-bg);color:var(--focus-ink);border-color:var(--focus-bg)}
+.nav .sidebar-shortcuts{
+ margin-top:12px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;
+ padding-top:14px;border-top:1px solid var(--edge);
+}
+.nav .sidebar-shortcuts button{width:100%}
+.listpane{display:flex;flex-direction:column;padding:20px}
+.heading{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:0 6px;margin-bottom:8px}
+.heading h1{font-size:40px;line-height:1.12;margin:0}
+.heading span{color:var(--muted);font-size:20px;white-space:nowrap}
+.groups,.channels{padding:7px;scrollbar-width:thin;scrollbar-color:var(--edge) transparent}
+.groups{display:flex;gap:10px;overflow-x:auto;flex-shrink:0;margin-bottom:6px}
+#app .groups button{min-height:54px;flex:none;max-width:82%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:20px}
+.channels{flex:1;min-height:0;overflow-y:auto}
+#app .channel{
+ display:flex;align-items:center;gap:13px;width:100%;min-height:78px;margin:0 0 9px;
+ padding:9px 14px;text-align:left;
+}
+#app .channel:last-child{margin-bottom:0}
+.num{
+ flex:none;min-width:47px;border-radius:8px;padding:8px 4px;text-align:center;
+ font-size:17px;font-variant-numeric:tabular-nums;background:var(--bg);color:var(--muted);
+}
+.logo,.placeholder{
+ flex:none;width:66px;height:44px;border-radius:8px;background:#f2f7fa;color:#164c58;
+}
+.logo{object-fit:contain;padding:3px}
+.placeholder{display:grid;place-items:center;font-size:17px}
+.chtext{flex:1;min-width:0}
+.chtext strong,.chtext small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chtext strong{font-size:25px}
+.chtext small{margin-top:3px;color:var(--muted);font-size:17px}
+.heart{flex:none;color:#ff8fbb;font-size:23px}
+#app #more{margin:6px 7px 0;flex-shrink:0}
+.empty{flex:1;overflow:auto;padding:14px 8px}
+.empty h2{font-size:28px;margin:0 0 10px}
+.empty p{font-size:20px;color:var(--muted);line-height:1.45;margin:0 0 14px}
+.empty button{display:block;width:100%;margin:6px 0 12px}
+.details{display:flex;flex-direction:column;gap:17px;padding:20px;overflow:auto;align-self:start;max-height:100%}
+.preview{
+ position:relative;overflow:hidden;display:grid;place-items:center;flex:none;height:29vh;min-height:86px;
+ max-height:300px;border:1px solid #26505d;border-radius:16px;color:#effffa;
+ background:radial-gradient(ellipse at 76% 0%,#1e6267 0%,transparent 72%),#102836;
+}
+.preview b{font-size:68px;letter-spacing:.035em}
+.preview img{
+ width:52%;height:60%;max-width:270px;max-height:142px;object-fit:contain;
+ border-radius:12px;background:#f3f7fa;padding:14px;
+}
+.channel-summary{min-width:0}
+.channel-summary h2{
+ margin:0;font-size:38px;line-height:1.1;overflow-wrap:anywhere;
+ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.channel-summary p{color:var(--muted);font-size:22px;margin:7px 0 0}
+.actions{display:flex;flex-direction:column;gap:10px;padding:5px;flex-shrink:0}
+#app .primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+body[data-theme=light] #app .primary{color:#fff}
+#app .primary:focus{background:var(--focus-bg);color:var(--focus-ink);border-color:var(--focus-bg)}
+.primary{background:var(--blue);color:#fff}
+.footer{min-height:67px;justify-content:center;gap:36px;flex-shrink:0;color:var(--muted);font-size:19px}
+.footer b{display:inline-block;color:var(--fg);background:var(--item);border:1px solid var(--edge);padding:5px 9px;border-radius:7px;margin-right:7px}
+@media(max-width:1350px),(max-height:820px){
+ #app{--home-gap:12px;--home-target:53px}
+ .top{min-height:80px;padding:10px 0}.brandicon{width:48px;height:48px;border-radius:13px}
+ .brand strong{font-size:25px}.brand p{font-size:14px}.toolbar{gap:8px}.clock{font-size:20px}
+ .main{grid-template-columns:minmax(144px,17fr) minmax(0,48fr) minmax(0,35fr)}
+ .nav,.listpane,.details{padding:12px;border-radius:16px}.nav{gap:6px}
+ #app button{font-size:18px;padding:8px 11px}
+ .heading h1{font-size:29px}.heading span{font-size:16px}
+ #app .groups button{min-height:44px;font-size:16px}
+ #app .channel{min-height:59px;gap:9px;padding:6px 9px;margin-bottom:7px}
+ .logo,.placeholder{width:50px;height:34px}.num{min-width:35px;font-size:14px}
+ .chtext strong{font-size:19px}.chtext small{font-size:14px}
+ .details{gap:10px}.preview b{font-size:52px}.channel-summary h2{font-size:29px}.channel-summary p{font-size:17px}
+ .footer{min-height:48px;gap:21px;font-size:15px}
+}
+@media(max-height:620px){
+ #app{--home-target:46px}.top{min-height:66px}.footer{min-height:39px}
+ .preview{height:23vh}.preview img{padding:5px}
+}
+.overlay{position:absolute;inset:0;background:#000d;display:grid;place-items:center;z-index:10}.dialog{width:min(800px,85vw);max-height:90vh;overflow-y:auto;background:var(--panel);border:2px solid var(--edge);border-radius:20px;padding:28px 35px}.dialog h2{margin:0 0 16px}.dialog label{display:block;margin-top:15px;font-size:18px;font-weight:bold}.dialog input:not([type=checkbox]),.dialog textarea{background:var(--bg);border:1px solid var(--edge);border-radius:10px;padding:14px;width:100%;margin-top:7px;font-size:19px}.dialog .consent{display:flex;gap:12px;align-items:center;line-height:1.45}.dialog .consent input{width:26px;height:26px}.dialog .hint{color:var(--muted);font-size:16px;line-height:1.4}.dialog .buttons{display:flex;justify-content:flex-end;gap:12px;margin-top:18px}
+#player{position:absolute;inset:0;background:#000;z-index:7}#video{width:100%;height:100%;object-fit:contain}.playerhead{position:absolute;top:0;left:0;right:0;padding:24px 32px;background:linear-gradient(#000b,transparent);display:flex;justify-content:space-between;align-items:center}.playerhead strong{font-size:30px}.playerstatus{position:absolute;top:45%;width:100%;text-align:center;color:#fff;font-size:22px;padding:0 9%}.playerfoot{position:absolute;bottom:0;width:100%;text-align:center;padding:25px;background:linear-gradient(transparent,#000a);font-size:20px}
+#toast{position:absolute;z-index:30;left:50%;transform:translateX(-50%);bottom:11%;padding:17px 25px;border-radius:14px;background:#0563ae;color:#fff;font-size:20px;max-width:70%;overflow-wrap:anywhere;line-height:1.45}
+
+/* TV first home redesign — large keys, unified outlined SVG icons, high contrast */
+#app{--home-inset:2.1vw;--home-gap:15px;--home-target:68px;--accent:#35e6d7;--focus-bg:#71ffed;--focus-ink:#042b2d;--active-bg:#123f45;background:radial-gradient(ellipse at 94% 0%,#183945 0%,transparent 58%),#080f1b;color:#f4f9ff}
+#app .top{min-height:106px;padding:16px 0;gap:18px}
+#app .brand{gap:17px;flex-shrink:0}
+#app .brandicon{width:70px;height:70px;border-radius:19px;background:linear-gradient(140deg,#4cf1de,#06acb5)}
+#app .brand-svg{width:43px;height:43px;color:#053438}
+#app .brand strong{font-size:34px;font-weight:850;letter-spacing:-.5px}
+#app .brand p{font-size:18px;color:#aabfcf}
+#app .toolbar{gap:11px}
+#app .clock{font-size:24px;color:#d3e5f4;font-weight:700}
+#app button{display:inline-flex;align-items:center;justify-content:center;gap:11px;min-height:68px;padding:12px 16px;border:2px solid #34536c;border-radius:16px;background:#162b3e;color:#f1f8ff;font-size:22px;font-weight:750}
+#app button:focus,#app button:focus-visible{outline:3px solid #e1fffa;outline-offset:3px;background:var(--focus-bg);border-color:var(--focus-bg);color:var(--focus-ink);box-shadow:0 0 0 5px #20e8d048}
+#app button.active{background:#123f45;border-color:#34c8c1;color:#e6fffe}
+#app button.active:focus{background:var(--focus-bg);color:var(--focus-ink)}
+#app .ui-icon{width:26px;height:26px;flex:none;stroke:currentColor}
+#app .main{grid-template-columns:minmax(222px,17fr) minmax(0,43fr) minmax(0,40fr);gap:var(--home-gap)}
+#app .nav,#app .listpane,#app .details{background:#0e1b2b;border:2px solid #2a455a;border-radius:23px}
+#app .nav{padding:14px;gap:12px;overflow-y:auto}
+#app .nav button{justify-content:flex-start;width:100%;min-height:77px;padding:12px 16px;font-size:24px}
+#app .nav button span.nav-icon{display:grid;place-items:center;width:30px;flex:none;color:#4fddd6}
+#app .nav button:focus span.nav-icon,#app .nav button.active:focus span.nav-icon{color:inherit}
+#app .nav .sidebar-shortcuts{margin-top:auto;padding-top:15px;gap:10px}
+#app .nav .sidebar-shortcuts button{min-height:68px;font-size:21px}
+#app .listpane{padding:20px 17px 16px}
+#app .heading{margin-bottom:12px}
+#app .heading h1{font-size:36px;font-weight:850}
+#app .heading span{font-size:21px;color:#add4dd;font-weight:700}
+#app .groups{gap:10px;margin-bottom:10px}
+#app .groups button{min-height:55px;font-size:21px}
+#app .channels{padding:5px}
+#app .channel{min-height:85px;padding:11px 13px;gap:13px;margin-bottom:9px;border-radius:16px;border-color:#2f4b60;background:#182c40;justify-content:flex-start}
+#app .channel .num{min-width:45px;font-size:17px;font-weight:800;color:#c5d7e5}
+#app .channel .logo,#app .channel .placeholder{width:67px;height:46px}
+#app .channel .chtext strong{font-size:26px;font-weight:800}
+#app .channel .chtext small{font-size:18px;color:#b4cada}
+#app .channel .heart{font-size:25px}
+#app .channel.is-selected{border-color:#2f9999;background:#193944}
+#app .channel:focus{background:#71ffed;border-color:#bffff7;color:#062d2c}
+#app .channel:focus .chtext small{color:#254947}
+#app .details{padding:19px;gap:14px;max-height:100%;overflow-y:auto}
+#app .preview{width:100%;height:39vh;min-height:208px;max-height:430px;position:relative;display:grid;place-items:center;overflow:hidden;border:2px solid #496e7b;border-radius:19px;background:radial-gradient(ellipse at 50% 28%,#1b4652,#07121f 78%)}
+#app .preview video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#050a13;z-index:1;pointer-events:none}
+#app .preview-art{position:absolute;inset:0;display:grid;place-items:center;z-index:1}
+#app .preview-art b{font-size:69px}
+#app .preview-art img{width:52%;height:55%;object-fit:contain;max-width:290px;max-height:182px;border-radius:13px;background:#f6faff;padding:12px}
+#app .preview-live{display:inline-flex;align-items:center;gap:8px;position:absolute;top:13px;left:13px;z-index:3;background:#061b27e8;border:1px solid #6be2d599;border-radius:10px;color:#c2fff7;padding:7px 11px;font-size:16px;font-weight:850}
+#app .preview-live .ui-icon{width:18px;height:18px}
+#app .preview-state{position:absolute;bottom:0;left:0;right:0;z-index:3;padding:25px 14px 14px;background:linear-gradient(transparent,#061522e8);color:#f2fdff;font-size:20px;line-height:1.4;text-align:center;font-weight:700}
+#app .preview.preview-playing .preview-state{display:none}
+#app .channel-summary h2{font-size:38px;line-height:1.14;font-weight:850}
+#app .channel-summary p{font-size:21px;color:#b2d0d8}
+#app .actions{padding:0;gap:12px}
+#app .actions button{min-height:74px;font-size:22px}
+#app .actions .primary{background:#33e9d9;border-color:#33e9d9;color:#07312e;font-weight:850}
+#app .footer{min-height:61px;gap:25px;justify-content:center;color:#b9ccda;font-size:19px;font-weight:650}
+#app .footer b{font-size:18px;color:#f2f8ff}
+#app .footer .preview-footer{color:#76e8dc}
+@media(max-width:1366px),(max-height:820px){
+ #app{--home-inset:1.75vw;--home-gap:12px;--home-target:57px}
+ #app .top{min-height:83px;padding:10px 0}
+ #app .brandicon{width:54px;height:54px;border-radius:15px}
+ #app .brand-svg{width:34px;height:34px}
+ #app .brand strong{font-size:28px}
+ #app .brand p{font-size:14px}
+ #app .clock{font-size:19px;margin-right:2px}
+ #app button{min-height:57px;font-size:19px;padding:9px 11px;gap:8px}
+ #app .ui-icon{width:22px;height:22px}
+ #app .main{grid-template-columns:minmax(171px,17fr) minmax(0,43fr) minmax(0,40fr)}
+ #app .nav,#app .listpane,#app .details{border-radius:18px}
+ #app .nav{padding:9px;gap:8px}
+ #app .nav button{min-height:64px;font-size:20px;padding:10px 12px}
+ #app .nav button span.nav-icon{width:23px}
+ #app .nav .sidebar-shortcuts{padding-top:10px;gap:7px}
+ #app .nav .sidebar-shortcuts button{min-height:57px;font-size:18px}
+ #app .listpane{padding:12px 10px}
+ #app .heading{margin-bottom:8px}
+ #app .heading h1{font-size:30px}
+ #app .heading span{font-size:17px}
+ #app .groups{margin-bottom:5px;gap:7px}
+ #app .groups button{min-height:44px;font-size:18px}
+ #app .channel{min-height:68px;padding:8px 10px;gap:9px;margin-bottom:7px}
+ #app .channel .num{min-width:34px;font-size:15px}
+ #app .channel .logo,#app .channel .placeholder{width:51px;height:38px}
+ #app .channel .chtext strong{font-size:21px}
+ #app .channel .chtext small{font-size:16px}
+ #app .details{padding:12px;gap:11px}
+ #app .preview{height:37vh;min-height:176px}
+ #app .preview-live{font-size:13px;padding:6px 9px}
+ #app .preview-state{font-size:17px}
+ #app .channel-summary h2{font-size:30px}
+ #app .channel-summary p{font-size:18px}
+ #app .actions button{min-height:62px;font-size:19px}
+ #app .footer{min-height:48px;gap:15px;font-size:16px}
+ #app .footer b{font-size:15px}
+}
+@media(max-height:620px){
+ #app .top{min-height:70px}
+ #app .nav button{min-height:56px}
+ #app .channel{min-height:60px}
+ #app .preview{height:34vh;min-height:144px}
+ #app .footer .preview-footer{display:none}
+}
+
+/* Large TV QR and explicit Samsung remote navigation */
+.dialog.source-mode{width:min(1300px,94vw);max-height:94vh;padding:26px 30px}
+.source-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,0.94fr);gap:25px}
+.source-manual{min-width:0}
+.source-pair{border:1px solid var(--edge);background:var(--bg);border-radius:20px;padding:13px;text-align:center}
+.source-pair h3{font-size:25px;margin:7px 0}.source-pair p{font-size:16px;line-height:1.4;margin:8px 0}
+#sourceQR{width:444px;height:444px;padding:12px;border-radius:14px;background:#fff;margin:10px auto;overflow:hidden}
+#sourceQR img,#sourceQR canvas{max-width:100%;max-height:100%}
+#sourceQR canvas[style*="display: none"]{display:none!important}
+#sourceQRStatus{min-height:46px;color:var(--muted);font-size:16px}
+#sourcePhoneLink{overflow-wrap:anywhere;color:var(--muted);font-size:13px}
+#toSourceUrl{display:block;margin-top:10px;width:100%;font-size:18px}
+@media(max-width:1150px){.source-grid{grid-template-columns:minmax(0,1fr) 330px;gap:12px}#sourceQR{width:318px;height:318px;padding:9px}}
+@media(max-height:780px){#sourceQR{width:300px;height:300px;padding:8px}.source-pair{padding:8px}.dialog.source-mode{max-height:97vh}}
+
+/* Samsung Tizen remote-safe checkbox: a real focusable button with checkbox semantics. */
+.dialog .rights-toggle{display:flex;align-items:center;gap:16px;width:100%;text-align:left;background:transparent;border:2px solid var(--edge);margin-top:18px;padding:13px 14px;border-radius:14px;font-size:19px;line-height:1.45;font-weight:650}
+.dialog .rights-box{display:inline-flex;flex:none;align-items:center;justify-content:center;width:42px;height:42px;background:var(--bg);border:3px solid #9fb6d0;border-radius:8px;color:white;font-size:31px;line-height:1}
+.dialog .rights-toggle[aria-checked=true]{background:rgba(13,145,238,.14);border-color:#34b9ef}
+.dialog .rights-toggle[aria-checked=true] .rights-box{background:#08a76e;border-color:#08a76e}
+.dialog .rights-toggle[aria-checked=true] .rights-box::before{content:"✓";font-weight:800}
+.dialog .rights-toggle:focus,.dialog .rights-toggle:focus-visible{outline:4px solid var(--focus);outline-offset:3px;box-shadow:0 0 0 7px #168df833}
+
+.playerfoot{pointer-events:none;transition:opacity .25s}
+.playerhead{pointer-events:none;transition:opacity .25s}
+#player.is-playing .playerfoot,#player.is-playing .playerhead{opacity:0}
+.playerstatus[hidden]{display:none!important}
+#video:focus-visible{outline:none}
+#player.is-tuning-video::after{content:'';position:absolute;inset:0;background:#000;z-index:1;pointer-events:none}
+#avplayObject{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#castPlayerFrame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;pointer-events:none}
+#castPlayerFrame[hidden]{display:none!important}
+#player .playerhead,#player .playerstatus,#player .playerfoot{z-index:2}
+#player:focus-visible{outline:none}
+#browserFallback{position:absolute;z-index:5;top:calc(53% + 24px);left:50%;transform:translateX(-50%);padding:16px 24px;min-width:400px;border:2px solid #64bfff;border-radius:14px;background:#06588c;color:#fff;font-size:20px;font-weight:bold}
+#browserFallback:focus{outline:4px solid #fff;outline-offset:4px}
+#browserFallback[hidden]{display:none}
+/* Full-screen Samsung remote channel selector; never navigate to hidden home controls. */
+#channelPicker{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:flex-start;padding:24px 0 24px 28px;background:linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,.34) 43%,rgba(0,0,0,.04));animation:picker-in .18s ease-out}
+#channelPicker:focus{outline:none}
+.picker-panel{width:min(640px,40vw);min-width:410px;height:100%;min-height:0;padding:26px 22px 18px;background:linear-gradient(155deg,rgba(13,28,49,.98),rgba(7,17,32,.97));border:1px solid rgba(157,195,232,.32);border-radius:22px;display:flex;flex-direction:column;gap:12px;box-shadow:0 18px 60px #0009;backdrop-filter:blur(12px)}
+.picker-heading{font-size:28px;font-weight:750;letter-spacing:.1px;color:#f4f8ff}
+.picker-info{font-size:15px;color:#a7bdd8;line-height:1.35}
+.picker-groups{display:flex;gap:8px;overflow-x:auto;min-height:44px;flex-shrink:0;padding:2px 1px 5px;scrollbar-width:none}
+.picker-groups button{flex:none;white-space:nowrap;padding:8px 14px;border:1px solid #3e5a77;border-radius:999px;background:#162b43;color:#dceaff;font-size:15px}
+.picker-groups button.active{background:linear-gradient(135deg,#08a8f5,#0875dd);border-color:#68d1ff;color:#fff;box-shadow:0 4px 14px #078cf544}
+.picker-list{flex:1;min-height:0;overflow-y:auto;padding:3px 5px 5px 1px;scrollbar-width:thin;scrollbar-color:#3b6288 transparent}
+.picker-row{width:100%;display:flex;gap:12px;align-items:center;text-align:left;margin:0 0 7px;padding:9px 13px;border-radius:12px;border:1px solid rgba(136,169,205,.16);background:rgba(27,47,74,.82);color:#f5f9ff;min-height:52px;font-size:17px;transition:background .12s,border-color .12s,transform .12s}
+.picker-row.active{background:linear-gradient(105deg,#078ee7,#0877d2);border-color:#73d7ff;box-shadow:0 0 0 2px #22aaff33,0 5px 16px #006bb855;transform:translateX(2px)}
+.picker-row .picker-number{width:40px;flex:none;color:#9db6d2;font-size:13px;font-variant-numeric:tabular-nums}
+.picker-row.active .picker-number{color:#e6f7ff}
+.picker-row .picker-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.picker-row .picker-onair{color:#b8ffd0;font-size:11px;font-weight:700;letter-spacing:.3px;flex:none;border:1px solid #b8ffd044;background:#00793b55;border-radius:999px;padding:5px 8px}
+.picker-help{font-size:13px;color:#a8c0da;line-height:1.4;border-top:1px solid #ffffff1b;padding:11px 3px 0}
+@keyframes picker-in{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@media(max-width:1050px){#channelPicker{padding:14px 0 14px 14px}.picker-panel{width:60vw;min-width:360px;padding:17px;border-radius:17px}.picker-heading{font-size:23px}.picker-row{min-height:46px;font-size:15px}.picker-groups button{font-size:13px;padding:7px 11px}.picker-help{font-size:12px}}
+@media(max-height:620px){#channelPicker{padding-top:10px;padding-bottom:10px}.picker-panel{padding:14px 17px;gap:8px}.picker-row{min-height:40px;padding:6px 10px;margin-bottom:5px}.picker-groups{min-height:38px}}
+/* TV picker large-type override: readable from the sofa, including 720p TVs. */
+#channelPicker{padding:24px 0 24px 30px;background:linear-gradient(90deg,rgba(0,0,0,.85),rgba(0,0,0,.43) 60%,rgba(0,0,0,.06))}
+#channelPicker .picker-panel{width:min(920px,57vw);min-width:0;padding:27px 28px 22px;gap:15px;border:2px solid #6d8fac;border-radius:24px;box-shadow:0 24px 70px #000b}
+#channelPicker .picker-heading{font-size:39px;line-height:1.16;font-weight:800}
+#channelPicker .picker-info{font-size:23px;color:#c8daef}
+#channelPicker .picker-groups{gap:12px;min-height:65px;padding:3px 2px 8px}
+#channelPicker .picker-groups button{font-size:23px;min-height:52px;padding:10px 20px;border:2px solid #536f8c;font-weight:750}
+#channelPicker .picker-groups button.active,#channelPicker .picker-groups button:focus{background:linear-gradient(135deg,#0999f2,#076ad7);border-color:#c2efff;color:#fff;box-shadow:0 0 0 2px #ffffff33,0 8px 24px #078cf570}
+#channelPicker .picker-list{padding:5px 12px 6px 3px}
+#channelPicker .picker-row{min-height:78px;font-size:29px;font-weight:750;line-height:1.23;padding:15px 18px;margin-bottom:10px;gap:16px;border:2px solid #ffffff33;border-radius:17px;background:#203751ee}
+#channelPicker .picker-row.active,#channelPicker .picker-row:focus{background:linear-gradient(110deg,#118ef0,#086bd0);border-color:#def8ff;box-shadow:0 0 0 3px #ffffff55,0 12px 30px #006cb5a9;transform:translateX(3px);color:#fff}
+#channelPicker .picker-row .picker-number{font-size:22px;font-weight:750;width:57px;color:#c8d9ea}
+#channelPicker .picker-row.active .picker-number{color:#fff}
+#channelPicker .picker-row .picker-onair{font-size:16px;font-weight:800;padding:7px 11px;border:2px solid #9eeec577;color:#c6ffdd}
+#channelPicker .picker-row.active .picker-onair{color:#fff;background:#ffffff29;border-color:#ffffff88}
+#channelPicker .picker-help{display:flex;flex-wrap:wrap;align-items:center;gap:11px 17px;font-size:21px;font-weight:700;line-height:1.3;color:#eff7ff;border-top:2px solid #ffffff33;padding:16px 2px 2px}
+#channelPicker .picker-help span{white-space:nowrap}
+#channelPicker .picker-help b{display:inline-block;padding:6px 10px;min-height:35px;border-radius:9px;margin-right:6px;border:1px solid #aac2d6;background:#2a4460;color:#fff;font-size:18px}
+@media(max-width:1350px){
+ #channelPicker{padding:15px 0 15px 16px}
+ #channelPicker .picker-panel{width:68vw;max-width:790px;padding:19px 21px;gap:10px}
+ #channelPicker .picker-heading{font-size:31px}
+ #channelPicker .picker-info{font-size:20px}
+ #channelPicker .picker-groups{min-height:55px;gap:9px}
+ #channelPicker .picker-groups button{min-height:45px;font-size:19px;padding:8px 14px}
+ #channelPicker .picker-row{min-height:64px;font-size:24px;padding:11px 13px;margin-bottom:8px}
+ #channelPicker .picker-row .picker-number{font-size:18px;width:48px}
+ #channelPicker .picker-row .picker-onair{font-size:13px;padding:5px 8px}
+ #channelPicker .picker-help{font-size:18px;padding-top:10px;gap:8px 12px}
+ #channelPicker .picker-help b{font-size:16px;min-height:30px;padding:4px 8px}
+}
+@media(max-height:620px){
+ #channelPicker{padding-top:9px;padding-bottom:9px}
+ #channelPicker .picker-panel{padding:13px 17px;gap:7px}
+ #channelPicker .picker-heading{font-size:27px}
+ #channelPicker .picker-info{font-size:18px}
+ #channelPicker .picker-groups{min-height:45px;padding:1px}
+ #channelPicker .picker-groups button{min-height:39px;font-size:18px;padding:6px 12px}
+ #channelPicker .picker-row{min-height:56px;font-size:21px;padding:9px 11px;margin-bottom:5px}
+ #channelPicker .picker-row .picker-number{font-size:16px;width:42px}
+ #channelPicker .picker-help{font-size:16px;padding-top:6px;gap:6px 8px}
+ #channelPicker .picker-help b{font-size:15px;min-height:26px;padding:3px 7px}
+}
+
+/* Netflix-inspired COLOR PALETTE ONLY. Preserve the pre-cinema TV layout,
+   remote navigation, preview lifecycle, picker sizes and playback engine. */
+body{
+ --bg:#141414;--panel:#1c1c1c;--item:#2b2b2b;--fg:#f5f5f1;
+ --muted:#b3b3b3;--edge:#454545;--blue:#e50914;--focus:#ffffff;
+ background:#141414;color:#f5f5f1
+}
+body[data-theme=amoled]{
+ --bg:#000000;--panel:#101010;--item:#242424;--fg:#f5f5f1;
+ --muted:#b3b3b3;--edge:#484848;--blue:#e50914;--focus:#ffffff;
+ background:#000
+}
+body[data-theme=light]{
+ --bg:#f5f5f1;--panel:#ffffff;--item:#ececec;--fg:#191919;
+ --muted:#555555;--edge:#b3b3b3;--blue:#e50914;--focus:#e50914;
+ background:#f5f5f1;color:#191919
+}
+body #app{
+ --accent:#e50914;--focus-bg:#ffffff;--focus-ink:#171717;--active-bg:#6e1117;
+ background:linear-gradient(145deg,#1a1a1a 0%,#111111 62%,#191919 100%);
+ color:#f5f5f1
+}
+body[data-theme=amoled] #app{background:#000}
+body[data-theme=light] #app{
+ --accent:#e50914;--focus-bg:#191919;--focus-ink:#fff;--active-bg:#ffe6e7;
+ background:#f5f5f1;color:#191919
+}
+body #app .brandicon{background:linear-gradient(140deg,#ee2934,#e50914);color:#fff;box-shadow:0 8px 24px #e5091430}
+body #app .brand-svg{color:#fff}
+body #app .brand p,body #app .clock{color:var(--muted)}
+body #app .nav,body #app .listpane,body #app .details{
+ background:var(--panel);border-color:var(--edge)
+}
+body #app button{
+ background:var(--item);color:var(--fg);border-color:var(--edge)
+}
+body #app button:focus,body #app button:focus-visible{
+ background:var(--focus-bg);color:var(--focus-ink);border-color:#e50914;
+ outline:3px solid var(--focus);outline-offset:3px;
+ box-shadow:0 0 0 5px #e5091440
+}
+body #app button.active{
+ background:#b20710;border-color:#e50914;color:#fff
+}
+body #app button.active:focus,body #app button.active:focus-visible{
+ background:var(--focus-bg);color:var(--focus-ink);border-color:#e50914
+}
+body[data-theme=light] #app button.active{background:#e50914;color:#fff}
+body #app .nav button span.nav-icon{color:#f05a63}
+body #app .nav button:focus span.nav-icon,body #app .nav button.active:focus span.nav-icon{color:inherit}
+body #app .channel{
+ background:var(--item);border-color:var(--edge);color:var(--fg)
+}
+body #app .channel .num{background:var(--bg);color:var(--muted)}
+body #app .channel .chtext small{color:var(--muted)}
+body #app .channel .heart{color:#ff606b}
+body #app .channel.is-selected{
+ background:#3a2022;border-color:#e50914
+}
+body[data-theme=light] #app .channel.is-selected{background:#ffe6e7}
+body #app .channel:focus,body #app .channel:focus-visible{
+ background:#e50914;border-color:#fff;color:#fff;box-shadow:0 0 0 3px #ffffff38
+}
+body #app .channel:focus .chtext small,body #app .channel:focus .num{color:#fff}
+body #app .channel:focus .num{background:#8b030b}
+body #app .groups button.active{background:#e50914;border-color:#e50914;color:#fff}
+body #app .heading span,body #app .channel-summary p{color:var(--muted)}
+body #app .preview{
+ border-color:#5d3033;
+ background:radial-gradient(ellipse at 68% 12%,#45191e 0%,#1b1b1b 64%,#111 100%)
+}
+body #app .preview-art{background:radial-gradient(ellipse at 54% 23%,#401a1e,#141414 76%)}
+body #app .preview .preview-live{
+ background:#74040cdd;border-color:#e50914;color:#fff
+}
+body #app .preview .preview-live .ui-icon{color:#fff}
+body #app .preview .preview-state{
+ color:#fff;background:linear-gradient(transparent,#000e)
+}
+body #app .actions .primary,body #app #emptyAdd,body #app #sampleBtn{
+ background:#e50914;color:#fff;border-color:#e50914
+}
+body #app .actions .primary:focus,body #app #emptyAdd:focus,body #app #sampleBtn:focus{
+ background:#fff;color:#171717;border-color:#e50914
+}
+body #app .footer{color:var(--muted)}
+body #app .footer b{
+ background:var(--item);border-color:var(--edge);color:var(--fg)
+}
+body #app .footer .preview-footer{color:#ff747d}
+body .overlay{background:#000c}
+body .dialog{
+ background:var(--panel);border-color:var(--edge);color:var(--fg)
+}
+body .dialog input:not([type=checkbox]),body .dialog textarea{
+ background:var(--bg);color:var(--fg);border-color:var(--edge)
+}
+body .dialog button,body .dialog .rights-toggle{
+ background:var(--item);color:var(--fg);border-color:var(--edge)
+}
+body .dialog button:focus,body .dialog input:focus,body .dialog textarea:focus{
+ outline:3px solid #e50914;outline-offset:2px;border-color:#e50914
+}
+body .dialog .buttons .primary,body .dialog #saveSource,body .dialog #applySearch{
+ background:#e50914;border-color:#e50914;color:#fff
+}
+body .dialog .rights-toggle[aria-checked=true]{
+ background:#e509141c;border-color:#e50914
+}
+body .dialog .rights-toggle[aria-checked=true] .rights-box{
+ background:#e50914;border-color:#e50914
+}
+body .source-pair{background:var(--bg);border-color:var(--edge)}
+body #channelPicker{
+ background:linear-gradient(90deg,#000e 0%,#0009 60%,#0001 100%)
+}
+body #channelPicker .picker-panel{
+ background:linear-gradient(150deg,#202020f8,#141414fb);
+ border-color:#666;box-shadow:0 22px 60px #000b
+}
+body #channelPicker .picker-heading{color:#fff}
+body #channelPicker .picker-info{color:#c9c9c9}
+body #channelPicker .picker-groups button{
+ background:#303030;border-color:#5d5d5d;color:#f5f5f1
+}
+body #channelPicker .picker-groups button.active,
+body #channelPicker .picker-groups button:focus{
+ background:#e50914;border-color:#ff7e85;color:#fff;
+ box-shadow:0 0 0 2px #ffffff36,0 8px 24px #e509144d
+}
+body #channelPicker .picker-row{
+ background:#2b2b2b;border-color:#494949;color:#f5f5f1
+}
+body #channelPicker .picker-row.active,
+body #channelPicker .picker-row:focus{
+ background:linear-gradient(110deg,#ed1825,#b20710);
+ border-color:#fff;color:#fff;box-shadow:0 0 0 3px #ffffff45,0 10px 30px #e5091455
+}
+body #channelPicker .picker-row .picker-number{color:#c6c6c6}
+body #channelPicker .picker-row.active .picker-number{color:#fff}
+body #channelPicker .picker-row .picker-onair{
+ background:#8c070fcc;border-color:#e50914;color:#fff
+}
+body #channelPicker .picker-help{
+ border-top-color:#ffffff38;color:#eeeeee
+}
+body #channelPicker .picker-help b{
+ background:#353535;border-color:#707070;color:#fff
+}
+body #browserFallback{
+ background:#b20710;border-color:#e50914;color:#fff
+}
+body #toast{background:#b20710;color:#fff}
+body #player .playerhead{background:linear-gradient(#000d,transparent)}
+body #player .playerfoot{background:linear-gradient(transparent,#000d)}
+body #player .playerdiag{
+ background:#161616f2;border-color:#e50914;color:#eee
+}
+
+.playerdiag{position:absolute;z-index:3;top:calc(45% + 55px);left:7%;right:7%;max-height:30vh;overflow:auto;white-space:pre-line;overflow-wrap:anywhere;padding:12px 18px;border:1px solid #8b6c3b;border-radius:10px;background:#080a0ee8;color:#ffe0aa;font-size:19px;line-height:1.45;text-align:left;text-shadow:0 1px 3px #000}
+#player.is-playing .playerdiag{display:none}
+
+/* GOOGLE TV / MATERIAL 3 DESIGN — aligned with approved 16:9 dark reference.
+   Styling only: no external fonts, images or decorative corner graphics. */
+body{--bg:#0c1321;--panel:#101827;--item:#202938;--fg:#f5f7fb;--muted:#a3afc3;--edge:#283246;--blue:#337df3;--focus:#a0c7ff;background:#0b1120}
+body[data-theme=amoled]{--bg:#000;--panel:#05080d;--item:#171b24;--edge:#303746}
+body[data-theme=light]{--bg:#f4f7fc;--panel:#fff;--item:#e9effa;--fg:#16233a;--muted:#65758e;--edge:#c7d4e7;--blue:#2672e6;--focus:#225cbd}
+#app{--home-inset:1.4vw;--home-gap:20px;--home-target:61px;--accent:#83b5ff;--focus-bg:#a7ccff;--focus-ink:#12284c;--active-bg:#a0c6ff;background:#0c1321;gap:0}
+body[data-theme=light] #app{--accent:#2774dc;--focus-bg:#215aaf;--focus-ink:#fff;--active-bg:#b1d3ff;background:#f3f6fc}
+body[data-theme=amoled] #app{background:#000}
+#app .top{min-height:104px;padding:14px 0 19px;gap:16px}
+#app .brand{gap:15px;min-width:320px}
+body #app .brandicon{display:flex;align-items:center;justify-content:center;width:74px;height:74px;border-radius:22px;background:#fff!important;box-shadow:0 5px 18px #0006!important;overflow:hidden;flex:none}
+body #app .brand-svg{display:block;width:100%;height:100%;color:inherit}
+#app .brand strong{font-size:34px;font-weight:800;color:var(--fg)}
+#app .brand p{font-size:17px;color:var(--muted)}
+#app .toolbar{gap:14px}
+#app .clock{font-size:23px;color:var(--fg);margin-right:8px;font-weight:700}
+#app .toolbar button{border-radius:30px;min-height:60px;padding:12px 20px;font-size:20px;white-space:nowrap}
+body #app button{background:var(--item);color:var(--fg);border:1px solid transparent;border-radius:19px}
+body #app button:focus,body #app button:focus-visible{
+ outline:3px solid #d4e5ff;outline-offset:3px;border-color:#2f78ea;
+ background:#98c3fc;color:#0b2343;box-shadow:0 0 0 6px #67a5fd44}
+body #app button.active{background:#9bc4ff;border-color:#b6d5ff;color:#101f39}
+body #app button.active:focus{background:#bedbff;color:#071a36;border-color:#fff}
+body[data-theme=light] #app button.active{background:#a5cafa;color:#132d54}
+#app .main{grid-template-columns:minmax(210px,17fr) minmax(500px,43fr) minmax(460px,39fr);gap:var(--home-gap)}
+body #app .nav{padding:15px 0;background:transparent;border:0;overflow:auto;gap:10px}
+#app .nav button{display:flex;align-items:center;width:100%;min-height:71px;padding:13px 22px;font-size:23px;font-weight:660;text-align:left;white-space:nowrap;background:transparent;border:1px solid transparent;border-radius:26px;gap:10px}
+body #app .nav button.active{background:#8fbafb;color:#061c3b}
+body #app .nav button span.nav-icon{color:currentColor;display:grid;place-items:center;width:42px;margin:0;flex:none}
+#app .nav button .ui-icon{width:28px;height:28px}
+#app .nav .sidebar-shortcuts{border:0;padding-top:0;margin-top:0;gap:10px}
+#app .nav #exitModuleBtn{font-size:18px;opacity:.8;margin-top:10px}
+body #app .listpane{padding:17px 20px 16px;background:#0d1626;border:1px solid #25314a;border-radius:25px}
+body #app .details{padding:20px 0 0;background:transparent;border:0;border-radius:0;gap:14px;max-height:100%}
+#app .heading{padding:2px 12px;margin:0 0 10px}
+#app .heading h1{font-size:40px;letter-spacing:-.6px}
+#app .heading span{font-size:21px;font-weight:700;color:#b9c3d2}
+#app .groups{gap:10px;margin:0 0 3px;padding:5px 4px 8px}
+#app .groups button{min-height:56px!important;border:0;border-radius:30px;font-size:18px;padding:10px 18px;max-width:90%}
+body #app .groups button.active{background:#87b7ff;color:#102e60;border:0}
+#app .epg-indicator{font-size:13px;color:#829ab8;padding:0 12px 8px;max-height:22px;overflow:hidden}
+#app .channels{padding:4px 2px 8px}
+body #app .channel{background:#202938;border:1px solid transparent;border-radius:20px;min-height:86px;padding:11px 15px;margin:0 0 10px;gap:12px}
+body #app .channel.is-selected{background:#9dc6ff;border-color:#add3ff;color:#0b1e39}
+body #app .channel.is-selected .chtext small{color:#234269}
+body #app .channel.is-selected .num{background:#77a5e5;color:#fff}
+body #app .channel:focus,body #app .channel:focus-visible{background:#b7d7ff;border:2px solid #fff;color:#0a2447;box-shadow:0 0 0 4px #3b8be855}
+body #app .channel:focus .chtext small{color:#244467}
+body #app .channel:focus .num{background:#6b9fdf;color:#fff}
+#app .num{font-size:18px;min-width:50px;border-radius:13px;padding:12px 5px;background:#344359;color:#b7c5d8}
+#app .logo,#app .placeholder{width:77px;height:58px;border-radius:15px;background:#fff;font-size:17px}
+#app .chtext strong{font-size:24px;font-weight:800}
+#app .chtext small{font-size:18px;color:#9eafc7}
+#app .channel .heart{color:#428eff}
+#app .channel .match-programme{font-size:14px;color:#a6c7ec}
+#app .channel.is-selected .match-programme{color:#234269}
+#app #more{width:calc(100% - 12px);margin:4px 6px 0;min-height:52px;font-size:18px}
+#app .search-notice{font-size:14px;color:#b1ccff;padding:2px 10px;max-height:32px}
+body #app .preview{height:36.6vh;max-height:390px;min-height:180px;border:1px solid #283750;border-radius:23px;background:#131e32;box-shadow:none}
+body #app .preview-art{background:#1b2842}
+body #app .preview-live{background:#d81736d9;border:0;border-radius:22px;font-size:15px;font-weight:800;top:18px;right:18px;left:auto}
+body #app .preview .preview-state{font-size:14px}
+#app .channel-summary{display:flex;align-items:center;gap:16px;min-height:80px;padding:0 3px}
+#app .selected-logo{width:77px;height:65px;background:#fff;color:#314362;display:grid;place-items:center;border-radius:16px;flex:none;overflow:hidden}
+#app .selected-logo img{max-width:100%;max-height:100%;object-fit:contain}
+#app .selected-logo span{font-size:18px}
+#app .channel-summary h2{font-size:33px;font-weight:800}
+#app .channel-summary p{font-size:20px;margin:3px 0 0}
+#app .guide-card{padding:16px 16px 13px;background:#202939;border:1px solid #27344a;border-radius:22px;min-height:168px;flex:none}
+#app .guide-row{display:flex;align-items:center;gap:14px;min-height:55px}
+#app .guide-tag{font-size:15px;background:#315d9c;color:#b0d6ff;border-radius:22px;padding:9px 13px;flex:none}
+#app .guide-next-tag{background:#303a4b;color:#c4cbd7}
+#app .guide-row div{min-width:0}
+#app .guide-row strong{display:block;font-size:19px;font-weight:720;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#app .guide-row small{font-size:15px;color:#aab9cc;display:block;margin-top:2px}
+#app .guide-track{height:7px;border-radius:10px;background:#3a475d;margin:7px 0;overflow:hidden}
+#app .guide-track div{height:100%;width:0;background:#4894ff;border-radius:10px}
+#app .actions{display:grid;grid-template-columns:1.55fr 1fr .85fr;gap:9px;padding:3px 0;flex:none}
+#app .actions button{min-height:64px;padding:10px 9px;border-radius:22px;font-size:17px;white-space:nowrap}
+body #app .actions .primary{background:#2f85f9;color:#fff;border:0}
+#app #favBtn{font-size:0}
+#app #favBtn .ui-icon{width:26px;height:26px}
+#app #favBtn .fav-label{font-size:0}
+body #app .actions button:focus{outline:3px solid #d3e4ff;outline-offset:3px;background:#95c2ff;color:#082347}
+#app .footer{display:none}
+#searchDialog .search-dialog-hint{font-size:17px;color:var(--muted);line-height:1.4}
+#searchDialog .search-suggestions{max-height:26vh;overflow:auto;display:flex;flex-wrap:wrap;gap:9px;padding:12px 3px}
+#searchDialog .search-suggestions button{min-height:48px;font-size:17px}
+body .dialog button:focus,body .dialog input:focus,body .dialog textarea:focus{outline-color:#70b0ff;border-color:#70b0ff}
+body .dialog .buttons .primary,body .dialog #saveSource,body .dialog #applySearch{background:#307ff1;border-color:#307ff1}
+body .dialog .rights-toggle[aria-checked=true]{background:#307ff122;border-color:#307ff1}
+body .dialog .rights-toggle[aria-checked=true] .rights-box{background:#307ff1;border-color:#307ff1}
+body #app .nav button:focus span.nav-icon,body #app .nav button.active:focus span.nav-icon{color:inherit}
+@media(max-width:1460px),(max-height:850px){
+ #app{--home-gap:12px;--home-inset:1.2vw}
+ #app .top{min-height:82px;padding:7px 0}
+ body #app .brandicon{width:55px;height:55px;border-radius:15px}
+ #app .brand strong{font-size:25px}
+ #app .brand p{font-size:13px}
+ #app .toolbar button{min-height:46px;font-size:16px;padding:9px 12px}
+ #app .main{grid-template-columns:minmax(155px,17fr) minmax(350px,43fr) minmax(320px,39fr)}
+ #app .nav button{font-size:16px;min-height:53px;padding:9px 14px;border-radius:17px}
+ #app .heading h1{font-size:29px}
+ #app .heading span{font-size:15px}
+ body #app .listpane{padding:10px}
+ body #app .details{padding:10px 0 0}
+ body #app .channel{min-height:61px;border-radius:13px;padding:6px 9px}
+ #app .num{font-size:13px;min-width:34px;padding:7px 3px}
+ #app .logo,#app .placeholder{width:50px;height:43px;border-radius:9px}
+ #app .chtext strong{font-size:17px}
+ #app .chtext small{font-size:13px}
+ #app .guide-card{padding:9px;min-height:140px}
+ #app .guide-row strong{font-size:15px}
+ #app .guide-row small{font-size:12px}
+ #app .actions button{min-height:48px;font-size:13px}
+}
+
+
+/* Google TV reference: favourite beside the title, 3 evenly aligned actions. */
+#app .selected-channel-text{flex:1;min-width:0}
+body #app .channel-summary #favBtn{
+ display:grid;place-items:center;flex:none;width:65px;height:65px;min-height:65px;
+ border:1px solid var(--edge);border-radius:50%;background:var(--item);
+ padding:8px;color:var(--fg);
+}
+body #app .channel-summary #favBtn[aria-pressed=true]{color:#72b2ff;border-color:#7ebaff}
+#app .channel-summary #favBtn .fav-label{font-size:0;position:absolute}
+#app .channel-summary #favBtn .ui-icon{width:29px;height:29px}
+#app .actions{grid-template-columns:1.5fr 1fr .8fr}
+@media(max-width:1460px),(max-height:850px){
+ body #app .channel-summary #favBtn{width:47px;height:47px;min-height:47px}
+ #app .channel-summary #favBtn .ui-icon{width:23px;height:23px}
+ #app .toolbar #searchBtn{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+
+
+/* Five visual systems for the SAME Google-TV 3-column / remote-friendly layout.
+   Avoid theme photos and avoid blurring player/video elements. */
+body[data-theme=dark]{
+ --bg:#05070c;--panel:#0d1119;--item:#151c27;--fg:#f0f3fa;
+ --muted:#91a0b3;--edge:#2e3746;--blue:#83adff;--focus:#d4e5ff;
+ background:#05070c;
+}
+body[data-theme=dark] #app{background:#05070c;color:#f0f3fa}
+body[data-theme=dark] #app .listpane,
+body[data-theme=dark] #app .guide-card{background:#0e141f;border-color:#28303d}
+body[data-theme=dark] #app .nav button{background:transparent;color:#c9d2e0}
+body[data-theme=dark] #app .nav button.active{background:#283345;color:#e1ebff}
+body[data-theme=dark] #app .channel,
+body[data-theme=dark] #app .toolbar button,
+body[data-theme=dark] #app .actions button,
+body[data-theme=dark] #app .groups button{background:#1b2230;color:#f0f3fa;border-color:#323d4c}
+body[data-theme=dark] #app .channel.is-selected{background:#354059;border-color:#83a8df;color:#fff}
+body[data-theme=dark] #app .channel.is-selected .chtext small{color:#c5d5f2}
+body[data-theme=dark] #app .actions .primary{background:#354f83;color:#fff}
+body[data-theme=dark] #app .guide-tag{background:#233d6a;color:#d7e7ff}
+body[data-theme=dark] #app button:focus{background:#aec9ff;color:#101b2f;outline-color:#f2f6ff}
+
+body[data-theme=apple]{
+ --bg:#131820;--panel:#202833;--item:#26303d;--fg:#f7f8fb;
+ --muted:#adb9ca;--edge:#465364;--blue:#f5f7fc;--focus:#fff;
+ background:#111720;
+}
+body[data-theme=apple] #app{background:linear-gradient(150deg,#1a202b,#0d1219);color:#f5f7fb;--home-gap:17px}
+body[data-theme=apple] #app .brand strong{font-weight:700;letter-spacing:-.9px}
+body[data-theme=apple] #app .listpane,
+body[data-theme=apple] #app .guide-card{
+ background:#202936;border:1px solid #435063;border-radius:30px;
+ box-shadow:0 20px 55px #0005;
+}
+body[data-theme=apple] #app .nav button,
+body[data-theme=apple] #app .channel,
+body[data-theme=apple] #app .toolbar button,
+body[data-theme=apple] #app .groups button,
+body[data-theme=apple] #app .actions button{
+ background:#252e3a;border:1px solid #3e4a59;border-radius:28px;color:#f8f9fb;
+}
+body[data-theme=apple] #app .nav button.active{background:#f6f7fa;color:#1b2028;border-color:#fff;box-shadow:0 10px 22px #0004}
+body[data-theme=apple] #app .channel.is-selected{background:#f7f8fa;color:#18202b;border-color:#fff;box-shadow:0 8px 23px #0004}
+body[data-theme=apple] #app .channel.is-selected .chtext small{color:#516073}
+body[data-theme=apple] #app .channel.is-selected .num{background:#e3e7ec;color:#263241}
+body[data-theme=apple] #app .actions .primary{background:#f3f5fa;color:#15202e;border-color:#f3f5fa}
+body[data-theme=apple] #app .guide-tag{background:#e8ecf4;color:#25354b}
+body[data-theme=apple] #app .guide-next-tag{background:#354252;color:#e5ebf3}
+body[data-theme=apple] #app .guide-track div{background:#c8d6ec}
+body[data-theme=apple] #app button:focus{background:#fff;color:#122035;outline:3px solid #fff;outline-offset:3px}
+
+body[data-theme=minimalist]{
+ --bg:#fff;--panel:#fff;--item:#f1f3f5;--fg:#151b23;
+ --muted:#5a6879;--edge:#d5dde6;--blue:#171d27;--focus:#20262e;
+ background:#fff;color:#151b23;
+}
+body[data-theme=minimalist] #app{background:#fff;color:#151b23;--home-gap:13px}
+body[data-theme=minimalist] #app .brand strong,
+body[data-theme=minimalist] #app .clock{color:#121b26}
+body[data-theme=minimalist] #app .brand p{color:#626e7d}
+body[data-theme=minimalist] #app .listpane{
+ background:#fff;border:1px solid #dde3eb;border-radius:12px;
+ box-shadow:none;padding:15px 16px;
+}
+body[data-theme=minimalist] #app .details{background:transparent}
+body[data-theme=minimalist] #app .nav button,
+body[data-theme=minimalist] #app .toolbar button,
+body[data-theme=minimalist] #app .groups button,
+body[data-theme=minimalist] #app .channel,
+body[data-theme=minimalist] #app .actions button{
+ background:#f4f6f8;color:#131b27;border:1px solid #dce3ea;border-radius:10px;
+ box-shadow:none;
+}
+body[data-theme=minimalist] #app .nav button{background:transparent;border-color:transparent}
+body[data-theme=minimalist] #app .nav button.active{background:#182332;color:#fff}
+body[data-theme=minimalist] #app .groups button.active{background:#172334;color:#fff}
+body[data-theme=minimalist] #app .channel.is-selected{background:#151e2a;color:#fff;border-color:#151e2a}
+body[data-theme=minimalist] #app .channel.is-selected .chtext small{color:#c4cedb}
+body[data-theme=minimalist] #app .channel.is-selected .num{background:#3f4957;color:#fff}
+body[data-theme=minimalist] #app .chtext small,
+body[data-theme=minimalist] #app .heading span,
+body[data-theme=minimalist] #app .epg-indicator{color:#526174}
+body[data-theme=minimalist] #app .guide-card{background:#f4f6f8;border:1px solid #dde3ea;border-radius:12px}
+body[data-theme=minimalist] #app .guide-tag{background:#dce4ee;color:#1d2d3c}
+body[data-theme=minimalist] #app .guide-row strong{color:#151b23}
+body[data-theme=minimalist] #app .guide-row small{color:#566374}
+body[data-theme=minimalist] #app .actions .primary{background:#182332;color:#fff}
+body[data-theme=minimalist] #app .preview{border-radius:12px;border-color:#dce3ea}
+body[data-theme=minimalist] #app .selected-logo{border:1px solid #dce3ea}
+body[data-theme=minimalist] #app button:focus{background:#101b29;color:#fff;outline:3px solid #151b23;outline-offset:3px}
+body[data-theme=minimalist] .dialog{background:#fff;color:#101b29}
+body[data-theme=minimalist] .dialog input{color:#101b29;background:#f6f7f9}
+
+body[data-theme=glass]{
+ --bg:#142039;--panel:#243751;--item:#2b405a;--fg:#f8fbff;
+ --muted:#c7d7ef;--edge:#7c97b644;--blue:#80c8ff;--focus:#cfe9ff;
+ background:#131e34;color:#f8fbff;
+}
+body[data-theme=glass] #app{
+ background:linear-gradient(145deg,#0e1c35 0%,#273a59 52%,#161d39 100%);
+ --home-gap:20px;color:#fff;
+}
+body[data-theme=glass] #app .listpane,
+body[data-theme=glass] #app .guide-card{
+ background:rgba(210,231,255,.10);
+ border:1px solid rgba(217,233,255,.27);
+ border-radius:28px;
+ box-shadow:0 16px 40px rgba(2,10,24,.24),inset 0 1px 0 rgba(255,255,255,.16);
+ -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+body[data-theme=glass] #app .nav button,
+body[data-theme=glass] #app .toolbar button,
+body[data-theme=glass] #app .groups button,
+body[data-theme=glass] #app .channel,
+body[data-theme=glass] #app .actions button{
+ background:rgba(227,238,255,.12);color:#f7fbff;
+ border:1px solid rgba(226,240,255,.24);border-radius:25px;
+ -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+}
+body[data-theme=glass] #app .nav button{background:rgba(220,237,255,.04)}
+body[data-theme=glass] #app .nav button.active{background:rgba(192,224,255,.78);color:#11223d;border-color:rgba(255,255,255,.55)}
+body[data-theme=glass] #app .channel.is-selected{background:rgba(193,225,255,.85);color:#102b4f;border-color:#e0f2ff}
+body[data-theme=glass] #app .channel.is-selected .chtext small{color:#27466c}
+body[data-theme=glass] #app .channel.is-selected .num{background:#5785c7;color:#fff}
+body[data-theme=glass] #app .actions .primary{background:rgba(103,174,255,.82);color:#091e3d;border-color:#b2d9ff}
+body[data-theme=glass] #app .guide-tag{background:rgba(133,187,255,.36);color:#f3f9ff}
+body[data-theme=glass] #app .guide-next-tag{background:rgba(225,237,255,.15)}
+body[data-theme=glass] #app .preview{border-color:rgba(213,239,255,.45);box-shadow:0 15px 30px #0004}
+body[data-theme=glass] #app button:focus{background:#daf0ff;color:#102c4e;outline:3px solid #fff;outline-offset:3px}
+body[data-theme=glass] .dialog{
+ background:rgba(24,40,63,.94);color:#fff;border-color:#aec4e166;
+ -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+}
+/* Style transitions are confined to flat UI components; video stays untouched. */
+#app .nav button,#app .toolbar button,#app .channel,#app .listpane,#app .guide-card,#app .actions button{
+ transition:background-color .12s linear,border-color .12s linear,color .12s linear;
+}
+
+
+/* Samsung/Tizen preview: keep the VIDEO ELEMENT full size. object-fit:contain
+   centers the decoded picture inside it, without CSS transforms, aspect-ratio
+   overrides, or runtime pixel resizing (which shifted footage to top-left). */
+#app .preview{position:relative;overflow:hidden;background:#050a13!important}
+#app .preview #homePreviewVideo{
+ position:absolute!important;inset:0!important;
+ left:0!important;top:0!important;right:0!important;bottom:0!important;
+ width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ transform:none!important;aspect-ratio:auto!important;
+ object-fit:contain!important;object-position:50% 50%!important;
+ margin:0!important;padding:0!important;background:#050a13;
+ pointer-events:none;
+}
+
+/* Full-screen error report, without overlapping controls. */
+body #player.is-playback-error{background:#090b10}
+body #player.is-playback-error .playerhead{top:0;left:0;right:0;padding:1.8vh 4vw;background:#151923;z-index:8}
+body #player.is-playback-error .playerhead strong{font-size:32px}
+body #player.is-playback-error .playerstatus{top:8vh;left:4vw;right:4vw;width:auto;padding:0;text-align:left;z-index:8;font-size:27px;line-height:1.23;color:#fff;overflow-wrap:anywhere;max-height:19vh;overflow:auto}
+body #player.is-playback-error .playerdiag{top:28vh;bottom:15vh;left:4vw;right:4vw;max-height:none;overflow:auto;z-index:8;margin:0;padding:1.5vh 1.4vw;border:2px solid #e50914;border-radius:12px;background:#121620;color:#fff;font-size:26px;line-height:1.32;white-space:pre-wrap;overflow-wrap:anywhere;text-shadow:none}
+body #player.is-playback-error #browserFallback{top:auto;bottom:6.6vh;left:4vw;right:auto;transform:none;z-index:8;min-width:0;max-width:92vw;padding:1.1vh 1.6vw;font-size:22px}
+body #player.is-playback-error .playerfoot{bottom:0;padding:1.1vh 3vw;font-size:18px;z-index:8;background:#151923;white-space:normal;line-height:1.2}
+body #player.is-playback-error video,body #player.is-playback-error #avplayObject{visibility:hidden}
+body #player.is-playback-error #channelPicker{z-index:12}
+/* The website's cinema mode is video-only, not the legacy TV status overlay. */
+body.web-tv-cinema #player.is-playing .playerhead,body.web-tv-cinema #player.is-playing .playerfoot,body.web-tv-cinema #player.is-playing .playerdiag,body.web-tv-cinema #player.is-playing #playerStatus{display:none!important}
+body.web-tv-cinema #player.is-playing #video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:black}
+#video:fullscreen,#video:-webkit-full-screen{width:100%;height:100%;object-fit:contain;background:#000}
+/* v0.1.61: there is only a video surface, no WGT loading/error interface. */
+#webLabLegacyHooks,#webLabLegacyHooks *{display:none!important}
+body #player:not([hidden]){position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;max-width:none!important;max-height:none!important;background:#000!important;z-index:2147483647!important;overflow:hidden}
+body #player #video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;background:#000!important;visibility:visible!important}
+body #player::after{display:none!important}
+body #player[hidden]{display:none!important}
+/* Original receiver video surface; WGT layout remains outside it. */
+#tvPlayer:not([hidden]){position:fixed;inset:0;width:100vw;height:100vh;background:#000;z-index:20;overflow:hidden}
+#tvVideo{display:block;width:100%;height:100%;object-fit:contain;background:#000}
+#tvVideo:fullscreen,#tvVideo:-webkit-full-screen{width:100%;height:100%;object-fit:contain;background:#000}
+body.tv-cinema #app{visibility:hidden}
+body.tv-cinema #tvPlayer{position:fixed;inset:0}
+#tvPlayer[hidden]{display:none!important}
+#receiverHistoryBtn{font-size:0.85em;white-space:normal}#toast{z-index:100001!important}body.tv-cinema #toast[hidden]{display:none!important}
+</style>
+<!-- Web-only: no Samsung AVPlay API -->
+</head><body data-theme="dark">
+<div id="app">
+<header class="top">
+  <div class="brand"><div class="brandicon" aria-hidden="true"><svg class="brand-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+<defs><linearGradient id="tri" x1="0" y1="0" x2=".95" y2=".95"><stop offset="0" stop-color="#00e6d4"/><stop offset=".4" stop-color="#22a6f8"/><stop offset=".74" stop-color="#5a60f7"/><stop offset="1" stop-color="#ba35fa"/></linearGradient></defs>
+<rect width="1024" height="1024" rx="220" fill="#ffffff"/>
+<path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
+</svg></div>
+    <div><strong>Open IPTV Pro</strong><p id="webLabVersion">TV Web · v0.1.65</p></div>
+  </div>
+  <div class="toolbar">
+    <span class="clock" id="clock">--:--</span>
+    <button id="searchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.6" cy="10.6" r="7.1"/><path d="m16 16 5.5 5.5"/></svg>Tìm kênh, chương trình...</button>
+    <button id="addBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M4 12h16"/></svg>Thêm nguồn</button>
+    <button id="themeBtn" title="Đổi giao diện: Tối, Google, Apple, Minimalist, Glassmorphism" aria-label="Đổi giao diện"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v2m0 14v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M3 12h2m14 0h2M4.22 19.78l1.42-1.42m12.72-12.72 1.42-1.42"/><circle cx="12" cy="12" r="4"/></svg><span id="themeLabel">Giao diện · Google</span></button>
+  </div>
+</header>
+<div class="main">
+  <nav class="nav">
+    <button class="active" data-nav="all"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="15" rx="3"/><path d="M8 22h8M12 19v3m-2-13 5 3-5 3z"/></svg></span>Trực tiếp</button>
+    <button data-nav="favorites"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg></span>Yêu thích</button>
+    <button data-nav="recent"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 3"/></svg></span>Đã xem</button>
+
+    <div id="sidebarShortcuts" class="sidebar-shortcuts">
+      
+          <button data-nav="help"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.2 9a3 3 0 1 1 5.6 1.6c-.8 1-2.8 1.5-2.8 3.4M12 17h.01"/></svg></span>Hướng dẫn</button>
+      <button type="button" id="exitModuleBtn" class="exit-small" title="Thoát website"><span class="nav-icon"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5m9-10 4 4-4 4m4-4H8"/></svg></span>Thoát</button>
+    </div>
+  </nav>
+  <section class="listpane" aria-labelledby="heading">
+    <div class="heading"><h1 id="heading">Trực tiếp</h1><span id="count">0 kênh</span></div>
+    <div class="groups" id="groups" aria-label="Nhóm kênh"></div><div class="epg-indicator" id="epgIndicator" role="status">Lịch EPG: đang kiểm tra bộ nhớ…</div>
+    <div class="channels" id="channels"></div>
+    <div class="empty" id="empty" hidden>
+      <h2 id="emptyTitle">Chưa có kênh IPTV</h2>
+      <p id="emptyHint">Thêm nguồn bằng URL hoặc quét QR bằng điện thoại.</p>
+      <button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button>
+      <button id="sampleBtn">▶ Thêm kênh thử nghiệm</button>
+    </div>
+    <p id="searchNotice" class="search-notice" hidden role="status"></p><button id="more" hidden>Tải thêm kênh ↓</button>
+  </section>
+  <aside class="details" aria-label="Kênh đang chọn">
+    <div class="preview" id="previewStage" aria-label="Xem thử kênh đang chọn">
+
+<div class="preview-art" id="previewArt"><b id="previewText">TV</b><img id="previewLogo" alt="" hidden></div>
+<div class="preview-live"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6"/></svg><span>XEM THỬ · TẮT TIẾNG</span></div>
+<div class="preview-state" id="previewStatus" role="status">Chọn kênh để xem thử</div></div>
+    <div class="channel-summary"><div class="selected-logo"><img id="selectedChannelLogo" alt="" hidden><span id="selectedChannelPlaceholder">TV</span></div><div class="selected-channel-text"><h2 id="channelTitle">Chọn kênh</h2><p id="channelGroup" hidden></p></div><button id="favBtn" title="Yêu thích" aria-label="Yêu thích"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg><span class="fav-label">Thêm yêu thích</span></button></div>
+    <section class="guide-card" id="guideCard" aria-label="Lịch phát sóng của kênh đang chọn">
+      <div class="guide-row guide-now"><span class="guide-tag">Đang phát</span><div><strong id="guideNowTitle">Chưa có chương trình</strong><small id="guideNowTime">Đang chờ EPG</small></div></div>
+      <div class="guide-track"><div id="guideProgress"></div></div>
+      <div class="guide-row"><span class="guide-tag guide-next-tag">Tiếp theo</span><div><strong id="guideNextTitle">Chưa có dữ liệu</strong><small id="guideNextTime"></small></div></div>
+    </section>
+    <div class="actions">
+      <button class="primary" id="watchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4m13-5h4a1 1 0 0 1 1 1v4M3 16v4a1 1 0 0 0 1 1h4m13-5v4a1 1 0 0 1-1 1h-4"/></svg>Xem toàn màn hình</button>
+      <button type="button" id="receiverHistoryBtn" hidden title="Phát đúng URL đã xem trên trang TV mã 6 số">▶ Nguồn TV 6 số</button><button type="button" id="guideBtn" title="Lịch phát sóng" aria-label="Lịch phát sóng">☷ <span>Lịch phát sóng</span></button><button type="button" id="infoBtn" title="Thông tin kênh" aria-label="Thông tin kênh">ⓘ <span>Thông tin</span></button>
+    </div>
+  </aside>
+</div>
+<footer class="footer"><span><b>↑ ↓ ← →</b> Di chuyển</span><span><b>OK</b> Xem toàn màn hình</span><span><b>Back</b> Quay lại</span><span class="preview-footer">Xem thử tự động · tắt tiếng</span></footer>
+</div>
+<div class="overlay" id="modal" hidden><div class="dialog" role="dialog" aria-modal="true"><h2 id="dialogTitle">Thêm nguồn IPTV</h2><div id="sourceDialog">
+<div class="source-grid"><section class="source-manual">
+<label for="sourceName">Tên nguồn (không bắt buộc)</label><input id="sourceName" placeholder="Để trống để tự đặt tên" maxlength="80" autocomplete="off">
+<button type="button" id="toSourceUrl">↓ Chuyển xuống nhập đường dẫn</button>
+<label for="sourceUrl">URL M3U / M3U8</label><input id="sourceUrl" type="url" placeholder="https://example.com/channels.m3u" autocomplete="off">
+<button type="button" class="rights-toggle" id="rights" role="checkbox" aria-checked="false" aria-label="Tôi có quyền sử dụng danh sách và nội dung này"><span class="rights-box" aria-hidden="true"></span><span>Tôi có quyền sử dụng danh sách và nội dung này</span></button>
+<p class="hint">Chỉ cần nhập URL, tên nguồn có thể để trống. Nhấn ↑ để đặt tên nếu muốn. Nếu TV không tải được, quét QR và gửi tệp hoặc dán M3U bằng điện thoại.</p>
+<div class="buttons"><button id="cancelSource">Hủy</button><button id="saveSource" class="primary">Lưu và tải</button></div></section>
+<section class="source-pair"><h3>📱 Quản lý IPTV bằng điện thoại</h3><p>Quét QR để thêm nguồn, xem và chỉnh sửa danh sách kênh trên TV. Giữ màn hình này mở khi quản lý.</p>
+<div id="sourceQR" aria-label="Mã QR nhập nguồn IPTV"></div>
+<p id="sourceQRStatus" role="status">Đang tạo mã QR…</p><p id="sourcePhoneLink"></p>
+<button type="button" id="refreshSourceQR">↻ Tạo mã QR mới</button></section></div></div>
+<div id="searchDialog" hidden><label for="searchInput">Tìm kênh / chương trình EPG</label><input id="searchInput" placeholder="VTV, tin tuc, thoi su, phim..." autocomplete="off"><p class="search-dialog-hint">Tìm không dấu, tự sửa lỗi chính tả và tìm theo tên chương trình đã tải từ EPG.</p><div id="searchSuggestions" class="search-suggestions" role="status">Kênh gợi ý sẽ xuất hiện tại đây.</div><div class="buttons"><button id="cancelSearch">Hủy</button><button id="clearSearch" type="button">Xóa tìm kiếm</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+<!-- QRCode.js © davidshimjs, MIT license. Embedded to work on older Tizen browsers. -->
+
+
+<script src="supabase-sdk.js"></script>
+<script src="web-cast-icons.js?v=dual-links-20261122a"></script>
+<script src="web-tv-pair.js?v=tv-local-handoff-20261122d"></script>
+<script src="tv-web-v065.js"></script></body></html>
