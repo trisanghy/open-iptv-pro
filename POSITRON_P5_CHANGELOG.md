@@ -1,3 +1,10 @@
+## P5.1.354 / Electron 4.23.439 — Hướng dẫn thiết lập AI theo trạng thái (CANDIDATE)
+- Feature priority: NEW — hướng dẫn thiết lập cá nhân hóa theo quyền học hiện tại, giúp người dùng chưa có playlist hiểu bước tiếp theo và vẫn dùng IPTV nếu từ chối học.
+- Feature class: AI
+- User action: Mở WatchFlow khi chưa có kênh, bật hoặc tắt học sở thích để thấy bước thiết lập tương ứng; không tự bật học hoặc nhập nguồn.
+- Electron screenshot: positron-p51354-setup-hint-after-1920x1080-real.png
+- Evidence: Đã mở PNG thật P353 ở 1920×1080 và 720×900 (fast QA 45474975304): checkbox đã bật nhưng hướng dẫn vẫn yêu cầu bật học. Audit P354 kiểm tra hai trạng thái thực, giữ quyền học và nguồn nguyên vẹn; ảnh trước tái hiện thông báo cũ trên Electron, ảnh sau là renderer mới. Chưa xác minh CI hoặc PNG P354; CANDIDATE, không public release.
+
 ## P5.1.353 / Electron 4.23.438 — Đồng bộ trạng thái quyền học của Khám phá AI (CANDIDATE)
 - Feature priority: BLOCKER_FIX — audit CI P352 chứng minh trạng thái quyền riêng tư bị báo sai cho trình đọc màn hình và tooltip khi người dùng đã đồng ý học; sửa đồng bộ và bổ sung kiểm thử chuyển trạng thái thật, tránh báo cáo quyền học sai.
 - Feature class: AI

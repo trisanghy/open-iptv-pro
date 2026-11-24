@@ -1074,7 +1074,8 @@
   list.replaceChildren();
   if(!collection.length){
    const empty=d.createElement('p');empty.className='po-ai-empty';
-   empty.textContent='Chưa có nguồn IPTV. Hãy thêm playlist hợp lệ và EPG để phân loại, sau đó bật học nếu muốn.';
+   const setupHint=learning=>learning?'Chưa có nguồn IPTV. Bạn đã bật học sở thích; hãy thêm playlist hợp lệ và EPG. AI chỉ học sau khi xem kênh đủ điều kiện.':'Chưa có nguồn IPTV. Hãy thêm playlist hợp lệ và EPG. Bạn vẫn có thể xem IPTV mà không bật học sở thích.';
+   empty.textContent=setupHint(enabled);
    // P350: offer a safe, keyboard-accessible route to native source management.
    // Never add/import/play a playlist or bypass the normal rights/consent check.
    const openSources=d.createElement('button');
