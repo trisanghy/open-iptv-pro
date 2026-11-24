@@ -1,10 +1,10 @@
 {
   "name": "open-iptv-pro-tv-web-lab",
-  "version": "0.1.60",
-  "description": "Giao diện WGT danh sách kênh; chọn kênh mở video fullscreen thuần web, không bảng trình phát.",
+  "version": "0.1.61",
+  "description": "Giao diện WGT, một URL trực tiếp vào video HTML5, fullscreen trình duyệt, không dò bộ phát.",
   "packageType": "mods",
   "appName": "Open IPTV Pro TV Web Lab",
-  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tv-web-lab-v060.html",
+  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tv-web-lab-v061.html",
   "main": "tizen-web/pages-launcher.js",
   "keys": [
     "ChannelUp",
@@ -17,5 +17,5 @@
     "ColorF1Green"
   ],
   "license": "MIT",
-  "tizenbrewEdition": "0.1.60"
+  "tizenbrewEdition": "0.1.61"
 }

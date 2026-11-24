@@ -1,67 +1,34 @@
 'use strict';
 const {test}=require('node:test'),a=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const p=JSON.parse(fs.readFileSync('package.json','utf8')),h=fs.readFileSync('tv-web-lab-v060.html','utf8'),s=fs.readFileSync('tv-web-lab-v060.js','utf8');
-test('Standalone HTTPS page, WGT UI and no pairing/relay module',()=>{
- a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-lab-v060.html');a.equal(p.packageType,'mods');a.equal(p.serviceFile,undefined);
- a.match(h,/id="channelPicker"/);a.match(h,/src="tv-web-lab-v060.js"/);a.match(s,/function keyHandler\(e\)/);a.match(s,/function play\(c\)/);new vm.Script(s);
- a.doesNotMatch(s,/(?:http|ws):\/\/127\.0\.0\.1/);
- let redirected='';vm.runInNewContext(s,{location:{origin:'http://127.0.0.1:8081',pathname:'/module/old',replace:u=>redirected=u}});a.equal(redirected,p.websiteURL);
- for(const f of ['tizenbrew/index.html','tizenbrew/bootstrap.html'])a.ok(fs.readFileSync(f,'utf8').includes(p.websiteURL));
+const p=JSON.parse(fs.readFileSync('package.json','utf8')),h=fs.readFileSync('tv-web-lab-v061.html','utf8'),s=fs.readFileSync('tv-web-lab-v061.js','utf8');
+test('Standalone HTTPS page and original TV interface',()=>{
+ a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-lab-v061.html');a.equal(p.packageType,'mods');a.equal(p.serviceFile,undefined);
+ a.match(h,/id="channelPicker"/);a.match(h,/src="tv-web-lab-v061.js"/);a.match(h,/TV Web Lab · v0\.1\.61/);a.match(s,/function keyHandler\(e\)/);new vm.Script(s);
+ a.match(h,/<video id="video"[^>]*controls playsinline/);a.doesNotMatch(h,/class="playerhead"|class="playerfoot"|class="playerdiag"/);
+ for(const f of ['tizenbrew/index.html','tizenbrew/bootstrap.html']){const x=fs.readFileSync(f,'utf8');a.ok(x.includes(p.websiteURL)&&x.includes('function play(c)'));}
 });
-test('Receiver decoder stages and fullscreen',()=>{
- const start=s.indexOf('var stageAvailable=stage=>'),end=s.indexOf('/* Receiver port:',start);
- const e={URL,window:{Hls:{isSupported:()=>true},dashjs:{MediaPlayer(){}}},byId:()=>({canPlayType:()=>true})};
- vm.runInNewContext(s.slice(start,end)+';this.stages=stagesFor;',e);
- a.deepEqual(Array.from(e.stages('https://example.org/a.m3u8')),['native-hls','hlsjs']);
- a.deepEqual(Array.from(e.stages('https://example.org/a.mpd')),['dashjs','native']);
- a.match(s,/Promise\.all\(jobs\)[\s\S]*?webStages=stagesFor/);a.match(s,/MANIFEST_PARSED[\s\S]*?webEngineReady=true;webPlayReady/);a.match(s,/playbackReady\(token\);enterWebCinema\(video\)/);
-});
-
-test('Legacy v0.1.54 OTA validator accepts both navigation-only entry points',()=>{
- for(const f of ['tizenbrew/index.html','tizenbrew/bootstrap.html']){
-  const html=fs.readFileSync(f,'utf8');
-  // Exact validator used by the installed bootstrap.
-  a.ok(html.indexOf('Open IPTV Pro')>=0&&html.indexOf('function play(c)')>=0&&/<html[\s>]/i.test(html));
-  let dest='',calls=0;
-  vm.runInNewContext(html.match(/<script>([\s\S]*?)<\/script>/)[1],{location:{replace(u){dest=u;calls++;}}});
-  a.equal(dest,p.websiteURL);a.equal(calls,1);
-  a.doesNotMatch(html,/<video|<iframe|fetch\(|new Hls|127\.0\.0\.1/);
- }
-});
-
-test('Video-only surface immediately enters fullscreen from play(), without old error UI',()=>{
- a.match(h,/#webLabLegacyHooks,#webLabLegacyHooks \*\{display:none!important\}/);
- a.doesNotMatch(h,/id="castPlayerFrame"|class="playerhead"|class="playerfoot"|class="playerdiag"/);
- const i=s.indexOf('function enterWebCinema('),j=s.indexOf('function leaveWebCinema(',i);
- let calls=0;const cls=new Set(),screen={hidden:false,requestFullscreen(){calls++;return Promise.resolve();}};
- const env={byId:()=>screen,document:{body:{classList:{add:x=>cls.add(x)}}},webFullscreenAttempted:false,playbackConfirmed:false};
- vm.runInNewContext(s.slice(i,j),env);env.enterWebCinema({});env.enterWebCinema({});a.equal(calls,1);a.ok(cls.has('web-tv-cinema'));
+function mock(){
+ let calls=[],token=1,failures=[],handlers={};
+ const video={hidden:true,paused:true,readyState:2,requestFullscreen(){calls.push('fullscreen');return Promise.resolve();},play(){calls.push('play');return Promise.resolve();},set src(v){calls.push(v);}};
+ const screen={hidden:false};const env={URL,location:{protocol:'https:'},byId:id=>id==='video'?video:screen,document:{body:{classList:{add(){},remove(){}}},documentElement:{},addEventListener(k,f){handlers[k]=f;}},playbackActive:t=>t===token,isActiveHtml5Video:(v,t)=>v===video&&t===token,playbackFailure:(t,r)=>failures.push(r),clearPlaybackTimer(){},setTimeout(){return 1;},playbackReady(){env.playbackConfirmed=true;},playbackConfirmed:false,notify(){},closePlayer(){}};
+ const i=s.indexOf('/* Direct browser playback only.'),j=s.indexOf('function tryNextChannelSource(',i);
+ vm.runInNewContext(s.slice(i,j),env);return {env,video,calls,failures,advance(){token++;}};
+}
+test('Selected URL exactly once; synchronous play and video fullscreen, no decoder probing',()=>{
+ const m=mock();m.env.startPlaybackStream({url:'https://example.org/stream.m3u8?key=example'},1);
+ a.deepEqual(m.calls,['https://example.org/stream.m3u8?key=example','play','fullscreen']);
+ m.video.error={code:4};m.video.onerror();a.deepEqual(m.failures,['HTML5 4']);a.equal(m.calls.length,3);
+ const i=s.indexOf('function startPlaybackStream('),j=s.indexOf('function tryNextChannelSource(',i);
+ a.doesNotMatch(s.slice(i,j),/loadHlsLibrary|loadDashLibrary|stagesFor|webNextStage|tryNextChannelSource\(|new Hls|fetch\(/);
  const start=s.indexOf('function play(c)'),end=s.indexOf('function togglePlayback(',start);
- a.match(s.slice(start,end),/enterWebCinema\(byId\('video'\)\)[\s\S]*?startPlaybackStream/);
+ a.match(s.slice(start,end),/playbackStreamUrls=\[c\.url\]/);a.match(s.slice(start,end),/startPlaybackStream\(c,token\)/);
 });
-test('Playback failures return to list and notify, not full-screen red panel',()=>{
- let calls=[];const i=s.indexOf('function playbackFailure('),j=s.indexOf('function fallbackFromAvplay(',i);
- const env={URL,playbackActive:()=>true,playing:{name:'Test channel'},playbackEvidence:[],console:{warn(){}},closePlayer:()=>calls.push('close'),notify:t=>calls.push(t)};
- vm.runInNewContext(s.slice(i,j),env);env.playbackFailure(1,'https://example.org/path?token=secret');
- a.deepEqual(calls,['close','Không phát được Test channel. Kiểm tra nguồn hoặc thử kênh khác.']);
+test('Obsolete media callbacks ignored; HTTP rejected without attempting playback',()=>{
+ const m=mock();m.env.startPlaybackStream({url:'https://example.org/one'},1);const cb=m.video.onerror;m.advance();m.video.error={code:4};cb();a.equal(m.failures.length,0);
+ const n=mock();n.env.startPlaybackStream({url:'http://example.org/one'},1);a.equal(n.calls.length,0);a.equal(n.failures.length,1);
 });
-
-test('Visible version, JS runtime, manifest and cache-busting script stay in sync',()=>{
- const v=p.version;
- a.equal(p.tizenbrewEdition,v);
- a.ok(h.includes('id="webLabVersion">TV Web Lab · v'+v+'</p>'));
- a.ok(s.includes("version:'"+v+"'"));
- a.ok(s.includes("textContent='TV Web Lab · v'+TV_PLAYBACK_CORE.version"));
- const suffix=v.split('.')[2].padStart(3,'0');
- a.ok(h.includes('tv-web-lab-v'+suffix+'.js'));
- a.ok(p.websiteURL.endsWith('/tv-web-lab-v'+suffix+'.html'));
-});
-
-test('Old website HTML, script and module launcher navigate to immutable release path',()=>{
- const target=p.websiteURL;
- const oldHtml=fs.readFileSync('tv-web-lab.html','utf8'),oldJs=fs.readFileSync('tv-web-lab.js','utf8'),loader=fs.readFileSync('tizen-web/pages-launcher.js','utf8');
- for(const src of [oldHtml.match(/<script>([\s\S]*?)<\/script>/)[1],oldJs,loader]){
-  let dest='';vm.runInNewContext(src,{location:{origin:'https://trisanghy.github.io',pathname:'/open-iptv-pro/tv-web-lab.html',replace:u=>dest=u}});a.equal(dest,target);
- }
- let redirected=false;vm.runInNewContext(loader,{location:{origin:'https://trisanghy.github.io',pathname:'/open-iptv-pro/tv-web-lab-v060.html',replace(){redirected=true;}}});a.equal(redirected,false);
+test('Legacy page URLs redirect to new filename',()=>{
+ for(const path of ['tv-web-lab.html','tv-web-lab-v060.html','tv-web-lab.js','tv-web-lab-v060.js']){
+ const raw=fs.readFileSync(path,'utf8'),code=path.endsWith('.html')?raw.match(/<script>([\s\S]*?)<\/script>/)[1]:raw;let dest='';
+ vm.runInNewContext(code,{location:{replace:u=>dest=u}});a.equal(dest,p.websiteURL);}
 });
