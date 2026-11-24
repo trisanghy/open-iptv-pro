@@ -629,13 +629,17 @@ def attach_actions_evidence(rows):
     for n, runs in full_by_version.items():
         row = by_number[n]
         latest = runs[0]
-        ci_status, ci_conclusion = (ci_result(latest) if latest["id"] == int(os.environ.get("GITHUB_RUN_ID", "0")) else (latest.get("status"), latest.get("conclusion")))
+        prior_ci = row.get("ci", {})
+        same_completed = prior_ci.get("url") == ART_ROOT + str(latest["id"]) and prior_ci.get("status") == "completed"
+        ci_status, ci_conclusion = (ci_result(latest) if latest["id"] == int(os.environ.get("GITHUB_RUN_ID", "0")) or (not same_completed and latest.get("status") == "completed" and latest.get("conclusion") != "success") else (latest.get("status"), latest.get("conclusion")))
+        if same_completed:
+            ci_status, ci_conclusion = prior_ci.get("status"), prior_ci.get("conclusion")
         row["ci"] = {"url": ART_ROOT + str(latest["id"]),
                      "status": ci_status, "conclusion": ci_conclusion,
                      "commit": latest.get("head_sha", "")}
         if not row.get("commit"):
             row["commit"] = latest.get("head_sha", "")
-        if len(row["builds"]) == 3 and all(a.get("commit") == latest.get("head_sha") for a in row["builds"]):
+        if same_completed or (len(row["builds"]) == 3 and all(a.get("commit") == latest.get("head_sha") for a in row["builds"])):
             continue
         eligible = [r for r in runs if r.get("status") == "completed" or r["id"] == int(os.environ.get("GITHUB_RUN_ID", "0"))]
         choices = eligible[:3]
@@ -677,10 +681,16 @@ def attach_actions_evidence(rows):
     candidates, seen = [], set()
     for run in fast:
         own = run["id"] == int(os.environ.get("GITHUB_RUN_ID", "0"))
-        if run.get("conclusion") != "success" and not (own and any(
-            j.get("name") == "fast-electron-round" and j.get("conclusion") == "success" for j in run_jobs(run))):
-            continue
         expected = sha_versions.get(run.get("head_sha"))
+        if expected is not None and expected in seen:
+            continue
+        # The catalog refresh may be cancelled/fail independently; do not
+        # discard a successful Electron job and its authentic uploaded PNGs.
+        if run.get("conclusion") != "success":
+            if not (own or run.get("status") == "completed"):
+                continue
+            if not any(j.get("name") == "fast-electron-round" and j.get("conclusion") == "success" for j in run_jobs(run)):
+                continue
         if expected is not None:
             row = by_number.get(expected)
             if not row or expected in seen:
