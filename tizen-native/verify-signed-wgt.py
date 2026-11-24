@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Verify a signed TV WGT's XML signatures and packaged payload.
 
-Requires ``python3 -m pip install lxml xmlsec``. Certificate trust and Samsung
+Requires ``python3 -m pip install lxml xmlsec cryptography``. Certificate trust and Samsung
 device authorization are enforced by the TV at install time, not by this tool.
 """
 
@@ -18,8 +18,9 @@ import zipfile
 try:
     from lxml import etree
     import xmlsec
+    from cryptography import x509
 except ImportError as exc:
-    raise SystemExit("Cần cài lxml và xmlsec: python3 -m pip install lxml xmlsec") from exc
+    raise SystemExit("Cần cài thư viện: python3 -m pip install lxml xmlsec cryptography") from exc
 
 
 DS = "{http://www.w3.org/2000/09/xmldsig#}"
@@ -44,6 +45,13 @@ def verify(filename: pathlib.Path, version: str, product: bool) -> None:
         assert root.attrib["version"] == version, "Sai phiên bản WGT"
         if product:
             assert "webapis.avplay" in archive.read("index.html").decode("utf-8"), "Thiếu AVPlay"
+            t = "{http://tizen.org/ns/widgets}"
+            assert root.find(t + "profile").attrib["name"] == "tv-samsung", "Sai profile TV"
+            app = root.find(t + "application")
+            assert app.attrib["id"] == "OIPTVPROTV.OpenIPTVPro", "Sai application ID"
+            assert tuple(map(int, app.attrib["required_version"].split("."))) <= (6, 0), "Yêu cầu Tizen cao hơn 6"
+            privileges = {p.attrib["name"] for p in root.findall(t + "privilege")}
+            assert {"http://tizen.org/privilege/internet", "http://tizen.org/privilege/tv.inputdevice"} <= privileges
 
         # xmlsec must read only members of this ZIP. Never allow its default
         # file/network handlers to dereference attacker-controlled XML URIs.
@@ -73,6 +81,9 @@ def verify(filename: pathlib.Path, version: str, product: bool) -> None:
             assert set(members) == expected and len(members) == len(expected), "Chữ ký không bao phủ đủ WGT"
             assert refs.count("#prop") == 1, "Thiếu SignedProperties"
             cert = base64.b64decode("".join(certificates[0].text.split()), validate=True)
+            if product and signature_name == "signature1.xml":
+                issuer = x509.load_der_x509_certificate(cert).issuer.rfc4514_string()
+                assert "Samsung Electronics" in issuer, "Distributor không do Samsung CA cấp"
             context = xmlsec.SignatureContext()
             context.key = xmlsec.Key.from_memory(cert, xmlsec.KeyFormat.CERT_DER, None)
             # The ZIP callback is the only registered IO handler; the URI
