@@ -1,0 +1,43 @@
+name: Positron - Đồng bộ changelog sau QA và build
+on:
+  workflow_call:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  refresh:
+    if: github.repository == 'trisanghy/open-iptv-pro' && github.ref_name == 'Positron'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: positron-feature-pages
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: Positron
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Xác minh và cập nhật ảnh, bộ cài từ Actions
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            git fetch origin Positron
+            git reset --hard origin/Positron
+            python -m py_compile scripts/build-positron-feature-site.py
+            python scripts/build-positron-feature-site.py
+            git add docs/positron-features/FEATURES.md docs/positron-features/LOG_GIT_TIENG_VIET.md docs/positron-features/catalog.json docs/positron-features/screenshots
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m 'Tài liệu Positron: đồng bộ ảnh và bộ cài Actions sau QA/build [skip ci]'
+            if git push origin HEAD:Positron; then exit 0; fi
+            sleep 3
+          done
+          echo 'Nhánh đã thay đổi liên tục; không force-push.'
+          exit 1
