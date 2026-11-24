@@ -12,6 +12,7 @@ import re
 from pathlib import Path
 from xml.etree import ElementTree as ET
 from zipfile import ZIP_DEFLATED, ZipFile
+from native_variant import adapt_native
 
 ROOT = Path(__file__).resolve().parents[1]
 ROOT_NS = "http://www.w3.org/ns/widgets"
@@ -35,6 +36,8 @@ def build(output: Path) -> Path:
     assert 'src="$WEBAPIS/webapis/webapis.js"' in tv
     assert sdk.is_file() and hls.is_file() and dash.is_file() and mpegts.is_file() and icon.is_file()
     assert '<script>\n(function(){' in tv
+
+    tv = adapt_native(tv, version)
 
     # The native WGT has its own file:// application context, which is what
     # exposes Samsung's AVPlay Product API. Keep an offline local HLS fallback.
@@ -76,6 +79,7 @@ def build(output: Path) -> Path:
         required = {"index.html", "phone.html", "config.xml", "supabase-sdk.js", "hls.min.js", "dash.all.min.js", "mpegts.min.js", "icon.png"}
         assert required.issubset(names), names
         content = archive.read("index.html").decode("utf-8")
+        assert "Native WGT v" + version in content and "registerNativeRemote()" in content
         assert "webapis.avplay" in content and "hls.min.js" in content and "dash.all.min.js" in content and "mpegts.min.js" in content
         m = ET.fromstring(archive.read("config.xml"))
         assert m.attrib.get("version") == version

@@ -6,7 +6,7 @@
 
 TizenBrew tải module qua máy chủ HTTP nội bộ, do đó `webapis.avplay` có thể không khả dụng trong trang module. HTML5 và HLS.js không xử lý được mọi luồng IPTV, nhất là manifest bị chặn CORS. Bản Tizen độc lập chạy trong **ngữ cảnh Tizen Web Application**, có thể sử dụng Samsung AVPlay trên TV tương thích.
 
-Bản build đóng gói `index.html` (ưu tiên HLS.js với `.m3u8`, DASH.js với `.mpd`, rồi AVPlay/HTML5 khi cần), `supabase-sdk.js`, cả hai thư viện `hls.min.js` và `dash.all.min.js` tại máy, cùng màn hình QR và 5 kiểu giao diện. Không chứa bất kỳ nguồn M3U riêng tư hay đăng nhập đã lưu nào.
+Bản build đóng gói giao diện web TV toàn màn hình chạy cục bộ, ưu tiên bộ phát đã kiểm chứng hoặc AVPlay cho nguồn mới; HLS.js, DASH.js, MPEG-TS và HTML5 là các dự phòng, `supabase-sdk.js`, cả hai thư viện `hls.min.js` và `dash.all.min.js` tại máy, cùng màn hình QR và 5 kiểu giao diện. Không chứa bất kỳ nguồn M3U riêng tư hay đăng nhập đã lưu nào.
 
 ## Build source
 
@@ -34,3 +34,10 @@ Nguồn: [Samsung — Playback Using AVPlay](https://developer.samsung.com/smart
 - Giao diện remote: Tối, Google TV, Apple TV, Minimalist và Glassmorphism. Nút Giao diện trên thanh công cụ luân phiên và ghi nhớ chế độ.
 - HLS.js và DASH.js lấy từ nhánh Web, đóng gói **thực** trong WGT; không tải từ CDN trước khi phát. AVPlay vẫn là phương án cần thiết trên TV không hỗ trợ codec/MSE hoặc khi manifest báo lỗi.
 - Không tự thêm hoặc cấu hình DRM/giấy phép nguồn, không phát luồng trái phép. Hạn chế cache bộ nhớ: nạp thư viện khi cần và hủy instance sau khi xem.
+
+## Native variant trên nền v0.1.52
+
+- Build riêng: chỉ chuyển đổi bản HTML đóng gói, không sửa module `tizenbrew/index.html`, bootstrap, relay hoặc manifest module GitHub. Không mở trang web từ xa trong ngữ cảnh có quyền hệ thống; giao diện web là mã cục bộ đáng tin cậy, dữ liệu online dùng cơ chế hiện có.
+- AVPlay ưu tiên cho kênh chưa có bộ phát đã kiểm chứng; nếu lỗi trước khi phát, chuyển bộ phát theo loại nguồn rồi HTML5, không lặp AVPlay trong cùng chuỗi khởi tạo. Đăng ký phím CH+/−, media và phím màu theo khả năng TV. Không khởi động relay TizenBrew khi mở bản native.
+- Module TizenBrew: `trisanghy/open-iptv-pro@tizenbrew` (không có AVPlay hệ thống). WGT độc lập: tải artifact GitHub Actions, ký bằng chứng chỉ phù hợp TV rồi cài qua Tizen Studio hoặc TizenBrew Installer tương thích. Mục Thêm Môđun GitHub không cài WGT native.
+- Chưa thử phần cứng; bản WGT vẫn chưa ký. Giao diện native đóng gói cục bộ, chưa hỗ trợ tự cập nhật mã giao diện từ xa.

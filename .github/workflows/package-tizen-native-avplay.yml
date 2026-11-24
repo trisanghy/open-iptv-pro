@@ -44,6 +44,8 @@ jobs:
           node -e "const s=require('fs').readFileSync('mpegts.min.js','utf8');if(!s.includes('1.8.2')||s.length<200000)process.exit(1)"
       - name: Build unsigned TV web application archive
         run: python3 tizen-native/build.py
+      - name: Verify native-specific decoder and remote behavior
+        run: node --test tizen-native/native-variant.test.cjs
       - name: Verify archive, AVPlay assets and version
         shell: bash
         run: |
