@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.437 · **Trạng thái:** Chưa có bản phát hành
 
-Feature priority: FIX — ảnh Electron thật P351 cho thấy nút Khám phá AI bị vô hiệu hóa nhưng không giải thích điều kiện ngay tại nút. Feature class: AI
+Feature priority: BLOCKER_FIX — sửa cổng CI phát hành bị chặn vì khai báo ưu tiên và liên kết bằng chứng Electron trước/sau sai; giữ nguyên cải tiến giải thích điều kiện Khám phá AI của P352, không tự bật học hay thay dữ liệu. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ba151aa53ce01dd62a47308dab559007455e5254)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
