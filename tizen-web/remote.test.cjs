@@ -1,34 +1,32 @@
 'use strict';
 const {test}=require('node:test'),a=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const p=JSON.parse(fs.readFileSync('package.json','utf8')),h=fs.readFileSync('tv-web-lab-v061.html','utf8'),s=fs.readFileSync('tv-web-lab-v061.js','utf8');
-test('Standalone HTTPS page and original TV interface',()=>{
- a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-lab-v061.html');a.equal(p.packageType,'mods');a.equal(p.serviceFile,undefined);
- a.match(h,/id="channelPicker"/);a.match(h,/src="tv-web-lab-v061.js"/);a.match(h,/TV Web Lab · v0\.1\.61/);a.match(s,/function keyHandler\(e\)/);new vm.Script(s);
- a.match(h,/<video id="video"[^>]*controls playsinline/);a.doesNotMatch(h,/class="playerhead"|class="playerfoot"|class="playerdiag"/);
- for(const f of ['tizenbrew/index.html','tizenbrew/bootstrap.html']){const x=fs.readFileSync(f,'utf8');a.ok(x.includes(p.websiteURL)&&x.includes('function play(c)'));}
+const h=fs.readFileSync('tv-web-v062.html','utf8'),s=fs.readFileSync('tv-web-v062.js','utf8'),p=JSON.parse(fs.readFileSync('package.json','utf8'));
+test('Pure website, no native or hybrid player',()=>{
+ a.match(h,/TV Web · v0\.1\.62/);a.match(h,/src="tv-web-v062.js"/);a.match(h,/<video id="video"[^>]*controls/);
+ a.doesNotMatch(h,/id="(?:appsBtn|tizenTubeBtn|webLabLegacyHooks|channelPicker|homePreviewVideo)"/);
+ a.doesNotMatch(s,/function (?:startAvplay|startRelayHlsPlayback|startHlsPlayback|loadDashLibrary|webNextStage)|new Hls\(|webapis\.avplay|tizen\.application/);
+ a.match(s,/function keyHandler\(e\)/);new vm.Script(s);
+ a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web.html');a.equal(p.serviceFile,undefined);
 });
 function mock(){
- let calls=[],token=1,failures=[],handlers={};
- const video={hidden:true,paused:true,readyState:2,requestFullscreen(){calls.push('fullscreen');return Promise.resolve();},play(){calls.push('play');return Promise.resolve();},set src(v){calls.push(v);}};
- const screen={hidden:false};const env={URL,location:{protocol:'https:'},byId:id=>id==='video'?video:screen,document:{body:{classList:{add(){},remove(){}}},documentElement:{},addEventListener(k,f){handlers[k]=f;}},playbackActive:t=>t===token,isActiveHtml5Video:(v,t)=>v===video&&t===token,playbackFailure:(t,r)=>failures.push(r),clearPlaybackTimer(){},setTimeout(){return 1;},playbackReady(){env.playbackConfirmed=true;},playbackConfirmed:false,notify(){},closePlayer(){}};
- const i=s.indexOf('/* Direct browser playback only.'),j=s.indexOf('function tryNextChannelSource(',i);
- vm.runInNewContext(s.slice(i,j),env);return {env,video,calls,failures,advance(){token++;}};
+ let calls=[],notes=[];const classes={add(){},remove(){}},screen={hidden:true};
+ const video={readyState:2,paused:true,addEventListener(){},pause(){calls.push('pause');},removeAttribute(){calls.push('clear');},load(){calls.push('load');},set src(v){calls.push(v);},requestFullscreen(){calls.push('fullscreen');return Promise.resolve();},play(){calls.push('play');return Promise.resolve();}};
+ const env={URL,byId:id=>id==='video'?video:screen,document:{addEventListener(){},body:{classList:classes},documentElement:{}},playing:null,state:{recent:[]},items:[],notify:t=>notes.push(t),save(){},draw(){},restoreHomeFocus(){},clearTimeout(){},setTimeout(){return 1;}};
+ const i=s.indexOf('/* Standalone browser player.'),j=s.indexOf('function homeButtons(',i);vm.runInNewContext(s.slice(i,j),env);
+ return {env,video,screen,calls,notes};
 }
-test('Selected URL exactly once; synchronous play and video fullscreen, no decoder probing',()=>{
- const m=mock();m.env.startPlaybackStream({url:'https://example.org/stream.m3u8?key=example'},1);
- a.deepEqual(m.calls,['https://example.org/stream.m3u8?key=example','play','fullscreen']);
- m.video.error={code:4};m.video.onerror();a.deepEqual(m.failures,['HTML5 4']);a.equal(m.calls.length,3);
- const i=s.indexOf('function startPlaybackStream('),j=s.indexOf('function tryNextChannelSource(',i);
- a.doesNotMatch(s.slice(i,j),/loadHlsLibrary|loadDashLibrary|stagesFor|webNextStage|tryNextChannelSource\(|new Hls|fetch\(/);
- const start=s.indexOf('function play(c)'),end=s.indexOf('function togglePlayback(',start);
- a.match(s.slice(start,end),/playbackStreamUrls=\[c\.url\]/);a.match(s.slice(start,end),/startPlaybackStream\(c,token\)/);
+test('Only one chosen URL; direct fullscreen and browser play; error closes player',()=>{
+ const m=mock();m.env.play({id:'a',name:'A',url:'https://example.org/a.m3u8'});
+ a.deepEqual(m.calls,['pause','clear','load','https://example.org/a.m3u8','fullscreen','play']);
+ a.equal(m.screen.hidden,false);m.video.error={code:4};m.video.onerror();a.equal(m.screen.hidden,true);a.equal(m.notes.length,1);
+ a.equal(m.calls.filter(x=>x==='play').length,1);
 });
-test('Obsolete media callbacks ignored; HTTP rejected without attempting playback',()=>{
- const m=mock();m.env.startPlaybackStream({url:'https://example.org/one'},1);const cb=m.video.onerror;m.advance();m.video.error={code:4};cb();a.equal(m.failures.length,0);
- const n=mock();n.env.startPlaybackStream({url:'http://example.org/one'},1);a.equal(n.calls.length,0);a.equal(n.failures.length,1);
+test('Back closes and remote channel changes keep one video surface',()=>{
+ const m=mock();m.env.items=[{id:'a',name:'A',url:'https://example.org/a'},{id:'b',name:'B',url:'https://example.org/b'}];
+ m.env.play(m.env.items[0]);m.env.changeChannel(1);a.equal(m.calls.filter(x=>x==='fullscreen').length,1);a.ok(m.calls.includes('https://example.org/b'));m.env.closePlayer();a.equal(m.screen.hidden,true);
 });
-test('Legacy page URLs redirect to new filename',()=>{
- for(const path of ['tv-web-lab.html','tv-web-lab-v060.html','tv-web-lab.js','tv-web-lab-v060.js']){
- const raw=fs.readFileSync(path,'utf8'),code=path.endsWith('.html')?raw.match(/<script>([\s\S]*?)<\/script>/)[1]:raw;let dest='';
- vm.runInNewContext(code,{location:{replace:u=>dest=u}});a.equal(dest,p.websiteURL);}
+test('Stable website and legacy addresses point to versioned HTTPS page',()=>{
+ for(const f of ['tv-web.html','tv-web-lab.html','tv-web-lab-v060.html','tv-web-lab-v061.html']){
+  let dest='';vm.runInNewContext(fs.readFileSync(f,'utf8').match(/<script>([\s\S]*?)<\/script>/)[1],{location:{replace:u=>dest=u}});a.equal(dest,'https://trisanghy.github.io/open-iptv-pro/tv-web-v062.html');
+ }
 });

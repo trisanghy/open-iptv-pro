@@ -1,2 +1,3 @@
-# TV Web Lab v0.1.58
-Standalone HTTPS page: https://trisanghy.github.io/open-iptv-pro/tv-web-lab.html. WGT UI, remote, direct browser receiver playback and fullscreen. TizenBrew opens it as a website (mods), without UI injection. Cached legacy app entry redirects. No local relay or local WebSocket, no AVPlay. TizenTube module launch must be done from TizenBrew itself. Data remains isolated via hybrid-lab storage keys; previously stored localhost data may need reimport. The same two standalone page files are added to web/online only for Pages publication; existing Web Online files remain unchanged. GitHub Pages publication and device playback must be verified separately.
+# Retired Hybrid experiment
+The active TV Web is a standalone HTTPS website: https://trisanghy.github.io/open-iptv-pro/tv-web.html
+The GitHub module is only an optional website shortcut. Legacy native build files are historical and are not used by this website.
