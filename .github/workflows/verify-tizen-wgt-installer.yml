@@ -24,6 +24,15 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+      - name: Bundle pinned MPEGTS.js 1.8.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --retry 3 --max-time 45 \
+            'https://cdn.jsdelivr.net/npm/mpegts.js@1.8.2/dist/mpegts.min.js' -o mpegts.min.js ||
+          curl --fail --location --silent --show-error --retry 3 --max-time 45 \
+            'https://unpkg.com/mpegts.js@1.8.2/dist/mpegts.min.js' -o mpegts.min.js
+          node -e "const s=require('fs').readFileSync('mpegts.min.js','utf8');if(!s.includes('1.8.2')||s.length<200000)process.exit(1)"
       - name: Build independent TV WGT
         run: python3 tizen-native/build.py
       - name: Gate manifest, remote UI, playback engines and signature state
