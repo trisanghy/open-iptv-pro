@@ -1,4 +1,4 @@
-/* TV Web Lab v0.1.58 — standalone GitHub Pages. */
+/* TV Web Lab v0.1.59 — standalone GitHub Pages. */
 if(location.origin!=='https://trisanghy.github.io'||location.pathname!=='/open-iptv-pro/tv-web-lab.html'){
  location.replace("https://trisanghy.github.io/open-iptv-pro/tv-web-lab.html");
 }else{
@@ -1202,7 +1202,7 @@ if(typeof epgStartup==='function')void epgStartup();if(!fromPhone)closeDialog();
 return {ok:true,count:list.length,usedFallback:webAliasUsed};}
 catch(e){var error=sourceError(e,address);notify('Không tải được URL. Quét QR trên điện thoại để gửi tệp hoặc dán M3U.');if(fromPhone)sourceStatus('✕ TV không tải được URL. Trên điện thoại hãy chọn tệp hoặc dán M3U qua QR.');return {ok:false,error:error};}
 finally{byId('saveSource').disabled=false;byId('saveSource').textContent='Lưu và tải';}}
-function setPlayerStatus(message){var status=byId('playerStatus');status.textContent=message||'';status.hidden=!message;}
+function setPlayerStatus(message){var status=byId('playerStatus');status.textContent=message||'';status.hidden=true;}
 function browserFallbackUrl(){
  var address=String(playbackStream&&playbackStream.url||(playing&&playing.url)||'');
  if(!/^https?:\/\//i.test(address))return '';
@@ -1490,7 +1490,7 @@ function startPlaybackWatchdog(token){
  * Only one instance is attached at a time, with a token for stale callbacks.
  * The framework does not bypass DRM, CORS or unavailable hardware codecs. */
 var TV_PLAYBACK_CORE={
- version:'0.1.58',
+ version:'0.1.59',
  libraries:{hlsjs:'1.6.15',dashjs:'5.3.0',mpegts:'1.8.2',native:'TV browser',avplay:'Samsung firmware'},
  preferredRoute:function(address){return dashAddress(address)?'dashjs':hlsAddress(address)?'hlsjs':mpegtsAddress(address)?'mpegts':'';},
  engines:{
@@ -1575,7 +1575,7 @@ function logPlayback(text){
  if(playbackEvidence.length>28)playbackEvidence.shift();
  var label=byId('playbackDiag');
  label.textContent=playbackEvidence.map(function(line,i){return (i+1)+'. '+line;}).join('\n');
- label.hidden=!playbackEvidence.length;
+ label.hidden=true;
 }
 function playbackChannelKey(channel){
  return String(channel&&channel.name||'').trim().toLowerCase().replace(/\s+/g,' ');
@@ -1638,19 +1638,31 @@ function clearPlaybackGrace(){
 var webStageGeneration=0,webStages=[],webStageIndex=-1,webStage='',webEngineReady=false,webPendingGesture=false;
 var webFullscreenAttempted=false,webFullscreenActive=false;
 function enterWebCinema(video){
- if(!video||!playbackConfirmed||byId('player').hidden)return;
+ var screen=byId('player');
+ if(screen.hidden)return;
  document.body.classList.add('web-tv-cinema');
+ // Enter a stable, video-only fullscreen surface synchronously on channel OK.
+ // HLS fallback may replace the video node, so fullscreen belongs to its parent.
  if(webFullscreenAttempted)return;
- webFullscreenAttempted=true;
- // Match tv.html receiver: real video fullscreen first, CSS cinema if denied.
- try{
-  var result;
-  if(typeof video.requestFullscreen==='function')result=video.requestFullscreen();
-  else if(typeof video.webkitEnterFullscreen==='function')video.webkitEnterFullscreen();
-  else if(typeof video.webkitRequestFullscreen==='function')result=video.webkitRequestFullscreen();
-  else if(typeof document.documentElement.requestFullscreen==='function')result=document.documentElement.requestFullscreen();
-  if(result&&result.catch)result.catch(function(){});
- }catch(e){}
+ var active=document.fullscreenElement||document.webkitFullscreenElement;
+ if(active===screen){webFullscreenAttempted=true;return;}
+ var request=screen.requestFullscreen||screen.webkitRequestFullscreen||screen.webkitRequestFullScreen;
+ if(request){
+  webFullscreenAttempted=true;
+  try{var result=request.call(screen);if(result&&result.catch)result.catch(function(){});}catch(e){}
+  return;
+ }
+ // Older TV video-native fullscreen may require actual decoded frames.
+ if(playbackConfirmed&&video){
+  webFullscreenAttempted=true;
+  try{
+   var result;
+   if(typeof video.requestFullscreen==='function')result=video.requestFullscreen();
+   else if(typeof video.webkitEnterFullscreen==='function')video.webkitEnterFullscreen();
+   if(result&&result.catch)result.catch(function(){});
+  }catch(e){}
+ }
+ // CSS fills the viewport even when the browser rejects native fullscreen.
 }
 function leaveWebCinema(){
  document.body.classList.remove('web-tv-cinema');
@@ -1668,7 +1680,7 @@ function leaveWebCinema(){
 }
 function onWebFullscreenChange(){
  var active=document.fullscreenElement||document.webkitFullscreenElement;
- if(active){webFullscreenActive=true;return;}
+ if(active){if(byId('player').hidden){leaveWebCinema();return;}webFullscreenActive=true;return;}
  if(webFullscreenActive){webFullscreenActive=false;if(playing&&!byId('player').hidden)closePlayer();}
 }
 document.addEventListener('fullscreenchange',onWebFullscreenChange);
@@ -2028,24 +2040,12 @@ function playbackReady(token){
 }
 function playbackFailure(token,message){
  if(!playbackActive(token))return;
- leaveWebCinema();
- var browserButton=byId('browserFallback');
- var sourceLabel='Nguồn '+(playbackStreamIndex+1)+'/'+Math.max(1,playbackStreamUrls.length);
- browserButton.textContent='Mở Cast chuẩn trên Samsung Internet (mã 6 số)';
- browserButton.hidden=false;
- // Keep remote focus on the in-app video controls. Cast is optional, never an automatic escape.
- clearPlaybackTimer();
- byId('player').classList.remove('is-playing');
- byId('player').classList.add('is-playback-error');
- var sourceHost=playbackSafeHost(playbackStream&&playbackStream.url||playing&&playing.url);
- setPlayerStatus('Không phát được kênh ('+sourceLabel+(sourceHost?', máy chủ '+sourceHost:'')+'). '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,140)+' · Nhấn OK thử lại trong ứng dụng; Cast chỉ là phương án thủ công.');
- if(typeof location!=='undefined'){
-  logPlayback('Web Lab '+TV_PLAYBACK_CORE.version+' · '+String(location.origin));
-  logPlayback('Chế độ Receiver TV: HTML5 / HLS.js / DASH.js, không relay');
-  logPlayback('Bộ phát cuối: '+webStage+' · '+(webStageIndex+1)+'/'+webStages.length);
- }
- var report=byId('playbackDiag');report.hidden=!playbackEvidence.length;report.scrollTop=0;
- if(byId('player').focus)byId('player').focus();
+ // Keep technical evidence in console, not a full-screen error UI.
+ var name=playing&&playing.name||'kênh';
+ var detail=String(message||'không hỗ trợ nguồn').replace(/https?:\/\/[^\s<>"']+/gi,function(value){try{return new URL(value).origin;}catch(e){return '[URL ẩn]';}}).slice(0,160);
+ try{console.warn('Web Lab: '+detail,playbackEvidence.slice());}catch(e){}
+ closePlayer();
+ notify('Không phát được '+name+'. Kiểm tra nguồn hoặc thử kênh khác.');
 }
 function fallbackFromAvplay(channel,token,message){
  if(!playbackActive(token)||playbackEngine!=='avplay')return;
@@ -2372,7 +2372,8 @@ function startHtml5Playback(channel,token){
 function startAvplay(channel,token){return false;}
 function play(c){
  if(!c)return;
- leaveWebCinema();
+ var continuing=!byId('player').hidden;
+ if(!continuing){leaveWebCinema();}
  if(typeof stopHomePreview==='function')stopHomePreview();
  byId('browserFallback').hidden=true;
  playbackSerial++;var token=playbackSerial;stopPlaybackEngine();playing=c;
@@ -2383,7 +2384,8 @@ function play(c){
  logPlayback('Web Lab: receiver TV · '+location.protocol+' · fullscreen video');
  byId('player').hidden=false;byId('player').classList.remove('is-playing');byId('player').classList.remove('is-playback-error');
  updateBottomActions();byId('playingName').textContent=c.name;
- setPlayerStatus('Đang mở '+c.name+'…');
+ byId('player').focus();enterWebCinema(byId('video'));
+ setPlayerStatus('');
  var address=playbackStreamUrls[0];
  startPlaybackStream(address&&address!==c.url?Object.assign({},c,{url:address}):c,token);
  state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();
@@ -2551,7 +2553,7 @@ function closePlayer(){
  playbackSerial++;stopPlaybackEngine();byId('player').hidden=true;
  hlsAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;hostedCastAttempted=false;playbackRecoveryAttempts={};playbackRecoveries=0;playbackStreamUrls=[];playbackStream=null;byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
  byId('player').classList.remove('is-playing');byId('player').classList.remove('is-playback-error');setPlayerStatus('');
- playing=null;draw();updateBottomActions();
+ playing=null;draw();updateBottomActions();restoreHomeFocus();
 }
 function resumeLastChannel(){
  // Watch history is already persisted in localStorage by play(). Only restore a channel still visible in the current M3U lists.
@@ -2667,35 +2669,12 @@ if(active===byId('saveSource')&&k==='ArrowUp'){e.preventDefault();e.stopPropagat
 if(isText&&(k==='ArrowLeft'||k==='ArrowRight'))return;
 if(k.indexOf('Arrow')===0){e.preventDefault();e.stopPropagation();move(k);}return;}
 if(!byId('player').hidden){
- if(byId('player').classList&&byId('player').classList.contains('is-playback-error')&&byId('channelPicker').hidden&&
-    (k==='ArrowLeft'||k==='ArrowRight')){
-  e.preventDefault();var report=byId('playbackDiag');
-  report.scrollTop=Math.max(0,(report.scrollTop||0)+(k==='ArrowRight'?1:-1)*Math.max(100,(report.clientHeight||400)-55));return;
- }
- if(k.indexOf('Arrow')===0){
-  e.preventDefault();if(e.stopPropagation)e.stopPropagation();
-  if(byId('channelPicker').hidden){
-   if(openChannelPicker(k==='ArrowUp'||k==='ArrowDown')&&(k==='ArrowUp'||k==='ArrowDown'))pickerMove(k);
-  }else pickerMove(k);
-  return;
- }
- if(!byId('channelPicker').hidden){
-  if(c===427||k==='ChannelUp'){e.preventDefault();pickerMove('ArrowDown');return;}
-  if(c===428||k==='ChannelDown'){e.preventDefault();pickerMove('ArrowUp');return;}
-  if(k==='Enter'||k==='OK'||c===13){e.preventDefault();confirmPickerChannel();return;}
-  return;
- }
- if(c===427||k==='ChannelUp'){e.preventDefault();changeChannel(1);return;}
- if(c===428||k==='ChannelDown'){e.preventDefault();changeChannel(-1);return;}
- if((k==='Enter'||k==='OK'||c===13)&&!byId('browserFallback').hidden&&document.activeElement===byId('browserFallback')){
-  e.preventDefault();openChannelInSamsungBrowser();return;
- }
- if(c===403||k==='ColorF0Red'){
-  e.preventDefault();openChannelInSamsungBrowser();return;
- }
- if(k==='Enter'||k==='OK'||c===13||c===415||c===10252){
-  e.preventDefault();togglePlayback();return;
- }
+ // No legacy WGT player panel or channel-picker overlay.
+ if(c===427||k==='ChannelUp'||k==='ArrowUp'){e.preventDefault();if(!e.repeat)changeChannel(1);return;}
+ if(c===428||k==='ChannelDown'||k==='ArrowDown'){e.preventDefault();if(!e.repeat)changeChannel(-1);return;}
+ if(k==='ArrowLeft'||k==='ArrowRight'||c===403||k==='ColorF0Red'){e.preventDefault();return;}
+ if(c===413||k==='MediaStop'){e.preventDefault();closePlayer();return;}
+ if(k==='Enter'||k==='OK'||c===13||c===415||c===10252){e.preventDefault();if(!e.repeat)togglePlayback();return;}
  return;
 }
 if(k.indexOf('Arrow')===0){e.preventDefault();moveHome(k);return;}
