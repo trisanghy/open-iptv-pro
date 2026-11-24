@@ -2,8 +2,8 @@
 const {test}=require('node:test'),a=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const p=JSON.parse(fs.readFileSync('package.json','utf8')),h=fs.readFileSync('tv-web-lab.html','utf8'),s=fs.readFileSync('tv-web-lab.js','utf8');
 test('Standalone HTTPS page, WGT UI and no pairing/relay module',()=>{
- a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-lab.html');a.equal(p.packageType,'mods');a.equal(p.serviceFile,undefined);
- a.match(h,/id="channelPicker"/);a.match(h,/src="tv-web-lab.js\?v=059"/);a.match(s,/function keyHandler\(e\)/);a.match(s,/function play\(c\)/);new vm.Script(s);
+ a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-lab.html?v=060');a.equal(p.packageType,'mods');a.equal(p.serviceFile,undefined);
+ a.match(h,/id="channelPicker"/);a.match(h,/src="tv-web-lab.js\?v=060"/);a.match(s,/function keyHandler\(e\)/);a.match(s,/function play\(c\)/);new vm.Script(s);
  a.doesNotMatch(s,/(?:http|ws):\/\/127\.0\.0\.1/);
  let redirected='';vm.runInNewContext(s,{location:{origin:'http://127.0.0.1:8081',pathname:'/module/old',replace:u=>redirected=u}});a.equal(redirected,p.websiteURL);
  for(const f of ['tizenbrew/index.html','tizenbrew/bootstrap.html'])a.ok(fs.readFileSync(f,'utf8').includes(p.websiteURL));
@@ -44,4 +44,15 @@ test('Playback failures return to list and notify, not full-screen red panel',()
  const env={URL,playbackActive:()=>true,playing:{name:'Test channel'},playbackEvidence:[],console:{warn(){}},closePlayer:()=>calls.push('close'),notify:t=>calls.push(t)};
  vm.runInNewContext(s.slice(i,j),env);env.playbackFailure(1,'https://example.org/path?token=secret');
  a.deepEqual(calls,['close','Không phát được Test channel. Kiểm tra nguồn hoặc thử kênh khác.']);
+});
+
+test('Visible version, JS runtime, manifest and cache-busting script stay in sync',()=>{
+ const v=p.version;
+ a.equal(p.tizenbrewEdition,v);
+ a.ok(h.includes('id="webLabVersion">TV Web Lab · v'+v+'</p>'));
+ a.ok(s.includes("version:'"+v+"'"));
+ a.ok(s.includes("textContent='TV Web Lab · v'+TV_PLAYBACK_CORE.version"));
+ const suffix=v.split('.')[2].padStart(3,'0');
+ a.ok(h.includes('tv-web-lab.js?v='+suffix));
+ a.ok(p.websiteURL.endsWith('?v='+suffix));
 });

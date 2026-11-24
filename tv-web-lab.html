@@ -808,7 +808,7 @@ body #player.is-playback-error #channelPicker{z-index:12}
 body.web-tv-cinema #player.is-playing .playerhead,body.web-tv-cinema #player.is-playing .playerfoot,body.web-tv-cinema #player.is-playing .playerdiag,body.web-tv-cinema #player.is-playing #playerStatus{display:none!important}
 body.web-tv-cinema #player.is-playing #video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:black}
 #video:fullscreen,#video:-webkit-full-screen{width:100%;height:100%;object-fit:contain;background:#000}
-/* v0.1.59: there is only a video surface, no WGT loading/error interface. */
+/* v0.1.60: there is only a video surface, no WGT loading/error interface. */
 #webLabLegacyHooks,#webLabLegacyHooks *{display:none!important}
 body #player:not([hidden]){position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;max-width:none!important;max-height:none!important;background:#000!important;z-index:2147483647!important;overflow:hidden}
 body #player #video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important;background:#000!important;visibility:visible!important}
@@ -824,7 +824,7 @@ body #player[hidden]{display:none!important}
 <rect width="1024" height="1024" rx="220" fill="#ffffff"/>
 <path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
 </svg></div>
-    <div><strong>Open IPTV Pro</strong><p>TV Web Lab · v0.1.58</p></div>
+    <div><strong>Open IPTV Pro</strong><p id="webLabVersion">TV Web Lab · v0.1.60</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
@@ -908,4 +908,4 @@ body #player[hidden]{display:none!important}
 <!-- QRCode.js © davidshimjs, MIT license. Embedded to work on older Tizen browsers. -->
 
 
-<script src="tv-web-lab.js?v=059"></script></body></html>
+<script src="tv-web-lab.js?v=060"></script></body></html>
