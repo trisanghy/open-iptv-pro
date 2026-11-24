@@ -15,7 +15,7 @@ Feature priority: BLOCKER_FIX — khắc phục lỗi CI capture ngăn phát hà
 
 ![Ảnh chụp Electron thật P5.1.351](./screenshots/positron-p51351-source-state-isolation-after-1920x1080-real.png)
 
-[Ảnh trước sửa](./screenshots/positron-p51351-source-state-isolation-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45293323822) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45293649622) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c7ce8c20280ecf33448bcdd95a3e2ac17d1a77d3)
+[Ảnh trước sửa](./screenshots/positron-p51351-source-state-isolation-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45293323822) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45297023130) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c7ce8c20280ecf33448bcdd95a3e2ac17d1a77d3)
 
 </details>
 

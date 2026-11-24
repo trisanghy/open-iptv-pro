@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-24T00:25:40.677007+00:00",
+  "generatedAt": "2026-11-24T00:26:14.501849+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -24,10 +24,10 @@
       "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45293323822/artifacts/14876280047",
       "builds": [],
       "ci": {
-        "url": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45293649622",
-        "status": "completed",
-        "conclusion": "failure",
-        "commit": "76f42781a7266b45be034422b4b4e5149fae9673"
+        "url": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45297023130",
+        "status": "in_progress",
+        "conclusion": null,
+        "commit": "28fad96828b8061f25bff77d86f8d169bed77ed0"
       }
     },
     {
