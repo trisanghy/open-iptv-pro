@@ -5,9 +5,10 @@ on:
   workflow_dispatch:
 concurrency:
   group: positron-feature-pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 permissions:
   contents: read
+  actions: read
 jobs:
   # Giữ nguyên cổng kiểm tra nghiêm ngặt: phiên bản không đạt vẫn báo lỗi.
   # Nhật ký lịch sử cần được cập nhật kể cả khi phiên bản mới đang sửa lỗi.
@@ -27,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      actions: read
     steps:
       - name: Chỉ lấy mã nguồn nhánh Positron
         uses: actions/checkout@v4

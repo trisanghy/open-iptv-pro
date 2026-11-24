@@ -9,7 +9,7 @@ Toàn bộ tiêu đề và mô tả phiên bản trên trang Positron được h
 - **[Bản dịch chính xác theo phiên bản](vi.json)** — dữ liệu Việt hóa có thể bổ sung, đối chiếu với changelog và Release gốc.
 - **[Quy tắc bắt buộc](../../POSITRON_FEATURE_RULES.md)** — ưu tiên tính năng mới; các mô tả, ghi chú và commit mới viết bằng tiếng Việt.
 
-Mã nguồn trình tạo: `scripts/build-positron-feature-site.py`. Quy trình cập nhật: `.github/workflows/positron-feature-pages.yml`. Workflow tải GitHub Releases thật, ghép ảnh PNG từ gói kiểm thử Electron đúng phiên bản và cập nhật bảng GitHub mà không force-push. Nếu chưa có ảnh riêng hoặc chưa xuất bản Release, trang phải ghi rõ trạng thái.
+Mã nguồn trình tạo: `scripts/build-positron-feature-site.py`. Quy trình cập nhật: `.github/workflows/positron-feature-pages.yml`. Workflow lấy ảnh trước/sau từ QA Electron thật trên GitHub Actions, đối chiếu phiên bản và báo cáo PASS; lấy bộ cài EXE/DMG đóng trong ZIP từ build job thành công còn hạn. Giữ Release lịch sử, không tạo Release thử nghiệm và không force-push. Nếu chưa có ảnh hoặc bộ cài còn hạn, trang ghi rõ. CI tổng hợp và trạng thái build là hai thông tin riêng biệt. Tải artifact có thể cần đăng nhập GitHub.
 
 **Giới hạn GitHub Pages:** môi trường hiện chỉ cho phép triển khai từ nhánh `web/online`. Không thay đổi trang Web đó. Bản nhật ký GitHub trên nhánh `Positron` hoạt động độc lập; Pages chỉ được bật khi có môi trường riêng được chủ sở hữu cho phép.
 
