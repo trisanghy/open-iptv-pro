@@ -172,9 +172,18 @@
  planMode.textContent='Lịch AI 24h';planMode.setAttribute('aria-pressed','false');
 
  const exploreMode=d.createElement('button');exploreMode.type='button';exploreMode.id='poAIExplore';
- exploreMode.textContent='Khám phá AI';exploreMode.setAttribute('aria-pressed','false');exploreMode.disabled=!enabled;
- exploreMode.title='Khám phá AI chỉ khả dụng khi bật học sở thích';
- exploreMode.setAttribute('aria-label','Khám phá AI — cần bật học sở thích');
+ exploreMode.textContent='Khám phá AI';exploreMode.setAttribute('aria-pressed','false');
+ const syncExploreConsent=()=>{
+  exploreMode.disabled=!enabled;
+  if(enabled){
+   exploreMode.title='Khám phá AI — đã bật học sở thích';
+   exploreMode.setAttribute('aria-label','Khám phá AI — đã bật học sở thích');
+  }else{
+   exploreMode.title='Khám phá AI chỉ khả dụng khi bật học sở thích';
+   exploreMode.setAttribute('aria-label','Khám phá AI — cần bật học sở thích');
+  }
+ };
+ syncExploreConsent();
  modeBar.append(channelsMode,upcomingMode,planMode,exploreMode);
  let upcomingOpen=false,planOpen=false,exploreOpen=false,foldersOpen=false,programmesOpen=false;
  let programmeQuery='';
@@ -1039,7 +1048,7 @@
   channelsMode.setAttribute('aria-pressed',String(!upcomingOpen&&!planOpen&&!exploreOpen&&!foldersOpen&&!programmesOpen));
   upcomingMode.setAttribute('aria-pressed',String(upcomingOpen));
   planMode.setAttribute('aria-pressed',String(planOpen));
-  exploreMode.setAttribute('aria-pressed',String(exploreOpen));exploreMode.disabled=!enabled;
+  exploreMode.setAttribute('aria-pressed',String(exploreOpen));syncExploreConsent();
   foldersMode.setAttribute('aria-pressed',String(foldersOpen));
   programmesMode.setAttribute('aria-pressed',String(programmesOpen));
   summary.textContent=(enabled?'● Đang học':'○ Chưa bật học')+(alertEnabled?' · Nhắc lịch AI bật':'')+' · '+model.observations+

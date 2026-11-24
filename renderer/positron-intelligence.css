@@ -579,3 +579,6 @@ html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-en
 /* P352: explain the disabled Explore action without changing consent. */
 #poWatchFlowPanel #poAIExplore:disabled{opacity:1;color:#a8cbd1;line-height:1.15;}
 #poWatchFlowPanel #poAIExplore:disabled::after{content:'Cần bật học';display:block;font-size:10px;font-weight:500;color:#9bc7c3;line-height:1.2;margin-top:2px;}
+
+/* P353: synchronize visual and accessible learning consent status. */
+#poWatchFlowPanel #poAIExplore:not(:disabled)::after{content:'Đã bật học';display:block;font-size:10px;font-weight:500;color:inherit;line-height:1.2;margin-top:2px;}

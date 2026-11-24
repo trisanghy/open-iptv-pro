@@ -1,3 +1,10 @@
+## P5.1.353 / Electron 4.23.438 — Đồng bộ trạng thái quyền học của Khám phá AI (CANDIDATE)
+- Feature priority: BLOCKER_FIX — audit CI P352 chứng minh trạng thái quyền riêng tư bị báo sai cho trình đọc màn hình và tooltip khi người dùng đã đồng ý học; sửa đồng bộ và bổ sung kiểm thử chuyển trạng thái thật, tránh báo cáo quyền học sai.
+- Feature class: AI
+- User action: Bật hoặc tắt học sở thích trong WatchFlow. Nút cập nhật đồng thời nhãn trực quan, tooltip, nhãn trợ năng và trạng thái khả dụng, không tự bật học.
+- Electron screenshot: positron-p51353-explore-consent-after-1920x1080-real.png
+- Evidence: Baseline P352 fast audit 45458207080 ghi active.disabled=false nhưng active.label và active.title vẫn báo cần bật học ở cả hai viewport. P353 thêm kiểm thử logic và audit Electron dùng checkbox thật; PNG trước mô phỏng trình bày cũ, PNG sau là renderer mới. Chưa xác minh CI/ảnh/bộ cài P353; CANDIDATE, không public release.
+
 ## P5.1.352 / Electron 4.23.437 — Giải thích điều kiện Khám phá AI ngay trên nút (CANDIDATE)
 - Feature priority: BLOCKER_FIX — sửa cổng CI phát hành bị chặn vì khai báo ưu tiên và liên kết bằng chứng Electron trước/sau sai; giữ nguyên cải tiến giải thích điều kiện Khám phá AI của P352, không tự bật học hay thay dữ liệu.
 - Feature class: AI

@@ -246,6 +246,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   await require('./positron-350-audit.cjs').run(page);
   await require('./positron-351-audit.cjs').run(page);
   await require('./positron-352-audit.cjs').run(page);
+  await require('./positron-353-audit.cjs').run(page);
   await browser.close();
 })().catch(e=>{
   console.error('P4 50-round audit failed: '+(e&&e.stack||e));

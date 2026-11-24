@@ -13,10 +13,10 @@ async function run(page){
  await page.evaluate(()=>{window.IPTVState.setPage('tv');window.PositronWatchFlow.close();document.getElementById('poWatchFlowToggle').focus();});
  await page.keyboard.press('F6');
  await page.waitForFunction(()=>{const p=document.getElementById('poWatchFlowPanel');return p&&!p.hidden&&p.dataset.poAiActive==='true';},null,{timeout:15000});
- const initial=await state(page),original=await page.locator('#poAIExplore').evaluate(b=>b.disabled),all={};
- assert.equal(original,!initial.consent,'production disabled state follows actual consent');
+ const initial=await state(page),original=await page.locator('#poAIExplore').evaluate(b=>({disabled:b.disabled,label:b.getAttribute('aria-label'),title:b.title})),all={};
+ assert.equal(original.disabled,!initial.consent,'production disabled state follows actual consent');
  try{
-  await page.locator('#poAIExplore').evaluate(b=>b.disabled=true);
+  await page.locator('#poAIExplore').evaluate(b=>{b.disabled=true;b.setAttribute('aria-label','Khám phá AI — cần bật học sở thích');b.title='Khám phá AI chỉ khả dụng khi bật học sở thích';});
   for(const [width,height] of [[1920,1080],[720,900]]){
    await page.setViewportSize({width,height});
    const old=await page.addStyleTag({content:'#poWatchFlowPanel #poAIExplore:disabled{opacity:.48!important;color:#ccece5!important}#poWatchFlowPanel #poAIExplore:disabled::after{content:none!important}'});
@@ -32,9 +32,9 @@ async function run(page){
    await page.locator('#poAIExplore').evaluate(b=>b.disabled=true);
    all[width+'x'+height]={visible,active,beforeSha256:hash(before),afterSha256:hash(after)};
   }
- }finally{await page.locator('#poAIExplore').evaluate((b,v)=>b.disabled=v,original);await page.setViewportSize({width:1920,height:1080});}
+ }finally{await page.locator('#poAIExplore').evaluate((b,v)=>{b.disabled=v.disabled;b.setAttribute('aria-label',v.label);b.title=v.title;},original);await page.setViewportSize({width:1920,height:1080});}
  assert.deepEqual(await state(page),initial,'model, consent, channels, playback untouched');
- fs.writeFileSync('positron-evidence/audit-p51352-explore-prerequisite.json',JSON.stringify({version:'P5.1.352',app:'4.23.437',realElectron:true,pass:true,scope:'native DOM visual compare; before uses temporary prior style, no consent mutation',all},null,2));
+ fs.writeFileSync('positron-evidence/audit-p51352-explore-prerequisite.json',JSON.stringify({version:'P5.1.352',app:'4.23.437',realElectron:true,pass:true,scope:'native DOM visual compare; historical controlled DOM/style comparison, no consent mutation',all},null,2));
  await page.evaluate(()=>window.PositronWatchFlow.close());
 }
 module.exports={run};
