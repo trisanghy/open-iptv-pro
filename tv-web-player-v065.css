@@ -1,0 +1,5 @@
+/* Keep the original video, original receiver stylesheet and cinema selectors. */
+.tv-local-page #tvPairing,.tv-local-page #tvRequest,.tv-local-page #tvHistory,.tv-local-page .tv-row,.tv-local-page .tv-help,.tv-local-page #tvDisconnect,.tv-local-page #tvLocalPause,.tv-local-page #tvPlayer>h1,.tv-local-page #tvPlayer>p{display:none!important}
+.tv-local-page #tvBackToList{position:fixed;left:12px;top:12px;z-index:10006}
+.tv-local-page.tv-cinema #tvBackToList{display:none}
+.tv-local-page:not(.tv-cinema) #tvStatus{overflow-wrap:anywhere}
