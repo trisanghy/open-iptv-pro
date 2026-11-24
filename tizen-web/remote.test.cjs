@@ -1,9 +1,9 @@
 'use strict';
 const {test}=require('node:test'),a=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const p=JSON.parse(fs.readFileSync('package.json','utf8')),h=fs.readFileSync('tv-web-lab.html','utf8'),s=fs.readFileSync('tv-web-lab.js','utf8');
+const p=JSON.parse(fs.readFileSync('package.json','utf8')),h=fs.readFileSync('tv-web-lab-v060.html','utf8'),s=fs.readFileSync('tv-web-lab-v060.js','utf8');
 test('Standalone HTTPS page, WGT UI and no pairing/relay module',()=>{
- a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-lab.html?v=060');a.equal(p.packageType,'mods');a.equal(p.serviceFile,undefined);
- a.match(h,/id="channelPicker"/);a.match(h,/src="tv-web-lab.js\?v=060"/);a.match(s,/function keyHandler\(e\)/);a.match(s,/function play\(c\)/);new vm.Script(s);
+ a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-lab-v060.html');a.equal(p.packageType,'mods');a.equal(p.serviceFile,undefined);
+ a.match(h,/id="channelPicker"/);a.match(h,/src="tv-web-lab-v060.js"/);a.match(s,/function keyHandler\(e\)/);a.match(s,/function play\(c\)/);new vm.Script(s);
  a.doesNotMatch(s,/(?:http|ws):\/\/127\.0\.0\.1/);
  let redirected='';vm.runInNewContext(s,{location:{origin:'http://127.0.0.1:8081',pathname:'/module/old',replace:u=>redirected=u}});a.equal(redirected,p.websiteURL);
  for(const f of ['tizenbrew/index.html','tizenbrew/bootstrap.html'])a.ok(fs.readFileSync(f,'utf8').includes(p.websiteURL));
@@ -53,6 +53,15 @@ test('Visible version, JS runtime, manifest and cache-busting script stay in syn
  a.ok(s.includes("version:'"+v+"'"));
  a.ok(s.includes("textContent='TV Web Lab · v'+TV_PLAYBACK_CORE.version"));
  const suffix=v.split('.')[2].padStart(3,'0');
- a.ok(h.includes('tv-web-lab.js?v='+suffix));
- a.ok(p.websiteURL.endsWith('?v='+suffix));
+ a.ok(h.includes('tv-web-lab-v'+suffix+'.js'));
+ a.ok(p.websiteURL.endsWith('/tv-web-lab-v'+suffix+'.html'));
+});
+
+test('Old website HTML, script and module launcher navigate to immutable release path',()=>{
+ const target=p.websiteURL;
+ const oldHtml=fs.readFileSync('tv-web-lab.html','utf8'),oldJs=fs.readFileSync('tv-web-lab.js','utf8'),loader=fs.readFileSync('tizen-web/pages-launcher.js','utf8');
+ for(const src of [oldHtml.match(/<script>([\s\S]*?)<\/script>/)[1],oldJs,loader]){
+  let dest='';vm.runInNewContext(src,{location:{origin:'https://trisanghy.github.io',pathname:'/open-iptv-pro/tv-web-lab.html',replace:u=>dest=u}});a.equal(dest,target);
+ }
+ let redirected=false;vm.runInNewContext(loader,{location:{origin:'https://trisanghy.github.io',pathname:'/open-iptv-pro/tv-web-lab-v060.html',replace(){redirected=true;}}});a.equal(redirected,false);
 });
