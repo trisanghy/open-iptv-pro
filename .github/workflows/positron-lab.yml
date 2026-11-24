@@ -901,3 +901,11 @@ jobs:
             release-stage/PUBLISH_STATUS.txt
           retention-days: 30
           if-no-files-found: error
+
+  refresh-changelog:
+    needs: [test, capture, build]
+    if: always() && github.ref_name == 'Positron'
+    permissions:
+      contents: write
+      actions: read
+    uses: ./.github/workflows/positron-catalog-refresh.yml
