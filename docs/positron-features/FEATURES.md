@@ -7,7 +7,20 @@ Trang này được tạo tự động từ GitHub Actions Artifacts và Release
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.351</strong> · QA độc lập kênh IPTV, bảo toàn playlist và thông luồng phát hành · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.352</strong> · Giải thích điều kiện Khám phá AI ngay trên nút · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.437 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: FIX — ảnh Electron thật P351 cho thấy nút Khám phá AI bị vô hiệu hóa nhưng không giải thích điều kiện ngay tại nút. Feature class: AI
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45450763985) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ba151aa53ce01dd62a47308dab559007455e5254)
+
+</details>
+
+<details>
+<summary><strong>P5.1.351</strong> · Cô lập nguồn kênh QA, sửa lỗi CI phát hành (ĐANG XÁC MINH) · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.436 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
@@ -15,7 +28,7 @@ Feature priority: BLOCKER_FIX — khắc phục lỗi CI capture ngăn phát hà
 
 ![Ảnh chụp Electron thật P5.1.351](./screenshots/positron-p51351-source-state-isolation-after-1920x1080-real.png)
 
-[Ảnh trước sửa](./screenshots/positron-p51351-source-state-isolation-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45449522870) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45449522976) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c7ce8c20280ecf33448bcdd95a3e2ac17d1a77d3)
+[Ảnh trước sửa](./screenshots/positron-p51351-source-state-isolation-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45297014268) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45449522976) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/140aad6bafe651f1c75f9655505c2eaf529f1330)
 
 </details>
 
@@ -1495,9 +1508,9 @@ Feature priority: NEW — Tăng khả năng điều hướng bằng bàn phím c
 
 Feature priority: NEW — Điều hướng lịch sử nhóm trực tiếp từ hàng kênh bằng tổ hợp Alt+Mũi tên trái/phải, giúp người dùng điều khiển bằng bàn phím mà không phải di chuyển focus lên nút Nhóm trước/Nhóm sau; phím vẫn giữ chức năng soạn thảo khi đang ở ô nhập. Electron screenshot: positron-p51237-keyboard-history-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.237](./screenshots/positron-p51237-keyboard-history-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049986914) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049986914/artifacts/14765515658) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049986914/artifacts/14764968710) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049986914/artifacts/14765535568) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/749ca18174015329d9eebff265204c5f9d8c6ec9)
+[Ảnh trước sửa](./screenshots/positron-p51237-keyboard-history-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049986914) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049986914) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049986914/artifacts/14765515658) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049986914/artifacts/14764968710) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049986914/artifacts/14765535568) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/749ca18174015329d9eebff265204c5f9d8c6ec9)
 
 </details>
 
@@ -1508,9 +1521,9 @@ Feature priority: NEW — Điều hướng lịch sử nhóm trực tiếp từ 
 
 Feature priority: NEW — Thêm nút “↷ Nhóm sau” chỉ xuất hiện sau khi người xem quay về nhóm trước, hỗ trợ tiến lại nhóm đã duyệt mà không phải tìm kiếm hay ghi nhớ thư mục vừa xem; việc chọn nhóm mới chủ động sẽ xóa hướng tiến không còn hợp lệ. Electron screenshot: positron-p51236-group-forward-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.236](./screenshots/positron-p51236-group-forward-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049246898) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049246898/artifacts/14765320279) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049246898/artifacts/14764604523) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049246898/artifacts/14764204446) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/39ef304fbab638cc562e79808e59641995a3c0f3)
+[Ảnh trước sửa](./screenshots/positron-p51236-group-forward-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049246898) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049246898) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049246898/artifacts/14765320279) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049246898/artifacts/14764604523) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45049246898/artifacts/14764204446) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/39ef304fbab638cc562e79808e59641995a3c0f3)
 
 </details>
 
@@ -1521,9 +1534,9 @@ Feature priority: NEW — Thêm nút “↷ Nhóm sau” chỉ xuất hiện sau
 
 Feature priority: NEW — Lịch sử điều hướng nhóm theo phiên chỉ giữ một vị trí cho mỗi nhóm và tự loại đích quay lại trùng nhóm đang xem, giúp nút “Nhóm trước” không quay vòng vô ích hoặc hiển thị nhầm sau khi trở về. Electron screenshot: positron-p51235-history-dedupe-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.235](./screenshots/positron-p51235-history-dedupe-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45048450106) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45048450106/artifacts/14764786826) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45048450106/artifacts/14763834419) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45048450106/artifacts/14765145567) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/e65f216e629350fcfaf9d4159b3cb0ac8d5a1be9)
+[Ảnh trước sửa](./screenshots/positron-p51235-history-dedupe-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45048450106) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45048450106) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45048450106/artifacts/14764786826) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45048450106/artifacts/14763834419) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45048450106/artifacts/14765145567) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/e65f216e629350fcfaf9d4159b3cb0ac8d5a1be9)
 
 </details>
 
@@ -1534,9 +1547,9 @@ Feature priority: NEW — Lịch sử điều hướng nhóm theo phiên chỉ g
 
 Feature priority: NEW — Hỗ trợ tìm tên thư mục tiếng Việt có chữ Đ viết hoa bằng từ khóa không dấu ngay trong bộ chọn nhóm, giúp người xem truy cập đúng dữ liệu danh sách kênh mà không cần đổi tên thư mục hoặc mở video. Electron screenshot: positron-p51234-vietnamese-group-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.234](./screenshots/positron-p51234-vietnamese-group-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45047758931) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45047758931/artifacts/14763449285) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45047758931/artifacts/14764164278) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45047758931/artifacts/14764477608) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c7423143a230c9dde4f3552f729a6ada0dcc52e0)
+[Ảnh trước sửa](./screenshots/positron-p51234-vietnamese-group-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45047758931) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45047758931) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45047758931/artifacts/14763449285) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45047758931/artifacts/14764164278) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45047758931/artifacts/14764477608) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c7423143a230c9dde4f3552f729a6ada0dcc52e0)
 
 </details>
 
@@ -1560,9 +1573,9 @@ Feature priority: NEW — Người dùng nhảy từ nhóm 01 sang một nhóm b
 
 Feature priority: NEW — Khi có hàng chục thư mục, người dùng có thể gõ một phần tên để thu hẹp nhóm ngay trong bộ chọn Alt+G, thay vì bấm tới từng nhóm; hỗ trợ tên tiếng Việt không dấu. Đồng thời sửa lỗi ảnh P5.1.231 cho thấy nhãn “Đến nhóm” chồng lên ô chọn. Electron screenshot: positron-p51232-group-search-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.232](./screenshots/positron-p51232-group-search-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45045467358) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45045467358/artifacts/14763178281) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45045467358/artifacts/14762534717) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45045467358/artifacts/14764000170) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/bb0d388b064196f684708f01f8cedf82f8718652)
+[Ảnh trước sửa](./screenshots/positron-p51232-group-search-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45045467358) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45045467358) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45045467358/artifacts/14763178281) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45045467358/artifacts/14762534717) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45045467358/artifacts/14764000170) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/bb0d388b064196f684708f01f8cedf82f8718652)
 
 </details>
 
@@ -1573,9 +1586,9 @@ Feature priority: NEW — Khi có hàng chục thư mục, người dùng có th
 
 Feature priority: NEW — Sau khi chuyển nhóm tuần tự đã hoạt động, người dùng có hàng chục nhóm kênh cần nhảy trực tiếp tới bất kỳ nhóm nào bằng menu chọn có nhãn rõ ràng và hỗ trợ bàn phím; có thể mở nhóm thu gọn qua thao tác gốc. Electron screenshot: positron-p51231-group-picker-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.231](./screenshots/positron-p51231-group-picker-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45044821726) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45044821726/artifacts/14762578572) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45044821726/artifacts/14763575535) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45044821726/artifacts/14763680145) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/0b096c095021ea4d82e0dbda9ce1bfb88e83e829)
+[Ảnh trước sửa](./screenshots/positron-p51231-group-picker-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45044255893) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45044821726) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45044821726/artifacts/14762578572) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45044821726/artifacts/14763575535) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45044821726/artifacts/14763680145) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/0b096c095021ea4d82e0dbda9ce1bfb88e83e829)
 
 </details>
 
@@ -1586,9 +1599,9 @@ Feature priority: NEW — Sau khi chuyển nhóm tuần tự đã hoạt động
 
 Feature priority: NEW — Chọn một kênh rồi nhấn → để tới đầu nhóm mở kế tiếp, ← để về đầu nhóm trước. Bỏ qua nhóm thu gọn, giữ nguyên luồng phát, dữ liệu playlist và Favorites. User action: Trên trang TV, focus một hàng kênh rồi nhấn mũi tên phải để tới đầu nhóm kế tiếp đang mở, nhấn mũi tên trái để quay lại nhóm trước; nhấn Enter mới phát.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.230](./screenshots/positron-p51230-group-navigation-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45043514719) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45043514719/artifacts/14762282691) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45043514719/artifacts/14763081861) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45043514719/artifacts/14762728042) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ef06c22c7cb84ec2ae62cbd8672dc0a79781cefc)
+[Ảnh trước sửa](./screenshots/positron-p51230-group-navigation-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45043514719) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45043514719) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45043514719/artifacts/14762282691) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45043514719/artifacts/14763081861) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45043514719/artifacts/14762728042) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ef06c22c7cb84ec2ae62cbd8672dc0a79781cefc)
 
 </details>
 
@@ -1612,9 +1625,9 @@ Feature priority: NEW — Người dùng đang duyệt hàng trăm kênh bằng 
 
 Feature priority: NEW — Người dùng có hàng trăm kênh có thể di chuyển focus bằng mũi tên lên xuống, Home, End, PageUp và PageDown mà không phải nhấn phát từng kênh; thêm viền focus rõ ràng và Alt+J mở ô nhảy tới số kênh, giữ nguyên video đang xem. Electron screenshot: positron-p51228-keyboard-channels-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.228](./screenshots/positron-p51228-keyboard-channels-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041825637) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041825637/artifacts/14761408835) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041825637/artifacts/14761724667) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041825637/artifacts/14762395800) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d0ea0be1b121c96c203a869c076280efbf7af1cd)
+[Ảnh trước sửa](./screenshots/positron-p51228-keyboard-channels-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041825637) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041825637) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041825637/artifacts/14761408835) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041825637/artifacts/14761724667) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041825637/artifacts/14762395800) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d0ea0be1b121c96c203a869c076280efbf7af1cd)
 
 </details>
 
@@ -1625,9 +1638,9 @@ Feature priority: NEW — Người dùng có hàng trăm kênh có thể di chuy
 
 Feature priority: BLOCKER_FIX — Ảnh Electron P5.1.226 cho thấy nhảy tới kênh 250 kéo cả trang video lên, che khuất đầu sidebar và mép trên khung phát, trong khi ba nút tiêu đề khiến chữ xuống hai dòng; sửa đúng vùng cuộn để điều khiển TV vẫn luôn nhìn thấy. Electron screenshot: positron-p51227-jump-scroll-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.227](./screenshots/positron-p51227-jump-scroll-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041070170) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041070170/artifacts/14761942346) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041070170/artifacts/14761383083) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041070170/artifacts/14761178824) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/5e7c9bb8666289cfb14d06da4c4956fbd8ef91a0)
+[Ảnh trước sửa](./screenshots/positron-p51227-jump-scroll-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041070170) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041070170) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041070170/artifacts/14761942346) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041070170/artifacts/14761383083) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45041070170/artifacts/14761178824) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/5e7c9bb8666289cfb14d06da4c4956fbd8ef91a0)
 
 </details>
 
@@ -1638,9 +1651,9 @@ Feature priority: BLOCKER_FIX — Ảnh Electron P5.1.226 cho thấy nhảy tớ
 
 Feature priority: NEW — Khi playlist có hàng trăm kênh, người dùng có thể nhập số thứ tự để định vị kênh trong danh sách mà không phải cuộn qua hàng trăm mục hoặc làm gián đoạn video đang phát. Electron screenshot: positron-p51226-channel-jump-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.226](./screenshots/positron-p51226-channel-jump-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45040295057) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45040295057/artifacts/14761142759) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45040295057/artifacts/14761651974) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45040295057/artifacts/14761851433) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/0b3ed40ff034e49e1ad99dd14dbc660a585dd035)
+[Ảnh trước sửa](./screenshots/positron-p51226-channel-jump-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45040295057) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45040295057) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45040295057/artifacts/14761142759) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45040295057/artifacts/14761651974) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45040295057/artifacts/14761851433) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/0b3ed40ff034e49e1ad99dd14dbc660a585dd035)
 
 </details>
 
@@ -1651,9 +1664,9 @@ Feature priority: NEW — Khi playlist có hàng trăm kênh, người dùng có
 
 Feature priority: BLOCKER_FIX — Các nút điều khiển phát video, âm lượng và chọn kênh bị đẩy xuống dưới vùng nhìn khi desktop rộng mà cửa sổ thấp, nên cần giới hạn riêng chiều cao stage để tránh cắt thao tác quan trọng mà không thay đổi dữ liệu người xem. Electron screenshot: positron-p51225-tv-controls-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.225](./screenshots/positron-p51225-tv-controls-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45039175143) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45039175143/artifacts/14761276373) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45039175143/artifacts/14761280936) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45039175143/artifacts/14760524679) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/88fbb97fa7e16aaeb7c22d210aaec162e4ac6e95)
+[Ảnh trước sửa](./screenshots/positron-p51225-tv-controls-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45039175143) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45039175143) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45039175143/artifacts/14761276373) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45039175143/artifacts/14761280936) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45039175143/artifacts/14760524679) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/88fbb97fa7e16aaeb7c22d210aaec162e4ac6e95)
 
 </details>
 
@@ -1664,9 +1677,9 @@ Feature priority: BLOCKER_FIX — Các nút điều khiển phát video, âm lư
 
 Feature priority: NEW — Sau khi người dùng nhập hoặc hủy file XMLTV ngay từ trang Lịch phát sóng, phản hồi không còn bị giấu trong mục Cài đặt, tránh nhầm rằng ứng dụng treo hoặc mất dữ liệu EPG. Electron screenshot: positron-p51224-epg-feedback-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.224](./screenshots/positron-p51224-epg-feedback-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45038371586) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45038371586/artifacts/14761045562) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45038371586/artifacts/14760697681) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45038371586/artifacts/14760822247) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/be3e79f8049cae0ebd42a211c47b73577a991fce)
+[Ảnh trước sửa](./screenshots/positron-p51224-epg-feedback-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45038371586) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45038371586) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45038371586/artifacts/14761045562) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45038371586/artifacts/14760697681) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45038371586/artifacts/14760822247) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/be3e79f8049cae0ebd42a211c47b73577a991fce)
 
 </details>
 
@@ -1677,9 +1690,9 @@ Feature priority: NEW — Sau khi người dùng nhập hoặc hủy file XMLTV 
 
 Feature priority: NEW — Người xem có file XMLTV hợp pháp trong máy có thể nhập trực tiếp từ trang Lịch phát sóng mà không phải đi vòng qua trang Cài đặt; dùng nguyên luồng kiểm tra, xác nhận và lưu của chức năng nhập hiện có. Electron screenshot: positron-p51223-epg-import-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.223](./screenshots/positron-p51223-epg-import-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45037486320) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45037486320/artifacts/14760760867) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45037486320/artifacts/14760800275) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45037486320/artifacts/14760104593) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/50bd3ac3820dbf615c5191abf5a7ac989691b51b)
+[Ảnh trước sửa](./screenshots/positron-p51223-epg-import-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45037486320) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45037486320) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45037486320/artifacts/14760760867) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45037486320/artifacts/14760800275) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45037486320/artifacts/14760104593) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/50bd3ac3820dbf615c5191abf5a7ac989691b51b)
 
 </details>
 
@@ -1690,9 +1703,9 @@ Feature priority: NEW — Người xem có file XMLTV hợp pháp trong máy có
 
 Feature priority: NEW — Bổ sung nút chọn nguồn XMLTV ngay trong trạng thái rỗng của lịch phát sóng, giúp người dùng nhập và kiểm tra nguồn thay vì bị báo sai là danh sách kênh không khớp khi chưa tải lịch. Electron screenshot: positron-p51222-epg-source-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.222](./screenshots/positron-p51222-epg-source-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45036408471) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45036408471/artifacts/14760007980) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45036408471/artifacts/14759729346) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45036408471/artifacts/14760270944) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/3848d687983751697f938c1e8c43c42273a5591c)
+[Ảnh trước sửa](./screenshots/positron-p51222-epg-source-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45036408471) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45036408471) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45036408471/artifacts/14760007980) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45036408471/artifacts/14759729346) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45036408471/artifacts/14760270944) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/3848d687983751697f938c1e8c43c42273a5591c)
 
 </details>
 
@@ -1703,9 +1716,9 @@ Feature priority: NEW — Bổ sung nút chọn nguồn XMLTV ngay trong trạng
 
 Feature priority: BLOCKER_FIX — Các nhãn Bắt đầu và Kết thúc lệch hàng khiến việc chọn đúng thời điểm ghi video trở nên khó kiểm tra; sửa bố cục để tránh thao tác nhầm mà không thay đổi dữ liệu lịch hoặc luồng ghi hình. Electron screenshot: positron-p51221-dvr-form-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.221](./screenshots/positron-p51221-dvr-form-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45035298048) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45035298048/artifacts/14759472652) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45035298048/artifacts/14759368044) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45035298048/artifacts/14758954925) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/57ad538afbea22ad2a867ebca6a8017e82235fa1)
+[Ảnh trước sửa](./screenshots/positron-p51221-dvr-form-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45035298048) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45035298048) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45035298048/artifacts/14759472652) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45035298048/artifacts/14759368044) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45035298048/artifacts/14758954925) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/57ad538afbea22ad2a867ebca6a8017e82235fa1)
 
 </details>
 
@@ -1716,9 +1729,9 @@ Feature priority: BLOCKER_FIX — Các nhãn Bắt đầu và Kết thúc lệch
 
 Feature priority: NEW — Mã và ảnh Electron P5.1.219 cho thấy lịch sử có thể chứa 50 lần khám phá nhưng popup chỉ hiện 10 kênh gần nhất, khiến các kênh cũ không thể truy cập; thêm nút mở rộng/thu gọn. Electron screenshot: positron-p51220-history-more-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.220](./screenshots/positron-p51220-history-more-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45034008644) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45034008644/artifacts/14759535170) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45034008644/artifacts/14759325742) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45034008644/artifacts/14758804417) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d1dd21a6f3662daa57a4ae5944f7617274259b07)
+[Ảnh trước sửa](./screenshots/positron-p51220-history-more-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45034008644) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45034008644) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45034008644/artifacts/14759535170) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45034008644/artifacts/14759325742) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45034008644/artifacts/14758804417) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d1dd21a6f3662daa57a4ae5944f7617274259b07)
 
 </details>
 
@@ -1729,9 +1742,9 @@ Feature priority: NEW — Mã và ảnh Electron P5.1.219 cho thấy lịch sử
 
 Feature priority: NEW — Ảnh Electron thật P5.1.218 cho thấy tìm kiếm và lọc Yêu thích hoạt động nhưng lịch sử chỉ theo thời điểm khám phá; thêm chế độ tên A–Z và Z–A theo thứ tự tiếng Việt. Electron screenshot: positron-p51219-history-sort-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.219](./screenshots/positron-p51219-history-sort-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45033057660) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45033057660/artifacts/14758349169) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45033057660/artifacts/14758867242) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45033057660/artifacts/14757854191) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/816fa1741d35c0594bbc0f255ac903165a3aeb77)
+[Ảnh trước sửa](./screenshots/positron-p51219-history-sort-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45033057660) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45033057660) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45033057660/artifacts/14758349169) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45033057660/artifacts/14758867242) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45033057660/artifacts/14757854191) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/816fa1741d35c0594bbc0f255ac903165a3aeb77)
 
 </details>
 
@@ -1742,9 +1755,9 @@ Feature priority: NEW — Ảnh Electron thật P5.1.218 cho thấy tìm kiếm 
 
 Feature priority: NEW — Ảnh Electron thật P5.1.217 cho thấy nút sao mới đã giúp lưu kênh, nhưng danh sách lịch sử còn trộn kênh thường và kênh đã yêu thích. Thêm lọc theo Favorites trong phiên, kết hợp tìm kiếm. Electron screenshot: positron-p51218-favorites-filter-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.218](./screenshots/positron-p51218-favorites-filter-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45032368431) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45032368431/artifacts/14758571196) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45032368431/artifacts/14758562197) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45032368431/artifacts/14758865844) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/e7667a49aeec087a0f1c812e0a55eed4d7a954e0)
+[Ảnh trước sửa](./screenshots/positron-p51218-favorites-filter-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45032368431) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45032368431) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45032368431/artifacts/14758571196) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45032368431/artifacts/14758562197) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45032368431/artifacts/14758865844) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/e7667a49aeec087a0f1c812e0a55eed4d7a954e0)
 
 </details>
 
@@ -1755,9 +1768,9 @@ Feature priority: NEW — Ảnh Electron thật P5.1.217 cho thấy nút sao m�
 
 Feature priority: NEW — Ảnh Electron P5.1.216 cho thấy menu khám phá cho phép chọn phát lại và tìm kiếm nhưng thiếu thao tác lưu ngay kênh vừa thấy vào Yêu thích; thêm nút sao độc lập trong mỗi dòng. Electron screenshot: positron-p51217-history-favorite-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.217](./screenshots/positron-p51217-history-favorite-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45031585445) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45031585445/artifacts/14757579744) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45031585445/artifacts/14758765065) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45031585445/artifacts/14758032442) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/31f35aac8c43f3a4af93522a0063a98fe2175b8b)
+[Ảnh trước sửa](./screenshots/positron-p51217-history-favorite-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45031585445) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45031585445) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45031585445/artifacts/14757579744) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45031585445/artifacts/14758765065) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45031585445/artifacts/14758032442) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/31f35aac8c43f3a4af93522a0063a98fe2175b8b)
 
 </details>
 
@@ -1768,9 +1781,9 @@ Feature priority: NEW — Ảnh Electron P5.1.216 cho thấy menu khám phá cho
 
 Feature priority: NEW — Mở menu với tiêu điểm ở ô tìm, gõ ngay và di chuyển hai hướng giữa kết quả bằng bàn phím; không tự phát kênh. Electron screenshot: positron-p51216-search-focus-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.216](./screenshots/positron-p51216-search-focus-after-1920x1080-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45030255128) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45030255128/artifacts/14756824153) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45030255128/artifacts/14757134493) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45030255128/artifacts/14757562728) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/18a791e1373a02601e398940f73075574d6b0b87)
+[Ảnh trước sửa](./screenshots/positron-p51216-search-focus-before-1920x1080-real.png) · [QA Electron thật](https://github.com/trisanghy/open-iptv-pro/actions/runs/45030255128) · [CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45030255128) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45030255128/artifacts/14756824153) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45030255128/artifacts/14757134493) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45030255128/artifacts/14757562728) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/18a791e1373a02601e398940f73075574d6b0b87)
 
 </details>
 
@@ -3213,7 +3226,7 @@ Bổ sung thao tác xử lý dấu trang Xem sau không còn nguồn hợp lệ,
 
 ![Ảnh chụp Electron thật P5.1.105](./screenshots/positron-p51105-dormant-manage-after-real.png)
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/44921869316) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/44921869316/artifacts/14714251005) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/44921869316/artifacts/14714022840) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/44921869316/artifacts/14713917924) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/937db5120885efefe32c62fe3a9476601e76955c)
+[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/44921869316) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/44921869316/artifacts/14714251005) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/44921869316/artifacts/14714022840) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/44921869316/artifacts/14713917924) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 

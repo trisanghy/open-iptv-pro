@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.351 — QA độc lập kênh IPTV, bảo toàn playlist và thông luồng phát hành
+## P5.1.352 — Giải thích điều kiện Khám phá AI ngay trên nút
+
+**Ứng dụng:** 4.23.437 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: FIX — ảnh Electron thật P351 cho thấy nút Khám phá AI bị vô hiệu hóa nhưng không giải thích điều kiện ngay tại nút. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ba151aa53ce01dd62a47308dab559007455e5254)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.351 — Cô lập nguồn kênh QA, sửa lỗi CI phát hành (ĐANG XÁC MINH)
 
 **Ứng dụng:** 4.23.436 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: BLOCKER_FIX — khắc phục lỗi CI capture ngăn phát hành Mac/Windows, do 561 dữ liệu kênh QA tồn tại từ giai đoạn trước khiến bài audit trạng thái rỗng thất bại; bảo toàn dữ liệu nguồn và quyền riêng tư. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c7ce8c20280ecf33448bcdd95a3e2ac17d1a77d3)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/140aad6bafe651f1c75f9655505c2eaf529f1330)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.350 — Nút nhập nguồn hợp pháp trong WatchFlow chưa có kênh (CANDIDATE)
 
@@ -2222,7 +2231,6 @@ Sửa khoảng cách ở hộp WatchFlow khi chưa có nguồn để không xu�
 
 Bổ sung thao tác xử lý dấu trang Xem sau không còn nguồn hợp lệ, có bước xác nhận rõ ràng để tránh xóa nhầm.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/937db5120885efefe32c62fe3a9476601e76955c)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.104 — Thông báo nguồn Xem sau không còn hoạt động
