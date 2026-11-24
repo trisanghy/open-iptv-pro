@@ -3,9 +3,9 @@
   "version": "0.1.63",
   "description": "Website TV: giao diện WGT, lõi phát sao chép nguyên bản từ receiver TV mã 6 số.",
   "packageType": "mods",
-  "appName": "Open IPTV Pro TV Web",
-  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tv-web.html",
-  "main": "tizen-web/pages-launcher.js",
+  "appName": "Open IPTV Pro TV Web 0.1.63",
+  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tv-web-v063.html",
+  "main": "tizen-web/pages-launcher-v063.js",
   "keys": [
     "ChannelUp",
     "ChannelDown",

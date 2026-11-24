@@ -26,3 +26,12 @@ test('UI delegates directly without another engine or source-selection layer',()
  a.match(s.slice(i,j),/OpenIPTVTVWebPlayer\.open\(c\.url,c\.name,c\.id/);
  a.doesNotMatch(s.slice(i,j),/\.src=|\.play\(|requestFullscreen|fetch\(/);
 });
+
+test('Module opens versioned release directly without cached canonical redirect',()=>{
+ const p=JSON.parse(fs.readFileSync('package.json','utf8'));
+ a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-v063.html');
+ for(const path of ['tizenbrew/index.html','tizenbrew/bootstrap.html',p.main]){
+  const raw=fs.readFileSync(path,'utf8');const code=path.endsWith('.html')?raw.split('<script>')[1].split('</script>')[0]:raw;
+  let dest='';vm.runInNewContext(code,{location:{origin:'https://trisanghy.github.io',pathname:'/open-iptv-pro/tv-web-v062.html',replace:u=>dest=u}});a.equal(dest,p.websiteURL);
+ }
+});
