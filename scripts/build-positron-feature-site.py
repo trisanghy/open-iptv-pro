@@ -451,6 +451,137 @@ def extract_native_images(archive, expected=None):
     return number, report, matches
 
 
+
+class RemoteArtifactZip(io.RawIOBase):
+    """Read the ZIP directory and selected PNGs via HTTP ranges, not the full 200MB QA ZIP."""
+    def __init__(self, artifact):
+        super().__init__()
+        self.pos = 0
+        self.transferred = 0
+        token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+        headers = {"User-Agent": "Positron-Feature-Catalog/2.0", "Range": "bytes=0-0"}
+        if token:
+            headers["Authorization"] = "Bearer " + token
+        class SafeRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self, req, fp, code, msg, headers, newurl):
+                redirected = super().redirect_request(req, fp, code, msg, headers, newurl)
+                if redirected and not newurl.startswith("https://api.github.com/"):
+                    redirected.remove_header("Authorization")
+                return redirected
+        opener = urllib.request.build_opener(SafeRedirect())
+        url = API + "/actions/artifacts/" + str(artifact["id"]) + "/zip"
+        with opener.open(urllib.request.Request(url, headers=headers), timeout=40) as response:
+            found = re.fullmatch(r"bytes 0-0/(\d+)", response.headers.get("Content-Range", ""))
+            if response.status != 206 or not found or not response.geturl().startswith("https://"):
+                raise ValueError("QA archive does not support safe range requests")
+            self.size = int(found.group(1))
+            self.url = response.geturl()
+        if not 0 < self.size <= 500_000_000:
+            raise ValueError("unexpected archive size")
+
+    def seekable(self):
+        return True
+
+    def readable(self):
+        return True
+
+    def tell(self):
+        return self.pos
+
+    def seek(self, offset, whence=0):
+        target = offset if whence == 0 else self.pos + offset if whence == 1 else self.size + offset
+        if target < 0:
+            raise ValueError("negative seek")
+        self.pos = target
+        return target
+
+    def read(self, size=-1):
+        if size is None or size < 0:
+            size = max(0, self.size - self.pos)
+        size = min(size, max(0, self.size - self.pos))
+        if not size:
+            return b""
+        if self.transferred + size > 18_000_000:
+            raise ValueError("QA image transfer budget exceeded")
+        start, end = self.pos, self.pos + size - 1
+        request = urllib.request.Request(self.url, headers={"Range": "bytes=%d-%d" % (start, end),
+                                                            "User-Agent": "Positron-Feature-Catalog/2.0"})
+        with urllib.request.urlopen(request, timeout=40) as response:
+            if response.status != 206 or response.headers.get("Content-Range") != "bytes %d-%d/%d" % (start, end, self.size):
+                raise ValueError("unexpected QA archive range")
+            data = response.read(size + 1)
+        if len(data) != size:
+            raise ValueError("incomplete QA archive range")
+        self.pos += size
+        self.transferred += size
+        return data
+
+
+def extract_full_images(archive, number):
+    """Only select PNGs tagged with the version of this successful capture run."""
+    choices = {}
+    for item in archive.infolist():
+        name = Path(item.filename).name
+        found = IMAGE_RE.search(name)
+        if (not found or int(found.group(1)) != number or "-real" not in name.lower()
+                or not re.fullmatch(r"[a-zA-Z0-9_.-]+\.png", name)
+                or not 1000 < item.file_size <= 12_000_000):
+            continue
+        phase = "before" if "-before-" in name else "after"
+        score = (100 if "-after-" in name else 0) + (10 if "1920x1080" in name else 0)
+        if phase not in choices or score > choices[phase][0]:
+            choices[phase] = (score, item, name)
+    output = {}
+    for phase, (score, item, name) in choices.items():
+        data = archive.read(item)
+        if data.startswith(b"\x89PNG\r\n\x1a\n") and len(data) >= 24:
+            w, h = int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big")
+            if w >= 600 and h >= 600:
+                output[phase] = (score, name, data)
+    return output if "after" in output else None
+
+
+def backfill_full_images(by_number, full_by_version, recovered, folder):
+    # The historical capture workflow may contain pictures from older versions,
+    # but only the current run's own product label may be backfilled.
+    candidates = []
+    for n in sorted(full_by_version, reverse=True):
+        row = by_number[n]
+        if row.get("image") or n in recovered:
+            continue
+        successful = next((r for r in full_by_version[n] if r.get("conclusion") == "success"), None)
+        if successful:
+            candidates.append((n, successful))
+        if len(candidates) >= 24:
+            break
+    def recover(pair):
+        n, run = pair
+        try:
+            artifact = next((a for a in run_artifacts(run) if a.get("name") == "positron-p51" + str(n) + "-real-desktop-screenshots"), None)
+            if not artifact:
+                return None
+            with RemoteArtifactZip(artifact) as remote, zipfile.ZipFile(remote) as archive:
+                matches = extract_full_images(archive, n)
+            return (n, run, artifact, matches) if matches else None
+        except (urllib.error.URLError, OSError, ValueError, zipfile.BadZipFile, TimeoutError):
+            print("CẢNH BÁO: Chưa phục hồi được ảnh QA tổng hợp", n, "run", run["id"], file=sys.stderr)
+            return None
+    count = 0
+    with ThreadPoolExecutor(max_workers=5) as pool:
+        for result in pool.map(recover, candidates):
+            if not result:
+                continue
+            n, run, artifact, matches = result
+            row = by_number[n]
+            for phase, (_, name, data) in matches.items():
+                (folder / name).write_bytes(data)
+                row["image" if phase == "after" else "imageBefore"] = "screenshots/" + name
+            row.update(imageSource="actions", imageKind="full", imageRun=ART_ROOT + str(run["id"]),
+                       imageCommit=run.get("head_sha", ""), imageArtifact=artifact_link(run, artifact))
+            count += 1
+    print("Actions: ảnh bổ sung từ capture thành công", count)
+
+
 def attach_actions_evidence(rows):
     """Backfill non-expired build ZIPs and exact-version native screenshots."""
     by_number = {row["number"]: row for row in rows}
@@ -462,8 +593,12 @@ def attach_actions_evidence(rows):
     # Preserve previously verified evidence beyond the bounded discovery window.
     for n, row in by_number.items():
         old = previous.get(n, {})
-        if old.get("imageSource") == "actions" and row.get("image") == old.get("image"):
-            for key in ("imageBefore", "imageSource", "imageRun", "imageCommit", "imageArtifact"):
+        if old.get("imageSource") == "actions" and old.get("image"):
+            old_image = ROOT / "docs" / "positron-features" / "screenshots" / Path(old["image"]).name
+            if old_image.is_file():
+                shutil.copyfile(old_image, OUT / "screenshots" / old_image.name)
+                row["image"] = "screenshots/" + old_image.name
+            for key in ("imageBefore", "imageSource", "imageKind", "imageRun", "imageCommit", "imageArtifact"):
                 if old.get(key):
                     row[key] = old[key]
             if row.get("imageBefore"):
@@ -590,9 +725,10 @@ def attach_actions_evidence(rows):
             for phase, (_, name, data) in matches.items():
                 (folder / name).write_bytes(data)
                 row["image" if phase == "after" else "imageBefore"] = "screenshots/" + name
-            row.update(imageSource="actions", imageRun=ART_ROOT + str(run["id"]),
+            row.update(imageSource="actions", imageKind="fast", imageRun=ART_ROOT + str(run["id"]),
                        imageCommit=run.get("head_sha", ""), imageArtifact=artifact_link(run, artifact))
             recovered.add(n)
+    backfill_full_images(by_number, full_by_version, recovered, folder)
     print("Actions: ảnh Electron mới", len(recovered), "; phiên bản có bộ cài", sum(bool(r["builds"]) for r in rows))
 
 
