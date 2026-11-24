@@ -3,10 +3,11 @@
 set -euo pipefail
 SOURCE=trisanghy/open-iptv-pro
 DEST=trisanghy/open-iptv-pro-tizen
-RUN=45302957982
+RUN=45303120659
 ARTIFACT=Tizen-Installer-UNSIGNED
-SOURCE_SHA=b1015190ebdb66bd78e684cd615041a5ac9140e2
+SOURCE_SHA=4149d79970e19e41cee4617a5cae6ddb313a2f7c
 MODE="${1:-prepare}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 WORK="$HOME/Downloads/Open-IPTV-Pro-Tizen-$RUN"
 die(){ printf '%s\n' "$*" >&2; exit 1; }
 command -v python3 >/dev/null || die 'Cần Python 3.'
@@ -58,22 +59,9 @@ else
   die 'Cách dùng: bash installer-release.sh prepare | publish [signed.wgt]'
 fi
 
-VERSION="$(python3 - "$FILE" <<'PY'
-import sys,zipfile,xml.etree.ElementTree as ET,re
-with zipfile.ZipFile(sys.argv[1]) as z:
-    assert z.testzip() is None
-    names=set(z.namelist())
-    assert {'config.xml','index.html','author-signature.xml','signature1.xml'} <= names, 'WGT chưa đủ chữ ký'
-    root=ET.fromstring(z.read('config.xml'))
-    v=root.attrib['version']
-    assert re.fullmatch(r'[0-9]+\.[0-9]+\.[0-9]+',v)
-    assert v=='0.1.52'
-    assert 'webapis.avplay' in z.read('index.html').decode()
-    print(v)
-PY
-)"
-printf 'WGT có đủ file chữ ký: %s\n' "$FILE"
-printf 'Kiểm tra cấu trúc không thay cho xác minh chữ ký hoặc thử trên TV thật.\n'
+[[ -f "$SCRIPT_DIR/verify-signed-wgt.py" ]] || die 'Thiếu bộ xác minh chữ ký.'
+python3 "$SCRIPT_DIR/verify-signed-wgt.py" "$FILE" --version 0.1.52 --product
+VERSION=0.1.52
 if [[ "$MODE" == prepare ]]; then
   printf 'Cài từ USB: chép WGT vào USB, mở TizenBrew Installer > Cài đặt app từ USB.\n'
   printf 'Để phát hành qua GitHub, chạy lại script với tham số publish.\n'
@@ -90,7 +78,7 @@ if ! gh repo view "$DEST" >/dev/null 2>&1; then
   INIT="$(mktemp -d "$WORK/repo.XXXXXX")"
   trap 'rm -rf "$INIT"' EXIT
   git -C "$INIT" init -b main
-  printf '# Open IPTV Pro — Samsung TV WGT\n\nDedicated installer releases; source: https://github.com/trisanghy/open-iptv-pro/tree/tizenbrew\n' > "$INIT/README.md"
+  printf '# Open IPTV Pro — Samsung TV WGT\n\nDedicated installer releases; source: https://github.com/trisanghy/open-iptv-pro/tree/tizen-wgt-installer\n' > "$INIT/README.md"
   git -C "$INIT" add README.md
   git -C "$INIT" -c user.name=trisanghy -c user.email="$(gh api user --jq .id)+trisanghy@users.noreply.github.com" commit -m 'Initialize TV-only release repository'
   (cd "$INIT" && gh repo create "$DEST" --public --source=. --remote=origin --push)
@@ -103,5 +91,5 @@ fi
 ASSET="$WORK/Open-IPTV-Pro-TV-$VERSION.wgt"
 if [[ "$FILE" != "$ASSET" ]]; then cp "$FILE" "$ASSET"; fi
 gh release create "$TAG" "$ASSET" -R "$DEST" --title "Open IPTV Pro TV $VERSION" --notes "Samsung TV WGT signed by owner; source commit $SOURCE_SHA. Device compatibility must be verified on TV." --latest
-gh api "repos/$DEST/releases/latest" --jq '{tag:.tag_name,assets:[.assets[].name]}'
+gh api "repos/$DEST/releases/latest" --jq '.tag_name == "v0.1.52" and (.assets | any(.name == "Open-IPTV-Pro-TV-0.1.52.wgt" and .size > 0))' | grep -qx true || die 'Release Latest chưa trả về WGT đúng.'
 printf 'Nhập trong TizenBrew Installer > Cài đặt app từ GitHub: %s\n' "$DEST"
