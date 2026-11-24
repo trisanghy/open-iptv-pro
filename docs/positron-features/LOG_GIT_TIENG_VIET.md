@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.436 · **Trạng thái:** Chưa có bản phát hành
 
-Nguyên nhân: bộ kiểm thử Electron dài chủ động nhập 561 kênh metadata QA, nhưng audit P350 giả định danh sách luôn rỗng; 561 !== 0 làm capture thất bại dù fast audit P350 trống đạt. Thay đổi: thử trạng thái trống bằng lớp API tạm thời, khôi phục nguyên trạng IPTVState; thêm audit P351 so sánh có ba kênh QA với không nguồn, đo CTA/điều hướng/focus/không tràn ở 1920×1080 và 720×900, không phát stream.
+Feature priority: BLOCKER_FIX — khắc phục lỗi CI capture ngăn phát hành Mac/Windows, do 561 dữ liệu kênh QA tồn tại từ giai đoạn trước khiến bài audit trạng thái rỗng thất bại; bảo toàn dữ liệu nguồn và quyền riêng tư. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c7ce8c20280ecf33448bcdd95a3e2ac17d1a77d3)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
