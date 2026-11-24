@@ -86,5 +86,34 @@ test('Playback recognises extensionless HLS and avoids repeated relay when offli
  assert.match(js,/relayDownUntil<=Date\.now\(\)&&preferredDecoderAttempts\.relay/);
  assert.match(js,/relayDownUntil>Date\.now\(\)\|\|preferredDecoderAttempts\.relay/);
  assert.match(js,/if\(isServiceDown\)preferredDecoderAttempts\.relay=PREFERRED_HLS_RELAY_MAX/);
- assert.match(ui,/Samsung Tizen Edition · TizenBrew v0\.1\.50/);
+ assert.match(ui,/Samsung Tizen Edition · TizenBrew v0\.1\.51/);
+});
+
+test('Invalid health JSON rejects rather than hanging',async()=>{
+ const s=instance({fetch:()=>Promise.resolve({ok:true,json:()=>Promise.resolve({ok:false})})});
+ await assert.rejects(s.context.ensureRelayReady(()=>true),/Dịch vụ HLS/);
+ assert.match(s.context.relayHealthState,/sai giao thức/);
+});
+test('Switching channels does not cancel the shared service health check',async()=>{
+ let active=true,resolveHealth;const calls=[];
+ const s=instance({fetch:(url,options)=>{
+  calls.push({url,options});
+  if(url.endsWith('/health'))return new Promise(resolve=>{resolveHealth=resolve;});
+  return Promise.resolve({ok:true,json:()=>Promise.resolve({url:'relay-session'})});
+ }});
+ const old=s.context.requestLocalHlsSession({url:'https://example.org/a.m3u8'},0,()=>active);
+ active=false;
+ const current=s.context.requestLocalHlsSession({url:'https://example.org/b.m3u8'},0,()=>true);
+ resolveHealth({ok:true,json:()=>Promise.resolve({ok:true,transport:'local-hls',version:'0.1.43'})});
+ await assert.rejects(old,/Lượt phát đã kết thúc/);
+ await current;
+ assert.equal(calls.filter(x=>x.url.endsWith('/health')).length,1);
+ const sessions=calls.filter(x=>x.url.endsWith('/session'));
+ assert.equal(sessions.length,1);
+ assert.equal(JSON.parse(sessions[0].options.body).url,'https://example.org/b.m3u8');
+});
+test('Terminal errors expand diagnostics; OK retries the relay',()=>{
+ assert.match(ui,/is-playback-error \.playerdiag\{[^}]*bottom:15vh/);
+ assert.match(ui,/classList\.add\('is-playback-error'\)/);
+ assert.match(ui,/relayHealthState='thử lại theo yêu cầu OK'/);
 });

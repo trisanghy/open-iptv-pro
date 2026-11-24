@@ -1,4 +1,10 @@
-# Open IPTV Pro TV · TizenBrew v0.1.50 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.51 (OTA)
+
+## v0.1.51 — Bảng lỗi toàn màn hình và sửa kiểm tra relay
+
+- Khi phát lỗi cuối, mở rộng báo cáo với chữ lớn: tên kênh, nguồn, phiên bản, từng bộ phát, StartService, health relay, cooldown và số lượt thử. ←/→ cuộn báo cáo; ↑/↓ chuyển kênh; OK thử lại. Cast thủ công vẫn có nút riêng.
+- Sửa kiểm tra health dùng chung không bị hủy bởi kênh cũ; hủy đúng phiên phát cũ, không hủy kiểm tra dịch vụ. Phản hồi health sai định dạng không còn treo. OK cho thử lại dịch vụ ngay nếu đang cooldown.
+- Không thay đổi nguồn hoặc ghi token vào log; không mở rộng quyền truy cập relay. Chưa xác minh xem được kênh trên TV thật.
 
 ## v0.1.50 — Giai đoạn 1–2: lưu lõi phát tốt và chống đứng hình
 

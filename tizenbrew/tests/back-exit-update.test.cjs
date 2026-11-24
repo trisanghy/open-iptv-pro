@@ -8,10 +8,10 @@ function block(a,b){
  assert.ok(start>=0&&end>start,'Missing code boundary: '+a);
  return html.slice(start,end);
 }
-test('TizenBrew v0.1.50 metadata matches on-screen header',()=>{
- assert.equal(packageInfo.version,'0.1.50');
+test('TizenBrew v0.1.51 metadata matches on-screen header',()=>{
+ assert.equal(packageInfo.version,'0.1.51');
  assert.equal(packageInfo.version,packageInfo.tizenbrewEdition);
- assert.ok(html.includes('Samsung Tizen Edition · TizenBrew v0.1.50'));
+ assert.ok(html.includes('Samsung Tizen Edition · TizenBrew v0.1.51'));
 });
 test('Back from the main screen navigates real WebView history (not the proxy port)',()=>{
  const code=block('function exitModule(){','function refreshTizenBrewModules(){');
