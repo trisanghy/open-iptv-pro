@@ -575,3 +575,7 @@ html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-en
 }
 #poWatchFlowPanel .po-ai-source-cta:hover{background:#296b59;}
 #poWatchFlowPanel .po-ai-source-cta:focus-visible{outline:3px solid #a6ffdc;outline-offset:2px;}
+
+/* P352: explain the disabled Explore action without changing consent. */
+#poWatchFlowPanel #poAIExplore:disabled{opacity:1;color:#a8cbd1;line-height:1.15;}
+#poWatchFlowPanel #poAIExplore:disabled::after{content:'Cần bật học';display:block;font-size:10px;font-weight:500;color:#9bc7c3;line-height:1.2;margin-top:2px;}

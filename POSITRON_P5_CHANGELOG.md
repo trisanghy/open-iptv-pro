@@ -1,3 +1,10 @@
+## P5.1.352 / Electron 4.23.437 — Giải thích điều kiện Khám phá AI ngay trên nút (CANDIDATE)
+- Feature priority: FIX — ảnh Electron thật P351 cho thấy nút Khám phá AI bị vô hiệu hóa nhưng không giải thích điều kiện ngay tại nút.
+- Feature class: AI
+- User action: Khi chưa đồng ý học sở thích, nút hiển thị “Cần bật học”; khi đã bật, nhãn phụ biến mất. Không tự bật học, không đổi playlist hay phát kênh.
+- Electron screenshot: positron-p51352-explore-prerequisite-after-1920x1080-real.png
+- Evidence: audit native Electron 1920×1080 và 720×900; đang chờ CI. Bản candidate, không public release.
+
 ## P5.1.351 / Electron 4.23.436 — Cô lập nguồn kênh QA, sửa lỗi CI phát hành (ĐANG XÁC MINH)
 - Feature priority: BLOCKER_FIX — khắc phục lỗi CI capture ngăn phát hành Mac/Windows, do 561 dữ liệu kênh QA tồn tại từ giai đoạn trước khiến bài audit trạng thái rỗng thất bại; bảo toàn dữ liệu nguồn và quyền riêng tư.
 - Feature class: AI

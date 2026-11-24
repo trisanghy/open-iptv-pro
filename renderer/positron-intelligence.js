@@ -173,6 +173,8 @@
 
  const exploreMode=d.createElement('button');exploreMode.type='button';exploreMode.id='poAIExplore';
  exploreMode.textContent='Khám phá AI';exploreMode.setAttribute('aria-pressed','false');exploreMode.disabled=!enabled;
+ exploreMode.title='Khám phá AI chỉ khả dụng khi bật học sở thích';
+ exploreMode.setAttribute('aria-label','Khám phá AI — cần bật học sở thích');
  modeBar.append(channelsMode,upcomingMode,planMode,exploreMode);
  let upcomingOpen=false,planOpen=false,exploreOpen=false,foldersOpen=false,programmesOpen=false;
  let programmeQuery='';
