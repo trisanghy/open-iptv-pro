@@ -12,3 +12,12 @@ test('P354 setup hint follows consent without mutating it',()=>{
  assert.doesNotMatch(hint(true),/sau đó bật học/);
  assert.ok(js.includes("openSources.id='poAIAddLegalSource'"));
 });
+
+test('P354 Electron audit waits for consent controls and opens AI before initial state capture',()=>{
+ const audit=fs.readFileSync('scripts/positron-354-audit.cjs','utf8');
+ const initial=audit.indexOf('const initial=await state(page)');
+ assert.ok(initial>0);
+ for(const ready of ["waitForSelector('#poAIMLConsent'","waitForSelector('#poAIAlerts'","await page.keyboard.press('F6')","p.dataset.poAiActive==='true'"]){
+  const index=audit.indexOf(ready);assert.ok(index>=0&&index<initial,ready+' must precede baseline capture');
+ }
+});

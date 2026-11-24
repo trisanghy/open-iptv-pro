@@ -9,7 +9,11 @@ const state=page=>page.evaluate(k=>({raw:localStorage.getItem(k),web:localStorag
 const snap=page=>page.evaluate(()=>{const p=document.getElementById('poWatchFlowPanel'),e=p.querySelector('.po-ai-empty'),b=document.getElementById('poAIAddLegalSource'),r=e.getBoundingClientRect(),f=p.getBoundingClientRect();return {text:e.textContent,consent:document.getElementById('poAIMLConsent').checked,cta:!!b&&b.getBoundingClientRect().height>=44,inside:r.left>=f.left&&r.right<=f.right,overflow:p.scrollWidth>p.clientWidth+3||document.documentElement.scrollWidth>innerWidth+3};});
 async function run(page){
  fs.mkdirSync(dir,{recursive:true});
- await page.evaluate(()=>{window.IPTVState.setPage('tv');window.PositronWatchFlow.close();});
+ await page.waitForSelector('#poAIMLConsent',{state:'attached',timeout:30000});
+ await page.waitForSelector('#poAIAlerts',{state:'attached',timeout:30000});
+ await page.evaluate(()=>{window.IPTVState.setPage('tv');window.PositronWatchFlow.close();document.getElementById('poWatchFlowToggle').focus();});
+ await page.keyboard.press('F6');
+ await page.waitForFunction(()=>{const p=document.getElementById('poWatchFlowPanel');return p&&!p.hidden&&p.dataset.poAiActive==='true';},null,{timeout:15000});
  const initial=await state(page),all={};
  const consent=page.locator('#poAIMLConsent'),alert=page.locator('#poAIAlerts');
  await page.evaluate(()=>{const native=window.IPTVState;window.__p354Native=native;window.IPTVState=Object.freeze({...native,getChannels:()=>[],getCurrent:()=>null});});
