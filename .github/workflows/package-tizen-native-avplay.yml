@@ -1,83 +1,19 @@
-name: Package Samsung TV native AVPlay source (unsigned)
-
+name: Build Tizen Web Lab (unsigned)
 on:
   push:
     branches: [tizen-hybrid-experiment]
-    paths:
-      - tizen-native/**
-      - tizenbrew/index.html
-      - tizenbrew/phone.html
-      - tizenbrew/tests/**
-      - supabase-sdk.js
-      - hls.min.js
-      - dash.all.min.js
-      - mpegts.min.js
-      - assets/icon.png
-      - package.json
-      - .github/workflows/package-tizen-native-avplay.yml
   workflow_dispatch:
-
 permissions:
   contents: read
-
-concurrency:
-  group: native-tv-source-build
-  cancel-in-progress: true
-
 jobs:
-  build-source:
-    name: Build and validate unsigned Samsung Tizen WGT
+  web-lab:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - name: Bundle pinned mpegts.js 1.8.2 (MPEG-TS/FLV)
-        shell: bash
-        run: |
-          set -euo pipefail
-          # The npm release omits the precompiled dist/ file. Use the pinned
-          # official npm package CDN to obtain the versioned UMD bundle.
-          curl --fail --location --silent --show-error --retry 3 --max-time 45 \
-            'https://cdn.jsdelivr.net/npm/mpegts.js@1.8.2/dist/mpegts.min.js' -o mpegts.min.js ||
-          curl --fail --location --silent --show-error --retry 3 --max-time 45 \
-            'https://unpkg.com/mpegts.js@1.8.2/dist/mpegts.min.js' -o mpegts.min.js
-          node -e "const s=require('fs').readFileSync('mpegts.min.js','utf8');if(!s.includes('1.8.2')||s.length<200000)process.exit(1)"
-      - name: Build unsigned TV web application archive
-        run: python3 tizen-native/build.py
-      - name: Verify native-specific decoder and remote behavior
-        run: node --test tizen-native/native-variant.test.cjs
-      - name: Verify archive, AVPlay assets and version
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-          from zipfile import ZipFile
-          from xml.etree import ElementTree as ET
-          import json
-          path=Path('dist-tizen-native/Open-IPTV-Pro-TV-Native-UNSIGNED.wgt')
-          version=json.loads(Path('package.json').read_text())['version']
-          assert path.is_file() and path.stat().st_size>100_000
-          with ZipFile(path) as z:
-              assert z.testzip() is None
-              names=set(z.namelist())
-              assert {'config.xml','index.html','phone.html','hls.min.js','dash.all.min.js','mpegts.min.js','supabase-sdk.js','icon.png'}.issubset(names)
-              xml=ET.fromstring(z.read('config.xml'))
-              assert xml.attrib['version']==version
-              html=z.read('index.html').decode()
-              assert 'webapis.avplay' in html
-              assert 'hls.min.js' in html and 'dash.all.min.js' in html and 'mpegts.min.js' in html
-              assert b'1.8.2' in z.read('mpegts.min.js')
-              assert '$WEBAPIS/webapis/webapis.js' in html
-              assert 'sourceQR' in html
-          print('Unsigned Samsung TV WGT source archive passed static validation:',version)
-          PY
-      - name: Upload unsigned WGT for local Samsung signing
-        uses: actions/upload-artifact@v4
+      - run: node --test tizen-web/remote.test.cjs
+      - run: python3 tizen-native/build.py
+      - uses: actions/upload-artifact@v4
         with:
-          name: Open-IPTV-Pro-TV-Native-UNSIGNED
-          path: |
-            dist-tizen-native/Open-IPTV-Pro-TV-Native-UNSIGNED.wgt
-            tizen-native/README.md
+          name: Open-IPTV-Pro-TV-Web-Lab-UNSIGNED
+          path: dist-tizen-native/*.wgt
           if-no-files-found: error
-          retention-days: 30

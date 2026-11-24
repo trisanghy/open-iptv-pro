@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns="http://www.w3.org/ns/widgets"
-        xmlns:tizen="http://tizen.org/ns/widgets"
-        id="https://trisanghy.github.io/open-iptv-pro/hybrid-lab"
-        version="0.1.27"
-        viewmodes="maximized">
-    <name>Open IPTV Pro TV Hybrid Lab</name>
-    <content src="index.html"/>
-    <icon src="icon.png"/>
-    <access origin="*" subdomains="true"/>
-    <tizen:application id="OIPTVLAB01.OpenIPTVLab" package="OIPTVLAB01" required_version="3.0"/>
-    <tizen:profile name="tv-samsung"/>
-    <tizen:privilege name="http://tizen.org/privilege/internet"/>
-    <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
-    <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
-    <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable"/>
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="https://trisanghy.github.io/open-iptv-pro/hybrid-lab" version="0.1.53" viewmodes="maximized">
+<name>Open IPTV Pro TV Web Lab</name><content src="index.html"/><icon src="icon.png"/>
+<access origin="https://trisanghy.github.io" subdomains="false"/>
+<tizen:allow-navigation>trisanghy.github.io</tizen:allow-navigation>
+<tizen:application id="OIPTVLAB01.OpenIPTVLab" package="OIPTVLAB01" required_version="3.0"/>
+<tizen:profile name="tv-samsung"/><tizen:privilege name="http://tizen.org/privilege/internet"/>
+<tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable"/>
 </widget>
