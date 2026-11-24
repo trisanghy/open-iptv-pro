@@ -704,7 +704,7 @@ Feature priority: NEW — Cho phép ẩn nhóm chỉ có dưới 5 kênh trong t
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45143108679) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45140728914/artifacts/14801697960) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45140728914/artifacts/14801199921) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45140728914/artifacts/14801079737) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/67a11cd0784212bfe9197ae5d9127772071d3dd4)
+[CI tổng hợp](https://github.com/trisanghy/open-iptv-pro/actions/runs/45143108679) · [Tải Mac Apple Silicon (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45141677974/artifacts/14801668377) · [Tải Mac Intel (ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45141677974/artifacts/14802876934) · [Tải Windows x64 (Setup + Portable ZIP)](https://github.com/trisanghy/open-iptv-pro/actions/runs/45141677974/artifacts/14802516933) · [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/67a11cd0784212bfe9197ae5d9127772071d3dd4)
 
 </details>
 
