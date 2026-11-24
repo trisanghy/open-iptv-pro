@@ -1,0 +1,61 @@
+name: Verify isolated Tizen 6 WGT installer source
+on:
+  push:
+    branches: [tizen-wgt-installer]
+    paths:
+      - tizen-native/**
+      - tizenbrew/index.html
+      - tizenbrew/phone.html
+      - hls.min.js
+      - dash.all.min.js
+      - mpegts.min.js
+      - supabase-sdk.js
+      - assets/icon.png
+      - package.json
+      - .github/workflows/verify-tizen-wgt-installer.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build independent TV WGT
+        run: python3 tizen-native/build.py
+      - name: Gate manifest, remote UI, playback engines and signature state
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, zipfile, xml.etree.ElementTree as ET
+          p=pathlib.Path('dist-tizen-native/Open-IPTV-Pro-TV-Native-UNSIGNED.wgt')
+          version=json.loads(pathlib.Path('package.json').read_text())['version']
+          with zipfile.ZipFile(p) as z:
+              assert z.testzip() is None
+              names=set(z.namelist())
+              required={'config.xml','index.html','phone.html','icon.png','supabase-sdk.js','hls.min.js','dash.all.min.js','mpegts.min.js'}
+              assert required <= names
+              assert not {'author-signature.xml','signature1.xml'} & names, 'This artifact must remain unsigned'
+              root=ET.fromstring(z.read('config.xml'))
+              t='{http://tizen.org/ns/widgets}'
+              assert root.attrib['version']==version
+              assert root.find(t+'profile').attrib['name']=='tv-samsung'
+              app=root.find(t+'application')
+              assert app.attrib['id']=='OIPTVPROTV.OpenIPTVPro'
+              assert tuple(map(int,app.attrib['required_version'].split('.'))) <= (6,0)
+              privileges={p.attrib['name'] for p in root.findall(t+'privilege')}
+              assert {'http://tizen.org/privilege/internet','http://tizen.org/privilege/tv.inputdevice','http://tizen.org/privilege/application.launch'} <= privileges
+              html=z.read('index.html').decode()
+              for token in ('webapis.avplay','startAvplay','hls.min.js','dash.all.min.js','mpegts.min.js','nativeHtml5Play','sourceQR','onkeydown'):
+                  assert token in html, token
+              assert '1.8.2' in z.read('mpegts.min.js').decode(errors='replace')
+          print(f'PASS: WGT {version}, Tizen 6 manifest, remote UI, 5 engines, unsigned as declared')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Tizen-Installer-UNSIGNED
+          path: dist-tizen-native/Open-IPTV-Pro-TV-Native-UNSIGNED.wgt
+          if-no-files-found: error
+          retention-days: 30
