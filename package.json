@@ -1,11 +1,11 @@
 {
   "name": "open-iptv-pro-tv-web-lab",
-  "version": "0.1.57",
-  "description": "Giao diện WGT, trình phát receiver web, tự mở fullscreen video khi phát.",
+  "version": "0.1.58",
+  "description": "Trang GitHub Pages riêng, giao diện WGT, phát video fullscreen kiểu TV receiver.",
   "packageType": "mods",
-  "appName": "Open IPTV Pro TV Web Lab 057",
-  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tizen/hosted-player.html?tv-lab=057",
-  "main": "tizen-web/wgt-receiver-v057.js",
+  "appName": "Open IPTV Pro TV Web Lab",
+  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tv-web-lab.html",
+  "main": "tizen-web/pages-launcher.js",
   "keys": [
     "ChannelUp",
     "ChannelDown",
@@ -17,5 +17,5 @@
     "ColorF1Green"
   ],
   "license": "MIT",
-  "tizenbrewEdition": "0.1.57"
+  "tizenbrewEdition": "0.1.58"
 }
