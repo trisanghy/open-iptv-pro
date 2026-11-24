@@ -360,6 +360,20 @@ def run_jobs(run):
     return data.get("jobs", [])
 
 
+def ci_result(run):
+    # A reusable changelog job is not part of native QA. In its own run, the
+    # required jobs already finished although the workflow itself is in progress.
+    jobs = [j for j in run_jobs(run) if j.get("name") in ("test", "capture")
+            or j.get("name", "").startswith("build (")]
+    if any(j.get("conclusion") == "failure" for j in jobs):
+        return "completed", "failure"
+    if len(jobs) >= 5 and all(j.get("conclusion") == "success" for j in jobs):
+        return "completed", "success"
+    if jobs and any(j.get("status") != "completed" for j in jobs):
+        return "in_progress", None
+    return run.get("status"), run.get("conclusion")
+
+
 def artifact_link(run, artifact):
     return ART_ROOT + str(run["id"]) + "/artifacts/" + str(artifact["id"])
 
@@ -480,8 +494,9 @@ def attach_actions_evidence(rows):
     for n, runs in full_by_version.items():
         row = by_number[n]
         latest = runs[0]
+        ci_status, ci_conclusion = (ci_result(latest) if latest["id"] == int(os.environ.get("GITHUB_RUN_ID", "0")) else (latest.get("status"), latest.get("conclusion")))
         row["ci"] = {"url": ART_ROOT + str(latest["id"]),
-                     "status": latest.get("status"), "conclusion": latest.get("conclusion"),
+                     "status": ci_status, "conclusion": ci_conclusion,
                      "commit": latest.get("head_sha", "")}
         if not row.get("commit"):
             row["commit"] = latest.get("head_sha", "")
