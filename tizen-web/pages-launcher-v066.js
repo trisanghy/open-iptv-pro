@@ -1,0 +1,1 @@
+(function(){if(window.top!==window)return;if(location.origin==='https://trisanghy.github.io'&&location.pathname==='/open-iptv-pro/tv-web-v066.html')return;location.replace("https://trisanghy.github.io/open-iptv-pro/tv-web-v066.html");})();

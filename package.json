@@ -1,11 +1,11 @@
 {
   "name": "open-iptv-pro-tv-web-lab",
-  "version": "0.1.65",
-  "description": "Trang danh sách WGT độc lập; chuyển sang bản sao trang TV receiver gốc để phát.",
+  "version": "0.1.66",
+  "description": "Receiver TV gốc ở trang chính; danh sách WGT biệt lập, gọi phát trực tiếp từ OK.",
   "packageType": "mods",
-  "appName": "Open IPTV Pro TV Web 0.1.65",
-  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tv-web-v065.html",
-  "main": "tizen-web/pages-launcher-v065.js",
+  "appName": "Open IPTV Pro TV Web 0.1.66",
+  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tv-web-v066.html",
+  "main": "tizen-web/pages-launcher-v066.js",
   "keys": [
     "ChannelUp",
     "ChannelDown",
@@ -17,5 +17,5 @@
     "ColorF1Green"
   ],
   "license": "MIT",
-  "tizenbrewEdition": "0.1.65"
+  "tizenbrewEdition": "0.1.66"
 }

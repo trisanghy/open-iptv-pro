@@ -1,32 +1,26 @@
 'use strict';
 const {test}=require('node:test'),a=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const read=f=>fs.readFileSync(f,'utf8');
-const original=read('tizen-web/source-tv-receiver-v065.js'),r=read('tv-web-player-receiver-v065.js'),s=read('tv-web-v065.js'),h=read('tv-web-v065.html'),ph=read('tv-web-player-v065.html'),page=read('tizen-web/source-tv-v065.html');
-test('Receiver identical except final local entry point',()=>{
- const end=' void boot();\n})(window);';
- a.ok(original.endsWith(end+'\n')||original.endsWith(end));
- const prefix=original.slice(0,original.lastIndexOf(end));
- a.ok(r.startsWith(prefix));a.match(r,/void loadVideo\(valid,payload\.name,payload\.id\)/);
- a.ok(ph.includes(page.match(/<video id="tvVideo"[^>]*><\/video>/)[0]));
+const original=read('tizen-web/source-tv-receiver-v065.js'),r=read('tv-web-receiver-v066.js'),s=read('tv-web-list-v066.js'),h=read('tv-web-list-v066.html'),ph=read('tv-web-v066.html'),page=read('tizen-web/source-tv-v065.html');
+test('Original receiver and video DOM retained in top document',()=>{
+ const end=' void boot();\n})(window);',prefix=original.slice(0,original.lastIndexOf(end));
+ a.ok(r.startsWith(prefix));a.ok(ph.includes(page.match(/<video id="tvVideo"[^>]*><\/video>/)[0]));
  a.ok(ph.includes(page.match(/<meta http-equiv="Content-Security-Policy"[^>]*>/)[0]));
- a.match(ph,/web-cast-v2\.css\?v=tv-history-keyboard-20261122d/);
- for(const f of ['supabase-sdk.js','hls.min.js','dash.all.min.js','web-tv-pair.js?v=tv-local-handoff-20261122d'])a.ok(ph.includes('src="'+f+'"'));
- a.doesNotMatch(h,/<video|src="(?:hls\.min|dash\.all|tv-web-player-receiver)/);a.doesNotMatch(s,/OpenIPTVTVWebPlayer|function togglePlayback|function closePlayer/);
- a.doesNotMatch(ph,/src="tv-web-v065.js"/);
- new vm.Script(r);new vm.Script(s);
+ a.match(ph,/<iframe id="tvChannelList"/);a.doesNotMatch(h,/<video|src="(?:hls\.min|dash\.all|tv-web-receiver)/);
+ a.match(r,/if\(card\)card\.click\(\);\s*else void loadVideo/);new vm.Script(r);new vm.Script(s);
 });
-test('Channel selection navigates to independent document without exposing URL in address',()=>{
- const i=s.indexOf('function play(c)'),j=s.indexOf('function restorePlayedChannel(',i);
- const data={},calls=[];
- const env={window:{OpenIPTVTVPair:{validateUrl:x=>x}},sessionStorage:{setItem:(k,v)=>data[k]=v,removeItem:k=>delete data[k]},Date,stopHomePreview(){},notify(){},location:{assign:u=>calls.push(u)}};
- vm.runInNewContext(s.slice(i,j),env);
- env.play({id:'1',name:'test',url:'https://example.org/test?secret=abc'});
- a.deepEqual(calls,['https://trisanghy.github.io/open-iptv-pro/tv-web-player-v065.html']);
- a.equal(JSON.parse(data['openiptv-tv-web-handoff-v1']).url,'https://example.org/test?secret=abc');
+test('Channel OK calls parent receiver synchronously, no page or URL handoff',()=>{
+ const i=s.indexOf('function play(c)'),j=s.indexOf('window.OpenIPTVTVWebList=',i),calls=[];
+ const env={window:{OpenIPTVTVPair:{validateUrl:x=>x},parent:{OpenIPTVTVWebLocal:{play:x=>calls.push(x)}}},stopHomePreview(){},notify(){}};
+ vm.runInNewContext(s.slice(i,j),env);env.play({id:'1',name:'Test',url:'https://example.org/test'});
+ a.equal(calls.length,1);a.equal(calls[0].url,'https://example.org/test');a.doesNotMatch(s.slice(i,j),/postMessage|location\.assign|setTimeout|sessionStorage/);
 });
-test('Module launcher does not redirect player document',()=>{
- const p=JSON.parse(read('package.json'));a.match(p.websiteURL,/tv-web-v065\.html$/);
- for(const path of ['/open-iptv-pro/tv-web-v065.html','/open-iptv-pro/tv-web-player-v065.html']){
-  let dest='';vm.runInNewContext(read(p.main),{location:{origin:'https://trisanghy.github.io',pathname:path,replace:u=>dest=u}});a.equal(dest,'');
- }
+test('Exact history source invokes original card; other source invokes original loadVideo',()=>{
+ const i=r.indexOf(' function bootLocalList(){'),j=r.indexOf(' bootLocalList();',i),calls=[],listeners={};
+ const frame={contentWindow:{focus(){}},addEventListener(){}},video={focus(){},addEventListener(){}};
+ const node={addEventListener(){},textContent:''};
+ const env={root:{addEventListener(){},history:{length:1}},d:{body:{classList:{add(){},remove(){}}},addEventListener(){}},$:(id)=>id==='tvChannelList'?frame:node,video,cinemaButton:node,MutationObserver:class{observe(){}},safeHistoryUrl:x=>x,show:x=>calls.push(x),watchHistory:[{url:'https://example.org/a'}],historyCards:()=>[{click:()=>calls.push('original card')}],loadVideo:(u)=>calls.push(u),cleanupPlayer(){}};
+ vm.runInNewContext(r.slice(i,j)+'bootLocalList();',env);
+ env.root.OpenIPTVTVWebLocal.play({url:'https://example.org/a'});a.ok(calls.includes('original card'));
+ env.root.OpenIPTVTVWebLocal.play({url:'https://example.org/b'});a.ok(calls.includes('https://example.org/b'));a.equal(frame.hidden,true);
 });
