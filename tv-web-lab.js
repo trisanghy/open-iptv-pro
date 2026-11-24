@@ -1,1 +1,1 @@
-location.replace("https://trisanghy.github.io/open-iptv-pro/tv-web-v062.html");
+location.replace("https://trisanghy.github.io/open-iptv-pro/tv-web-v063.html");
