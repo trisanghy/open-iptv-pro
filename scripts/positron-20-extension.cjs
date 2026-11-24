@@ -11889,6 +11889,12 @@ async function runTwenty(page){
  await require('./positron-344-audit.cjs').run(page);
  await require('./positron-345-audit.cjs').run(page);
  await require('./positron-346-audit.cjs').run(page);
+ // P351: repair P350 full-suite fixture clash, verify native populated vs empty
+ // source mode and restore IPTVState without deleting existing channel data.
+ // positron-p51351-source-state-isolation-before-1920x1080-real.png
+ // positron-p51351-source-state-isolation-after-1920x1080-real.png
+ // positron-p51351-source-state-isolation-before-720x900-real.png
+ // positron-p51351-source-state-isolation-after-720x900-real.png
  // P350: native AI empty state links to lawful source management.
  // positron-p51350-legal-source-onboarding-before-1920x1080-real.png
  // positron-p51350-legal-source-onboarding-after-1920x1080-real.png

@@ -1,4 +1,8 @@
 ## P5.1.351 / Electron 4.23.436 — Cô lập nguồn kênh QA, sửa lỗi CI phát hành (ĐANG XÁC MINH)
+- Feature priority: BLOCKER_FIX — khắc phục lỗi CI capture ngăn phát hành Mac/Windows, do 561 dữ liệu kênh QA tồn tại từ giai đoạn trước khiến bài audit trạng thái rỗng thất bại; bảo toàn dữ liệu nguồn và quyền riêng tư.
+- Feature class: AI
+- Electron screenshot: positron-p51351-source-state-isolation-after-720x900-real.png
+- Evidence: Real Electron/CDP compare two distinct rendered playlist conditions at 1920×1080 and 720×900 with four PNG, 29 checks, SHA256, CTA focus and native state restoration; still pending new CI screenshots.
 - Nguyên nhân: bộ kiểm thử Electron dài chủ động nhập 561 kênh metadata QA, nhưng audit P350 giả định danh sách luôn rỗng; 561 !== 0 làm capture thất bại dù fast audit P350 trống đạt.
 - Thay đổi: thử trạng thái trống bằng lớp API tạm thời, khôi phục nguyên trạng IPTVState; thêm audit P351 so sánh có ba kênh QA với không nguồn, đo CTA/điều hướng/focus/không tràn ở 1920×1080 và 720×900, không phát stream.
 - Quy trình: sửa tên artifact release cũ P341, cập nhật version/nhãn P351 và xác minh chứng cứ riêng; không force push, không đụng nhánh khác.
