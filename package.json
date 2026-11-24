@@ -1,7 +1,7 @@
 {
   "name": "open-iptv-pro-tv-web-lab",
-  "version": "0.1.62",
-  "description": "Lối tắt tùy chọn tới website TV độc lập, không hybrid, không dịch vụ nền.",
+  "version": "0.1.63",
+  "description": "Website TV: giao diện WGT, lõi phát sao chép nguyên bản từ receiver TV mã 6 số.",
   "packageType": "mods",
   "appName": "Open IPTV Pro TV Web",
   "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tv-web.html",
@@ -17,5 +17,5 @@
     "ColorF1Green"
   ],
   "license": "MIT",
-  "tizenbrewEdition": "0.1.62"
+  "tizenbrewEdition": "0.1.63"
 }
