@@ -1,12 +1,12 @@
 'use strict';
 const {test}=require('node:test'),a=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const h=fs.readFileSync('tv-web-v063.html','utf8'),s=fs.readFileSync('tv-web-v063.js','utf8'),r=fs.readFileSync('tv-web-receiver-v063.js','utf8'),original=fs.readFileSync('tizen-web/source-tv-receiver-v063.js','utf8'),page=fs.readFileSync('tizen-web/source-tv-v063.html','utf8');
+const h=fs.readFileSync('tv-web-v064.html','utf8'),s=fs.readFileSync('tv-web-v064.js','utf8'),r=fs.readFileSync('tv-web-receiver-v064.js','utf8'),original=fs.readFileSync('tizen-web/source-tv-receiver-v063.js','utf8'),page=fs.readFileSync('tizen-web/source-tv-v063.html','utf8');
 test('Original TV receiver playback core is copied byte for byte',()=>{
  const start=original.indexOf(' function leaveCinema(){'),end=original.indexOf(' function handleCommand(command)',start);
  a.ok(start>=0&&end>start);a.ok(r.includes(original.slice(start,end)));
  const video=page.match(/<video id="tvVideo"[^>]*><\/video>/)[0];a.ok(h.includes(video));
  for(const src of ['supabase-sdk.js','hls.min.js','dash.all.min.js','web-tv-pair.js?v=tv-local-handoff-20261122d'])a.ok(h.includes('src="'+src+'"'));
- a.match(h,/id="channels"/);a.match(h,/TV Web · v0\.1\.63/);a.doesNotMatch(h,/id="tvPairPin"|id="webLabLegacyHooks"/);
+ a.match(h,/id="channels"/);a.match(h,/TV Web · v0\.1\.64/);a.doesNotMatch(h,/id="tvPairPin"|id="webLabLegacyHooks"/);
  a.doesNotMatch(s,/new Hls|new root\.Hls|function startNativeVideo|function stagesFor|function loadVideo/);
  a.doesNotMatch(r,/createReceiver\(|void boot\(/);new vm.Script(s);new vm.Script(r);
 });
@@ -29,9 +29,28 @@ test('UI delegates directly without another engine or source-selection layer',()
 
 test('Module opens versioned release directly without cached canonical redirect',()=>{
  const p=JSON.parse(fs.readFileSync('package.json','utf8'));
- a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-v063.html');
+ a.equal(p.websiteURL,'https://trisanghy.github.io/open-iptv-pro/tv-web-v064.html');
  for(const path of ['tizenbrew/index.html','tizenbrew/bootstrap.html',p.main]){
   const raw=fs.readFileSync(path,'utf8');const code=path.endsWith('.html')?raw.split('<script>')[1].split('</script>')[0]:raw;
   let dest='';vm.runInNewContext(code,{location:{origin:'https://trisanghy.github.io',pathname:'/open-iptv-pro/tv-web-v062.html',replace:u=>dest=u}});a.equal(dest,p.websiteURL);
  }
+});
+
+test('Read exact working URL from original receiver history without modifying history or substituting silently',()=>{
+ const start=s.indexOf('function receiverHistorySource('),end=s.indexOf('function updateReceiverChoice(',start);
+ const env={window:{OpenIPTVTVPair:{validateUrl:u=>/^https:\/\//.test(u)?u:''}}};
+ vm.runInNewContext(s.slice(start,end),env);
+ const rows=[{name:'Test',url:'https://example.org/old',watchedAt:1},{name:' test ',url:'https://example.org/working',watchedAt:3},{name:'Other',url:'https://example.org/unrelated',watchedAt:9}];
+ const storage={getItem:key=>{a.equal(key,'openiptv-tv-history-v1');return JSON.stringify(rows);}};
+ a.equal(env.receiverHistorySource({name:'Test',url:'https://example.org/new'},storage).url,rows[1].url);
+ a.equal(env.receiverHistorySource({name:'Test',url:rows[0].url},storage).same,true);
+ a.equal(env.receiverHistorySource({name:'Missing',url:'https://example.org/new'},storage),null);
+ a.match(s,/receiverHistoryBtn'\)\.onclick/);
+ a.doesNotMatch(h,/<meta name="referrer" content="no-referrer">/);
+});
+test('Ignore fullscreen events before native fullscreen was actually entered',()=>{
+ const start=s.indexOf('var nativeFullscreenSeen=false;'),end=s.indexOf("document.addEventListener('fullscreenchange'",start);
+ let closed=0;const env={playing:{},document:{body:{classList:{contains:()=>true}}},closePlayer:()=>closed++};
+ vm.runInNewContext(s.slice(start,end),env);
+ env.browserFullscreenEnded();a.equal(closed,0);env.document.fullscreenElement={};env.browserFullscreenEnded();env.document.fullscreenElement=null;env.browserFullscreenEnded();a.equal(closed,1);
 });
