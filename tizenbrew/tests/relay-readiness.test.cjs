@@ -86,5 +86,5 @@ test('Playback recognises extensionless HLS and avoids repeated relay when offli
  assert.match(js,/relayDownUntil<=Date\.now\(\)&&preferredDecoderAttempts\.relay/);
  assert.match(js,/relayDownUntil>Date\.now\(\)\|\|preferredDecoderAttempts\.relay/);
  assert.match(js,/if\(isServiceDown\)preferredDecoderAttempts\.relay=PREFERRED_HLS_RELAY_MAX/);
- assert.match(ui,/Samsung Tizen Edition · TizenBrew v0\.1\.49/);
+ assert.match(ui,/Samsung Tizen Edition · TizenBrew v0\.1\.50/);
 });

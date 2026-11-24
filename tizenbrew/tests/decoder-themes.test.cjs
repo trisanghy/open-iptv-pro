@@ -84,9 +84,9 @@ function launch(address,verified){
  context.startPlaybackStream({id:'test',name:'Test',url:address},7);
  return calls;
 }
-test('manifest streams select packaged HLS.js and DASH.js before AVPlay',()=>{
+test('manifest streams select packaged decoders unless a verified engine exists',()=>{
  assert.deepEqual(launch('https://example.org/a.m3u8'),['hlsjs']);
- assert.deepEqual(launch('https://example.org/live.m3u8?token=x','avplay'),['hlsjs']);
+ assert.deepEqual(launch('https://example.org/live.m3u8?token=x','avplay'),['avplay'],'verified route takes precedence over file extension');
  assert.deepEqual(launch('https://example.org/program.mpd'),['dashjs']);
  assert.deepEqual(launch('https://example.org/movie.mp4'),['avplay']);
  assert.deepEqual(launch('https://example.org/a.m3u8','relay'),['relay'],'verified HLS relay avoids repeating known-bad direct CORS route');
