@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.353 — Đồng bộ trạng thái quyền học AI
+## P5.1.354 — Hướng dẫn thiết lập AI theo trạng thái
+
+**Ứng dụng:** 4.23.439 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — hướng dẫn thiết lập cá nhân hóa theo quyền học hiện tại, giúp người dùng chưa có playlist hiểu bước tiếp theo và vẫn dùng IPTV nếu từ chối học. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/cfca624e1262cd30189740e2a94282c62063f30a)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.353 — Đồng bộ trạng thái quyền học của Khám phá AI (CANDIDATE)
 
 **Ứng dụng:** 4.23.438 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: BLOCKER_FIX — audit CI P352 chứng minh trạng thái quyền riêng tư bị báo sai cho trình đọc màn hình và tooltip khi người dùng đã đồng ý học; sửa đồng bộ và bổ sung kiểm thử chuyển trạng thái thật, tránh báo cáo quyền học sai. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/238d371edffd7bd70c6080d81ed0462dff6991e6)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/cdeedb64044770386c312eeba3928a98cff5bcf4)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.352 — Giải thích điều kiện Khám phá AI ngay trên nút (CANDIDATE)
 
@@ -2222,7 +2231,6 @@ Giới hạn vị trí thông báo trong cửa sổ hẹp để không che thanh
 
 Các nút tab thư viện kênh và chế độ xem dùng biểu tượng SVG thay cho ký tự phụ thuộc phông chữ. Thao tác và nhãn hỗ trợ truy cập được giữ nguyên.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ac4670a51959aef9a9e6917c85495184c460bf1a)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.106 — Bỏ thanh cuộn ngang thừa trong WatchFlow trống
