@@ -16,3 +16,15 @@ test('Receiver decoder stages and fullscreen',()=>{
  a.deepEqual(Array.from(e.stages('https://example.org/a.mpd')),['dashjs','native']);
  a.match(s,/Promise\.all\(jobs\)[\s\S]*?webStages=stagesFor/);a.match(s,/MANIFEST_PARSED[\s\S]*?webEngineReady=true;webPlayReady/);a.match(s,/playbackReady\(token\);enterWebCinema\(video\)/);
 });
+
+test('Legacy v0.1.54 OTA validator accepts both navigation-only entry points',()=>{
+ for(const f of ['tizenbrew/index.html','tizenbrew/bootstrap.html']){
+  const html=fs.readFileSync(f,'utf8');
+  // Exact validator used by the installed bootstrap.
+  a.ok(html.indexOf('Open IPTV Pro')>=0&&html.indexOf('function play(c)')>=0&&/<html[\s>]/i.test(html));
+  let dest='',calls=0;
+  vm.runInNewContext(html.match(/<script>([\s\S]*?)<\/script>/)[1],{location:{replace(u){dest=u;calls++;}}});
+  a.equal(dest,p.websiteURL);a.equal(calls,1);
+  a.doesNotMatch(html,/<video|<iframe|fetch\(|new Hls|127\.0\.0\.1/);
+ }
+});
