@@ -9,9 +9,8 @@ jobs:
     if: github.repository == 'trisanghy/open-iptv-pro' && github.ref_name == 'Positron'
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    concurrency:
-      group: positron-feature-pages
-      cancel-in-progress: false
+    # Each completed QA/build must get its own refresh, without cancelling a queued job.
+    # The retry below serializes publishing safely against the latest branch HEAD.
     steps:
       - uses: actions/checkout@v4
         with:
