@@ -1,11 +1,11 @@
 {
   "name": "open-iptv-pro-tv-web-lab",
-  "version": "0.1.56",
-  "description": "Giao diện WGT TV trên HTTPS, trình phát port từ receiver TV mã 6 số, không ghép đôi.",
+  "version": "0.1.57",
+  "description": "Giao diện WGT, trình phát receiver web, tự mở fullscreen video khi phát.",
   "packageType": "mods",
-  "appName": "Open IPTV Pro TV Web Lab",
-  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tizen/hosted-player.html?tv-lab=056",
-  "main": "tizen-web/wgt-receiver-v056.js",
+  "appName": "Open IPTV Pro TV Web Lab 057",
+  "websiteURL": "https://trisanghy.github.io/open-iptv-pro/tizen/hosted-player.html?tv-lab=057",
+  "main": "tizen-web/wgt-receiver-v057.js",
   "keys": [
     "ChannelUp",
     "ChannelDown",
@@ -17,5 +17,5 @@
     "ColorF1Green"
   ],
   "license": "MIT",
-  "tizenbrewEdition": "0.1.56"
+  "tizenbrewEdition": "0.1.57"
 }

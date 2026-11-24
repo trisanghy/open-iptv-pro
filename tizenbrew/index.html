@@ -802,6 +802,10 @@ body #player.is-playback-error #browserFallback{top:auto;bottom:6.6vh;left:4vw;r
 body #player.is-playback-error .playerfoot{bottom:0;padding:1.1vh 3vw;font-size:18px;z-index:8;background:#151923;white-space:normal;line-height:1.2}
 body #player.is-playback-error video,body #player.is-playback-error #avplayObject{visibility:hidden}
 body #player.is-playback-error #channelPicker{z-index:12}
+/* The website's cinema mode is video-only, not the legacy TV status overlay. */
+body.web-tv-cinema #player.is-playing .playerhead,body.web-tv-cinema #player.is-playing .playerfoot,body.web-tv-cinema #player.is-playing .playerdiag,body.web-tv-cinema #player.is-playing #playerStatus{display:none!important}
+body.web-tv-cinema #player.is-playing #video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:black}
+#video:fullscreen,#video:-webkit-full-screen{width:100%;height:100%;object-fit:contain;background:#000}
 </style>
 <!-- Web-only: no Samsung AVPlay API -->
 </head><body data-theme="dark">
@@ -812,7 +816,7 @@ body #player.is-playback-error #channelPicker{z-index:12}
 <rect width="1024" height="1024" rx="220" fill="#ffffff"/>
 <path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
 </svg></div>
-    <div><strong>Open IPTV Pro</strong><p>TV Web Lab · v0.1.56</p></div>
+    <div><strong>Open IPTV Pro</strong><p>TV Web Lab · v0.1.57</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
@@ -2376,7 +2380,7 @@ function startPlaybackWatchdog(token){
  * Only one instance is attached at a time, with a token for stale callbacks.
  * The framework does not bypass DRM, CORS or unavailable hardware codecs. */
 var TV_PLAYBACK_CORE={
- version:'0.1.56',
+ version:'0.1.57',
  libraries:{hlsjs:'1.6.15',dashjs:'5.3.0',mpegts:'1.8.2',native:'TV browser',avplay:'Samsung firmware'},
  preferredRoute:function(address){return dashAddress(address)?'dashjs':hlsAddress(address)?'hlsjs':mpegtsAddress(address)?'mpegts':'';},
  engines:{
@@ -2522,6 +2526,44 @@ function clearPlaybackGrace(){
  * attach/manifest/STREAM_INITIALIZED readiness, adapted to WGT UI sessions.
  * No pairing, iframe, AVPlay or relay; the chosen channel is passed directly. */
 var webStageGeneration=0,webStages=[],webStageIndex=-1,webStage='',webEngineReady=false,webPendingGesture=false;
+var webFullscreenAttempted=false,webFullscreenActive=false;
+function enterWebCinema(video){
+ if(!video||!playbackConfirmed||byId('player').hidden)return;
+ document.body.classList.add('web-tv-cinema');
+ if(webFullscreenAttempted)return;
+ webFullscreenAttempted=true;
+ // Match tv.html receiver: real video fullscreen first, CSS cinema if denied.
+ try{
+  var result;
+  if(typeof video.requestFullscreen==='function')result=video.requestFullscreen();
+  else if(typeof video.webkitEnterFullscreen==='function')video.webkitEnterFullscreen();
+  else if(typeof video.webkitRequestFullscreen==='function')result=video.webkitRequestFullscreen();
+  else if(typeof document.documentElement.requestFullscreen==='function')result=document.documentElement.requestFullscreen();
+  if(result&&result.catch)result.catch(function(){});
+ }catch(e){}
+}
+function leaveWebCinema(){
+ document.body.classList.remove('web-tv-cinema');
+ webFullscreenAttempted=false;webFullscreenActive=false;
+ try{
+  var active=document.fullscreenElement||document.webkitFullscreenElement;
+  if(active){
+   var exit=document.exitFullscreen||document.webkitExitFullscreen;
+   if(exit){var result=exit.call(document);if(result&&result.catch)result.catch(function(){});}
+  }else{
+   var video=byId('video');
+   if(video&&video.webkitDisplayingFullscreen&&video.webkitExitFullscreen)video.webkitExitFullscreen();
+  }
+ }catch(e){}
+}
+function onWebFullscreenChange(){
+ var active=document.fullscreenElement||document.webkitFullscreenElement;
+ if(active){webFullscreenActive=true;return;}
+ if(webFullscreenActive){webFullscreenActive=false;if(playing&&!byId('player').hidden)closePlayer();}
+}
+document.addEventListener('fullscreenchange',onWebFullscreenChange);
+document.addEventListener('webkitfullscreenchange',onWebFullscreenChange);
+
 function webStageActive(token,attempt,video){
  return playbackActive(token)&&attempt===webStageGeneration&&isActiveHtml5Video(video,token);
 }
@@ -2564,11 +2606,11 @@ function webNextStage(token){
  var video=prepareHtml5Video(token);
  video.onplaying=function(){
   if(!webStageActive(token,attempt,video)||video.paused||video.readyState<2)return;
-  clearPlaybackTimer();webPendingGesture=false;playbackWaitingSince=0;playbackReady(token);
+  clearPlaybackTimer();webPendingGesture=false;playbackWaitingSince=0;playbackReady(token);enterWebCinema(video);
  };
  video.ontimeupdate=function(){
   if(webStageActive(token,attempt,video)&&!video.paused&&video.readyState>=2){
-   clearPlaybackTimer();playbackReady(token);notePlaybackProgress(token,Number(video.currentTime));
+   clearPlaybackTimer();playbackReady(token);enterWebCinema(video);notePlaybackProgress(token,Number(video.currentTime));
   }
  };
  video.onerror=function(){
@@ -2611,10 +2653,19 @@ function startPlaybackStream(channel,token){
  try{url=new URL(channel.url);}catch(e){webFinalFailure(token,'URL không hợp lệ');return;}
  if(url.protocol!=='https:'&&url.protocol!=='http:'){webFinalFailure(token,'URL không hợp lệ');return;}
  if(url.protocol==='http:'&&location.protocol==='https:'){webFinalFailure(token,'Nguồn HTTP bị giới hạn trên trang HTTPS. Chọn nguồn HTTPS.');return;}
- // Same decoder libraries already loaded by the official HTTPS shell.
- webStages=stagesFor(url.href);
- if(!webStages.length){webFinalFailure(token,'TV không có bộ phát phù hợp');return;}
- webNextStage(token);
+ // Old OTA/cached app manifests may still run on localhost; never assume globals.
+ var generation=webStageGeneration,path=url.pathname.toLowerCase();
+ var jobs=[];
+ if(!/\.(?:mp4|m4v|webm|mp3|aac|m4a|ts|mpd)$/.test(path))jobs.push(loadHlsLibrary().then(function(){logPlayback('HLS.js đã tải');},function(){logPlayback('Không tải được HLS.js');}));
+ if(!/\.(?:mp4|m4v|webm|mp3|aac|m4a|ts|m3u8?)$/.test(path))jobs.push(loadDashLibrary().then(function(){logPlayback('DASH.js đã tải');},function(){logPlayback('Không tải được DASH.js');}));
+ setPlayerStatus('Đang chuẩn bị trình phát Web…');
+ Promise.all(jobs).then(function(){
+  if(!playbackActive(token)||generation!==webStageGeneration)return;
+  logPlayback('Khả năng: HLS.js '+(stageAvailable('hlsjs')?'có':'không')+' · DASH '+(stageAvailable('dashjs')?'có':'không'));
+  webStages=stagesFor(url.href);
+  if(!webStages.length){webFinalFailure(token,'TV không có bộ phát phù hợp');return;}
+  webNextStage(token);
+ });
 }
 function tryNextChannelSource(token){
  if(!playbackActive(token)||playbackConfirmed)return false;
@@ -2866,6 +2917,7 @@ function playbackReady(token){
 }
 function playbackFailure(token,message){
  if(!playbackActive(token))return;
+ leaveWebCinema();
  var browserButton=byId('browserFallback');
  var sourceLabel='Nguồn '+(playbackStreamIndex+1)+'/'+Math.max(1,playbackStreamUrls.length);
  browserButton.textContent='Mở Cast chuẩn trên Samsung Internet (mã 6 số)';
@@ -2913,7 +2965,7 @@ function loadHlsLibrary(){
  hlsLibraryPromise=new Promise(function(resolve,reject){
   // The first URL is bundled into both WGT archives; remote TizenBrew pages
   // can fall back to the identical Web asset hosted on GitHub Pages.
-  var urls=['hls.min.js','https://trisanghy.github.io/open-iptv-pro/hls.min.js'];
+  var urls=['https://trisanghy.github.io/open-iptv-pro/hls.min.js'];
   function next(){
    if(window.Hls){resolve(window.Hls);return;}
    if(!urls.length){reject(Error('Không tải được HLS.js'));return;}
@@ -2939,7 +2991,7 @@ function loadDashLibrary(){
  if(window.dashjs&&window.dashjs.MediaPlayer)return Promise.resolve(window.dashjs);
  if(dashLibraryPromise)return dashLibraryPromise;
  dashLibraryPromise=new Promise(function(resolve,reject){
-  var urls=['dash.all.min.js','https://trisanghy.github.io/open-iptv-pro/dash.all.min.js'];
+  var urls=['https://trisanghy.github.io/open-iptv-pro/dash.all.min.js'];
   function next(){
    if(window.dashjs&&window.dashjs.MediaPlayer){resolve(window.dashjs);return;}
    if(!urls.length){reject(Error('Không tải được DASH.js đã đóng gói'));return;}
@@ -3219,6 +3271,7 @@ function startHtml5Playback(channel,token){
 function startAvplay(channel,token){return false;}
 function play(c){
  if(!c)return;
+ leaveWebCinema();
  if(typeof stopHomePreview==='function')stopHomePreview();
  byId('browserFallback').hidden=true;
  playbackSerial++;var token=playbackSerial;stopPlaybackEngine();playing=c;
@@ -3226,7 +3279,7 @@ function play(c){
  playbackRecoveryAttempts={};playbackRecoveries=0;resetPreferredDecoderAttempts();
  playbackStreamUrls=playbackCandidates(c);playbackStreamIndex=0;
  byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
- logPlayback('Web Lab: trình phát receiver TV HTTPS');
+ logPlayback('Web Lab: receiver TV · '+location.protocol+' · fullscreen video');
  byId('player').hidden=false;byId('player').classList.remove('is-playing');byId('player').classList.remove('is-playback-error');
  updateBottomActions();byId('playingName').textContent=c.name;
  setPlayerStatus('Đang mở '+c.name+'…');
@@ -3390,6 +3443,7 @@ function confirmPickerChannel(){
  return !!channel;
 }
 function closePlayer(){
+ leaveWebCinema();
  cancelPickerPlay();
  byId('browserFallback').hidden=true;
  if(!byId('channelPicker').hidden)closeChannelPicker();
