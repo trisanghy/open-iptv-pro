@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Build the public Positron feature timeline from authentic GitHub releases.
+"""Build the public Positron feature timeline from releases and verified Actions artifacts.
 
 Read-only against GitHub. Never commits screenshots or changes user IPTV data.
-Only images present in a release's real-Electron ZIP are published.
+Only version-matched real Electron evidence is published.
 """
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ import sys
 import urllib.error
 import urllib.request
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -104,9 +105,9 @@ def changelog_titles():
     for m in re.finditer(r"(?m)^## P5\.1\.(\d+)([^\n]*)$", source):
         n = int(m.group(1))
         raw = m.group(2).strip()
-        ver = re.search(r"\bv(4\.23\.\d+)", raw, re.I)
+        ver = re.search(r"\b(?:v)?(4\.23\.\d+)", raw, re.I)
         name = re.sub(r"^\s*[—–:\-]\s*", "", raw)
-        name = re.sub(r"\s*/\s*(?:Electron\s*)?v4\.23\.\d+.*$", "", name, flags=re.I)
+        name = re.sub(r"^\s*/?\s*(?:Electron\s*)?v?4\.23\.\d+\s*[—–:\-]*\s*", "", name, flags=re.I)
         name = name.strip(" —–-:/")
         item = {"title": name[:160], "appVersion": ver.group(1) if ver else ""}
         if n not in found or (not found[n]["appVersion"] and item["appVersion"]):
@@ -309,6 +310,277 @@ def attach_checked_in_images(rows):
     print("Ảnh Electron phục hồi từ repository:", count)
 
 
+
+# Positron experiments are no longer GitHub Releases. Actions is authoritative
+# for candidate builds and native screenshots. A successful build job can
+# provide a valid installer even when a different capture job failed.
+BUILD_NAME = re.compile(r"^positron-p51(\d+)-(win-x64|mac-arm64|mac-x64)$", re.I)
+RUN_NAME = re.compile(r"\bP5\.1\.(\d+)\b")
+BUILD_JOBS = {"win-x64": "windows-latest", "mac-arm64": "macos-15, mac, arm64",
+              "mac-x64": "macos-15-intel"}
+ART_ROOT = "https://github.com/trisanghy/open-iptv-pro/actions/runs/"
+
+
+def safe_api(path):
+    try:
+        return get_json(API + path)
+    except (urllib.error.URLError, OSError, ValueError, TimeoutError) as err:
+        print("CẢNH BÁO: Actions API:", path, str(err), file=sys.stderr)
+        return {}
+
+
+def workflow_runs(workflow, pages=5):
+    result = []
+    for page in range(1, pages + 1):
+        data = safe_api("/actions/workflows/" + workflow + "/runs?branch=Positron&per_page=100&page=" + str(page))
+        items = data.get("workflow_runs", []) if isinstance(data, dict) else []
+        result.extend(r for r in items if r.get("head_branch") == "Positron")
+        if len(items) < 100:
+            break
+    return result
+
+
+def live_artifact(a):
+    if not a.get("id") or a.get("expired") is not False or not a.get("expires_at"):
+        return False
+    try:
+        expiry = datetime.fromisoformat(a["expires_at"].replace("Z", "+00:00"))
+        return expiry > datetime.now(timezone.utc)
+    except (ValueError, TypeError):
+        return False
+
+
+def run_artifacts(run):
+    data = safe_api("/actions/runs/" + str(run["id"]) + "/artifacts?per_page=100")
+    return [a for a in data.get("artifacts", []) if live_artifact(a)]
+
+
+def run_jobs(run):
+    data = safe_api("/actions/runs/" + str(run["id"]) + "/jobs?per_page=100")
+    return data.get("jobs", [])
+
+
+def artifact_link(run, artifact):
+    return ART_ROOT + str(run["id"]) + "/artifacts/" + str(artifact["id"])
+
+
+def read_native_zip(artifact, limit=15_000_000):
+    # GitHub redirects the authenticated archive request to a signed blob URL.
+    # Never forward the workflow token to a different host.
+    class SafeRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            redirected = super().redirect_request(req, fp, code, msg, headers, newurl)
+            if redirected and not newurl.startswith("https://api.github.com/"):
+                redirected.remove_header("Authorization")
+            return redirected
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    headers = {"User-Agent": "Positron-Feature-Catalog/2.0",
+               "Accept": "application/vnd.github+json"}
+    if token:
+        headers["Authorization"] = "Bearer " + token
+    if not live_artifact(artifact) or not 0 < artifact.get("size_in_bytes", 0) <= limit:
+        raise ValueError("invalid or oversized native QA artifact")
+    url = API + "/actions/artifacts/" + str(artifact["id"]) + "/zip"
+    with urllib.request.build_opener(SafeRedirect()).open(urllib.request.Request(url, headers=headers), timeout=60) as response:
+        data = response.read(limit + 1)
+    if len(data) > limit:
+        raise ValueError("oversized native QA archive")
+    return zipfile.ZipFile(io.BytesIO(data))
+
+
+def extract_native_images(archive, expected=None):
+    """Require the same-version passing Electron audit plus before/after PNGs."""
+    reports = []
+    for item in archive.infolist():
+        name = Path(item.filename).name
+        if not name.startswith("audit-") or not name.endswith(".json") or item.file_size > 2_000_000:
+            continue
+        try:
+            report = json.loads(archive.read(item))
+        except (ValueError, OSError, UnicodeError):
+            continue
+        if not isinstance(report, dict):
+            continue
+        match = re.fullmatch(r"P5\.1\.(\d+)", str(report.get("version", "")))
+        if not match or report.get("realElectron") is not True or report.get("pass") is not True:
+            continue
+        number = int(match.group(1))
+        if expected is not None and number != expected:
+            continue
+        reports.append((number, report))
+    if len(reports) != 1:
+        return None
+    number, report = reports[0]
+    matches = {}
+    for item in archive.infolist():
+        name = Path(item.filename).name
+        # Restrict to valid basenames; never extract arbitrary archive paths.
+        if not re.fullmatch(r"[a-zA-Z0-9_.-]+\.png", name) or not 1000 < item.file_size <= 12_000_000:
+            continue
+        found = IMAGE_RE.search(name)
+        if not found or int(found.group(1)) != number or "-real" not in name:
+            continue
+        phase = "after" if "-after-" in name else "before" if "-before-" in name else None
+        if not phase:
+            continue
+        data = archive.read(item)
+        if not data.startswith(b"\x89PNG\r\n\x1a\n") or len(data) < 24:
+            continue
+        w, h = int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big")
+        if w < 600 or h < 600:
+            continue
+        score = 10 if (w, h) == (1920, 1080) else 5 if (w, h) == (720, 900) else 0
+        if phase not in matches or score > matches[phase][0]:
+            matches[phase] = (score, name, data)
+    if set(matches) != {"before", "after"}:
+        return None
+    return number, report, matches
+
+
+def attach_actions_evidence(rows):
+    """Backfill non-expired build ZIPs and exact-version native screenshots."""
+    by_number = {row["number"]: row for row in rows}
+    previous_file = ROOT / "docs" / "positron-features" / "catalog.json"
+    try:
+        previous = {r["number"]: r for r in json.loads(previous_file.read_text(encoding="utf-8"))["versions"]}
+    except (OSError, KeyError, ValueError, TypeError):
+        previous = {}
+    # Preserve previously verified evidence beyond the bounded discovery window.
+    for n, row in by_number.items():
+        old = previous.get(n, {})
+        if old.get("imageSource") == "actions" and row.get("image") == old.get("image"):
+            for key in ("imageBefore", "imageSource", "imageRun", "imageCommit", "imageArtifact"):
+                if old.get(key):
+                    row[key] = old[key]
+            if row.get("imageBefore"):
+                f = ROOT / "docs" / "positron-features" / Path(row["imageBefore"]).name
+                f = f.parent / "screenshots" / f.name
+                if f.is_file():
+                    shutil.copyfile(f, OUT / "screenshots" / f.name)
+                else:
+                    row.pop("imageBefore", None)
+        row["builds"] = [a for a in old.get("builds", []) if live_artifact({
+            "id": a.get("id"), "expired": False, "expires_at": a.get("expiresAt")})]
+        if old.get("ci"):
+            row["ci"] = old["ci"]
+    full = workflow_runs("positron-lab.yml")
+    fast = workflow_runs("positron-fast-round.yml", pages=4)
+    full_by_version, sha_versions = {}, {}
+    for r in full:
+        match = RUN_NAME.search(r.get("name", ""))
+        if not match:
+            continue
+        n = int(match.group(1))
+        if n not in by_number:
+            continue
+        sha_versions.setdefault(r.get("head_sha"), n)
+        full_by_version.setdefault(n, []).append(r)
+    # Most recent attempts first, plus an older successful attempt if needed.
+    selected = []
+    for n, runs in full_by_version.items():
+        row = by_number[n]
+        latest = runs[0]
+        row["ci"] = {"url": ART_ROOT + str(latest["id"]),
+                     "status": latest.get("status"), "conclusion": latest.get("conclusion"),
+                     "commit": latest.get("head_sha", "")}
+        if not row.get("commit"):
+            row["commit"] = latest.get("head_sha", "")
+        if len(row["builds"]) == 3 and all(a.get("commit") == latest.get("head_sha") for a in row["builds"]):
+            continue
+        eligible = [r for r in runs if r.get("status") == "completed" or r["id"] == int(os.environ.get("GITHUB_RUN_ID", "0"))]
+        choices = eligible[:3]
+        success = next((r for r in eligible if r.get("conclusion") == "success"), None)
+        if success and success not in choices:
+            choices.append(success)
+        selected.extend((n, r) for r in choices)
+    def builds_for(pair):
+        n, run = pair
+        artifacts = [a for a in run_artifacts(run) if BUILD_NAME.fullmatch(a.get("name", ""))]
+        if not artifacts:
+            return n, []
+        jobs = run_jobs(run) if run.get("conclusion") != "success" else []
+        out = []
+        for a in artifacts:
+            m = BUILD_NAME.fullmatch(a["name"])
+            if int(m.group(1)) != n:
+                continue
+            platform = m.group(2)
+            if run.get("conclusion") != "success" and not any(
+                job.get("conclusion") == "success" and job.get("name", "").startswith("build (")
+                and BUILD_JOBS[platform] in job.get("name", "") for job in jobs):
+                continue
+            out.append({"id": a["id"], "name": a["name"], "platform": platform,
+                        "url": artifact_link(run, a), "runUrl": ART_ROOT + str(run["id"]),
+                        "expiresAt": a["expires_at"], "createdAt": a.get("created_at", ""),
+                        "commit": run.get("head_sha", "")})
+        return n, out
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        for n, assets in pool.map(builds_for, selected):
+            row = by_number[n]
+            existing = {a["platform"]: a for a in row["builds"]}
+            for a in assets:
+                if a["platform"] not in existing or a["createdAt"] > existing[a["platform"]].get("createdAt", ""):
+                    existing[a["platform"]] = a
+            row["builds"] = sorted(existing.values(), key=lambda a: a["platform"])
+    # Fast QA archives are small and contain the current binary's own audit,
+    # rather than historical screenshots generated using a later executable.
+    candidates, seen = [], set()
+    for run in fast:
+        own = run["id"] == int(os.environ.get("GITHUB_RUN_ID", "0"))
+        if run.get("conclusion") != "success" and not (own and any(
+            j.get("name") == "fast-electron-round" and j.get("conclusion") == "success" for j in run_jobs(run))):
+            continue
+        expected = sha_versions.get(run.get("head_sha"))
+        if expected is not None:
+            row = by_number.get(expected)
+            if not row or expected in seen:
+                continue
+            if row.get("imageSource") == "actions" and row.get("image") and row.get("imageBefore"):
+                # Refresh if a newer source commit has passed the fast QA.
+                if row.get("imageCommit") == run.get("head_sha") or row.get("imageRun") == ART_ROOT + str(run["id"]):
+                    seen.add(expected)
+                    continue
+            seen.add(expected)
+        candidates.append((expected, run))
+        if len(candidates) >= 60:
+            break
+    def images_for(pair):
+        expected, run = pair
+        try:
+            a = next((a for a in run_artifacts(run) if a.get("name") == "positron-fast-round"), None)
+            if not a:
+                return None
+            with read_native_zip(a) as archive:
+                result = extract_native_images(archive, expected)
+            return (run, a, result) if result else None
+        except (urllib.error.URLError, OSError, ValueError, zipfile.BadZipFile, TimeoutError) as err:
+            print("CẢNH BÁO: Không đọc được ảnh Actions", run["id"], str(err), file=sys.stderr)
+            return None
+    folder = OUT / "screenshots"
+    folder.mkdir(parents=True, exist_ok=True)
+    recovered = set()
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        for result in pool.map(images_for, candidates):
+            if not result:
+                continue
+            run, artifact, (n, report, matches) = result
+            row = by_number.get(n)
+            if not row or n in recovered:
+                continue
+            app = report.get("app") or report.get("appVersion")
+            if app and row["appVersion"] not in ("", "Chưa xác minh", app):
+                continue
+            if app and row["appVersion"] in ("", "Chưa xác minh"):
+                row["appVersion"] = app
+            for phase, (_, name, data) in matches.items():
+                (folder / name).write_bytes(data)
+                row["image" if phase == "after" else "imageBefore"] = "screenshots/" + name
+            row.update(imageSource="actions", imageRun=ART_ROOT + str(run["id"]),
+                       imageCommit=run.get("head_sha", ""), imageArtifact=artifact_link(run, artifact))
+            recovered.add(n)
+    print("Actions: ảnh Electron mới", len(recovered), "; phiên bản có bộ cài", sum(bool(r["builds"]) for r in rows))
+
+
 def write_github_index(rows):
     """Render a GitHub-native expandable timeline when Pages is owned by web/online.
 
@@ -327,7 +599,7 @@ def write_github_index(rows):
         "",
         "**Ưu tiên: tính năng mới hữu ích, không chỉ sửa giao diện.**",
         "",
-        "Trang này được tạo tự động từ GitHub Releases và ảnh kiểm thử Electron thật. "
+        "Trang này được tạo tự động từ GitHub Actions Artifacts và Releases lịch sử. "
         "Bấm vào từng phiên bản để đọc mô tả, mở ảnh và tải EXE.",
         "",
         "[Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · "
@@ -358,6 +630,15 @@ def write_github_index(rows):
         else:
             lines.extend(["*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*", ""])
         links = []
+        if row.get("imageBefore"):
+            links.append("[Ảnh trước sửa](./" + row["imageBefore"] + ")")
+        if row.get("imageRun"):
+            links.append("[QA Electron thật](" + row["imageRun"] + ")")
+        if row.get("ci", {}).get("url"):
+            links.append("[CI tổng hợp](" + row["ci"]["url"] + ")")
+        labels = {"win-x64": "Windows x64 (Setup + Portable ZIP)", "mac-arm64": "Mac Apple Silicon (ZIP)", "mac-x64": "Mac Intel (ZIP)"}
+        for build in row.get("builds", []):
+            links.append("[Tải " + labels[build["platform"]] + "](" + build["url"] + ")")
         if row.get("url"):
             links.append("[Bản phát hành / thông tin](" + row["url"] + ")")
         if re.fullmatch(r"[0-9a-fA-F]{40}", str(row.get("commit") or "")):
@@ -374,7 +655,7 @@ def write_github_index(rows):
         lines.extend([" · ".join(links), "", "</details>", ""])
     lines.extend([
         "---", "",
-        "Ảnh chỉ xuất hiện nếu có PNG thực từ GitHub Release. "
+        "Ảnh lấy từ QA Electron thật của Actions hoặc Release lịch sử; bộ cài thử nghiệm là artifact ZIP. "
         "Mỗi lần nhánh Positron được cập nhật, GitHub Actions tạo lại "
         "trang Markdown và đồng bộ ảnh mà không force-push hay sửa nhánh web/online.",
         "",
@@ -417,6 +698,7 @@ def main():
     viet_hoa_rows(rows)
     attach_real_images(rows)
     attach_checked_in_images(rows)
+    attach_actions_evidence(rows)
     rows.sort(key=lambda row: row["number"], reverse=True)
     (OUT / "catalog.json").write_text(json.dumps({
         "generatedAt": datetime.now(timezone.utc).isoformat(),
