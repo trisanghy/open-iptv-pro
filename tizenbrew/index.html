@@ -791,6 +791,17 @@ body[data-theme=glass] .dialog{
  margin:0!important;padding:0!important;background:#050a13;
  pointer-events:none;
 }
+
+/* Full-screen error report, without overlapping controls. */
+body #player.is-playback-error{background:#090b10}
+body #player.is-playback-error .playerhead{top:0;left:0;right:0;padding:1.8vh 4vw;background:#151923;z-index:8}
+body #player.is-playback-error .playerhead strong{font-size:32px}
+body #player.is-playback-error .playerstatus{top:8vh;left:4vw;right:4vw;width:auto;padding:0;text-align:left;z-index:8;font-size:27px;line-height:1.23;color:#fff;overflow-wrap:anywhere;max-height:19vh;overflow:auto}
+body #player.is-playback-error .playerdiag{top:28vh;bottom:15vh;left:4vw;right:4vw;max-height:none;overflow:auto;z-index:8;margin:0;padding:1.5vh 1.4vw;border:2px solid #e50914;border-radius:12px;background:#121620;color:#fff;font-size:26px;line-height:1.32;white-space:pre-wrap;overflow-wrap:anywhere;text-shadow:none}
+body #player.is-playback-error #browserFallback{top:auto;bottom:6.6vh;left:4vw;right:auto;transform:none;z-index:8;min-width:0;max-width:92vw;padding:1.1vh 1.6vw;font-size:22px}
+body #player.is-playback-error .playerfoot{bottom:0;padding:1.1vh 3vw;font-size:18px;z-index:8;background:#151923;white-space:normal;line-height:1.2}
+body #player.is-playback-error video,body #player.is-playback-error #avplayObject{visibility:hidden}
+body #player.is-playback-error #channelPicker{z-index:12}
 </style>
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
@@ -801,7 +812,7 @@ body[data-theme=glass] .dialog{
 <rect width="1024" height="1024" rx="220" fill="#ffffff"/>
 <path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
 </svg></div>
-    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.50</p></div>
+    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.51</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
@@ -867,7 +878,7 @@ body[data-theme=glass] .dialog{
 <p id="sourceQRStatus" role="status">Đang tạo mã QR…</p><p id="sourcePhoneLink"></p>
 <button type="button" id="refreshSourceQR">↻ Tạo mã QR mới</button></section></div></div>
 <div id="searchDialog" hidden><label for="searchInput">Tìm kênh / chương trình EPG</label><input id="searchInput" placeholder="VTV, tin tuc, thoi su, phim..." autocomplete="off"><p class="search-dialog-hint">Tìm không dấu, tự sửa lỗi chính tả và tìm theo tên chương trình đã tải từ EPG.</p><div id="searchSuggestions" class="search-suggestions" role="status">Kênh gợi ý sẽ xuất hiện tại đây.</div><div class="buttons"><button id="cancelSearch">Hủy</button><button id="clearSearch" type="button">Xóa tìm kiếm</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
-<div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><iframe id="castPlayerFrame" hidden tabindex="-1" title="Bộ phát Cast HTTPS" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerdiag" id="playbackDiag" hidden></div><button id="browserFallback" type="button" hidden>Mở Cast chuẩn · ghép mã 6 số</button><div class="playerfoot">↑ ↓ Chuyển ngay và hiện danh sách　·　← → Chọn thư mục　·　CH ± Chuyển nhanh　·　OK Phát/Tạm dừng　·　Đỏ: Trình duyệt　·　Back Danh sách</div>
+<div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><iframe id="castPlayerFrame" hidden tabindex="-1" title="Bộ phát Cast HTTPS" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerdiag" id="playbackDiag" hidden></div><button id="browserFallback" type="button" hidden>Mở Cast chuẩn · ghép mã 6 số</button><div class="playerfoot">↑ ↓ Chuyển ngay và hiện danh sách　·　← → Chọn thư mục / cuộn lỗi　·　CH ± Chuyển nhanh　·　OK Phát/Tạm dừng　·　Đỏ: Trình duyệt　·　Back Danh sách</div>
 <div id="channelPicker" hidden tabindex="-1" role="dialog" aria-label="Chọn kênh">
   <div class="picker-panel">
     <div class="picker-heading">Chọn kênh TV</div>
@@ -2153,6 +2164,7 @@ function retryPreferredDecoder(channel,token,route,reason,canRepeat){
    hlsRelayAttempted=false;fastRelayActive=false;
    if(startRelayHlsPlayback(channel,token))return true;
   }
+  if(relayDownUntil>Date.now())logPlayback('Relay tạm ngừng: '+Math.ceil((relayDownUntil-Date.now())/1000)+' giây · OK thử lại khi lỗi');
  }else if(route==='relay'&&relayDownUntil<=Date.now()&&preferredDecoderAttempts.relay<PREFERRED_HLS_RELAY_MAX){
   hlsRelayAttempted=false;fastRelayActive=false;
   if(startRelayHlsPlayback(channel,token))return true;
@@ -2382,7 +2394,7 @@ function startPlaybackWatchdog(token){
  * Only one instance is attached at a time, with a token for stale callbacks.
  * The framework does not bypass DRM, CORS or unavailable hardware codecs. */
 var TV_PLAYBACK_CORE={
- version:'0.1.50',
+ version:'0.1.51',
  libraries:{hlsjs:'1.6.15',dashjs:'5.3.0',mpegts:'1.8.2',native:'TV browser',avplay:'Samsung firmware'},
  preferredRoute:function(address){return dashAddress(address)?'dashjs':hlsAddress(address)?'hlsjs':mpegtsAddress(address)?'mpegts':'';},
  engines:{
@@ -2495,11 +2507,13 @@ function dashAddress(address){return /\.mpd(?:[?#]|$)/i.test(String(address||'')
 function mpegtsAddress(address){return /\.(?:ts|m2ts|mpegts|flv)(?:[?#]|$)/i.test(String(address||''));}
 function mpegtsType(address){return /\.flv(?:[?#]|$)/i.test(String(address||''))?'flv':'mse';}
 function logPlayback(text){
- var message=String(text||'').replace(/[\r\n\u0000-\u001f]/g,' ').slice(0,280);
+ var message=String(text||'').replace(/[\r\n\u0000-\u001f]/g,' ')
+  .replace(/https?:\/\/[^\s<>"']+/gi,function(value){try{return new URL(value).origin;}catch(e){return '[URL ẩn]';}})
+  .replace(/([?&](?:token|key|password|auth|signature|sig)=)[^\s&]+/gi,'$1[ẩn]').slice(0,350);
  if(message&&playbackEvidence.indexOf(message)<0)playbackEvidence.push(message);
- if(playbackEvidence.length>8)playbackEvidence.shift();
+ if(playbackEvidence.length>28)playbackEvidence.shift();
  var label=byId('playbackDiag');
- label.textContent=playbackEvidence.join('\n');
+ label.textContent=playbackEvidence.map(function(line,i){return (i+1)+'. '+line;}).join('\n');
  label.hidden=!playbackEvidence.length;
 }
 function playbackChannelKey(channel){
@@ -2818,6 +2832,7 @@ function playbackReady(token){
  if(firstFrame)resetPreferredDecoderAttempts();
  clearPlaybackTimer();clearPlaybackGrace();
  byId('player').classList.remove('is-tuning-video');
+ byId('player').classList.remove('is-playback-error');
  byId('player').classList.add('is-playing');setPlayerStatus('');
  byId('playbackDiag').hidden=true;
  if(firstFrame)startPlaybackWatchdog(token);
@@ -2831,9 +2846,17 @@ function playbackFailure(token,message){
  // Keep remote focus on the in-app video controls. Cast is optional, never an automatic escape.
  clearPlaybackTimer();
  byId('player').classList.remove('is-playing');
+ byId('player').classList.add('is-playback-error');
  var sourceHost=playbackSafeHost(playbackStream&&playbackStream.url||playing&&playing.url);
  setPlayerStatus('Không phát được kênh ('+sourceLabel+(sourceHost?', máy chủ '+sourceHost:'')+'). '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,140)+' · Nhấn OK thử lại trong ứng dụng; Cast chỉ là phương án thủ công.');
- byId('playbackDiag').hidden=!playbackEvidence.length;
+ if(typeof location!=='undefined'){
+  logPlayback('TizenBrew '+TV_PLAYBACK_CORE.version+' · '+(tizenModuleContext()?'đúng môi trường module':'ngoài môi trường module')+' · '+String(location.protocol||'')+'//'+String(location.hostname||'')+':'+String(location.port||''));
+  logPlayback('Relay StartService: '+relayStartState+' · Health: '+relayHealthState);
+  logPlayback('Relay '+(relayDownUntil>Date.now()?'tạm ngừng '+Math.ceil((relayDownUntil-Date.now())/1000)+' giây':relayReadyUntil>Date.now()?'đã xác nhận online':'chưa xác nhận')+' · '+(relayDownReason||'không có lỗi health đã ghi'));
+  logPlayback('Bộ phát cuối: '+currentPlaybackRoute()+' · HLS '+preferredDecoderAttempts.hlsjs+' · relay '+preferredDecoderAttempts.relay+' · DASH '+preferredDecoderAttempts.dashjs+' · phục hồi '+playbackRecoveries);
+ }
+ var report=byId('playbackDiag');report.hidden=!playbackEvidence.length;report.scrollTop=0;
+ if(byId('player').focus)byId('player').focus();
 }
 function fallbackFromAvplay(channel,token,message){
  if(!playbackActive(token)||playbackEngine!=='avplay')return;
@@ -3040,6 +3063,7 @@ function retryNativeHls(channel,token){
  */
 var hlsRelayServiceLastLaunch=0;
 var relayReadyUntil=0,relayDownUntil=0,relayDownReason='',relayProbePromise=null;
+var relayStartState='chưa gọi',relayHealthState='chưa kiểm tra';
 function tizenModuleContext(){
  if(typeof location==='undefined')return true;
  return /^(127\.0\.0\.1|localhost)$/.test(String(location.hostname||'')) &&
@@ -3056,17 +3080,18 @@ function relayOfflineError(message){
  var err=Error(message);err.relayOffline=true;return err;
 }
 function ensureTizenHlsRelayService(){
- if(!tizenModuleContext())return false;
+ if(!tizenModuleContext()){relayStartState='không phải TizenBrew localhost:8081';return false;}
  // TizenBrew's websocket supports StartService (event 6). Starting our own
  // explicitly named module service avoids waiting for stale CDN metadata to
  // be refreshed after the app HTML OTA has already advanced.
  if(Date.now()-hlsRelayServiceLastLaunch<12000)return;
  hlsRelayServiceLastLaunch=Date.now();
+ relayStartState='đang mở WebSocket localhost:8081';
  var socket=null;
  try{
   socket=new WebSocket('ws://127.0.0.1:8081');
   var ws=socket;
-  var timeout=setTimeout(function(){try{ws.close();}catch(e){}},2600);
+  var timeout=setTimeout(function(){if(relayStartState==='đang mở WebSocket localhost:8081')relayStartState='WebSocket hết thời gian chờ';try{ws.close();}catch(e){}},2600);
   ws.onopen=function(){
    try{
     ws.send(JSON.stringify({
@@ -3076,12 +3101,13 @@ function ensureTizenHlsRelayService(){
       serviceFile:'tizenbrew/hls-relay-v1.js'
      }
     }));
-   }catch(e){}
+    relayStartState='đã gửi StartService (chưa xác nhận chạy)';
+   }catch(e){relayStartState='gửi StartService thất bại';}
    setTimeout(function(){clearTimeout(timeout);try{ws.close();}catch(e){}},1300);
   };
-  ws.onerror=function(){clearTimeout(timeout);};
+  ws.onerror=function(){clearTimeout(timeout);relayStartState='WebSocket kết nối lỗi';};
   return true;
- }catch(e){return false;}
+ }catch(e){relayStartState='không mở được WebSocket';return false;}
 }
 function relayHealthCheck(){
  var url=hlsRelayServer+'/health',headers={'X-Open-IPTV-Relay':'1'};
@@ -3098,9 +3124,9 @@ function relayHealthCheck(){
    if(!res.ok)throw Error('Relay HTTP '+res.status);
    return res.json();
   }).then(function(body){
-   if(settled)return;settled=true;clearTimeout(timer);
+   if(settled)return;
    if(!body||body.ok!==true||body.transport!=='local-hls')throw Error('Relay trả sai giao thức');
-   resolve(body);
+   settled=true;clearTimeout(timer);resolve(body);
   }).catch(function(err){
    if(settled)return;settled=true;clearTimeout(timer);reject(err);
   });
@@ -3117,16 +3143,19 @@ function ensureRelayReady(active){
  if(relayProbePromise)return relayProbePromise;
  ensureTizenHlsRelayService();
  var count=0;
+ // The health probe belongs to the service, not the first channel.
  function poll(){
-  if(active&&!active())return Promise.reject(Error('Lượt phát đã kết thúc.'));
+  relayHealthState='đang kiểm tra '+(count+1)+'/6';
   return relayHealthCheck().then(function(res){
+   relayHealthState='online · version '+String(res.version||'không rõ').slice(0,30);
    relayReadyUntil=Date.now()+30000;relayDownUntil=0;relayDownReason='';
    return res;
   }).catch(function(err){
    count++;
+   relayHealthState='lỗi '+count+'/6 · '+String(err&&err.message||'không kết nối').replace(/https?:\/\/\S+/gi,'[URL]').slice(0,100);
    if(count<6)return new Promise(function(resolve){setTimeout(resolve,600);}).then(poll);
    relayReadyUntil=0;relayDownUntil=Date.now()+45000;
-   relayDownReason='Dịch vụ HLS trên TV (127.0.0.1:17870) chưa khởi động hoặc bị chặn. Kiểm tra service của module TizenBrew.';
+   relayDownReason='Dịch vụ HLS trên TV (127.0.0.1:17870) chưa khởi động hoặc bị chặn. '+relayHealthState;
    throw relayOfflineError(relayDownReason);
   });
  }
@@ -3416,7 +3445,7 @@ function play(c){
  playbackStreamUrls=preferVerifiedSource(c,playbackCandidates(c));playbackStreamIndex=0;
  byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
  logPlayback('AVPlay: '+(nativeAvplay()?'có API':'không có API'));
- byId('player').hidden=false;byId('player').classList.remove('is-playing');
+ byId('player').hidden=false;byId('player').classList.remove('is-playing');byId('player').classList.remove('is-playback-error');
  updateBottomActions();byId('playingName').textContent=c.name;
  setPlayerStatus('Đang mở '+c.name+'…');
  var address=playbackStreamUrls[0];
@@ -3425,7 +3454,13 @@ function play(c){
 }
 function togglePlayback(){
  if(!playing)return;
- if(playbackFailed){play(playing);return;}
+ if(playbackFailed){
+  if(relayDownUntil>Date.now()&&!relayProbePromise){
+   relayDownUntil=0;relayReadyUntil=0;hlsRelayServiceLastLaunch=0;
+   relayHealthState='thử lại theo yêu cầu OK';ensureTizenHlsRelayService();
+  }
+  play(playing);return;
+ }
  if(playbackEngine==='hosted-cast'){
   hostedCastSend('toggle');
   return;
@@ -3578,7 +3613,7 @@ function closePlayer(){
  if(!byId('channelPicker').hidden)closeChannelPicker();
  playbackSerial++;stopPlaybackEngine();byId('player').hidden=true;
  hlsAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;hostedCastAttempted=false;playbackRecoveryAttempts={};playbackRecoveries=0;playbackStreamUrls=[];playbackStream=null;byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
- byId('player').classList.remove('is-playing');setPlayerStatus('');
+ byId('player').classList.remove('is-playing');byId('player').classList.remove('is-playback-error');setPlayerStatus('');
  playing=null;draw();updateBottomActions();
 }
 function resumeLastChannel(){
@@ -3764,6 +3799,11 @@ if(active===byId('saveSource')&&k==='ArrowUp'){e.preventDefault();e.stopPropagat
 if(isText&&(k==='ArrowLeft'||k==='ArrowRight'))return;
 if(k.indexOf('Arrow')===0){e.preventDefault();e.stopPropagation();move(k);}return;}
 if(!byId('player').hidden){
+ if(byId('player').classList.contains('is-playback-error')&&byId('channelPicker').hidden&&
+    (k==='ArrowLeft'||k==='ArrowRight')){
+  e.preventDefault();var report=byId('playbackDiag');
+  report.scrollTop=Math.max(0,(report.scrollTop||0)+(k==='ArrowRight'?1:-1)*Math.max(100,(report.clientHeight||400)-55));return;
+ }
  if(k.indexOf('Arrow')===0){
   e.preventDefault();if(e.stopPropagation)e.stopPropagation();
   if(byId('channelPicker').hidden){
