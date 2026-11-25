@@ -175,7 +175,7 @@ jobs:
           export ELECTRON_DISABLE_SECURITY_WARNINGS=true
           ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 > positron-evidence/electron.log 2>&1 &
           echo $! > positron-evidence/electron.pid
-          timeout --signal=TERM --kill-after=10s 480s node scripts/positron-50-audit.cjs
+          timeout --signal=TERM --kill-after=10s 600s node scripts/positron-50-audit.cjs
           test -s positron-evidence/p5-20-rounds/positron-p51324-watchflow-tabs-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51324-watchflow-tabs-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51324-watchflow-tabs-after-720x900-real.png
@@ -261,6 +261,12 @@ jobs:
           test -s positron-evidence/audit-p51351-source-state-isolation.json
           test -s positron-evidence/audit-p51354-setup-hint.json
           test -s positron-evidence/audit-p51355-context-keys.json
+          test -s positron-evidence/audit-p51356-viewing-clock.json
+          test -s positron-evidence/p5-20-rounds/positron-p51356-viewing-clock-before-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51356-viewing-clock-before-720x900-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51356-viewing-clock-after-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51356-viewing-clock-after-720x900-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51356-viewing-clock-after-local-media-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51355-context-keys-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51355-context-keys-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51355-context-keys-before-720x900-real.png

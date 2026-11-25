@@ -1,5 +1,5 @@
 'use strict';
-const assert=require('node:assert/strict'),fs=require('node:fs'),crypto=require('node:crypto');
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 exports.run=async function(page){
   const errors=[];page.on('pageerror',e=>errors.push(String(e)));
@@ -25,8 +25,15 @@ exports.run=async function(page){
   await page.locator('#poAIMLConsent').check();
   await page.evaluate(()=>document.getElementById('video').dispatchEvent(new Event('playing')));
   const shots=[];
-  const folder='positron-evidence/p5-20-rounds';fs.mkdirSync(folder,{recursive:true});
-  const shot=async(tag,width,height)=>{await page.setViewportSize({width,height});const filename='positron-p51356-viewing-clock-'+tag+'-'+width+'x'+height+'-real.png';const b=await page.screenshot({path:folder+'/'+filename,animations:'disabled'});shots.push({filename,sha256:crypto.createHash('sha256').update(b).digest('hex')});};
+  const dir='positron-evidence/p5-20-rounds';fs.mkdirSync(dir,{recursive:true});
+  const names={
+    'before-1920x1080':'positron-p51356-viewing-clock-before-1920x1080-real.png',
+    'before-720x900':'positron-p51356-viewing-clock-before-720x900-real.png',
+    'after-1920x1080':'positron-p51356-viewing-clock-after-1920x1080-real.png',
+    'after-720x900':'positron-p51356-viewing-clock-after-720x900-real.png',
+    'after-local-media-1920x1080':'positron-p51356-viewing-clock-after-local-media-1920x1080-real.png'
+  };
+  const shot=async(tag,width,height)=>{await page.setViewportSize({width,height});const filename=names[tag+'-'+width+'x'+height];assert.ok(filename,'declared screenshot name required');const b=await page.screenshot({path:path.join(dir,filename),animations:'disabled'});assert.equal(b.readUInt32BE(16),width);assert.equal(b.readUInt32BE(20),height);shots.push({filename,sha256:crypto.createHash('sha256').update(b).digest('hex')});};
   await shot('before',1920,1080);await shot('before',720,900);await delay(44000);
   const stalled=await page.evaluate(()=>window.PositronIntelligence.getProfile());
   assert.equal(stalled.observations,0,'controlled frozen media timeline');
