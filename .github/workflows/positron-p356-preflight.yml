@@ -1,0 +1,59 @@
+name: Positron P356 preflight (no version bump)
+on:
+  push:
+    branches: [Positron]
+    paths:
+      - 'qa/positron-p356-prepare.cjs'
+      - 'qa/positron-p356-evidence.cjs'
+      - '.github/workflows/positron-p356-preflight.yml'
+permissions:
+  contents: read
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install Electron and test tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb x11-utils libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0 libdrm2
+          npm install --no-audit --no-fund
+          npm install --no-save --no-audit --no-fund playwright-core
+      - name: Real baseline and candidate Electron evidence
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p positron-preflight-evidence
+          Xvfb :99 -screen 0 1920x1080x24 >positron-preflight-evidence/xvfb.log 2>&1 &
+          export DISPLAY=:99
+          for i in $(seq 1 60); do if xdpyinfo >/dev/null 2>&1; then break; fi; sleep 0.5; done
+          xdpyinfo >/dev/null
+          export ELECTRON_DISABLE_SECURITY_WARNINGS=true
+          XDG_CONFIG_HOME="$RUNNER_TEMP/p356-before-config" XDG_CACHE_HOME="$RUNNER_TEMP/p356-before-cache" ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 >positron-preflight-evidence/before-electron.log 2>&1 &
+          pid=$!
+          timeout 100s node qa/positron-p356-evidence.cjs before 9222
+          kill "$pid" 2>/dev/null || true
+          wait "$pid" 2>/dev/null || true
+          node qa/positron-p356-prepare.cjs
+          node --check renderer/positron-intelligence-core.js
+          node --check renderer/positron-intelligence.js
+          node --test tests/positron-356-preflight.test.cjs | tee positron-preflight-evidence/unit.log
+          git diff -- renderer/positron-intelligence-core.js renderer/positron-intelligence.js >positron-preflight-evidence/candidate.patch
+          cp tests/positron-356-preflight.test.cjs positron-preflight-evidence/
+          XDG_CONFIG_HOME="$RUNNER_TEMP/p356-after-config" XDG_CACHE_HOME="$RUNNER_TEMP/p356-after-cache" ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9223 >positron-preflight-evidence/after-electron.log 2>&1 &
+          pid=$!
+          timeout 180s node qa/positron-p356-evidence.cjs after 9223
+          kill "$pid" 2>/dev/null || true
+          wait "$pid" 2>/dev/null || true
+          npm test | tee positron-preflight-evidence/full-test.log
+      - name: Upload preflight results only (no installer or Release)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: positron-p356-preflight
+          path: positron-preflight-evidence/
+          if-no-files-found: warn
+          retention-days: 30
