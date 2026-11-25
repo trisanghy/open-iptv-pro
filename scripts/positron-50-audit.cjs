@@ -249,7 +249,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   await require('./positron-353-audit.cjs').run(page);
    await require('./positron-354-audit.cjs').run(page);
   await require('./positron-355-audit.cjs').run(page);
-  await require('./positron-356-audit.cjs').run(page);
+  // P356 requires a fresh AI model and consent; the lab workflow runs it separately in a fresh Electron profile.
   await browser.close();
 })().catch(e=>{
   console.error('P4 50-round audit failed: '+(e&&e.stack||e));

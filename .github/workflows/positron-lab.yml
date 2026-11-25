@@ -176,6 +176,13 @@ jobs:
           ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 > positron-evidence/electron.log 2>&1 &
           echo $! > positron-evidence/electron.pid
           timeout --signal=TERM --kill-after=10s 600s node scripts/positron-50-audit.cjs
+          # P356 requires default-off consent and zero observations. Earlier audits
+          # intentionally train models, so use an independent disposable Electron profile.
+          P356_PROFILE=$(mktemp -d)
+          ./node_modules/.bin/electron . --no-sandbox --disable-gpu --user-data-dir="$P356_PROFILE" --remote-debugging-port=9223 > positron-evidence/electron-p356-isolated.log 2>&1 &
+          P356_PID=$!
+          trap 'kill "$P356_PID" 2>/dev/null || true; rm -rf -- "$P356_PROFILE"' EXIT
+          POSITRON_CDP_PORT=9223 timeout --signal=TERM --kill-after=10s 260s node scripts/positron-fast-round.cjs
           test -s positron-evidence/p5-20-rounds/positron-p51324-watchflow-tabs-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51324-watchflow-tabs-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51324-watchflow-tabs-after-720x900-real.png

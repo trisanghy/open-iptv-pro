@@ -4,9 +4,11 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const {chromium}=require('playwright-core');
 const root=path.resolve(__dirname,'..'),delay=ms=>new Promise(r=>setTimeout(r,ms));
 (async()=>{
+ const port=process.env.POSITRON_CDP_PORT||'9222';
+ assert.ok(/^\d{1,5}$/.test(port)&&Number(port)>0&&Number(port)<=65535,'invalid CDP port');
  let browser,lastError;
  for(let i=0;i<35;i++){
-  try{browser=await chromium.connectOverCDP('http://127.0.0.1:9222',{timeout:1700});break;}
+  try{browser=await chromium.connectOverCDP('http://127.0.0.1:'+port,{timeout:1700});break;}
   catch(e){lastError=e;await delay(900);}
  }
  if(!browser)throw lastError||Error('Electron CDP port unavailable');

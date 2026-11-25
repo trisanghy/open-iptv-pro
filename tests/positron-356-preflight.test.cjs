@@ -12,3 +12,19 @@ test('invalid and seeking samples reset session',()=>{let s=step(null,0,0);for(c
 test('long sampling gaps are bounded',()=>{assert.equal(step(step(null,0,0),100000,100).seconds,5);});
 test('threshold flags preserved and input not mutated',()=>{let s={...step(null,0,0),seconds:180,first:true,second:true};let n=step(s,4000,4);assert.equal(n.seconds,184);assert.equal(n.first,true);assert.equal(n.second,true);assert.equal(s.seconds,180);});
 test('non-monotonic wall time cannot add learning',()=>{assert.equal(step(step(null,4000,0),3000,4).seconds,0);});
+
+// Regression guard for the full-suite failure (run 45532608584): preserve the
+// original zero-observation and default-off assertions, isolate the QA profile.
+test('P356 full CI uses separate Electron profile and endpoint',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const read=f=>fs.readFileSync(path.join(__dirname,'..',f),'utf8');
+ const full=read('scripts/positron-50-audit.cjs'),lab=read('.github/workflows/positron-lab.yml'),fast=read('scripts/positron-fast-round.cjs'),audit=read('scripts/positron-356-audit.cjs');
+ assert.ok(!full.includes("require('./positron-356-audit.cjs').run(page)"));
+ assert.ok(lab.includes('P356_PROFILE=$(mktemp -d)'));
+ assert.ok(lab.includes('--user-data-dir="$P356_PROFILE" --remote-debugging-port=9223'));
+ assert.ok(lab.includes('POSITRON_CDP_PORT=9223 timeout --signal=TERM --kill-after=10s 260s node scripts/positron-fast-round.cjs'));
+ assert.ok(lab.indexOf('600s node scripts/positron-50-audit.cjs')<lab.indexOf('P356_PROFILE=$(mktemp -d)'));
+ assert.ok(fast.includes('process.env.POSITRON_CDP_PORT'));
+ assert.ok(audit.includes("assert.equal(before.observations,0,'fixture must have fresh model')"));
+ assert.ok(audit.includes("assert.equal(before.enabled,false,'consent must default off')"));
+});
