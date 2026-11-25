@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T01:39:17.475162+00:00",
+  "generatedAt": "2026-11-25T01:40:54.175380+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -16,14 +16,20 @@
       "commit": "24b3178e0b171ef2179a040ff7704ae7d08a4c67",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
-      "image": null,
+      "image": "screenshots/positron-p51356-viewing-clock-after-1920x1080-real.png",
       "builds": [],
       "ci": {
         "url": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45527181127",
         "status": "completed",
         "conclusion": "failure",
         "commit": "24b3178e0b171ef2179a040ff7704ae7d08a4c67"
-      }
+      },
+      "imageBefore": "screenshots/positron-p51356-viewing-clock-before-1920x1080-real.png",
+      "imageSource": "actions",
+      "imageKind": "fast",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45527181154",
+      "imageCommit": "24b3178e0b171ef2179a040ff7704ae7d08a4c67",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45527181154/artifacts/14982897716"
     },
     {
       "number": 355,
@@ -278,9 +284,9 @@
       "imageBefore": "screenshots/positron-p51351-source-state-isolation-before-1920x1080-real.png",
       "imageSource": "actions",
       "imageKind": "fast",
-      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45449522870",
-      "imageCommit": "140aad6bafe651f1c75f9655505c2eaf529f1330",
-      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45449522870/artifacts/14948635855",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45297014268",
+      "imageCommit": "15c2f0856a42444894e64324c8af41608e092f3c",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45297014268/artifacts/14875899940",
       "builds": [
         {
           "id": 14947211813,
