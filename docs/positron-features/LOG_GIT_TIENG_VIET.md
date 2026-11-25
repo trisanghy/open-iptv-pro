@@ -2222,7 +2222,6 @@ Hiển thị nhóm trong một hàng cuộn ngang thay vì xuống nhiều dòng
 
 Ở cửa sổ hẹp và chưa phát gì, thu gọn vùng giới thiệu để đưa phần tìm kênh lên cao hơn. Khung video thực vẫn giữ tỷ lệ.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/75d4acb5bf940eb46ecb868476aca6bda33e99f4)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.109 — Không lặp thông báo đang hiển thị
