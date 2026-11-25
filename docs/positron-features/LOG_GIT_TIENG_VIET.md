@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.355 — Phím điều hướng AI theo nguồn
+## P5.1.356 — AI chỉ học khi media thực sự phát
+
+**Ứng dụng:** 4.23.441 · **Trạng thái:** Chưa có bản phát hành
+
+WatchFlow không ghi nhận sở thích khi media đứng yên; đo tiến trình media và đặt lại phiên khi chuyển nguồn hoặc tua.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/24b3178e0b171ef2179a040ff7704ae7d08a4c67)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.355 — Phím điều hướng AI theo nguồn (CANDIDATE)
 
 **Ứng dụng:** 4.23.440 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — hướng dẫn remote tự thích ứng với trạng thái không có nguồn, hiển thị bốn phím chuyển chế độ và không quảng cáo lối tắt tới gợi ý chưa tồn tại. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a2be3185954a5f873bebf25117af9e7d4fdda186)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5235ab6fe76b959be804f901174beb47bf16d282)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.354 — Hướng dẫn thiết lập AI theo trạng thái (CANDIDATE)
 
