@@ -1,3 +1,10 @@
+
+## P5.1.356 / Electron 4.23.441 — AI chỉ học khi media thực sự phát (CANDIDATE)
+- Feature priority: BLOCKER_FIX — sửa lỗi WatchFlow AI học sai khi đồng hồ media đứng yên dù readyState đủ; bảo toàn quyền học và dữ liệu nguồn.
+- Feature class: AI
+- User action: Bật học sở thích; WatchFlow chỉ ghi nhận thời lượng media tiến thực sự, không ghi nhận khi bị đứng; không tự bật học.
+- Electron screenshot: positron-p51356-viewing-clock-after-1920x1080-real.png
+- Evidence: Preflight 45521032519 tại bfb483ec: 10/10 test chuyên biệt, 1091 pass/5 skipped/0 fail toàn bộ; 5 PNG Electron thật đã tải, SHA256 đối chiếu và mở soát. Baseline đứng media ghi 1, candidate đứng media ghi 0, WAV cục bộ tiến 35.047961 giây ghi 1. Không thử IPTV thực/GPU. Ảnh trước sửa và sau sửa gốc nằm trong artifact positron-p356-preflight; audit bản commit mới chụp trước/sau khoảng đứng media (không giả lập phiên bản cũ). CI bản đóng gói mới chưa xác minh; stable-only Release giữ nguyên.
 ## P5.1.355 / Electron 4.23.440 — Phím điều hướng AI theo nguồn (CANDIDATE)
 - Feature priority: NEW — hướng dẫn remote tự thích ứng với trạng thái không có nguồn, hiển thị bốn phím chuyển chế độ và không quảng cáo lối tắt tới gợi ý chưa tồn tại.
 - Feature class: AI

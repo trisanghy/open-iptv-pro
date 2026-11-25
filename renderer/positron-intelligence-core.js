@@ -864,6 +864,17 @@
    &&row.probability>=minScore).slice(0,Math.max(1,Math.min(3,Math.trunc(limit)||3)));
  }
 
+ function advanceViewingSample(previous,{id,source,wall,media,rate=1,seeking=false}){
+  if(!id||typeof source!=='string'||!source||seeking||!Number.isFinite(wall)||!Number.isFinite(media)||media<0||!Number.isFinite(rate)||rate<=0)return null;
+  const sample={id:String(id),source,wall,media,rate,seconds:0,first:false,second:false};
+  if(!previous||previous.id!==sample.id||previous.source!==source)return sample;
+  const elapsed=(wall-previous.wall)/1000,delta=media-previous.media;
+  sample.seconds=previous.seconds;sample.first=previous.first;sample.second=previous.second;
+  if(rate===previous.rate&&elapsed>0&&delta>0&&delta<=elapsed*rate+1.25){
+   sample.seconds+=Math.min(5,elapsed,delta/rate);
+  }
+  return sample;
+ }
  function cleanQuery(name){
   const s=String(name||'').trim();
   if(!s||s.length>70||/[:\\/]/.test(s)||/https?\b|@|[<>]/i.test(s))return '';
@@ -889,5 +900,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,explainPreference,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,verifyLearningBackupSnapshot,compareLearningBackup,previewLearningImpact,previewCategoryImpact,compareCategorySamples,previewCategoryGroupRisks,previewCategoryTopicShifts,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,explainPreference,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,verifyLearningBackupSnapshot,compareLearningBackup,previewLearningImpact,previewCategoryImpact,compareCategorySamples,previewCategoryGroupRisks,previewCategoryTopicShifts,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,advanceViewingSample,cleanQuery,readWikiSearch});
 });

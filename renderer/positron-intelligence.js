@@ -336,7 +336,7 @@
  const summary=d.createElement('p');summary.className='po-ai-summary';summary.id='poAISummary';
  const list=d.createElement('div');list.id='poAICards';list.className='po-ai-cards';
  const privacy=d.createElement('p');privacy.className='po-ai-privacy';
- privacy.textContent='Mặc định KHÔNG học. Khi bật: chỉ lưu trọng số sở thích trong máy; học sau ≥35 giây phát có hình/tiếng, không tải stream hay lịch sử lên mạng. Tra cứu web chỉ gửi tên kênh, không gửi playlist/URL/hành vi. Bạn có thể xóa mô hình.';
+ privacy.textContent='Mặc định KHÔNG học. Khi bật: chỉ lưu trọng số sở thích trong máy; học sau ≥35 giây thời gian phát media thực sự tiến, không tải stream hay lịch sử lên mạng. Tra cứu web chỉ gửi tên kênh, không gửi playlist/URL/hành vi. Bạn có thể xóa mô hình.';
  area.append(title,controls,alertRow,modeBar,summary,list,privacy,modelManager);
  modeBar.after(modeHelp);
  // P345: an optional native shortcut disclosure for TV/remote users.
@@ -1711,19 +1711,17 @@
   }
  }
  win.setInterval(checkAlerts,60000);
- // Only a real decoded/playable frame triggers tracking. Switching, pausing
- // or a stalled player does not count as a long viewing session.
+ // Require advancing media time in addition to readyState. This is evidence
+ // of timeline progress, not proof of decoded video frames.
  const player=byId('video');
  function tick(){
   if(!enabled||!player||player.paused||player.readyState<2||!player.currentSrc){
    active=null;return;
   }
   const ch=state()?.getCurrent?.(),now=Date.now();
-  if(!ch?.id)return;
-  if(!active||active.id!==String(ch.id)){
-   active={id:String(ch.id),seconds:0,last:now,first:false,second:false};return;
-  }
-  const elapsed=Math.max(0,Math.min(5,(now-active.last)/1000));active.last=now;active.seconds+=elapsed;
+  active=core.advanceViewingSample(active,{id:ch?.id,source:player.currentSrc,
+   wall:win.performance.now(),media:player.currentTime,rate:player.playbackRate,seeking:player.seeking});
+  if(!active)return;
   if((active.seconds>=35&&!active.first)||(active.seconds>=180&&!active.second)){
    const isSecond=active.seconds>=180;
    if(isSecond)active.second=true;else active.first=true;
@@ -1736,6 +1734,8 @@
   player.addEventListener('playing',tick);
   player.addEventListener('pause',()=>{active=null;});
   player.addEventListener('ended',()=>{active=null;});
+  player.addEventListener('seeking',()=>{active=null;});
+  player.addEventListener('emptied',()=>{active=null;});
   player.addEventListener('error',()=>{active=null;});
   win.setInterval(tick,4000);
  }

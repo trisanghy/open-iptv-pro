@@ -1,0 +1,14 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+const {advanceViewingSample:advance}=require('../renderer/positron-intelligence-core.js');
+const step=(prev,wall,media,extra={})=>advance(prev,{id:'qa',source:'blob:fixture',wall,media,...extra});
+test('playing credits actual watched seconds',()=>{let s=step(null,0,0);for(let i=1;i<=9;i++)s=step(s,i*4000,i*4);assert.equal(s.seconds,36);});
+test('stalled media never crosses learning thresholds',()=>{let s=step(null,0,3);for(let i=1;i<=60;i++)s=step(s,i*4000,3);assert.equal(s.seconds,0);});
+test('partial buffering credits only progressing media',()=>{assert.equal(step(step(null,0,0),4000,1).seconds,1);});
+test('large discontinuities cannot train AI',()=>{let s=step(null,0,30);s=step(s,4000,130);s=step(s,8000,20);assert.equal(s.seconds,0);});
+test('2x media credits wall time, rate transition is conservative',()=>{let s=step(null,0,0,{rate:2});s=step(s,4000,8,{rate:2});assert.equal(s.seconds,4);assert.equal(step(s,8000,12,{rate:1}).seconds,4);});
+test('channel and source changes reset session',()=>{let s=step(step(null,0,0),4000,4);assert.equal(step(s,8000,8,{source:'blob:other'}).seconds,0);assert.equal(step(s,8000,8,{id:'other'}).seconds,0);});
+test('invalid and seeking samples reset session',()=>{let s=step(null,0,0);for(const x of [{seeking:true},{rate:0},{source:''},{media:NaN},{wall:Infinity}])assert.equal(step(s,4000,4,x),null);});
+test('long sampling gaps are bounded',()=>{assert.equal(step(step(null,0,0),100000,100).seconds,5);});
+test('threshold flags preserved and input not mutated',()=>{let s={...step(null,0,0),seconds:180,first:true,second:true};let n=step(s,4000,4);assert.equal(n.seconds,184);assert.equal(n.first,true);assert.equal(n.second,true);assert.equal(s.seconds,180);});
+test('non-monotonic wall time cannot add learning',()=>{assert.equal(step(step(null,4000,0),3000,4).seconds,0);});

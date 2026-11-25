@@ -433,6 +433,10 @@
     "134": {
       "title": "Nhấn F để thêm/bỏ Yêu thích và dùng biểu tượng sao SVG",
       "description": "Khi chọn một thẻ kênh, nhấn phím F để thêm kênh vào Yêu thích; nhấn lần nữa để bỏ lưu mà không phát video. Nút sao sử dụng SVG 20 px đồng nhất thay ký tự phụ thuộc phông chữ, giữ nguyên dữ liệu đã lưu, thao tác chuột và bàn phím."
+    },
+    "356": {
+      "title": "AI chỉ học khi media thực sự phát",
+      "description": "WatchFlow không ghi nhận sở thích khi media đứng yên; đo tiến trình media và đặt lại phiên khi chuyển nguồn hoặc tua."
     }
   }
 }
