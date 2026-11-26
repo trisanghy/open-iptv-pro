@@ -96,7 +96,22 @@ test('Hai PNG Electron thật riêng cho phiên bản mới phải được khai
   const file='positron-'+n+'-audit.cjs';
   qa=read('scripts/'+file);
   const runner=read('scripts/positron-50-audit.cjs');
-  assert.ok(runner.includes("await require('./"+file+"').run(page)"),'full Electron QA must execute current independent audit');
+  if(n===356){
+   // P356 requires a pristine profile; the historical runner trains the model.
+   // Full capture must run the same independent audit through isolated CDP.
+   const fast=read('scripts/positron-fast-round.cjs');
+   assert.ok(workflow.includes('P356_PROFILE=$(mktemp -d)'));
+   assert.ok(workflow.includes('--user-data-dir="$P356_PROFILE" --remote-debugging-port=9223'));
+   const isolated='POSITRON_CDP_PORT=9223 timeout --signal=TERM --kill-after=10s 260s node scripts/positron-fast-round.cjs';
+   assert.ok(workflow.includes(isolated));
+   assert.ok(workflow.indexOf('600s node scripts/positron-50-audit.cjs')>=0);
+   assert.ok(workflow.indexOf(isolated)>workflow.indexOf('600s node scripts/positron-50-audit.cjs'));
+   assert.ok(fast.includes("const source=path.join(__dirname,'positron-'+round+'-audit.cjs')"));
+   assert.ok(fast.includes('await require(source).run(page)'));
+   assert.ok(fast.includes('process.env.POSITRON_CDP_PORT'));
+  }else{
+   assert.ok(runner.includes("await require('./"+file+"').run(page)"),'full Electron QA must execute current independent audit');
+  }
   assert.ok(qa.includes('await page.screenshot({path:path.join(dir,'),'current audit must capture real Electron PNG');
  }
  const names=[...qa.matchAll(/positron-p51\d+[-a-zA-Z0-9]+\.png/g)]
