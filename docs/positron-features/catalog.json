@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T03:14:23.793131+00:00",
+  "generatedAt": "2026-11-26T01:46:04.202253+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -315,9 +315,9 @@
       "imageBefore": "screenshots/positron-p51351-source-state-isolation-before-1920x1080-real.png",
       "imageSource": "actions",
       "imageKind": "fast",
-      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45297014268",
-      "imageCommit": "15c2f0856a42444894e64324c8af41608e092f3c",
-      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45297014268/artifacts/14875899940",
+      "imageRun": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45449522870",
+      "imageCommit": "140aad6bafe651f1c75f9655505c2eaf529f1330",
+      "imageArtifact": "https://github.com/trisanghy/open-iptv-pro/actions/runs/45449522870/artifacts/14948635855",
       "builds": [
         {
           "id": 14947211813,
@@ -9185,7 +9185,7 @@
       "commit": "ff29ada0c777398a4fc8dcba36db4cd9c99dd474",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png",
+      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png",
       "builds": [
         {
           "id": 14747500489,
