@@ -284,16 +284,26 @@
    row.querySelector('.del-epg')?.addEventListener('click',()=>{config.sources.splice(i,1);saveConfig();renderSources();});
    root.append(row);
  });}
+ function renderLiveProgress(item,clock){
+  const root=$('#epgLiveProgress'),bar=$('#epgLiveTrack');
+  if(!root||!bar)return;
+  const valid=Number.isFinite(item?.start)&&Number.isFinite(item?.end)&&item.end>item.start&&clock>=item.start&&clock<item.end;
+  const percent=valid?Math.max(0,Math.min(100,(clock-item.start)/(item.end-item.start)*100)):0;
+  root.hidden=!valid;bar.value=percent;
+  root.style.setProperty('--epg-progress',percent+'%');
+ }
  function renderNow(){
   const target=$('#epgNowText');if(!target)return;
   const c=ctx.getCurrent(),time=ms=>Number.isFinite(ms)?today(ms):'—';
   const nowName=$('#epgNowName'),nowTime=$('#epgNowTime'),nextName=$('#epgNextName'),nextTime=$('#epgNextTime');
   if(!c){
+   renderLiveProgress(null,Date.now());
    target.textContent='Chọn kênh để xem chương trình hiện tại';
    if(nowName)nowName.textContent='Chưa chọn kênh';if(nowTime)nowTime.textContent='—';
    if(nextName)nextName.textContent='Chưa có lịch tiếp theo';if(nextTime)nextTime.textContent='—';return;
   }
-  const {now,next}=guideLib.current(guide,c);
+  const clock=Date.now(),{now,next}=guideLib.current(guide,c,clock);
+  renderLiveProgress(now,clock);
   target.textContent=now?`${time(now.start)}–${time(now.end)} · ${now.title}${next?'  |  Tiếp: '+next.title:''}`:'Chưa có EPG khớp với '+c.name;
   if(nowName){nowName.textContent=now?.title||'Chưa có EPG';nowName.title=now?.title||'Chưa có thông tin chương trình';}
   if(nowTime)nowTime.textContent=now?`${time(now.start)} – ${time(now.end)}`:'—';
@@ -561,7 +571,7 @@
   if(!ctx.getChannels().length){$('#epgAutoHint').textContent='Chưa có kênh M3U; EPG sẽ tải khi có danh sách kênh.';return;}
   void refreshEPG({startup:true}).catch(e=>{ctx.toast('Tự tải EPG gặp lỗi: '+String(e?.message||e),'warn');});
  },2200);}
- window.setInterval(()=>{if($('#page-tv')?.classList.contains('active-page'))renderNow();},60_000);
+ window.setInterval(()=>{if($('#page-tv')?.classList.contains('active-page'))renderNow();},15_000);
  window.IPTVExtras={render:renderNow,onChannel:renderNow,onPage:p=>{if(p==='settings')renderSources();if(p==='epg')renderGuidePages();},decorateRow,getGuide:()=>guide,setMapping:(id,epgId)=>{if(epgId)config.manualMappings[id]=epgId;else delete config.manualMappings[id];guide.manualMappings=config.manualMappings;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},setOffset:minutes=>{config.offsetMinutes=Math.max(-720,Math.min(720,Number(minutes)||0));guide.offsetMinutes=config.offsetMinutes;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},getOffset:()=>config.offsetMinutes};
  window.setInterval(()=>{renderNow();if(document.querySelector('#page-epg').classList.contains('active-page'))renderEPG();},60000);
 })();
