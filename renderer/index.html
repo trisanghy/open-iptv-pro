@@ -43,6 +43,13 @@
  #page-tv .player-control-card :is(.control-layout-bottom,.ipvp-second-row) :is(.manual-link-picker,#manualLinkControl){grid-column:2!important;grid-row:2!important}
  #page-tv .player-control-card :is(.control-layout-bottom,.ipvp-second-row) #favCurrentBtn{grid-column:3!important;grid-row:2!important}
 }
+</style><style id="desktop-epg-details">
+#page-tv .player-control-card #epgCurrent :is(.epg-current-item,.epg-next-item,.ipvp-program){grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important}
+#page-tv .player-control-card #epgCurrent .epg-program-copy{display:grid!important;gap:2px;min-width:0;text-align:left}
+#page-tv .player-control-card #epgCurrent .epg-program-copy b{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;min-width:0}
+#page-tv .player-control-card #epgCurrent .epg-program-description{display:block!important;color:var(--muted,#99aebe)!important;font-size:11px!important;font-weight:400!important;line-height:1.35!important;text-align:left!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;max-width:100%!important}
+#page-tv .player-control-card #epgCurrent .epg-program-description[hidden]{display:none!important}
+#page-tv .player-control-card #epgCurrent :is(#epgNowTime,#epgNextTime,#ipvpNowTime,#ipvpNextTime){white-space:nowrap!important;text-align:right!important}
 </style></head>
 <body>
 <div class="app-shell" id="appShell">
@@ -121,8 +128,8 @@
        </div>
        <div class="control-layout-bottom">
         <div class="epg-current-card" id="epgCurrent" aria-label="Lịch phát sóng của kênh đang xem">
-         <div class="epg-current-item"><b id="epgNowName" title="Chương trình đang phát">Chưa có chương trình</b><small id="epgNowTime">—</small></div>
-         <div class="epg-next-item"><b id="epgNextName" title="Chương trình tiếp theo">Chưa có lịch tiếp theo</b><small id="epgNextTime">—</small></div>
+         <div class="epg-current-item"><span class="epg-program-copy"><b id="epgNowName" title="Chương trình đang phát">Chưa có chương trình</b><small id="epgNowDescription" class="epg-program-description" hidden></small></span><small id="epgNowTime">—</small></div>
+         <div class="epg-next-item"><span class="epg-program-copy"><b id="epgNextName" title="Chương trình tiếp theo">Chưa có lịch tiếp theo</b><small id="epgNextDescription" class="epg-program-description" hidden></small></span><small id="epgNextTime">—</small></div>
          <div id="epgLiveProgress" hidden><progress id="epgLiveTrack" max="100" value="0" aria-label="Tiến trình chương trình đang phát"></progress><span class="epg-live-marker" aria-hidden="true"></span></div>
          <span id="epgNowText" class="screen-reader-only" aria-live="polite">Chọn kênh để xem chương trình hiện tại</span>
          <button type="button" id="openGuideBtn" title="Xem toàn bộ lịch phát sóng EPG" aria-label="Xem lịch phát sóng EPG">▤</button>

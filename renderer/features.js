@@ -292,23 +292,26 @@
   root.hidden=!valid;bar.value=percent;
   root.style.setProperty('--epg-progress',percent+'%');
  }
+ function programmeDetail(item){
+  const title=String(item?.title||'').trim(), key=v=>v.toLocaleLowerCase('vi-VN');
+  const subtitle=String(item?.subtitle||'').trim(),description=String(item?.description||'').trim();
+  const detail=[subtitle,description].find(v=>v&&key(v)!==key(title))||'';
+  return {title:detail&&key(title).endsWith(': '+key(detail))?title.slice(0,-detail.length-2):title,detail};
+ }
  function renderNow(){
   const target=$('#epgNowText');if(!target)return;
-  const c=ctx.getCurrent(),time=ms=>Number.isFinite(ms)?today(ms):'—';
-  const nowName=$('#epgNowName'),nowTime=$('#epgNowTime'),nextName=$('#epgNextName'),nextTime=$('#epgNextTime');
-  if(!c){
-   renderLiveProgress(null,Date.now());
-   target.textContent='Chọn kênh để xem chương trình hiện tại';
-   if(nowName)nowName.textContent='Chưa chọn kênh';if(nowTime)nowTime.textContent='—';
-   if(nextName)nextName.textContent='Chưa có lịch tiếp theo';if(nextTime)nextTime.textContent='—';return;
-  }
-  const clock=Date.now(),{now,next}=guideLib.current(guide,c,clock);
+  const c=ctx.getCurrent(),clock=Date.now(),{now,next}=c?guideLib.current(guide,c,clock):{now:null,next:null};
   renderLiveProgress(now,clock);
-  target.textContent=now?`${time(now.start)}–${time(now.end)} · ${now.title}${next?'  |  Tiếp: '+next.title:''}`:'Chưa có EPG khớp với '+c.name;
-  if(nowName){nowName.textContent=now?.title||'Chưa có EPG';nowName.title=now?.title||'Chưa có thông tin chương trình';}
-  if(nowTime)nowTime.textContent=now?`${time(now.start)} – ${time(now.end)}`:'—';
-  if(nextName){nextName.textContent=next?.title||'Chưa có lịch tiếp theo';nextName.title=next?.title||'Chưa có lịch tiếp theo';}
-  if(nextTime)nextTime.textContent=next?`${time(next.start)} – ${time(next.end)}`:'—';
+  const update=(nameId,timeId,descriptionId,item,fallback)=>{
+   const name=$(nameId),time=$(timeId),desc=$(descriptionId),data=programmeDetail(item);
+   if(name){name.textContent=data.title||fallback;name.title=item?.title||fallback;}
+   if(time)time.textContent=item?today(item.start)+' – '+today(item.end):'—';
+   if(desc){desc.textContent=data.detail;desc.title=data.detail;desc.hidden=!data.detail;}
+   return [data.title,data.detail].filter(Boolean).join(' — ');
+  };
+  const a=update('#epgNowName','#epgNowTime','#epgNowDescription',now,c?'Chưa có EPG':'Chưa chọn kênh');
+  const b=update('#epgNextName','#epgNextTime','#epgNextDescription',next,'Chưa có lịch tiếp theo');
+  target.textContent=!c?'Chọn kênh để xem chương trình hiện tại':now?today(now.start)+'–'+today(now.end)+' · '+a+(next?'  |  Tiếp: '+b:''):'Chưa có EPG khớp với '+c.name;
  }
  function renderEPG(){const root=$('#epgGuide');root.replaceChildren();const channels=ctx.getChannels(),clock=Date.now();const filter=$('#epgSearch')?.value?.toLowerCase().trim()||'';
   const matched=channels.filter(c=>guideLib.find(guide,c).length>0).filter(c=>!filter||(c.name+' '+c.tvgId).toLowerCase().includes(filter)).slice(0,250);
