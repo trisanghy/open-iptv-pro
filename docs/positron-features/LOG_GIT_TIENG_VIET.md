@@ -2213,7 +2213,6 @@ Thay lưới thẻ quá nhỏ bằng hai cột và cho phép tên kênh hiển t
 
 Hiển thị nhóm trong một hàng cuộn ngang thay vì xuống nhiều dòng. Giữ vị trí thanh cuộn sau khi chọn nhóm.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ba5a3f4b282ad68a4d5c270fe523935dbf35b00e)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.110 — Thu gọn màn hình phát khi chưa chọn kênh
