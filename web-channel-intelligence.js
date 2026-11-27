@@ -121,7 +121,7 @@
   panel.append(hint,bar,feedback,chips,grid,more);main.append(panel);
   const state=()=>root.IPTVState,store=()=>state()?.getStore?.()||{};
   const favorites=()=>root.OpenIPTVFavorites?.visible?.(store())||[];
-  let active='',selected='Tất cả',limit=48,analysis=null,timer=null,version='',renderSerial=0,inputTimer=null;
+  let active='',selected='Tất cả',limit=48,analysis=null,timer=null,version='',renderSerial=0,inputTimer=null,lastGuide=null,lastRenderKey='';
   const locale=()=>root.OpenIPTVI18n?.getLanguage?.()||doc.documentElement.lang||'vi';
   function tabText(key){return locale()==='vi'?(key==='classification'?'Phân loại kênh':'Kênh gợi ý'):(key==='classification'?'AI categories':'Recommended');}
   function syncTabState(){
@@ -130,8 +130,14 @@
    if(active)for(const b of nav.querySelectorAll('.web-hub-tab[data-tab]')){b.classList.remove('active');b.setAttribute('aria-selected','false');}
   }
   function activate(next){
-   active=next;selected='Tất cả';search.value='';limit=48;version='';
-   syncTabState();if(active)render();
+   if(active===next)return;
+   ++renderSerial;
+   if(timer){root.clearTimeout(timer);timer=null;}
+   if(inputTimer){root.clearTimeout(inputTimer);inputTimer=null;}
+   active=next;selected='Tất cả';search.value='';limit=48;lastRenderKey='';
+   grid.removeAttribute('aria-busy');
+   syncTabState();
+   if(active){grid.replaceChildren();schedule();}
   }
   nav.addEventListener('click',event=>{
    const selectedAI=event.target.closest('[data-ai-tab]'),normal=event.target.closest('[data-tab]');
@@ -140,7 +146,7 @@
   });
   function schedule(){
    if(!active||timer)return;
-   timer=root.setTimeout(()=>{timer=null;render();},100);
+   timer=root.setTimeout(()=>{timer=null;render();},60);
   }
   function card(row,match=null){
    const c=row.channel,tile=doc.createElement('div');tile.className='web-hub-tile web-ai-tile';
@@ -158,7 +164,7 @@
    play.addEventListener('click',()=>{void state()?.playChannel?.(c.id);});
    tile.append(play);
    const isFav=()=>root.OpenIPTVFavorites?.has?.(store(),c);
-   const star=button(isFav()?'★':'☆','web-hub-favorite'+(isFav()?' marked':''));
+   const marked=!!isFav();const star=button(marked?'★':'☆','web-hub-favorite'+(marked?' marked':''));
    star.setAttribute('aria-label','Yêu thích '+c.name);star.addEventListener('click',()=>{
     const f=root.OpenIPTVFavorites,s=store(),beforeKeys=[...(s.favoriteKeys||[])],beforeURLs=[...(s.favorites||[])];
     if(!f?.toggle||!Array.isArray(s.favoriteKeys))return;
@@ -173,11 +179,14 @@
    syncTabState();
    const channels=state()?.getChannels?.()||[],s=store(),guide=root.IPTVExtras?.getGuide?.()||null,history=s.recentChannelIds||[];
    const fav=favorites(),programmes=guide?.programmes||[];
-   const key=JSON.stringify([active,channels.map(c=>[c.id,c.name,c.group,c.tvgId]),fav.map(c=>c.id),history,
-    programmes.length,programmes[0]?.title,programmes[programmes.length-1]?.title,Math.floor(Date.now()/1800000)]);
-   if(version!==key){
-    version=key;analysis=analyse(channels,{guide,favorites:fav,recentIds:history});
+   const key=JSON.stringify([channels.map(c=>[c.id,c.name,c.group,c.tvgId,c.logo]),fav.map(c=>c.id),history,
+    programmes.length,programmes[0]?.title,programmes[programmes.length-1]?.title,guide?.manualMappings,guide?.offsetMinutes,Math.floor(Date.now()/1800000)]);
+   if(!analysis||version!==key||lastGuide!==guide){
+    analysis=analyse(channels,{guide,favorites:fav,recentIds:history});version=key;lastGuide=guide;lastRenderKey='';
    }
+   const renderKey=JSON.stringify([key,active,selected,limit,search.value,locale()]);
+   if(renderKey===lastRenderKey)return;
+   lastRenderKey=renderKey;
    hint.textContent=active==='classification'?'Naive Bayes phân loại theo tên kênh, nhóm M3U và chương trình EPG.':
     analysis.coldStart?'Gợi ý khám phá · Chưa đủ lịch sử xem và yêu thích để cá nhân hóa.':'Kênh đề xuất dựa trên yêu thích, lịch sử xem và chủ đề tương tự.';
    const rows=active==='classification'?analysis.classified:analysis.recommended;
@@ -196,12 +205,14 @@
     empty.textContent=channels.length?'Không có kênh phù hợp.':'Chưa có kênh. Hãy nhập danh sách M3U để bắt đầu.';grid.append(empty);
    }
    const token=++renderSerial;let index=0,end=Math.min(limit,filtered.length);
+   grid.setAttribute('aria-busy',String(end>0));
    function batch(){
-    if(token!==renderSerial)return;
-    const fragment=doc.createDocumentFragment(),stop=Math.min(index+80,end);
+    if(token!==renderSerial||!active)return;
+    const fragment=doc.createDocumentFragment(),stop=Math.min(index+12,end);
     for(;index<stop;index++)fragment.append(card(filtered[index],matches.matches.get(String(filtered[index].channel.id))));
     grid.append(fragment);
     if(index<end)root.requestAnimationFrame?root.requestAnimationFrame(batch):root.setTimeout(batch,0);
+    else grid.removeAttribute('aria-busy');
    }
    batch();
    more.hidden=filtered.length<=limit;more.textContent='Hiển thị thêm ('+Math.min(48,filtered.length-limit)+')';

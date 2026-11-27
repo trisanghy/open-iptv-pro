@@ -213,6 +213,7 @@
     return;
    }
    if(!api())return;
+   if(hub.classList.contains('web-ai-active'))return;
    const all=allChannels(),s=store(),searchGuide=search.trim()?root.IPTVExtras?.getGuide?.()||null:null;
    const signature=renderSignature(all,s,[tab,chip,groupName,sort,view,search,expanded],currentLang());
    if(signature===lastRenderSignature&&searchGuide===lastSearchGuide){updateCurrentSelection();return;}
@@ -257,7 +258,7 @@
   }
   let scheduled=false;
   function schedule(){if(scheduled)return;scheduled=true;root.setTimeout(()=>{scheduled=false;render();},80);}
-  nav.addEventListener('click',event=>{const target=event.target.closest('[data-tab]');if(target)selectTab(target.dataset.tab);});
+  nav.addEventListener('click',event=>{const target=event.target.closest('[data-tab]');if(target){selectTab(target.dataset.tab);schedule();}});
   aside.addEventListener('click',event=>{const target=event.target.closest('[data-open]');if(target)selectTab(target.dataset.open);});
   find.addEventListener('input',()=>{search=find.value;expanded=false;if(searchTimer)root.clearTimeout(searchTimer);searchTimer=root.setTimeout(()=>{searchTimer=null;render();},110);});
   groupSelect.addEventListener('change',()=>{groupName=groupSelect.value;expanded=false;render();});

@@ -12,3 +12,28 @@ html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv #webChannelHub{
  html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv .channel-panel{display:none!important}
  html[data-iptv-device="mobile"].web-ai-quick-open body #page-tv #webChannelIntelligence .web-ai-grid{
   grid-template-columns:repeat(auto-fill,minmax(94px,1fr));max-height:48dvh}
+
+/* Single vertical page scroll on all touch layouts, including desktop-site Safari. */
+html:is(.web-touch-capable,[data-iptv-device="mobile"],[data-iptv-handheld-desktop="true"]).web-ai-quick-open body #appShell > .main > .content{
+ overflow-y:auto!important;overflow-x:hidden!important;min-height:0!important;
+ scroll-behavior:auto!important;overscroll-behavior-y:contain!important;
+ -webkit-overflow-scrolling:touch!important;
+}
+html:is(.web-touch-capable,[data-iptv-device="mobile"],[data-iptv-handheld-desktop="true"]).web-ai-quick-open body #page-tv.active-page,
+html:is(.web-touch-capable,[data-iptv-device="mobile"],[data-iptv-handheld-desktop="true"]).web-ai-quick-open body #page-tv .tv-layout{
+ height:auto!important;max-height:none!important;min-height:0!important;overflow:visible!important;
+}
+html:is(.web-touch-capable,[data-iptv-device="mobile"],[data-iptv-handheld-desktop="true"]).web-ai-quick-open body #page-tv #webChannelHub{
+ min-height:0!important;height:auto!important;max-height:none!important;align-self:stretch!important;
+ flex:0 0 auto!important;grid-template-columns:minmax(0,1fr)!important;overflow:visible!important;
+}
+html:is(.web-touch-capable,[data-iptv-device="mobile"],[data-iptv-handheld-desktop="true"]).web-ai-quick-open body #page-tv #webChannelHub .web-hub-main{
+ min-height:0!important;height:auto!important;max-height:none!important;overflow:clip!important;
+}
+html:is(.web-touch-capable,[data-iptv-device="mobile"],[data-iptv-handheld-desktop="true"]).web-ai-quick-open body #page-tv #webChannelIntelligence .web-ai-grid{
+ max-height:none!important;height:auto!important;min-height:0!important;overflow:visible!important;
+ overscroll-behavior:auto!important;touch-action:pan-y!important;align-content:start!important;
+}
+html:is(.web-touch-capable,[data-iptv-device="mobile"],[data-iptv-handheld-desktop="true"]).web-ai-quick-open body #page-tv #webChannelIntelligence :is(.web-ai-tile,.web-hub-play,.web-hub-art){
+ touch-action:pan-y!important;
+}
