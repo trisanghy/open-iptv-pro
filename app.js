@@ -293,32 +293,20 @@
   if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được xóa thư mục','warn');
   const members=()=>store.channels.filter(c=>groupName(c)===group);
   const count=members().length;
-  const fallback=group==='Khác'?'Chưa phân loại':'Khác';
-  const destinations=[...new Set([fallback,...groupNames().filter(g=>g!==group)])].filter(g=>g!==group);
   const body=count?
-   `<p>Thư mục <b>${escape(group)}</b> chứa ${count} mục kênh (gồm cả nguồn đang tắt nếu có).</p>
-    <label class="modal-label" for="folderDeleteMode">Chọn cách xóa</label>
-    <select class="modal-input" id="folderDeleteMode"><option value="move">Chỉ xóa thư mục, giữ các kênh</option><option value="delete">Xóa thư mục và toàn bộ kênh trong đó</option></select>
-    <label class="modal-label" for="folderDeleteDestination">Chuyển kênh tới (nếu giữ kênh)</label>
-    <select class="modal-input" id="folderDeleteDestination">${destinations.map(g=>`<option value="${escape(g)}">${escape(g)}</option>`).join('')}</select>
-    <p class="hint">Mặc định giữ lại các kênh. Chọn xóa toàn bộ chỉ khi bạn thực sự muốn bỏ các kênh khỏi danh sách.</p>`:
+   `<p>Bạn có muốn xóa thư mục <b>${escape(group)}</b> và toàn bộ ${count} mục kênh bên trong (gồm cả nguồn đang tắt nếu có)?</p><p class="hint">Các kênh sẽ bị xóa khỏi danh sách, không chuyển sang thư mục khác.</p>`:
    `<p>Xóa thư mục trống <b>${escape(group)}</b>?</p>`;
   openModal('Xóa thư mục',body,()=>{
    if(window.IPTVProAdvanced?.canEdit?.()===false)throw Error('Hồ sơ trẻ em không được xóa thư mục');
-   const rows=members(),ids=new Set(rows.map(c=>c.id)),mode=$('#folderDeleteMode')?.value||'move';
-   const destination=$('#folderDeleteDestination')?.value||fallback;
-   if(rows.length&&mode==='move'&&(!destination||destination===group||!destinations.includes(destination)))throw Error('Chọn thư mục đích khác');
-   if(mode==='delete'&&(tasks.check.running||tasks.shots.running))throw Error('Hãy dừng tác vụ kiểm tra/chụp ảnh trước khi xóa kênh');
+   const rows=members(),ids=new Set(rows.map(c=>c.id));
+   if(rows.length!==count)throw Error('Số kênh đã thay đổi. Hãy đóng hộp thoại và xác nhận lại.');
+   if(rows.length&&(tasks.check.running||tasks.shots.running))throw Error('Hãy dừng tác vụ kiểm tra/chụp ảnh trước khi xóa kênh');
    const before={channels:store.channels,folders:store.folders,groupOrder:store.groupOrder,
     collapsedGroups:store.collapsedGroups,channelOrder:Object.fromEntries(Object.entries(store.channelOrder||{}).map(([g,order])=>[g,[...order]])),
     favorites:store.favorites,favoriteKeys:store.favoriteKeys,recentChannelIds:store.recentChannelIds,current:store.current,alternates:store.alternates};
-   const previousGroups=new Map(rows.map(c=>[c.id,c.group]));
-   const stop=mode==='delete'&&!!current&&ids.has(current.id);
+   const stop=!!current&&ids.has(current.id);
    try{
-    if(rows.length&&mode==='move'){
-     channelOrderCore.move(store,[...ids],destination);
-     if(!store.folders.includes(destination))store.folders=[...store.folders,destination];
-    }else if(rows.length&&mode==='delete'){
+    if(rows.length){
      store.channels=store.channels.filter(c=>!ids.has(c.id));
      store.recentChannelIds=store.recentChannelIds.filter(id=>!ids.has(id));
      if(ids.has(store.current))store.current='';
@@ -334,12 +322,12 @@
     channelOrderCore.reconcile(store);syncGroupOrder();
     if(!save())throw Error('Không lưu được thay đổi; thư mục chưa bị xóa');
    }catch(e){
-    Object.assign(store,before);for(const c of rows)c.group=previousGroups.get(c.id);
+    Object.assign(store,before);
     throw e;
    }
    if(stop)stopPlayer();
    render(true);
-   toast(mode==='delete'?`Đã xóa thư mục và ${rows.length} mục kênh`:`Đã xóa thư mục ${group}; giữ lại các kênh`);
+   toast(`Đã xóa thư mục ${group} và ${rows.length} mục kênh`);
   },'Xóa thư mục');
  }
  function renderFolders(){
