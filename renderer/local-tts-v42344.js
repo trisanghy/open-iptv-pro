@@ -176,9 +176,8 @@
    return d.ready===true;
   }catch(e){status('Lỗi kiểm tra TTS: '+e.message);return false;}
  }
- function ensureTranslate(){
-  // Preserve user's independent original Caption visibility choice.
-  if(translate&&!translate.checked){translate.checked=true;translate.dispatchEvent(new Event('change',{bubbles:true}));}
+ function ensureCaptionSource(){
+  if(!captions?.checked&&!translate?.checked&&captions){captions.checked=true;captions.dispatchEvent(new Event('change',{bubbles:true}));}
  }
  // New text never interrupts a sentence that the user is already hearing.
  // Only the most recent NOT-YET-PLAYED subtitle is kept, to avoid old backlogs.
@@ -288,11 +287,11 @@
   if(mediaActive())applyDuck();
   else status('Video đang dừng · TTS chờ phát lại');
   updateSession();
-  ensureTranslate();
+  ensureCaptionSource();
   if(!await refresh())status('Nhấn “Cài mô hình tự động” để sử dụng giọng '+target.value);
  });
  target.addEventListener('change',()=>{
-  resetForModelChange();setVoiceChoices();if(enabled)ensureTranslate();void refresh();
+  resetForModelChange();setVoiceChoices();if(enabled)ensureCaptionSource();void refresh();
  });
  install.addEventListener('click',async()=>{
   if(install.disabled)return;
@@ -356,21 +355,32 @@
   if(e.type==='status'&&enabled&&!previewCoordinator.isActive())status(e.message||'TTS đang xử lý…');
  });
  if(api.captionOnEvent)api.captionOnEvent(e=>{
-  if(!enabled||!translate?.checked||!mediaActive()||!e||e.type!=='segment'||!e.text)return;
+  if(!enabled||!(captions?.checked||translate?.checked)||!mediaActive()||!e||e.type!=='segment'||!e.text)return;
+  if(window.OpenIPTVCaptionSpeechSession&&!window.OpenIPTVCaptionSpeechSession(e))return;
   updateSession();
+  const direct=!translate?.checked;
+  const rawLanguage=String(e.sourceLanguage||e.language||'').trim().toLowerCase().split(/[-_]/)[0];
+  if(direct){
+   if(e.translated||e.interim||!captions?.checked)return;
+   if(rawLanguage!==target.value){
+    status('Đọc phụ đề gốc: chọn giọng '+(rawLanguage&&rawLanguage!=='auto'&&rawLanguage!=='unknown'?rawLanguage:'đúng ngôn ngữ nhận diện')+' (không dịch).');
+    return;
+   }
+  }
+
   const number=Number(e.sequence)||0;
   if(number&&number<lastCaptionSeq)return;
   if(number)lastCaptionSeq=Math.max(number,lastCaptionSeq);
   // Raw/interim recognition stays internal and NEVER cancels audible TTS.
-  if(!e.translated)return;
+  if(!direct&&!e.translated)return;
   // If spoken and subtitle languages match, the UI text is ALREADY translated:
   // synthesize it directly without another Argos/MLX pass. If they differ,
   // translate once into the requested voice language (prefer English pivot
   // when the backend already provided one).
   const sameLanguage=e.language===target.value;
   const englishIntermediate=String(e.englishText||'').trim();
-  const sourceLanguage=sameLanguage?target.value:(englishIntermediate?'en':e.language);
-  const text=String(sameLanguage?e.text:(englishIntermediate||e.text)).trim();
+  const sourceLanguage=direct?rawLanguage:(sameLanguage?target.value:(englishIntermediate?'en':e.language));
+  const text=String(direct?e.text:(sameLanguage?e.text:(englishIntermediate||e.text))).trim();
   if(!text||!rememberOnce(e.utteranceKey||text))return;
   const payload={text,sourceLanguage,alreadyTranslated:sourceLanguage===target.value,
    sequence:number,lang:target.value,voiceId:voice.value,streamUrl:source()};
@@ -401,13 +411,14 @@
    if(!video.paused&&!video.ended&&video.readyState<3)haltSpeech();
   },1500);
  });
- translate?.addEventListener('change',()=>{
-  // If users disable translation, TTS no longer has its prerequisite.
-  // Do not re-enable Translate or the separate original Caption switch.
-  if(!translate.checked&&toggle.checked){
-   toggle.checked=false;toggle.dispatchEvent(new Event('change',{bubbles:true}));
-  }
- });
+ const captionModeChanged=()=>{
+  if(!toggle.checked)return;
+  if(!captions?.checked&&!translate?.checked){toggle.checked=false;toggle.dispatchEvent(new Event('change',{bubbles:true}));return;}
+  resetForModelChange();
+  if(enabled)status(translate?.checked?'Đang chờ phụ đề dịch…':'Đang chờ đọc phụ đề gốc · không dịch…');
+ };
+ translate?.addEventListener('change',captionModeChanged);
+ captions?.addEventListener('change',()=>{if(!translate?.checked)captionModeChanged();});
  window.addEventListener('pagehide',()=>{
   clearStall();enabled=false;void previewCoordinator.cancel();resetPlayback();restore();
   if(previewAudio){try{previewAudio.pause();}catch{}previewAudio=null;}

@@ -109,10 +109,20 @@ test('Electron: Caption remains independent when TTS is off',()=>{
  assert.deepEqual(ui.state(),[false,true,false]);
 });
 
-test('Electron: disabling Translate still disables dependent TTS only',()=>{
+test('Electron: disabling Translate switches to direct Caption TTS',()=>{
  const ui=createHarness();
  ui.change('liveTtsToggle',true);
  ui.change('liveTranslateToggle',false);
- assert.deepEqual(ui.state(),[true,false,false]);
- assert.equal(ui.queueEnabled.at(-1),false);
+ assert.deepEqual(ui.state(),[true,false,true]);
+ assert.equal(ui.queueEnabled.at(-1),true);
+});
+
+test('Electron: enabling TTS with Caption alone does not start Translate',()=>{
+ const ui=createHarness();ui.change('liveCaptionToggle',true);ui.change('liveTtsToggle',true);
+ assert.deepEqual(ui.state(),[true,false,true]);
+ ui.change('liveCaptionToggle',false);assert.deepEqual(ui.state(),[false,false,false]);
+});
+test('Electron: direct reading preference survives normalization',()=>{
+ const api=require('../renderer/ai-toggle-persistence-v42368.js');
+ assert.deepEqual(api.normalize({caption:true,translate:false,tts:true}),{caption:true,translate:false,tts:true});
 });

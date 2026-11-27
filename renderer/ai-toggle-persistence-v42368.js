@@ -16,9 +16,8 @@
   if(!raw||typeof raw!=='object'||Array.isArray(raw))return null;
   if(['caption','translate','tts'].some(k=>typeof raw[k]!=='boolean'))return null;
   const state={caption:raw.caption,translate:raw.translate,tts:raw.tts};
-  // A restored TTS session always needs translation. The original Caption
-  // visibility remains independent, as the user may have hidden it.
-  if(state.tts)state.translate=true;
+  // Preserve Caption + TTS without Translate; repair only orphaned TTS.
+  if(state.tts&&!state.caption&&!state.translate)state.caption=true;
   return state;
  }
  function createController({doc,storage}={}){

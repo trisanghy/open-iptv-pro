@@ -204,6 +204,7 @@
  }
  chooseBinary?.addEventListener('click',()=>void choose('binary'));
  chooseModel?.addEventListener('click',()=>void choose('model'));
+ window.OpenIPTVCaptionSpeechSession=ev=>!!activeId&&ev?.id===activeId&&mediaActive()&&activeSignature===signature();
  if(api?.captionOnEvent)api.captionOnEvent(ev=>{
   if(!ev)return;
   if(ev.type==='setup-progress'){message(ev.message||'Đang cài Whisper…');return;}
