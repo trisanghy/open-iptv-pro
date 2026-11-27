@@ -211,19 +211,26 @@
   root.hidden=!valid;bar.value=percent;
   root.style.setProperty('--epg-progress',percent+'%');
  }
+ function programmeDetail(item){
+  const title=String(item?.title||'').trim(), key=v=>v.toLocaleLowerCase('vi-VN');
+  const subtitle=String(item?.subtitle||'').trim(),description=String(item?.description||'').trim();
+  const detail=[subtitle,description].find(v=>v&&key(v)!==key(title))||'';
+  return {title:detail&&key(title).endsWith(': '+key(detail))?title.slice(0,-detail.length-2):title,detail};
+ }
  function renderNow(){
   const target=$('#epgNowText');if(!target)return;
-  const clock=Date.now(),c=ctx.getCurrent(), current=c?guideLib.current(guide,c,clock):{now:null,next:null};
-  const {now,next}=current;
+  const c=ctx.getCurrent(),clock=Date.now(),{now,next}=c?guideLib.current(guide,c,clock):{now:null,next:null};
   renderLiveProgress(now,clock);
-  target.textContent=!c?'Chọn kênh để xem chương trình hiện tại':now?`${today(now.start)}–${today(now.end)} · ${now.title}${next?'  |  Tiếp: '+next.title:''}`:'Chưa có EPG khớp với '+c.name;
-  const update=(titleId,timeId,item,fallback)=>{
-   const title=$(titleId),time=$(timeId);
-   if(title){title.textContent=item?.title||fallback;title.title=item?.title||fallback;}
-   if(time)time.textContent=item?`${today(item.start)} – ${today(item.end)}`:'—';
+  const update=(nameId,timeId,descriptionId,item,fallback)=>{
+   const name=$(nameId),time=$(timeId),desc=$(descriptionId),data=programmeDetail(item);
+   if(name){name.textContent=data.title||fallback;name.title=item?.title||fallback;}
+   if(time)time.textContent=item?today(item.start)+' – '+today(item.end):'—';
+   if(desc){desc.textContent=data.detail;desc.title=data.detail;desc.hidden=!data.detail;}
+   return [data.title,data.detail].filter(Boolean).join(' — ');
   };
-  update('#ipvpNowTitle','#ipvpNowTime',now,c?'Chưa có EPG':'Chưa chọn kênh');
-  update('#ipvpNextTitle','#ipvpNextTime',next,'Chưa có chương trình tiếp theo');
+  const a=update('#ipvpNowTitle','#ipvpNowTime','#epgNowDescription',now,c?'Chưa có EPG':'Chưa chọn kênh');
+  const b=update('#ipvpNextTitle','#ipvpNextTime','#epgNextDescription',next,'Chưa có lịch tiếp theo');
+  target.textContent=!c?'Chọn kênh để xem chương trình hiện tại':now?today(now.start)+'–'+today(now.end)+' · '+a+(next?'  |  Tiếp: '+b:''):'Chưa có EPG khớp với '+c.name;
  }
  function renderEPG(){const root=$('#epgGuide');root.replaceChildren();const channels=ctx.getChannels(),clock=Date.now();const filter=$('#epgSearch')?.value?.toLowerCase().trim()||'';
   const matched=channels.filter(c=>guideLib.find(guide,c).length>0).filter(c=>!filter||(c.name+' '+c.tvgId).toLowerCase().includes(filter)).slice(0,250);
