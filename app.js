@@ -291,13 +291,56 @@
  }
  function deleteFolder(group){
   if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được xóa thư mục','warn');
-  const count=groupCount(group);if(!confirm(count?`Thư mục ${group} đang chứa ${count} kênh. Chuyển các kênh sang Khác rồi xóa thư mục?`:`Xóa thư mục trống ${group}?`))return;
-  const ids=store.channels.filter(c=>groupName(c)===group).map(c=>c.id);
-  if(ids.length)channelOrderCore.move(store,ids,'Khác');
-  delete store.channelOrder[group];store.folders=store.folders.filter(x=>x!==group);
-  store.groupOrder=store.groupOrder.filter(g=>g!==group);
-  store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);
-  save();render();
+  const members=()=>store.channels.filter(c=>groupName(c)===group);
+  const count=members().length;
+  const fallback=group==='Khác'?'Chưa phân loại':'Khác';
+  const destinations=[...new Set([fallback,...groupNames().filter(g=>g!==group)])].filter(g=>g!==group);
+  const body=count?
+   `<p>Thư mục <b>${escape(group)}</b> chứa ${count} mục kênh (gồm cả nguồn đang tắt nếu có).</p>
+    <label class="modal-label" for="folderDeleteMode">Chọn cách xóa</label>
+    <select class="modal-input" id="folderDeleteMode"><option value="move">Chỉ xóa thư mục, giữ các kênh</option><option value="delete">Xóa thư mục và toàn bộ kênh trong đó</option></select>
+    <label class="modal-label" for="folderDeleteDestination">Chuyển kênh tới (nếu giữ kênh)</label>
+    <select class="modal-input" id="folderDeleteDestination">${destinations.map(g=>`<option value="${escape(g)}">${escape(g)}</option>`).join('')}</select>
+    <p class="hint">Mặc định giữ lại các kênh. Chọn xóa toàn bộ chỉ khi bạn thực sự muốn bỏ các kênh khỏi danh sách.</p>`:
+   `<p>Xóa thư mục trống <b>${escape(group)}</b>?</p>`;
+  openModal('Xóa thư mục',body,()=>{
+   if(window.IPTVProAdvanced?.canEdit?.()===false)throw Error('Hồ sơ trẻ em không được xóa thư mục');
+   const rows=members(),ids=new Set(rows.map(c=>c.id)),mode=$('#folderDeleteMode')?.value||'move';
+   const destination=$('#folderDeleteDestination')?.value||fallback;
+   if(rows.length&&mode==='move'&&(!destination||destination===group||!destinations.includes(destination)))throw Error('Chọn thư mục đích khác');
+   if(mode==='delete'&&(tasks.check.running||tasks.shots.running))throw Error('Hãy dừng tác vụ kiểm tra/chụp ảnh trước khi xóa kênh');
+   const before={channels:store.channels,folders:store.folders,groupOrder:store.groupOrder,
+    collapsedGroups:store.collapsedGroups,channelOrder:Object.fromEntries(Object.entries(store.channelOrder||{}).map(([g,order])=>[g,[...order]])),
+    favorites:store.favorites,favoriteKeys:store.favoriteKeys,recentChannelIds:store.recentChannelIds,current:store.current,alternates:store.alternates};
+   const previousGroups=new Map(rows.map(c=>[c.id,c.group]));
+   const stop=mode==='delete'&&!!current&&ids.has(current.id);
+   try{
+    if(rows.length&&mode==='move'){
+     channelOrderCore.move(store,[...ids],destination);
+     if(!store.folders.includes(destination))store.folders=[...store.folders,destination];
+    }else if(rows.length&&mode==='delete'){
+     store.channels=store.channels.filter(c=>!ids.has(c.id));
+     store.recentChannelIds=store.recentChannelIds.filter(id=>!ids.has(id));
+     if(ids.has(store.current))store.current='';
+     if(store.alternates&&typeof store.alternates==='object'){
+      store.alternates=Object.fromEntries(Object.entries(store.alternates).filter(([id])=>!ids.has(id)));
+     }
+     favCore.sync(store);
+    }
+    delete store.channelOrder[group];
+    store.folders=store.folders.filter(x=>x!==group);
+    store.groupOrder=store.groupOrder.filter(g=>g!==group);
+    store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);
+    channelOrderCore.reconcile(store);syncGroupOrder();
+    if(!save())throw Error('Không lưu được thay đổi; thư mục chưa bị xóa');
+   }catch(e){
+    Object.assign(store,before);for(const c of rows)c.group=previousGroups.get(c.id);
+    throw e;
+   }
+   if(stop)stopPlayer();
+   render(true);
+   toast(mode==='delete'?`Đã xóa thư mục và ${rows.length} mục kênh`:`Đã xóa thư mục ${group}; giữ lại các kênh`);
+  },'Xóa thư mục');
  }
  function renderFolders(){
   const root=$('#folderManager');root.replaceChildren();const groups=groupNames();
