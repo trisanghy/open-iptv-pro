@@ -19,9 +19,9 @@ test('Rust GPU IPC exposes only app-owned cache and hardware benchmark',()=>{
   assert.ok(shim.includes(key),key+' missing in bridge');
  }
 });
-test('shared GPU panel is linked, popup appears only after benchmark',()=>{
+test('retired GPU panel is not loaded; archival module remains testable',()=>{
  const html=read('renderer/index.html'),code=read('renderer/video-gpu-manager-v1.js');
- assert.match(html,/video-gpu-manager-v1\.css/);assert.match(html,/video-gpu-manager-v1\.js/);
+ assert.doesNotMatch(html,/video-gpu-manager-v1\.css/);assert.doesNotMatch(html,/video-gpu-manager-v1\.js/);
  assert.match(code,/showModal/);assert.match(code,/videoGpuDelete/);assert.match(code,/videoGpuBenchmark/);
  assert.doesNotThrow(()=>new Function(code));
 });
