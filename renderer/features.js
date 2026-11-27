@@ -192,8 +192,12 @@
    row.querySelector('.del-epg')?.addEventListener('click',()=>{config.sources.splice(i,1);saveConfig();renderSources();});
    root.append(row);
  });}
- function renderNow(){const target=$('#epgNowText');if(!target)return;const c=ctx.getCurrent();if(!c){target.textContent='Chọn kênh để xem chương trình hiện tại';return;}
-  const {now,next}=guideLib.current(guide,c);target.textContent=now?`${today(now.start)}–${today(now.end)} · ${now.title}${next?'  |  Tiếp: '+next.title:''}`:'Chưa có EPG khớp với '+c.name;
+ function renderNow(){
+  const target=$('#epgNowText');if(!target)return;
+  const c=ctx.getCurrent();if(!c){target.textContent='Chọn kênh để xem chương trình hiện tại';return;}
+  const {now,next}=guideLib.current(guide,c);
+  const detail=item=>{const title=String(item.title||'').trim(),extra=String(item.subtitle||item.description||'').trim();return extra&&!title.toLocaleLowerCase('vi-VN').includes(extra.toLocaleLowerCase('vi-VN'))?title+' — '+extra:title;};
+  target.textContent=now?today(now.start)+'–'+today(now.end)+' · '+detail(now)+(next?'  |  Tiếp: '+detail(next):''):'Chưa có EPG khớp với '+c.name;
  }
  function renderEPG(){const root=$('#epgGuide');root.replaceChildren();const channels=ctx.getChannels(),clock=Date.now();const filter=$('#epgSearch')?.value?.toLowerCase().trim()||'';
   const matched=channels.filter(c=>guideLib.find(guide,c).length>0).filter(c=>!filter||(c.name+' '+c.tvgId).toLowerCase().includes(filter)).slice(0,250);

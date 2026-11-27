@@ -42,8 +42,9 @@
    const start=when(p.getAttribute('start')),end=when(p.getAttribute('stop'));
    if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start||end<min||start>max)continue;
    const description=firstText(p,'desc').slice(0,450);
-   const title=detailedTitle(firstText(p,'title').slice(0,220),description,firstText(p,'sub-title').slice(0,150));
-   out.push({id:ch,start,end,title,description});
+   const subtitle=firstText(p,'sub-title').slice(0,150);
+   const title=detailedTitle(firstText(p,'title').slice(0,220),description,subtitle);
+   out.push({id:ch,start,end,title,description,subtitle});
   }
   out.sort((a,b)=>a.start-b.start);return {names,aliasesById,programmes:out,matchedChannels:matched.size};
  }
