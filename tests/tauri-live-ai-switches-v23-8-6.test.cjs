@@ -72,13 +72,13 @@ test('From all ON, disabling Caption turns off all three and stops recognition',
  assert.ok(a.events.some(e=>e.id==='liveTranslateToggle'&&!e.checked));
  assert.ok(a.callbacks.captionStop.length>before,'Whisper must stop after disabling the entire pipeline');
 });
-test('Turning Translate off stops TTS but retains Caption',async()=>{
+test('Turning Translate off retains Caption and direct TTS',async()=>{
  const a=app();a.change('liveTtsToggle',true);
  a.change('liveTranslateToggle',false);
  await settle();
  assert.equal(a.nodes.liveCaptionToggle.checked,true);
  assert.equal(a.nodes.liveTranslateToggle.checked,false);
- assert.equal(a.nodes.liveTtsToggle.checked,false);
+ assert.equal(a.nodes.liveTtsToggle.checked,true);
 });
 test('Turning TTS off alone does not alter Caption or Translate',()=>{
  const a=app();a.change('liveTtsToggle',true);
@@ -87,11 +87,11 @@ test('Turning TTS off alone does not alter Caption or Translate',()=>{
  assert.equal(a.nodes.liveTranslateToggle.checked,true);
  assert.equal(a.nodes.liveTtsToggle.checked,false);
 });
-test('Re-enabling TTS recovers the full pipeline after partial configurations',()=>{
+test('Enabling TTS with Caption alone preserves direct reading',()=>{
  const a=app();a.change('liveCaptionToggle',true);
  a.change('liveTtsToggle',true);
  assert.equal(a.nodes.liveCaptionToggle.checked,true);
- assert.equal(a.nodes.liveTranslateToggle.checked,true);
+ assert.equal(a.nodes.liveTranslateToggle.checked,false);
  assert.equal(a.nodes.liveTtsToggle.checked,true);
 });
 test('Caption/TTS source code and persisted startup settings match requested cascades',()=>{
@@ -101,8 +101,8 @@ test('Caption/TTS source code and persisted startup settings match requested cas
  assert.match(cap,/if\(event\?\.target===caption&&!caption\.checked\)/);
  assert.match(cap,/if\(!tts\.checked\)return/);
  assert.match(cap,/caption\.checked=true;translate\.checked=true/);
- assert.match(speech,/function ensureTranslate\(/);
- assert.match(prefs,/if\(tts\?\.checked\)/);
+ assert.match(speech,/function ensureCaptionSource\(/);
+ assert.match(prefs,/if\(tts\?\.checked&&!caption\?\.checked&&!translate\?\.checked\)/);
  assert.match(prefs,/if\(caption\)caption\.checked=true/);
 });
 test('Current release tag is immutable and matches the single-app Mac builder',()=>{

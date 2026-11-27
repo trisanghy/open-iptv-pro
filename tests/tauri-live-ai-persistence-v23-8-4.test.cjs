@@ -73,3 +73,9 @@ test('Resume runs after all AI modules, version tag matches local Mac builder',(
  assert.match(version,/^23\.8\.\d+$/);
  assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
 });
+
+test('Restore Caption + TTS without forcing Translate',()=>{
+ const store=new Map();const ui=launch(store);ui.nodes.liveCaptionToggle.checked=true;ui.nodes.liveTtsToggle.checked=true;ui.change('liveTtsToggle');
+ const fresh=launch(store);fresh.window.RustAiPreferences.activate();
+ assert.equal(fresh.nodes.liveCaptionToggle.checked,true);assert.equal(fresh.nodes.liveTranslateToggle.checked,false);assert.equal(fresh.nodes.liveTtsToggle.checked,true);
+});

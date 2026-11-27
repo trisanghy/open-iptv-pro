@@ -43,11 +43,9 @@
  function activate(){
   if(activated)return;activated=true;
   const caption=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),tts=$('liveTtsToggle');
-  // TTS on always restores the complete three-stage pipeline. This also
-  // migrates inconsistent saved preferences from the older independent mode.
-  if(tts?.checked){
+  // Restore the chosen source; repair an orphan TTS state with Caption only.
+  if(tts?.checked&&!caption?.checked&&!translate?.checked){
    if(caption)caption.checked=true;
-   if(translate)translate.checked=true;
   }
   // Start only after all AI providers are configured, and only when a playable URL exists.
   if(translate?.checked||caption?.checked)(translate?.checked?translate:caption).dispatchEvent(new Event('change',{bubbles:true}));

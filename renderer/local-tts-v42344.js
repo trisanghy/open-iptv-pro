@@ -106,11 +106,8 @@
    return d.ready===true;
   }catch(e){status('Lỗi kiểm tra TTS: '+e.message);return false;}
  }
- function ensureTranslate(){
-  // On the TTS switch itself, live-captions.js already enables all three modes.
-  // Also preserve the full pipeline if the TTS language is changed while active.
-  if(captions&&!captions.checked){captions.checked=true;captions.dispatchEvent(new Event('change',{bubbles:true}));}
-  if(translate&&!translate.checked){translate.checked=true;translate.dispatchEvent(new Event('change',{bubbles:true}));}
+ function ensureCaptionSource(){
+  if(!captions?.checked&&!translate?.checked&&captions){captions.checked=true;captions.dispatchEvent(new Event('change',{bubbles:true}));}
  }
  async function speak(input){
   if(!enabled||video.paused||video.ended||busy||playing||previewInFlight||previewAudio||!input||input.enqueuedAt&&Date.now()-input.enqueuedAt>12000)return;
@@ -185,14 +182,14 @@
   if(!enabled){resetPlayback();recentSpeech.clear();restore();status('Đã tắt TTS');return;}
   recentSpeech.clear();
   updateSession();applyDuck();
-  ensureTranslate();
+  ensureCaptionSource();
   // Launch model warmup without blocking recognition or waiting for the first caption.
   prewarm();
   const ready=await refresh();
   if(enabled&&!ready)status('Nhấn “Cài mô hình tự động” để sử dụng giọng '+target.value);
  });
  target.addEventListener('change',()=>{
-  resetPlayback();updateVoiceVisibility();if(enabled){ensureTranslate();prewarm();}void refresh();
+  resetPlayback();updateVoiceVisibility();if(enabled){ensureCaptionSource();prewarm();}void refresh();
  });
  voice?.addEventListener('change',()=>{resetPlayback();if(enabled)prewarm();void refresh();});
  preview?.addEventListener('click',async()=>{
@@ -234,24 +231,44 @@
   if(e.type==='status'&&enabled)status(e.message||'TTS đang xử lý…');
  });
  if(api.captionOnEvent)api.captionOnEvent(e=>{
-  if(!enabled||video.paused||video.ended||!translate?.checked||!e||e.type!=='segment'||!e.text)return;
-  if(e.route==='mlx-error')return; // Do not narrate untranslated source speech.
+  if(!enabled||video.paused||video.ended||!(captions?.checked||translate?.checked)||!e||e.type!=='segment'||!e.text)return;
+  if(window.OpenIPTVCaptionSpeechSession&&!window.OpenIPTVCaptionSpeechSession(e))return;
+  if(e.route==='mlx-error')return;
   updateSession();
+  const direct=!translate?.checked;
+  const rawLanguage=String(e.sourceLanguage||e.language||'').trim().toLowerCase().split(/[-_]/)[0];
+  if(direct){
+   if(e.translated||e.interim||!captions?.checked)return;
+   if(rawLanguage!==target.value){
+    status('Đọc phụ đề gốc: chọn giọng '+(rawLanguage&&rawLanguage!=='auto'&&rawLanguage!=='unknown'?rawLanguage:'đúng ngôn ngữ nhận diện')+' (không dịch).');
+    return;
+   }
+  }
+
   // Use the actual language of the text, bypass translation when the voice already matches.
   const to=String(target.value||'').toLowerCase(),spoken=String(e.sourceLanguage||'').toLowerCase();
   const visibleLang=String(e.language||'').toLowerCase(),original=String(e.originalText||'').trim();
   const englishFallback=String(e.englishText||'').trim();
   let text=String(e.text||'').trim(),sourceLanguage=visibleLang;
-  if(visibleLang===to){sourceLanguage=to;}
+  if(direct){text=original||text;sourceLanguage=to;}
+  else if(visibleLang===to){sourceLanguage=to;}
   else if(spoken===to&&original){text=original;sourceLanguage=to;}
   else if(spoken&&original){text=original;sourceLanguage=spoken;}
   else if(englishFallback){text=englishFallback;sourceLanguage='en';}
   if(!text||!sourceLanguage)return;
   if(!acceptSpeech(sourceLanguage+' '+text))return;
-  const payload={text,sourceLanguage,englishFallbackText:englishFallback,originalText:original,enqueuedAt:Date.now()};
+  const payload={text,sourceLanguage,englishFallbackText:direct?'':englishFallback,originalText:original,enqueuedAt:Date.now()};
   if(busy||playing||previewInFlight||previewAudio){queued=payload;return;}
   void speak(payload);
  });
+ const captionModeChanged=()=>{
+  if(!enabled)return;
+  if(!captions?.checked&&!translate?.checked){toggle.checked=false;toggle.dispatchEvent(new Event('change',{bubbles:true}));return;}
+  resetPlayback();recentSpeech.clear();
+  status(translate?.checked?'Đang chờ phụ đề dịch…':'Đang chờ đọc phụ đề gốc · không dịch…');
+ };
+ translate?.addEventListener('change',captionModeChanged);
+ captions?.addEventListener('change',()=>{if(!translate?.checked)captionModeChanged();});
  document.addEventListener('openiptv:media-info',updateSession);
  const suspendSpeech=()=>{
   // Cancel outstanding synthesis, queued speech and the audio player, but remember the enabled preference.

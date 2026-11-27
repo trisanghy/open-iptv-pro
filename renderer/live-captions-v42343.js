@@ -121,9 +121,7 @@
   if(now-lastHlsRecovery<2500)return;
   lastHlsRecovery=now;void reconcile(true);
  });
- // Three-mode group: enabling TTS from OFF enables the whole pipeline;
- // disabling its leading Caption switch shuts down Caption/Translate/TTS together.
- // The visible Caption preference remains independent when only Translate changes.
+ // Keep legacy all-OFF shortcut; an active Caption can drive TTS without Translate.
  const tts=$('liveTtsToggle');
  const changed=event=>{
   if(event?.target===caption&&!caption.checked){
@@ -144,8 +142,8 @@
    document.dispatchEvent(new CustomEvent('rustlab:caption-visibility-changed',{detail:{enabled:caption.checked}}));
    return;
   }
-  // Turning off Translate also turns off voice-over, but retains Caption.
-  if(event?.target===translate&&!translate.checked&&tts?.checked){
+  // No recognition source remains only when BOTH switches are off.
+  if(event?.target===translate&&!translate.checked&&!caption.checked&&tts?.checked){
    tts.checked=false;
    tts.dispatchEvent(new Event('change',{bubbles:true}));
   }
@@ -154,11 +152,12 @@
  caption.addEventListener('change',changed);translate.addEventListener('change',changed);
  tts?.addEventListener('change',()=>{
   if(!tts.checked)return;
-  // One-click TTS ON: enable the full recognition → translation → speech chain.
-  const needsCaption=!caption.checked,needsTranslate=!translate.checked;
-  caption.checked=true;translate.checked=true;
-  if(needsCaption)caption.dispatchEvent(new Event('change',{bubbles:true}));
-  if(needsTranslate)translate.dispatchEvent(new Event('change',{bubbles:true}));
+  // From an existing Caption or Translate mode, do not change the source.
+  if(!caption.checked&&!translate.checked){
+   caption.checked=true;translate.checked=true;
+   caption.dispatchEvent(new Event('change',{bubbles:true}));
+   translate.dispatchEvent(new Event('change',{bubbles:true}));
+  }
  });
  target.addEventListener('change',()=>{
   try{localStorage.setItem(preference,target.value);}catch{}
@@ -206,6 +205,7 @@
   }catch(e){setStatus('Dịch mẫu lỗi: '+String(e.message||e).slice(0,140),true);}
   finally{testTranslate.disabled=false;}
  });
+ window.OpenIPTVCaptionSpeechSession=e=>!!activeId&&e?.id===activeId&&mediaActive()&&currentURL===preferredURL()&&lastTranslate===translate.checked&&(!translate.checked||lastTarget===target.value);
  if(api.captionOnEvent)api.captionOnEvent(e=>{
   if(!e||!activeId||e.id!==activeId||!mediaActive())return;
   if(e.type==='segment'){
