@@ -203,10 +203,19 @@
    row.querySelector('.del-epg')?.addEventListener('click',()=>{config.sources.splice(i,1);saveConfig();renderSources();});
    root.append(row);
  });}
+ function renderLiveProgress(item,clock){
+  const root=$('#epgLiveProgress'),bar=$('#epgLiveTrack');
+  if(!root||!bar)return;
+  const valid=Number.isFinite(item?.start)&&Number.isFinite(item?.end)&&item.end>item.start&&clock>=item.start&&clock<item.end;
+  const percent=valid?Math.max(0,Math.min(100,(clock-item.start)/(item.end-item.start)*100)):0;
+  root.hidden=!valid;bar.value=percent;
+  root.style.setProperty('--epg-progress',percent+'%');
+ }
  function renderNow(){
   const target=$('#epgNowText');if(!target)return;
-  const c=ctx.getCurrent(), current=c?guideLib.current(guide,c):{now:null,next:null};
+  const clock=Date.now(),c=ctx.getCurrent(), current=c?guideLib.current(guide,c,clock):{now:null,next:null};
   const {now,next}=current;
+  renderLiveProgress(now,clock);
   target.textContent=!c?'Chọn kênh để xem chương trình hiện tại':now?`${today(now.start)}–${today(now.end)} · ${now.title}${next?'  |  Tiếp: '+next.title:''}`:'Chưa có EPG khớp với '+c.name;
   const update=(titleId,timeId,item,fallback)=>{
    const title=$(titleId),time=$(timeId);
@@ -385,5 +394,6 @@
   },3500);
  }
  window.IPTVExtras={render:renderNow,onChannel:renderNow,onPage:p=>{if(p==='settings')renderSources();if(p==='epg')renderGuidePages();},decorateRow,getGuide:()=>guide,setMapping:(id,epgId)=>{if(epgId)config.manualMappings[id]=epgId;else delete config.manualMappings[id];guide.manualMappings=config.manualMappings;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();notifyWatchFlow();},setOffset:minutes=>{config.offsetMinutes=Math.max(-720,Math.min(720,Number(minutes)||0));guide.offsetMinutes=config.offsetMinutes;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();notifyWatchFlow();},getOffset:()=>config.offsetMinutes};
+ window.setInterval(()=>{if($('#page-tv')?.classList.contains('active-page'))renderNow();},15000);
  window.setInterval(()=>{renderNow();if(document.querySelector('#page-epg').classList.contains('active-page'))renderEPG();},60000);
 })();
