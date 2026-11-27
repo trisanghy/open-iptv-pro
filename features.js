@@ -286,6 +286,20 @@
    row.querySelector('.del-epg')?.addEventListener('click',()=>{config.sources.splice(i,1);saveConfig();renderSources();});
    root.append(row);
  });}
+ function renderLiveProgress(item,clock){
+  const root=$('#epgLiveProgress'),bar=$('#epgLiveTrack');
+  if(!root||!bar)return;
+  const valid=Number.isFinite(item?.start)&&Number.isFinite(item?.end)&&item.end>item.start&&clock>=item.start&&clock<item.end;
+  root.hidden=!valid;
+  if(!valid){bar.value=0;bar.removeAttribute('aria-valuetext');$('#epgLiveElapsed').textContent='';$('#epgLiveRemaining').textContent='';return;}
+  const elapsed=clock-item.start,remaining=item.end-clock;
+  const percent=Math.max(0,Math.min(100,elapsed/(item.end-item.start)*100));
+  const format=minutes=>minutes>=60?Math.floor(minutes/60)+' giờ '+minutes%60+' phút':minutes+' phút';
+  const left='Đã phát '+format(Math.floor(elapsed/60000));
+  const right='Còn '+format(Math.ceil(remaining/60000));
+  bar.value=percent;bar.setAttribute('aria-valuetext',left+', '+right);
+  $('#epgLiveElapsed').textContent=left;$('#epgLiveRemaining').textContent=right;
+ }
  function renderNow(){
   const target=$('#epgNowText');if(!target)return;
   const c=ctx.getCurrent(),time=ms=>Number.isFinite(ms)?today(ms):'—';
@@ -308,11 +322,13 @@
    element.textContent=detail;element.hidden=!detail;element.title=detail;
   };
   if(!c){
+   renderLiveProgress(null,Date.now());
    target.textContent='Chọn kênh để xem chương trình hiện tại';
    if(nowName)nowName.textContent='Chưa chọn kênh';if(nowTime)nowTime.textContent='—';
    if(nextName)nextName.textContent='Chưa có lịch tiếp theo';if(nextTime)nextTime.textContent='—';renderDetail(nowDetails,null);renderDetail(nextDetails,null);return;
   }
-  const {now,next}=guideLib.current(guide,c);
+  const clock=Date.now(),{now,next}=guideLib.current(guide,c,clock);
+  renderLiveProgress(now,clock);
   target.textContent=now?`${time(now.start)}–${time(now.end)} · ${displayTitle(now)}${detailText(now)?' — '+detailText(now):''}${next?'  |  Tiếp: '+displayTitle(next)+(detailText(next)?' — '+detailText(next):''):''}`:'Chưa có EPG khớp với '+c.name;
   if(nowName){nowName.textContent=displayTitle(now)||'Chưa có EPG';nowName.title=now?.title||'Chưa có thông tin chương trình';}
   if(nowTime)nowTime.textContent=now?`${time(now.start)} – ${time(now.end)}`:'—';
@@ -656,9 +672,10 @@
   void refreshEPG({startup:true}).catch(e=>{ctx.toast('Tự tải EPG gặp lỗi: '+String(e?.message||e),'warn');});
  },2200);}
  window.setInterval(()=>{
-  if(document.visibilityState==='hidden')return;
-  if($('#page-tv')?.classList.contains('active-page'))renderNow();
-  else if($('#page-epg')?.classList.contains('active-page'))renderGuidePages();
+  if(document.visibilityState!=='hidden'&&$('#page-tv')?.classList.contains('active-page'))renderNow();
+ },15000);
+ window.setInterval(()=>{
+  if(document.visibilityState!=='hidden'&&$('#page-epg')?.classList.contains('active-page'))renderGuidePages();
  },60000);
  document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState!=='visible')return;
