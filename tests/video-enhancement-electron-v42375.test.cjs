@@ -93,12 +93,12 @@ test('unified module emits a lifecycle event; CSS never draws an outer purple fr
   assert.match(style,/border:0!important;outline:0!important;box-shadow:none!important/);
 });
 
-test('Electron index includes AI module after the original CC controls; repair styles load last',()=>{
+test('Electron index no longer loads retired video enhancement; original CC remains',()=>{
  const html=read('renderer/index.html');
- assert.match(html,/video-enhancement-electron-v42375\.js/);
- assert.match(html,/video-enhancement-electron-v42375\.css/);
+ assert.doesNotMatch(html,/video-enhancement-electron-v42375\.js/);
+ assert.doesNotMatch(html,/video-enhancement-electron-v42375\.css/);
  assert.match(html,/sidebar-gap-repair-v42375\.css/);
- assert.ok(html.indexOf('unified-ai-inline-v1.js')<html.indexOf('video-enhancement-electron-v42375.js'));
+ assert.ok(html.includes('unified-ai-inline-v1.js'));
 });
 test('collapsed channel panel has no reserved 52px gutter, but opener stays accessible',()=>{
  const css=read('renderer/sidebar-gap-repair-v42375.css');
