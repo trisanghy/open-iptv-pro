@@ -308,8 +308,8 @@
   // Show XMLTV episode/film details below the category. A decoded legacy EPG
   // may already combine the genre and episode in title: do not repeat it.
   const detailText=item=>{
-   const detail=String(item?.description||'').trim();
-   return detail&&detail.toLocaleLowerCase('vi-VN')!==String(item?.title||'').trim().toLocaleLowerCase('vi-VN')?detail:'';
+   const title=String(item?.title||'').trim(),subtitle=String(item?.subtitle||'').trim(),description=String(item?.description||'').trim();
+   return [subtitle,description].find(detail=>detail&&detail.toLocaleLowerCase('vi-VN')!==title.toLocaleLowerCase('vi-VN'))||'';
   };
   const displayTitle=item=>{
    const title=String(item?.title||'').trim();
