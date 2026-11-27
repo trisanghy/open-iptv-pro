@@ -1,7 +1,7 @@
 'use strict';
 /* Touch-only drag sorting for the Web player.
  * Existing desktop pointer + HTML5 drag support stays in app.js.
- * On iOS/Android long-press the folder/channel itself for 800ms.
+ * Touch works in mobile and desktop-site layouts; logo/folder icon is a drag handle.
  * Short taps play/open, swipes scroll, and nested action buttons remain intact. */
 (function(w,d){
  const api=w.IPTVState,order=w.OpenIPTVChannelOrder;
@@ -10,9 +10,17 @@
  const isMobile=()=>d.documentElement?.dataset?.iptvDevice==='mobile';
  const canEdit=()=>w.IPTVProAdvanced?.canEdit?.()!==false;
  const selector='#channelList .folder-header[data-group],#folderManager .folder-card[data-group],#channelList .channel-item[data-channel-id]';
- const HOLD_MS=800;
+ const HOLD_MS=500;
+ const HANDLE_HOLD_MS=180;
+ const handleSelector='.chan-logo,.folder-emoji,#folderManager .folder-card h3';
+ const markTouch=()=>{
+  d.documentElement.classList.add('web-touch-capable');
+  const hint=d.querySelector('#page-tv .channel-drag-hint');
+  if(hint)hint.textContent='↕ Giữ logo kênh / biểu tượng thư mục rồi kéo để sắp xếp; kéo kênh vào thư mục khác để chuyển. Vuốt phần tên để cuộn.';
+ };
+ if(w.navigator?.maxTouchPoints>0||w.matchMedia?.('(any-pointer: coarse)')?.matches)markTouch();
  const CANCEL_SLOP=14;
- let gesture=null,ghost=null,highlight=null,scrollFrame=0,suppressClickUntil=0,suppressClickSource=null,activeDragMove=null;
+ let gesture=null,ghost=null,highlight=null,scrollFrame=0,suppressClickUntil=0,suppressClickSource=null;
  // No extra drag icons: long press anywhere on a channel or folder.
  // A short tap retains the existing play/expand behavior; normal scroll cancels
  // the pending hold. Use cancellable touchmove for reliable iPhone Safari drag.
@@ -29,7 +37,6 @@
  }
  function reset(){
   if(gesture?.timer)w.clearTimeout(gesture.timer);
-  if(activeDragMove){d.removeEventListener('touchmove',activeDragMove,true);activeDragMove=null;}
   gesture?.source?.classList.remove('touch-sorting');
   if(highlight){highlight.classList.remove('touch-sort-before','touch-sort-after','touch-sort-into');highlight=null;}
   if(ghost){ghost.remove();ghost=null;}
@@ -37,12 +44,9 @@
   gesture=null;
  }
  function startDrag(){
-  const g=gesture;if(!g||g.started||!isMobile())return;
+  const g=gesture;if(!g||g.started||!g.source.isConnected)return;
   if(!canEdit()){api.toast('Hồ sơ trẻ em không được thay đổi thứ tự','warn');reset();return;}
   g.started=true;g.source.classList.add('touch-sorting');
-  // Only a long-press reorder drag needs to cancel native scrolling.
-  activeDragMove=handleActiveDragMove;
-  d.addEventListener('touchmove',activeDragMove,{capture:true,passive:false});
   ghost=d.createElement('div');ghost.className='web-touch-sort-ghost';
   ghost.textContent=g.kind==='channel'?(api.getStore().channels.find(c=>c.id===g.id)?.name||'Kênh'):g.id;
   ghost.setAttribute('aria-hidden','true');d.body.append(ghost);
@@ -55,7 +59,7 @@
   const g=gesture;if(!g)return;
   if(highlight){highlight.classList.remove('touch-sort-before','touch-sort-after','touch-sort-into');highlight=null;}
   g.drop=null;
-  if(!target)return;
+  if(!target||!target.isConnected)return;
   const isRow=target.classList.contains('channel-item');
   if(g.kind==='folder'&&isRow)return;
   const group=target.dataset.group;
@@ -72,9 +76,12 @@
   g.drop={kind:g.kind,group,anchorId:isRow?target.dataset.channelId:'',after};
  }
  function scrollPort(){
-  const list=channelList;
-  if(list.scrollHeight>list.clientHeight+5)return list;
-  return d.querySelector('#page-tv .content, .content')||list;
+  const list=gesture?.source?.closest('#folderManager')||channelList;
+  for(let node=list;node&&node!==d.body;node=node.parentElement){
+   const style=w.getComputedStyle(node);
+   if(/auto|scroll/.test(style.overflowY)&&node.scrollHeight>node.clientHeight+5)return node;
+  }
+  return d.scrollingElement||d.documentElement;
  }
  function scrollStep(){
   scrollFrame=0;const g=gesture;if(!g?.started)return;
@@ -119,16 +126,20 @@
   api.render(true);api.toast('Đã sắp xếp thư mục: '+id);return true;
  }
  d.addEventListener('touchstart',e=>{
-  if(!isMobile()||gesture||e.touches.length!==1)return;
+  if(gesture){if(e.touches.length!==1)reset();return;}
+  if(e.touches.length!==1)return;
+  markTouch();
+  suppressClickUntil=0;
   const source=dragSource(e.target);
   if(!source)return;
   const touch=e.changedTouches[0];
   const kind=source.classList.contains('channel-item')?'channel':'folder';
   const id=kind==='channel'?source.dataset.channelId:source.dataset.group;
-  if(!id)return;
-  gesture={identifier:touch.identifier,source,kind,id,x:touch.clientX,y:touch.clientY,
+  if(!id||(kind==='folder'&&d.getElementById('searchBox')?.value?.trim()))return;
+  const handle=!!e.target.closest(handleSelector);
+  gesture={identifier:touch.identifier,source,kind,id,handle,x:touch.clientX,y:touch.clientY,
    lastX:touch.clientX,lastY:touch.clientY,started:false,drop:null,timer:0};
-  gesture.timer=w.setTimeout(startDrag,HOLD_MS);
+  gesture.timer=w.setTimeout(startDrag,handle?HANDLE_HOLD_MS:HOLD_MS);
  },{capture:true,passive:true});
  function handleActiveDragMove(e){
   const g=gesture;if(!g?.started)return;
@@ -139,14 +150,20 @@
   positionGhost(touch.clientX,touch.clientY);dropTarget(touch.clientX,touch.clientY);
   if(!scrollFrame)scrollFrame=w.requestAnimationFrame(scrollStep);
  }
- // Keep ordinary channel-list swipes on the browser's passive scrolling path.
+ // Install a non-passive listener before the gesture begins: Safari can
+ // otherwise commit to native scrolling before a late listener is attached.
  d.addEventListener('touchmove',e=>{
-  const g=gesture;if(!g||g.started)return;
+  const g=gesture;if(!g)return;
   if(e.touches.length!==1){reset();return;}
   const touch=touchAt(e,g.identifier);if(!touch)return;
   g.lastX=touch.clientX;g.lastY=touch.clientY;
-  if(Math.hypot(g.lastX-g.x,g.lastY-g.y)>CANCEL_SLOP)reset();
- },{capture:true,passive:true});
+  if(!g.started){
+   const distance=Math.hypot(g.lastX-g.x,g.lastY-g.y);
+   if(g.handle&&distance>=6)startDrag();
+   else if(distance>CANCEL_SLOP){reset();return;}
+  }
+  if(gesture?.started)handleActiveDragMove(e);
+ },{capture:true,passive:false});
  d.addEventListener('touchend',e=>{
   const g=gesture;if(!g)return;
   const touch=touchAt(e,g.identifier);if(!touch)return;
@@ -162,7 +179,7 @@
  },{capture:true,passive:false});
  d.addEventListener('touchcancel',reset,true);
  d.addEventListener('contextmenu',e=>{
-  if(gesture?.started&&gesture.source.contains(e.target)){e.preventDefault();e.stopPropagation();}
+  if(gesture&&gesture.source.contains(e.target)){e.preventDefault();e.stopPropagation();}
  },true);
  w.addEventListener('blur',reset);
  // Long-press release must not subsequently play a channel or collapse a folder.

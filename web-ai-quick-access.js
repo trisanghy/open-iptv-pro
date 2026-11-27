@@ -1,5 +1,5 @@
 'use strict';
-/* Two lightweight entries into the EXISTING AI tabs; no second Bayes engine.
+/* Channel-panel shortcuts into the EXISTING AI tabs; no sidebar entries.
  * The mobile channel panel remains the default. AI hub is revealed on demand. */
 (function(root,create){
  const api=create(root);
@@ -16,18 +16,9 @@
    hub=doc.getElementById('webChannelHub'),hubNav=hub?.querySelector('.web-hub-tabs'),
    hubMain=hub?.querySelector('.web-hub-main');
   if(!sidebar||!filters||!hubNav||!hubMain||doc.getElementById('webAiQuickBack'))return false;
-  const navItems={},filterItems={};
+  const filterItems={};
   let current='';
-  const sidebarAnchor=sidebar.querySelector('.nav[data-page="fav"]');
-  let lastSidebarAnchor=sidebarAnchor;
   for(const mode of modes){
-   const nav=doc.createElement('button');nav.type='button';nav.className='nav web-ai-quick-nav';
-   nav.dataset.aiQuick=mode;nav.setAttribute('aria-label',text(mode));nav.title=text(mode);
-   const glyph=doc.createElement('span');glyph.textContent=mode==='classification'?'▦':'✦';glyph.setAttribute('aria-hidden','true');
-   nav.append(glyph,doc.createTextNode(' '+text(mode)));
-   lastSidebarAnchor?.insertAdjacentElement('afterend',nav);
-   lastSidebarAnchor=nav;
-   navItems[mode]=nav;
    const tab=doc.createElement('button');tab.type='button';tab.className='filter-tab web-ai-quick-filter';
    tab.dataset.aiQuick=mode;tab.textContent=text(mode);tab.setAttribute('aria-pressed','false');
    filters.append(tab);filterItems[mode]=tab;
@@ -40,9 +31,6 @@
    back.hidden=!current;back.textContent='‹ '+text('back');
    for(const mode of modes){
     const active=mode===current;
-    navItems[mode].classList.toggle('active',active);
-    navItems[mode].setAttribute('aria-current',active?'page':'false');
-    navItems[mode].setAttribute('aria-label',text(mode));navItems[mode].title=text(mode);
     filterItems[mode].classList.toggle('active',active);
     filterItems[mode].setAttribute('aria-pressed',String(active));
     filterItems[mode].textContent=text(mode);
@@ -63,7 +51,6 @@
    return true;
   }
   for(const mode of modes){
-   navItems[mode].addEventListener('click',()=>open(mode));
    filterItems[mode].addEventListener('click',()=>open(mode));
   }
   back.addEventListener('click',()=>{

@@ -90,3 +90,21 @@ html[data-iptv-device="mobile"] body #page-tv .channel-panel :is(
 html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs{
  overscroll-behavior-y:auto!important;
 }
+
+/* Touch capability is independent of desktop/mobile layout (iPad and
+   Safari Request Desktop Website included). Only handles reserve the gesture. */
+html.web-touch-capable body :is(#channelList .folder-header,#channelList .channel-item,#folderManager .folder-card){
+ -webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;
+}
+html.web-touch-capable body :is(#channelList .chan-logo,#channelList .folder-emoji,#folderManager .folder-card h3),
+html.web-touch-capable body :is(#channelList .chan-logo,#channelList .folder-emoji,#folderManager .folder-card h3) *{
+ touch-action:none!important;-webkit-touch-callout:none!important;-webkit-user-select:none!important;user-select:none!important;cursor:grab;
+}
+html.web-touch-capable body :is(#channelList .channel-item,#channelList .folder-header,#folderManager .folder-card).touch-sorting{
+ opacity:.72!important;outline:2px dashed var(--accent,#be89eb)!important;outline-offset:-2px!important;
+}
+html.web-touch-capable body :is(#channelList .channel-item,#channelList .folder-header,#folderManager .folder-card).touch-sort-before{box-shadow:inset 0 4px 0 var(--accent,#c78bef)!important}
+html.web-touch-capable body :is(#channelList .channel-item,#channelList .folder-header,#folderManager .folder-card).touch-sort-after{box-shadow:inset 0 -4px 0 var(--accent,#c78bef)!important}
+html.web-touch-capable body :is(#channelList .folder-header,#folderManager .folder-card).touch-sort-into{
+ outline:3px solid var(--accent,#c78bef)!important;outline-offset:-3px!important;background:color-mix(in srgb,var(--accent,#be89eb) 20%,var(--surface,#15212e))!important;
+}
