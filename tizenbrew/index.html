@@ -577,6 +577,8 @@ body #app .preview .preview-state{font-size:14px}
 #app .guide-row div{min-width:0}
 #app .guide-row strong{display:block;font-size:19px;font-weight:720;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #app .guide-row small{font-size:15px;color:#aab9cc;display:block;margin-top:2px}
+#app .guide-row .guide-description{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#app .guide-row .guide-description[hidden]{display:none!important}
 #app .guide-track{height:7px;border-radius:10px;background:#3a475d;margin:7px 0;overflow:hidden}
 #app .guide-track div{height:100%;width:0;background:#4894ff;border-radius:10px}
 #app .actions{display:grid;grid-template-columns:1.55fr 1fr .85fr;gap:9px;padding:3px 0;flex:none}
@@ -853,9 +855,9 @@ body #player.is-playback-error #channelPicker{z-index:12}
 <div class="preview-state" id="previewStatus" role="status">Chọn kênh để xem thử</div></div>
     <div class="channel-summary"><div class="selected-logo"><img id="selectedChannelLogo" alt="" hidden><span id="selectedChannelPlaceholder">TV</span></div><div class="selected-channel-text"><h2 id="channelTitle">Chọn kênh</h2><p id="channelGroup" hidden></p></div><button id="favBtn" title="Yêu thích" aria-label="Yêu thích"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 8.7c0 4.5-8.8 10.3-8.8 10.3S3.2 13.2 3.2 8.7a5.2 5.2 0 0 1 8.8-3.5 5.2 5.2 0 0 1 8.8 3.5z"/></svg><span class="fav-label">Thêm yêu thích</span></button></div>
     <section class="guide-card" id="guideCard" aria-label="Lịch phát sóng của kênh đang chọn">
-      <div class="guide-row guide-now"><span class="guide-tag">Đang phát</span><div><strong id="guideNowTitle">Chưa có chương trình</strong><small id="guideNowTime">Đang chờ EPG</small></div></div>
+      <div class="guide-row guide-now"><span class="guide-tag">Đang phát</span><div><strong id="guideNowTitle">Chưa có chương trình</strong><small class="guide-description" id="guideNowDescription" hidden></small><small id="guideNowTime">Đang chờ EPG</small></div></div>
       <div class="guide-track"><div id="guideProgress"></div></div>
-      <div class="guide-row"><span class="guide-tag guide-next-tag">Tiếp theo</span><div><strong id="guideNextTitle">Chưa có dữ liệu</strong><small id="guideNextTime"></small></div></div>
+      <div class="guide-row"><span class="guide-tag guide-next-tag">Tiếp theo</span><div><strong id="guideNextTitle">Chưa có dữ liệu</strong><small class="guide-description" id="guideNextDescription" hidden></small><small id="guideNextTime"></small></div></div>
     </section>
     <div class="actions">
       <button class="primary" id="watchBtn"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4m13-5h4a1 1 0 0 1 1 1v4M3 16v4a1 1 0 0 0 1 1h4m13-5v4a1 1 0 0 1-1 1h-4"/></svg>Xem toàn màn hình</button>
@@ -1588,7 +1590,9 @@ function epgParse(xml,channels,now){
   if((counts[ch]||0)>=32||rows.length>=maxRows)continue;
   var label=/<title\b[^>]*>([\s\S]*?)<\/title>/i.exec(m[2]),title=epgEntity(label&&label[1]||'').slice(0,120);
   if(!title)continue;
-  rows.push({id:ch,start:start,end:end,title:title});
+  var sub=/<sub-title\b[^>]*>([\s\S]*?)<\/sub-title>/i.exec(m[2]),desc=/<desc\b[^>]*>([\s\S]*?)<\/desc>/i.exec(m[2]);
+  var subtitle=epgEntity(sub&&sub[1]||'').slice(0,150),description=epgEntity(desc&&desc[1]||'').slice(0,450);
+  rows.push({id:ch,start:start,end:end,title:title,subtitle:subtitle,description:description});
   counts[ch]=(counts[ch]||0)+1;
  }
  rows.sort(function(a,b){return a.start-b.start;});
@@ -1611,8 +1615,14 @@ function epgForChannel(channel,now){
  return {now:current,next:next};
 }
 function epgTime(ts){if(!Number.isFinite(ts))return '';var d=new Date(ts);return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+function renderEPGDetail(kind,item){
+ var title=String(item&&item.title||'').trim(),subtitle=String(item&&item.subtitle||'').trim(),description=String(item&&item.description||'').trim();
+ var detail=subtitle&&subtitle.toLowerCase()!==title.toLowerCase()?subtitle:description&&description.toLowerCase()!==title.toLowerCase()?description:'';
+ var node=byId('guide'+kind+'Description');node.textContent=detail;node.title=detail;node.hidden=!detail;
+}
 function renderSelectedEPG(){
  var c=selected,g=epgForChannel(c);
+ renderEPGDetail('Now',g.now);renderEPGDetail('Next',g.next);
  byId('guideNowTitle').textContent=g.now?g.now.title:epgReady?'Chưa có lịch phát':'Đang chờ EPG';
  byId('guideNowTime').textContent=g.now?epgTime(g.now.start)+' – '+epgTime(g.now.end):epgError||'';
  byId('guideNextTitle').textContent=g.next?g.next.title:'Chưa có dữ liệu';
